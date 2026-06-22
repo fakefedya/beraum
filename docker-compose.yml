@@ -36,7 +36,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # Инициализатор: создает публичный бакет products
   minio-init:
     image: minio/mc:latest
     container_name: brm-minio-init
