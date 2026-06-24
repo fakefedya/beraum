@@ -1,13 +1,13 @@
-import { Pill } from './_components/Pill'
-import { Toggle } from './_components/Toggle'
+import { Pill } from "./_components/Pill";
+import { StoreMode } from "./_components/StoreMode";
 
 export const Header = () => {
-	return (
-		<header className='sticky top-4 h-14 z-100 mx-auto w-full max-w-7xl'>
-			<div className='w-full h-full flex '>
-				<Toggle />
-				<Pill />
-			</div>
-		</header>
-	)
-}
+  return (
+    <header className="sticky top-4 z-50 mx-auto h-14 w-full max-w-7xl px-4">
+      <div className="flex h-full w-full items-center gap-3">
+        <StoreMode />
+        <Pill />
+      </div>
+    </header>
+  );
+};
