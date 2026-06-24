@@ -1,29 +1,44 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Search, User } from "lucide-react";
+import { cn } from "@/src/lib/utils";
 import { Button } from "@/src/components/ui/button";
-import { Search } from "lucide-react";
+import { NAV_LINKS } from "@/src/lib/constants";
+import { DesktopNav } from "./DesktopNav";
 
 export const Pill = () => {
+  const pathname = usePathname();
+  const isDiscount = pathname.startsWith("/discount");
+  const links = isDiscount ? NAV_LINKS.discount : NAV_LINKS.store;
+
   return (
-    <div className="bg-frost-glass h-full w-full rounded-full">
-      <div className="flex h-full justify-between py-1 pr-1 pl-8">
-        <nav className="flex w-full justify-between">
-          <ul className="flex items-center gap-4">
-            <li>Каталог</li>
-            <li>Коллекции</li>
-            <li>Дизайн интерьера</li>
-          </ul>
-          <ul className="flex items-center gap-4">
-            <li>О бренде</li>
-            <li>Поддержка</li>
-            <li>
-              <Search />
-            </li>
-            <li className="h-full">
-              <Button className="bg-brand dark h-full rounded-full">
-                Купить
-              </Button>
-            </li>
-          </ul>
-        </nav>
+    <div
+      className={cn(
+        "flex h-full w-full items-center justify-between rounded-full py-1 pr-1 pl-5 transition-all duration-500",
+        isDiscount ? "bg-brand" : "bg-frost-glass",
+      )}
+    >
+      <DesktopNav links={links} />
+
+      <div className="flex h-full items-center gap-1.5">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full"
+          aria-label="Поиск"
+        >
+          <Search className="h-5 w-5" />
+        </Button>
+
+        <Button
+          variant={isDiscount ? "default" : "brand"}
+          className="h-full rounded-full px-6"
+          asChild
+        >
+          <Link href="/stores">Где купить</Link>
+        </Button>
       </div>
     </div>
   );
