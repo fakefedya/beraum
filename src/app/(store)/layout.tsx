@@ -1,15 +1,15 @@
 import "@/src/app/globals.css";
-import { Manrope } from "next/font/google";
+import { Golos_Text } from "next/font/google";
 
 import { Footer } from "@/src/components/layout/Footer";
 import { Header } from "@/src/components/layout/header/Header";
 import { Main } from "@/src/components/layout/Main";
 import { cn } from "@/src/lib/utils";
 
-const manrope = Manrope({
+const golosText = Golos_Text({
   subsets: ["latin", "cyrillic"],
   display: "swap",
-  variable: "--font-manrope",
+  variable: "--font-golos-text",
 });
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={cn("font-sans antialiased", manrope.variable)}>
+    <html lang="ru" className={cn("font-sans antialiased", golosText.variable)}>
       <body>
         <div className="bg-background-main relative min-h-screen">
           <Header />

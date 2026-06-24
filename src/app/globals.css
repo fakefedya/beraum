@@ -80,7 +80,7 @@
   --color-black: #0d0e0e;
   --color-frost-glass: #e8e8e866;
 
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-golos-text), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-sans);
 
   --color-background: var(--background);
