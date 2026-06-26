@@ -1,7 +1,7 @@
 type Props = {
-	children: React.ReactNode
-}
+  children: React.ReactNode;
+};
 
 export const Section = ({ children }: Props) => {
-	return <section className='flex flex-col'>{children}</section>
-}
+  return <section className="flex w-full flex-col">{children}</section>;
+};

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/src/lib/utils";
 import { useEffect, useRef, useState } from "react";
 
-export const StoreMode = () => {
+export const ModePill = () => {
   const pathname = usePathname();
   const isDiscount = pathname === "/discount";
 
@@ -35,12 +35,12 @@ export const StoreMode = () => {
       <div
         className={cn(
           "relative flex h-14 items-center rounded-full p-1 transition-colors duration-500 ease-out",
-          isDiscount ? "bg-brand" : "bg-frost-glass",
+          isDiscount ? "bg-brand" : "bg-glass",
         )}
       >
         <div
           className={cn(
-            "absolute top-1 bottom-1 left-0 rounded-full bg-white transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+            "absolute top-1 bottom-1 left-0 rounded-full transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
             isDiscount ? "bg-white" : "bg-brand",
           )}
           style={{
@@ -57,7 +57,7 @@ export const StoreMode = () => {
           aria-current={!isDiscount ? "page" : undefined}
           className={cn(
             "relative z-10 flex h-full items-center justify-center rounded-full px-5 transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none",
-            !isDiscount ? "text-black" : "text-black/50 hover:text-black/80",
+            !isDiscount ? "text-black" : "text-brand-muted hover:text-black",
           )}
         >
           <Icons.logo className="h-5 w-auto fill-current stroke-current stroke-[0.25] [shape-rendering:crispEdges]" />
@@ -68,7 +68,7 @@ export const StoreMode = () => {
           aria-current={isDiscount ? "page" : undefined}
           className={cn(
             "relative z-10 flex h-full items-center justify-center rounded-full px-5 text-lg font-semibold tracking-wide transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none",
-            isDiscount ? "text-black" : "text-black/50 hover:text-black/80",
+            isDiscount ? "text-black" : "text-black-muted hover:text-black",
           )}
         >
           Дисконт

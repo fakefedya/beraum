@@ -15,27 +15,23 @@ import {
   navigationMenuTriggerStyle,
 } from "@/src/components/ui/navigation-menu";
 
-// Типизируем пропсы, чтобы компонент был переиспользуемым
-type NavLink = {
+type Props = {
   label: string;
   href: string;
   isExternal: boolean;
 };
 
-export const DesktopNav = ({ links }: { links: readonly NavLink[] }) => {
+export const NavDesktop = ({ links }: { links: readonly Props[] }) => {
   return (
-    <NavigationMenu className="hidden lg:flex">
-      <NavigationMenuList className="gap-1">
+    <NavigationMenu className="hidden h-full lg:flex">
+      <NavigationMenuList className="h-full gap-8">
         {links.map((link) => {
-          // 1. СПЕЦИАЛЬНЫЙ СЛУЧАЙ: Мега-меню для Каталога
           if (link.label === "Каталог") {
             return (
               <NavigationMenuItem key={link.href}>
-                <NavigationMenuTrigger className="h-9 rounded-full bg-transparent hover:bg-black/5 focus:bg-black/5 data-[state=open]:bg-black/5">
-                  {link.label}
-                </NavigationMenuTrigger>
+                <NavigationMenuTrigger>{link.label}</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                  <ul className="grid h-full w-100 gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                     <li className="row-span-3">
                       <NavigationMenuLink asChild>
                         <a
@@ -76,22 +72,15 @@ export const DesktopNav = ({ links }: { links: readonly NavLink[] }) => {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "h-9 rounded-full bg-transparent hover:bg-black/5 focus:bg-black/5",
-                    )}
+                    className={cn(navigationMenuTriggerStyle())}
                   >
-                    {link.label}{" "}
-                    <ExternalLink className="ml-1.5 h-3.5 w-3.5 opacity-50" />
+                    {link.label} <ExternalLink />
                   </a>
                 </NavigationMenuLink>
               ) : (
                 <Link href={link.href} legacyBehavior passHref>
                   <NavigationMenuLink
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "h-9 rounded-full bg-transparent hover:bg-black/5 focus:bg-black/5",
-                    )}
+                    className={cn(navigationMenuTriggerStyle(), "text-base")}
                   >
                     {link.label}
                   </NavigationMenuLink>
@@ -117,7 +106,7 @@ const ListItem = React.forwardRef<
           href={href!}
           ref={ref}
           className={cn(
-            "block space-y-1 rounded-lg p-3 leading-none no-underline transition-colors outline-none select-none hover:bg-slate-100 hover:text-black focus:bg-slate-100 focus:text-black",
+            "block space-y-1 rounded-full p-3 leading-none no-underline transition-colors outline-none select-none hover:bg-slate-100 hover:text-black focus:bg-slate-100 focus:text-black",
             className,
           )}
           {...props}

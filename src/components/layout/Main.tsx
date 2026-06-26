@@ -1,9 +1,9 @@
-import { ReactNode } from 'react'
+import { ReactNode } from "react";
 
 type Props = {
-	children: ReactNode
-}
+  children: ReactNode;
+};
 
 export const Main = ({ children }: Props) => {
-	return <main className='h-full flex flex-col'>{children}</main>
-}
+  return <main className="flex h-full w-full flex-col">{children}</main>;
+};

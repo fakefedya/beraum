@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="ru" className={cn("font-sans antialiased", golosText.variable)}>
       <body>
-        <div className="bg-background-main relative min-h-screen">
+        <div className="bg-surface-gray relative min-h-screen">
           <Header />
           <Main>{children}</Main>
           <Footer />

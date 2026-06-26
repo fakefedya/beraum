@@ -75,10 +75,13 @@
 
 @theme inline {
   --color-brand: #b2fe27;
-  --color-brand-dark: #97db1a;
-  --color-background-main: #f3f4f4;
+  --color-brand-hover: #a9f125;
+  --color-brand-muted: #97db1a;
+
   --color-black: #0d0e0e;
-  --color-frost-glass: #e8e8e866;
+  --color-black-muted: #7f7f7f;
+  --color-surface-gray: #f3f4f4;
+  --color-glass: #e8e8e866;
 
   --font-sans: var(--font-golos-text), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-sans);
