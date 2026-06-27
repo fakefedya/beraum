@@ -17,8 +17,9 @@ import {
 
 type Props = {
   label: string;
-  href: string;
-  isExternal: boolean;
+  href?: string;
+  type: string;
+  layout?: string;
 };
 
 export const NavDesktop = ({ links }: { links: readonly Props[] }) => {
@@ -26,7 +27,7 @@ export const NavDesktop = ({ links }: { links: readonly Props[] }) => {
     <NavigationMenu className="hidden h-full lg:flex">
       <NavigationMenuList className="h-full gap-8">
         {links.map((link) => {
-          if (link.label === "Каталог") {
+          if (link.type === "dropdown") {
             return (
               <NavigationMenuItem key={link.href}>
                 <NavigationMenuTrigger>{link.label}</NavigationMenuTrigger>
