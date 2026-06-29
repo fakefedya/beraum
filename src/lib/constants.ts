@@ -13,47 +13,94 @@ export type NavExternal = {
   target?: "_blank" | "_self";
 };
 
-export type NavMenu = {
+export type NavMenuMega = {
   label: string;
-  type: "default" | "mega";
-  layout: "grid" | "list";
-  colCount?: number;
-  items: { label: string; isNew?: boolean; href: string }[];
+  type: "mega";
+  sidebarLinks: { label: string; isNew?: boolean; href: string }[];
+  promoCards: {
+    label: string;
+    href: string;
+    isNew?: boolean;
+    cover: string;
+  }[];
+  promoAspectRatio: "horizontal" | "square" | "vertical";
+  promoColumnCount: number;
 };
 
-export type NavItem = NavLink | NavExternal | NavMenu;
+export type NavMenuDefault = {
+  label: string;
+  type: "default";
+  items: { label: string; href: string; cover: string }[];
+  columnCount: number;
+  aspectRatio: "horizontal" | "square" | "vertical";
+};
+
+export type NavItem = NavLink | NavExternal | NavMenuDefault | NavMenuMega;
 
 export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
   store: [
     {
       label: "Каталог",
       type: "mega",
-      layout: "grid",
-      colCount: 4,
-      items: [
-        { label: "Варочные панели", isNew: true, href: "/catalog/hobs" },
-        { label: "Вытяжки", isNew: false, href: "/catalog/hoods" },
-        { label: "Духовые шкафы", isNew: false, href: "/catalog/ovens" },
-        { label: "Холодильники", isNew: false, href: "/catalog/fridges" },
-        { label: "Морозильники", isNew: false, href: "/catalog/freezers" },
+      sidebarLinks: [
+        {
+          label: "Холодильники",
+          href: "/catalog/fridges",
+          isNew: false,
+        },
+        {
+          label: "Морозильники",
+          href: "/catalog/freezers",
+          isNew: false,
+        },
         {
           label: "Посудомоечные машины",
-          isNew: false,
           href: "/catalog/dishwashers",
+          isNew: false,
         },
         {
           label: "Микроволновые печи",
-          isNew: false,
           href: "/catalog/microwaves",
-        },
-        { label: "Аэрогрили", isNew: false, href: "/catalog/aerogrils" },
-        { label: "Термопоты", isNew: false, href: "/catalog/thermopots" },
-        {
-          label: "Подогреватели посуды",
           isNew: false,
-          href: "/catalog/dish-warmers",
+        },
+        {
+          label: "Аэрогрили",
+          isNew: false,
+          href: "/catalog/aerogrils",
+        },
+        {
+          label: "Термопоты",
+          isNew: false,
+          href: "/catalog/thermopots",
+        },
+        {
+          label: "Угольные фильтры",
+          isNew: false,
+          href: "/catalog/carbon-filters",
         },
       ],
+      promoCards: [
+        {
+          label: "Варочные панели",
+          href: "/catalog/hobs",
+          isNew: true,
+          cover: "path/to/image",
+        },
+        {
+          label: "Вытяжки",
+          href: "/catalog/hoods",
+          isNew: true,
+          cover: "path/to/image",
+        },
+        {
+          label: "Духовые шкафы",
+          isNew: false,
+          href: "/catalog/ovens",
+          cover: "path/to/image",
+        },
+      ],
+      promoAspectRatio: "vertical",
+      promoColumnCount: 3,
     },
     {
       label: "Коллекции",
@@ -61,29 +108,32 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
       href: "/collections",
     },
     {
-      label: "Сервис",
-      type: "mega",
-      layout: "grid",
-      colCount: 3,
-      items: [
-        { label: "Поддержка", href: "/support" },
-        { label: "Гарантия", href: "/service" },
-        { label: "Частые вопросы", href: "/faq" },
-      ],
-    },
-    {
       label: "О бренде",
       type: "default",
-      layout: "list",
+      columnCount: 3,
+      aspectRatio: "horizontal",
       items: [
         {
           label: "О бренде",
           href: "/about",
+          cover: "path/to/image",
         },
         {
           label: "Сотрудничество",
           href: "/partnership",
+          cover: "path/to/image",
         },
+      ],
+    },
+    {
+      label: "Сервис",
+      type: "default",
+      columnCount: 3,
+      aspectRatio: "horizontal",
+      items: [
+        { label: "Поддержка", href: "/support", cover: "path/to/image" },
+        { label: "Гарантия", href: "/service", cover: "path/to/image" },
+        { label: "Частые вопросы", href: "/faq", cover: "path/to/image" },
       ],
     },
     {
