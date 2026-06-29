@@ -44,6 +44,21 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
       type: "mega",
       sidebarLinks: [
         {
+          label: "Варочные панели",
+          href: "/catalog/hobs",
+          isNew: true,
+        },
+        {
+          label: "Вытяжки",
+          href: "/catalog/hoods",
+          isNew: true,
+        },
+        {
+          label: "Духовые шкафы",
+          isNew: false,
+          href: "/catalog/ovens",
+        },
+        {
           label: "Холодильники",
           href: "/catalog/fridges",
           isNew: false,
@@ -70,7 +85,7 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
         },
         {
           label: "Термопоты",
-          isNew: false,
+          isNew: true,
           href: "/catalog/thermopots",
         },
         {

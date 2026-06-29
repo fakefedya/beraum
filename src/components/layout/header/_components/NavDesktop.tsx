@@ -55,37 +55,39 @@ export const NavDesktop = ({ links }: NavDesktopProps) => {
 };
 
 const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
+  const colCount = item.promoCards.length;
+
   return (
     <NavigationMenuItem>
-      <NavigationMenuTrigger className="bg-transparent">
-        {item.label}
-      </NavigationMenuTrigger>
+      <NavigationMenuTrigger>{item.label}</NavigationMenuTrigger>
       <NavigationMenuContent>
-        {/* CSS Grid разделяет контейнер: 250px на сайдбар, остальное на карточки */}
-        <div className="grid w-[800px] grid-cols-[220px_1fr] gap-6 p-6 lg:w-[960px]">
-          {/* ЛЕВАЯ КОЛОНКА (Сайдбар со ссылками) */}
-          <ul className="flex flex-col gap-1 border-r border-slate-100 pr-4">
+        <div className="flex gap-4">
+          <ul className="flex h-full min-w-fit flex-col">
             {item.sidebarLinks.map((link) => (
               <li key={link.href}>
-                <NavigationMenuLink asChild>
+                <NavigationMenuLink asChild className="flex-col-reverse">
                   <Link
                     href={link.href}
-                    className="block rounded-md px-3 py-2 text-sm font-medium text-black/70 transition-colors outline-none hover:bg-slate-100 hover:text-black focus:bg-slate-100 focus:text-black"
+                    className="hover:bg-surface-gray transition-300 flex items-start gap-0 rounded-lg p-4 text-base font-medium"
                   >
                     {link.label}
+                    {link.isNew && (
+                      <span className="text-brand-muted text-xs leading-1 font-medium">
+                        Новые модели
+                      </span>
+                    )}
                   </Link>
                 </NavigationMenuLink>
               </li>
             ))}
           </ul>
 
-          {/* ПРАВАЯ КОЛОНКА (Сетка с промо-карточками) */}
-          <ul className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+          <ul className="grid h-auto w-full grid-cols-3 gap-3">
             {item.promoCards.map((card) => (
               <li
                 key={card.href}
                 className={cn(
-                  "relative",
+                  "min-h-full",
                   card.label === "Без отделки" && "row-span-2",
                 )}
               >
@@ -105,9 +107,7 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                     )}
 
                     {/* Заглушка под картинку. Когда будут реальные изображения - используй next/image */}
-                    <div className="absolute inset-0 z-0 flex items-end justify-end p-2 text-black opacity-20 transition-opacity group-hover:opacity-40">
-                      {card.imagePlaceholder}
-                    </div>
+                    <div className="absolute inset-0 z-0 flex items-end justify-end p-2 text-black opacity-20 transition-opacity group-hover:opacity-40"></div>
                   </Link>
                 </NavigationMenuLink>
               </li>
@@ -122,9 +122,7 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
 const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
   return (
     <NavigationMenuItem>
-      <NavigationMenuTrigger className="bg-transparent">
-        {item.label}
-      </NavigationMenuTrigger>
+      <NavigationMenuTrigger>{item.label}</NavigationMenuTrigger>
       <NavigationMenuContent>
         <ul className="flex w-[250px] flex-col gap-1 p-3">
           {item.items.map((subItem) => (
