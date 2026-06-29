@@ -1,48 +1,54 @@
-export const NAV_LINKS = {
+type StoreMode = "store" | "discount";
+
+export type NavLink = {
+  label: string;
+  type: "link";
+  href: string;
+};
+
+export type NavExternal = {
+  label: string;
+  type: "external";
+  href: string;
+  target?: "_blank" | "_self";
+};
+
+export type NavMenu = {
+  label: string;
+  type: "default" | "mega";
+  layout: "grid" | "list";
+  items: { label: string; isNew?: boolean; href: string }[];
+};
+
+export type NavItem = NavLink | NavExternal | NavMenu;
+
+export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
   store: [
     {
       label: "Каталог",
-      type: "dropdown",
-      layout: "cards",
+      type: "mega",
+      layout: "grid",
       items: [
-        {
-          label: "Варочные панели",
-          href: "/catalog/hobs",
-        },
-        {
-          label: "Вытяжки",
-          href: "/catalog/hoods",
-        },
-        {
-          label: "Духовые шкафы",
-          href: "/catalog/ovens",
-        },
-        {
-          label: "Холодильники",
-          href: "/catalog/fridges",
-        },
-        {
-          label: "Морозильники",
-          href: "/catalog/freezers",
-        },
+        { label: "Варочные панели", isNew: true, href: "/catalog/hobs" },
+        { label: "Вытяжки", isNew: false, href: "/catalog/hoods" },
+        { label: "Духовые шкафы", isNew: false, href: "/catalog/ovens" },
+        { label: "Холодильники", isNew: false, href: "/catalog/fridges" },
+        { label: "Морозильники", isNew: false, href: "/catalog/freezers" },
         {
           label: "Посудомоечные машины",
+          isNew: false,
           href: "/catalog/dishwashers",
         },
         {
           label: "Микроволновые печи",
+          isNew: false,
           href: "/catalog/microwaves",
         },
-        {
-          label: "Аэрогрили",
-          href: "/catalog/aerogrils",
-        },
-        {
-          label: "Термопоты",
-          href: "/catalog/thermopots",
-        },
+        { label: "Аэрогрили", isNew: false, href: "/catalog/aerogrils" },
+        { label: "Термопоты", isNew: false, href: "/catalog/thermopots" },
         {
           label: "Подогреватели посуды",
+          isNew: false,
           href: "/catalog/dish-warmers",
         },
       ],
@@ -53,8 +59,18 @@ export const NAV_LINKS = {
       href: "/collections",
     },
     {
+      label: "Сервис",
+      type: "mega",
+      layout: "list",
+      items: [
+        { label: "Поддержка", href: "/support" },
+        { label: "Гарантия", href: "/service" },
+        { label: "Частые вопросы", href: "/faq" },
+      ],
+    },
+    {
       label: "О бренде",
-      type: "dropdown",
+      type: "default",
       layout: "list",
       items: [
         {
@@ -68,33 +84,10 @@ export const NAV_LINKS = {
       ],
     },
     {
-      label: "Сервис",
-      type: "dropdown",
-      layout: "list",
-      items: [
-        {
-          label: "Поддержка",
-          href: "/support",
-        },
-        {
-          label: "Гарантия",
-          href: "/service",
-        },
-        {
-          label: "Частые вопросы",
-          href: "/faq",
-        },
-        {
-          label: "Документация",
-          href: "/docs",
-        },
-      ],
-    },
-    {
       label: "Студия дизайна",
+      type: "external",
       href: "https://design.beraum.com",
       target: "_blank",
-      type: "external",
     },
   ],
   discount: [

@@ -67,7 +67,7 @@ export const ModePill = () => {
           ref={isDiscount ? activeRef : null}
           aria-current={isDiscount ? "page" : undefined}
           className={cn(
-            "relative z-10 flex h-full items-center justify-center rounded-full px-5 text-lg font-semibold tracking-wide transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none",
+            "relative z-10 flex h-full items-center justify-center rounded-full px-5 text-lg font-medium tracking-wide transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none",
             isDiscount ? "text-black" : "text-black-muted hover:text-black",
           )}
         >

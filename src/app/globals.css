@@ -83,6 +83,8 @@
   --color-surface-gray: #f3f4f4;
   --color-glass: #e8e8e866;
 
+  --shadow-card: 2px 4px 12px 0 rgba(0, 0, 0, 0.09);
+
   --font-sans: var(--font-golos-text), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-sans);
 
