@@ -19,6 +19,7 @@ export type NavMenuMega = {
   sidebarLinks: { label: string; isNew?: boolean; href: string }[];
   promoCards: {
     label: string;
+    description: string;
     href: string;
     isNew?: boolean;
     cover: string;
@@ -97,18 +98,21 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
       promoCards: [
         {
           label: "Варочные панели",
+          description: "Овальная панель",
           href: "/catalog/hobs",
           isNew: true,
           cover: "path/to/image",
         },
         {
           label: "Вытяжки",
+          description: "Овальная панель",
           href: "/catalog/hoods",
           isNew: true,
           cover: "path/to/image",
         },
         {
           label: "Духовые шкафы",
+          description: "Овальная панель",
           isNew: false,
           href: "/catalog/ovens",
           cover: "path/to/image",

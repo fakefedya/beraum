@@ -1,4 +1,3 @@
-// src/components/layout/header/_components/NavDesktop.tsx
 "use client";
 
 import Link from "next/link";
@@ -21,6 +20,7 @@ import type {
   NavExternal,
   NavLink,
 } from "@/src/lib/constants";
+import { Badge } from "@/src/components/ui/badge";
 
 interface NavDesktopProps {
   links: readonly NavItem[];
@@ -61,18 +61,18 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
     <NavigationMenuItem>
       <NavigationMenuTrigger>{item.label}</NavigationMenuTrigger>
       <NavigationMenuContent>
-        <div className="flex gap-4">
+        <div className="flex gap-8">
           <ul className="flex h-full min-w-fit flex-col">
             {item.sidebarLinks.map((link) => (
               <li key={link.href}>
                 <NavigationMenuLink asChild className="flex-col-reverse">
                   <Link
                     href={link.href}
-                    className="hover:bg-surface-gray transition-300 flex items-start gap-0 rounded-lg p-4 text-base font-medium"
+                    className="color-black transition-300 flex items-start gap-0 rounded-xl p-4 text-base font-medium hover:bg-gray-50"
                   >
                     {link.label}
                     {link.isNew && (
-                      <span className="text-brand-muted text-xs leading-1 font-medium">
+                      <span className="text-xs leading-1 font-medium text-[#ff6109]">
                         Новые модели
                       </span>
                     )}
@@ -84,29 +84,25 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
 
           <ul className="grid h-auto w-full grid-cols-3 gap-3">
             {item.promoCards.map((card) => (
-              <li
-                key={card.href}
-                className={cn(
-                  "min-h-full",
-                  card.label === "Без отделки" && "row-span-2",
-                )}
-              >
+              <li key={card.href} className={"min-h-full"}>
                 <NavigationMenuLink asChild>
                   <Link
                     href={card.href}
-                    className="group relative flex h-full min-h-[140px] w-full flex-col overflow-hidden rounded-xl bg-slate-100 p-4 transition-all outline-none hover:shadow-md focus:ring-2 focus:ring-black"
+                    className="relative flex h-full items-end rounded-xl bg-gray-50"
                   >
-                    <span className="relative z-10 max-w-[80%] text-sm leading-tight font-bold text-black">
-                      {card.label}
-                    </span>
-
-                    {card.isNew && (
-                      <span className="bg-brand absolute top-4 right-4 z-10 flex h-5 items-center justify-center rounded-full px-2 text-[10px] font-bold tracking-wider text-black uppercase">
-                        New
+                    <div className="flex flex-col gap-0 p-4">
+                      <span className="font-medium text-black">
+                        {card.label}
                       </span>
+                      <span className="text-black-muted">
+                        {card.description}
+                      </span>
+                    </div>
+                    {card.isNew && (
+                      <Badge variant={"new"} className="absolute top-4 right-4">
+                        Новинка
+                      </Badge>
                     )}
-
-                    {/* Заглушка под картинку. Когда будут реальные изображения - используй next/image */}
                     <div className="absolute inset-0 z-0 flex items-end justify-end p-2 text-black opacity-20 transition-opacity group-hover:opacity-40"></div>
                   </Link>
                 </NavigationMenuLink>
