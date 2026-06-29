@@ -17,6 +17,7 @@ export type NavMenu = {
   label: string;
   type: "default" | "mega";
   layout: "grid" | "list";
+  colCount?: number;
   items: { label: string; isNew?: boolean; href: string }[];
 };
 
@@ -28,6 +29,7 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
       label: "Каталог",
       type: "mega",
       layout: "grid",
+      colCount: 4,
       items: [
         { label: "Варочные панели", isNew: true, href: "/catalog/hobs" },
         { label: "Вытяжки", isNew: false, href: "/catalog/hoods" },
@@ -61,7 +63,8 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
     {
       label: "Сервис",
       type: "mega",
-      layout: "list",
+      layout: "grid",
+      colCount: 3,
       items: [
         { label: "Поддержка", href: "/support" },
         { label: "Гарантия", href: "/service" },

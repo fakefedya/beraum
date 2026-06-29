@@ -36,9 +36,9 @@ export const NavDesktop = ({ links }: NavDesktopProps) => {
 
           switch (link.type) {
             case "mega":
-              return <MegaMenuNode key={key} item={link} colCount={4} />;
+              return <MegaMenuNode key={key} item={link} />;
             case "default":
-              return <MegaMenuNode key={key} item={link} colCount={3} />;
+              return <MegaMenuNode key={key} item={link} />;
             case "link":
             case "external":
               return <LinkNode key={key} item={link} />;
@@ -53,13 +53,7 @@ export const NavDesktop = ({ links }: NavDesktopProps) => {
   );
 };
 
-const MegaMenuNode = ({
-  item,
-  colCount,
-}: {
-  item: NavMenu;
-  colCount: number;
-}) => {
+const MegaMenuNode = ({ item }: { item: NavMenu }) => {
   const isGrid = item.layout === "grid";
 
   return (
@@ -71,7 +65,7 @@ const MegaMenuNode = ({
         <ul
           className={cn(
             isGrid
-              ? `grid grid-cols-${colCount} gap-2`
+              ? `grid grid-cols-${item.colCount} gap-2`
               : "flex w-50 flex-col gap-1",
           )}
         >
@@ -79,7 +73,7 @@ const MegaMenuNode = ({
             <li key={subItem.href}>
               <NavigationMenuLink asChild>
                 <Link href={subItem.href} className="relative flex-col gap-1">
-                  <div className="flex aspect-3/2 items-center justify-center rounded-lg bg-slate-100 text-slate-400"></div>
+                  <div className="flex aspect-2/3 items-center justify-center rounded-lg bg-slate-100 text-slate-400"></div>
                   <span className="absolute top-1 right-1">
                     {subItem.isNew ? "Новые модели" : ""}
                   </span>
