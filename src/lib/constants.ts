@@ -1,3 +1,5 @@
+import { Icons } from "@/src/components/ui/icons";
+
 type StoreMode = "store" | "discount";
 
 export type NavLink = {
@@ -24,16 +26,12 @@ export type NavMenuMega = {
     isNew?: boolean;
     cover: string;
   }[];
-  promoAspectRatio: "horizontal" | "square" | "vertical";
-  promoColumnCount: number;
 };
 
 export type NavMenuDefault = {
   label: string;
   type: "default";
   items: { label: string; href: string; cover: string }[];
-  columnCount: number;
-  aspectRatio: "horizontal" | "square" | "vertical";
 };
 
 export type NavItem = NavLink | NavExternal | NavMenuDefault | NavMenuMega;
@@ -56,8 +54,8 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
         },
         {
           label: "Духовые шкафы",
-          isNew: false,
           href: "/catalog/ovens",
+          isNew: false,
         },
         {
           label: "Холодильники",
@@ -72,7 +70,7 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
         {
           label: "Посудомоечные машины",
           href: "/catalog/dishwashers",
-          isNew: false,
+          isNew: true,
         },
         {
           label: "Микроволновые печи",
@@ -97,29 +95,27 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
       ],
       promoCards: [
         {
-          label: "Варочные панели",
-          description: "Овальная панель",
+          label: "HI-2CR591",
+          description: "Дизайнерская овальная панель",
           href: "/catalog/hobs",
           isNew: true,
           cover: "path/to/image",
         },
         {
-          label: "Вытяжки",
+          label: "HI-3CR451",
           description: "Овальная панель",
           href: "/catalog/hoods",
           isNew: true,
           cover: "path/to/image",
         },
         {
-          label: "Духовые шкафы",
-          description: "Овальная панель",
-          isNew: false,
+          label: "HI-4CR591",
+          description: "Уникальность технологий",
+          isNew: true,
           href: "/catalog/ovens",
           cover: "path/to/image",
         },
       ],
-      promoAspectRatio: "vertical",
-      promoColumnCount: 3,
     },
     {
       label: "Коллекции",
@@ -129,8 +125,6 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
     {
       label: "О бренде",
       type: "default",
-      columnCount: 3,
-      aspectRatio: "horizontal",
       items: [
         {
           label: "О бренде",
@@ -147,8 +141,6 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
     {
       label: "Сервис",
       type: "default",
-      columnCount: 3,
-      aspectRatio: "horizontal",
       items: [
         { label: "Поддержка", href: "/support", cover: "path/to/image" },
         { label: "Гарантия", href: "/service", cover: "path/to/image" },
@@ -174,25 +166,25 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
 export const MARKETPLACE_LINKS = {
   store: [
     {
-      icon: "OZON_logo",
+      icon: Icons.ozon,
       label: "OZON",
       description: "Более 90 000 довольных клиентов",
       href: "https://ozon.ru/seller/...",
     },
     {
-      icon: "WB_logo",
+      icon: Icons.wb,
       label: "Wildberries",
       description: "Скидки постоянным клиентам",
       href: "https://wildberries.ru/seller/...",
     },
     {
-      icon: "YM_logo",
+      icon: Icons.ym,
       label: "Яндекс Маркет",
       description: "Вернем кэшбэк баллами",
       href: "https://market.yandex.ru/business/...",
     },
     {
-      icon: "MVideo_logo",
+      icon: Icons.mvideo,
       label: "М.Видео",
       description: "Начислим кэшбэк и баллы",
       href: "https://mvideo.ru/...",
@@ -200,9 +192,9 @@ export const MARKETPLACE_LINKS = {
   ],
   discount: [
     {
-      icon: "OZON_logo",
+      icon: Icons.ozon,
       label: "OZON",
-      description: "Дисконт техника",
+      description: "Наш магазин с дисконт техникой",
       href: "https://ozon.ru/seller/discount...",
     },
   ],

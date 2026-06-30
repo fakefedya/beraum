@@ -55,8 +55,6 @@ export const NavDesktop = ({ links }: NavDesktopProps) => {
 };
 
 const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
-  const colCount = item.promoCards.length;
-
   return (
     <NavigationMenuItem>
       <NavigationMenuTrigger>{item.label}</NavigationMenuTrigger>
@@ -72,7 +70,7 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                   >
                     {link.label}
                     {link.isNew && (
-                      <span className="text-xs leading-1 font-medium text-[#ff6109]">
+                      <span className="text-brand text-xs leading-3 font-medium">
                         Новые модели
                       </span>
                     )}
@@ -88,10 +86,10 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                 <NavigationMenuLink asChild>
                   <Link
                     href={card.href}
-                    className="relative flex h-full items-end rounded-xl bg-gray-50"
+                    className="hover:border-brand relative flex h-full items-end rounded-xl border-2 border-transparent bg-gray-50 transition-colors duration-300"
                   >
                     <div className="flex flex-col gap-0 p-4">
-                      <span className="font-medium text-black">
+                      <span className="font-semibold text-black">
                         {card.label}
                       </span>
                       <span className="text-black-muted">
@@ -116,19 +114,35 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
 };
 
 const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
+  const gridColumnCount = item.items.length;
+  const columnsMap: Record<number, string> = {
+    1: "grid-cols-1",
+    2: "grid-cols-2",
+    3: "grid-cols-3",
+    4: "grid-cols-4",
+    5: "grid-cols-5",
+  };
+
+  const gridClass = columnsMap[gridColumnCount] || "grid-cols-3";
+
   return (
     <NavigationMenuItem>
       <NavigationMenuTrigger>{item.label}</NavigationMenuTrigger>
       <NavigationMenuContent>
-        <ul className="flex w-[250px] flex-col gap-1 p-3">
+        <ul className={cn("grid h-full min-w-fit gap-3", gridClass)}>
           {item.items.map((subItem) => (
-            <li key={subItem.href}>
+            <li key={subItem.href} className={"h-full min-h-95"}>
               <NavigationMenuLink asChild>
                 <Link
                   href={subItem.href}
-                  className="block rounded-md px-3 py-2.5 text-sm font-medium text-black/70 transition-colors outline-none hover:bg-slate-100 hover:text-black focus:bg-slate-100"
+                  className="hover:border-brand relative flex h-full items-start rounded-xl border-2 border-transparent bg-gray-50 transition-colors duration-300"
                 >
-                  {subItem.label}
+                  <div className="flex flex-col gap-0 p-4">
+                    <span className="font-semibold text-black">
+                      {subItem.label}
+                    </span>
+                  </div>
+                  <div className="absolute inset-0 z-0 flex items-end justify-end p-2 text-black opacity-20 transition-opacity group-hover:opacity-40"></div>
                 </Link>
               </NavigationMenuLink>
             </li>

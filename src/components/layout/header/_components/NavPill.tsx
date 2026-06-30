@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Search } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import { Button } from "@/src/components/ui/button";
 import { NAV_LINKS } from "@/src/lib/constants";
 import { NavDesktop } from "./NavDesktop";
+import { MarketplaceDropdown } from "./MarketplaceDropdown";
 
 export const NavPill = () => {
   const pathname = usePathname();
@@ -36,13 +36,7 @@ export const NavPill = () => {
           </Button>
         )}
 
-        <Button
-          variant={isDiscount ? "white" : "brand"}
-          className="h-full"
-          asChild
-        >
-          <Link href="/stores">Где купить</Link>
-        </Button>
+        <MarketplaceDropdown />
       </div>
     </div>
   );
