@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Search } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import { Button } from "@/src/components/ui/button";
 import { NAV_LINKS } from "@/src/lib/constants";
@@ -16,16 +16,14 @@ export const NavPill = () => {
   return (
     <div
       className={cn(
-        "h-full items-center justify-between rounded-full py-1 pr-1 pl-8 transition-all duration-300 lg:flex lg:w-full",
+        "flex h-full items-center justify-between rounded-full py-1 pr-4 pl-4 transition-all duration-300 xl:w-full xl:pr-1 xl:pl-8",
         isDiscount ? "bg-brand" : "bg-glass",
       )}
     >
       <NavDesktop links={links} />
 
-      <div className="flex h-full items-center gap-8">
-        {isDiscount ? (
-          ""
-        ) : (
+      <div className="flex h-full items-center gap-4 xl:gap-8">
+        {!isDiscount && (
           <Button
             variant="transparent"
             size="icon-xs"
@@ -36,7 +34,18 @@ export const NavPill = () => {
           </Button>
         )}
 
-        <MarketplaceDropdown />
+        <Button
+          variant="transparent"
+          size="icon-xs"
+          className="text-black-muted [&_svg:size-6] transition-colors duration-300 hover:text-black xl:hidden"
+          aria-label="Меню"
+        >
+          <Menu />
+        </Button>
+
+        <div className="hidden h-full xl:block">
+          <MarketplaceDropdown />
+        </div>
       </div>
     </div>
   );

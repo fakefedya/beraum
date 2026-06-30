@@ -31,10 +31,13 @@ export const ModePill = () => {
   }, [pathname]);
 
   return (
-    <nav className="relative w-fit" aria-label="Переключение режима магазина">
+    <nav
+      className="relative h-full w-fit"
+      aria-label="Переключение режима магазина"
+    >
       <div
         className={cn(
-          "relative flex h-14 items-center rounded-full p-1 transition-colors duration-500 ease-out",
+          "relative flex h-full items-center rounded-full p-1 transition-colors duration-500 ease-out",
           isDiscount ? "bg-brand" : "bg-glass",
         )}
       >
@@ -56,18 +59,18 @@ export const ModePill = () => {
           aria-label="Главная страница"
           aria-current={!isDiscount ? "page" : undefined}
           className={cn(
-            "relative z-10 flex h-full items-center justify-center rounded-full px-5 transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none",
+            "relative z-10 flex h-full items-center justify-center rounded-full px-3 transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none xl:px-5",
             !isDiscount ? "text-black" : "text-brand-muted hover:text-black",
           )}
         >
-          <Icons.logo className="h-5 w-auto fill-current stroke-current stroke-[0.25] [shape-rendering:crispEdges]" />
+          <Icons.logo className="h-4 w-auto fill-current stroke-current stroke-[0.25] [shape-rendering:crispEdges] xl:h-5" />
         </Link>
         <Link
           href="/discount"
           ref={isDiscount ? activeRef : null}
           aria-current={isDiscount ? "page" : undefined}
           className={cn(
-            "relative z-10 flex h-full items-center justify-center rounded-full px-5 text-lg font-medium tracking-wide transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none",
+            "relative z-10 flex h-full items-center justify-center rounded-full px-3 text-lg font-medium tracking-wide transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none xl:px-5",
             isDiscount ? "text-black" : "text-black-muted hover:text-black",
           )}
         >

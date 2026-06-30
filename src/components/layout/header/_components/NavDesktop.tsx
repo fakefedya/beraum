@@ -30,7 +30,7 @@ export const NavDesktop = ({ links }: NavDesktopProps) => {
   if (!links || links.length === 0) return null;
 
   return (
-    <NavigationMenu className="static hidden h-full max-w-full lg:flex">
+    <NavigationMenu className="static hidden h-full xl:flex xl:w-full xl:max-w-full">
       <NavigationMenuList className="h-full gap-8">
         {links.map((link, idx) => {
           const key = `nav-item-${idx}`;
