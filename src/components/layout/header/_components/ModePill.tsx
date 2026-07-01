@@ -37,10 +37,11 @@ export const ModePill = () => {
     >
       <div
         className={cn(
-          "relative flex h-full items-center rounded-full p-1 transition-colors duration-500 ease-out",
+          "p-1transition-colors relative flex h-full items-center rounded-full p-1 duration-500 ease-out",
           isDiscount ? "bg-brand" : "bg-glass",
         )}
       >
+        <div className="absolute top-0 left-0 z-0 h-full w-full rounded-full backdrop-blur-2xl"></div>
         <div
           className={cn(
             "absolute top-1 bottom-1 left-0 rounded-full transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",

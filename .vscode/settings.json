@@ -3,7 +3,13 @@
     "Аэрогрили",
     "Термопоты",
     "aerogrils",
+    "golos",
+    "healthcheck",
+    "isready",
+    "miniodata",
     "mvideo",
+    "myminio",
+    "pgdata",
     "thermopots"
   ]
 }

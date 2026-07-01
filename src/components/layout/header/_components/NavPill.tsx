@@ -22,7 +22,6 @@ export const NavPill = () => {
       )}
     >
       <NavDesktop links={links} />
-
       <div className="flex h-full items-center gap-4 xl:gap-8">
         {!isDiscount && (
           <Button
