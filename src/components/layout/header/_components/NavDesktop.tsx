@@ -89,7 +89,7 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                     className="hover:border-brand relative flex h-full items-end rounded-xl border-2 border-transparent bg-gray-50 transition-colors duration-300"
                   >
                     <div className="flex flex-col gap-0 p-4">
-                      <span className="font-semibold text-black">
+                      <span className="font-medium text-black">
                         {card.label}
                       </span>
                       <span className="text-black-muted">
@@ -138,7 +138,7 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
                   className="hover:border-brand relative flex h-full items-start rounded-xl border-2 border-transparent bg-gray-50 transition-colors duration-300"
                 >
                   <div className="flex flex-col gap-0 p-4">
-                    <span className="font-semibold text-black">
+                    <span className="font-medium text-black">
                       {subItem.label}
                     </span>
                   </div>
@@ -171,7 +171,8 @@ const LinkNode = ({ item }: { item: NavLink | NavExternal }) => {
               "gap-1.5 bg-transparent",
             )}
           >
-            {item.label} <ExternalLink className="size-3.5 opacity-50" />
+            {item.label}
+            <ExternalLink className="stroke-black-muted size-3.5" />
           </a>
         ) : (
           <Link

@@ -63,7 +63,7 @@ export const ModePill = () => {
             !isDiscount ? "text-black" : "text-brand-muted hover:text-black",
           )}
         >
-          <Icons.logo className="h-4 w-auto fill-current stroke-current stroke-[0.25] [shape-rendering:crispEdges] xl:h-5" />
+          <Icons.logo className="h-4 w-fit fill-current stroke-current stroke-[0.25] [shape-rendering:crispEdges] xl:h-5" />
         </Link>
         <Link
           href="/discount"

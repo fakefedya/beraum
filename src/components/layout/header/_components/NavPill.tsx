@@ -7,6 +7,7 @@ import { Button } from "@/src/components/ui/button";
 import { NAV_LINKS } from "@/src/lib/constants";
 import { NavDesktop } from "./NavDesktop";
 import { MarketplaceDropdown } from "./MarketplaceDropdown";
+import { NavMobile } from "./NavMobile";
 
 export const NavPill = () => {
   const pathname = usePathname();
@@ -34,14 +35,7 @@ export const NavPill = () => {
           </Button>
         )}
 
-        <Button
-          variant="transparent"
-          size="icon-xs"
-          className="text-black-muted [&_svg:size-6] transition-colors duration-300 hover:text-black xl:hidden"
-          aria-label="Меню"
-        >
-          <Menu />
-        </Button>
+        <NavMobile links={links} />
 
         <div className="hidden h-full xl:block">
           <MarketplaceDropdown />

@@ -53,7 +53,7 @@ export const MarketplaceDropdown = () => {
                   <Icon className="size-12" />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-base leading-none font-semibold text-black">
+                  <span className="text-base leading-none font-medium text-black">
                     {link.label}
                   </span>
                   <span className="text-black-muted text-sm font-normal">
