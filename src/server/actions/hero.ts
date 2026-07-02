@@ -6,7 +6,6 @@ import { heroSlides } from "@/src/server/db/schema";
 import { z } from "zod";
 import { env } from "@/src/lib/env";
 
-// Строгая валидация полезной нагрузки (Zero Trust к БД)
 const tagSchema = z.object({
   xPercent: z.number().min(0).max(100),
   yPercent: z.number().min(0).max(100),
@@ -40,7 +39,8 @@ export async function getActiveSlides() {
       .select()
       .from(heroSlides)
       .where(eq(heroSlides.isActive, true))
-      .orderBy(desc(heroSlides.sortOrder));
+      .orderBy(desc(heroSlides.sortOrder))
+      .limit(10);
 
     const validSlides: ValidatedSlide[] = [];
 

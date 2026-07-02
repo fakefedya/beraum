@@ -35,7 +35,7 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
     },
     {
       fallbackData: initialSlides, // КРИТИЧНО: Отдаем SWR серверные данные для мгновенного первого рендера
-      refreshInterval: 3000, // Фоновое обновление каждые 30 секунд (30000 мс)
+      refreshInterval: 30000, // Фоновое обновление каждые 30 секунд (30000 мс)
       revalidateOnFocus: true, // Обновлять данные, если пользователь свернул браузер и вернулся
     },
   );
@@ -77,7 +77,7 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
       autoplay={{ delay: 6000, disableOnInteraction: false }}
       loop={slides.length > 1}
       pagination={{ enabled: true, clickable: true }}
-      className="h-full w-full [&_.swiper-pagination]:right-8! [&_.swiper-pagination-bullet-active]:bg-white!"
+      className="h-full w-full [&_.swiper-pagination]:right-4! [&_.swiper-pagination-bullet-active]:bg-white!"
     >
       {slides.map((slide, index) => (
         <SwiperSlide
