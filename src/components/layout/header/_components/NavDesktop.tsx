@@ -5,7 +5,6 @@ import { ExternalLink } from "lucide-react";
 
 import { cn } from "@/src/lib/utils";
 import {
-  NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
@@ -30,27 +29,25 @@ export const NavDesktop = ({ links }: NavDesktopProps) => {
   if (!links || links.length === 0) return null;
 
   return (
-    <NavigationMenu className="static hidden h-full xl:flex xl:w-full xl:max-w-full">
-      <NavigationMenuList className="h-full gap-8">
-        {links.map((link, idx) => {
-          const key = `nav-item-${idx}`;
+    <NavigationMenuList className="hidden h-full gap-8 xl:flex">
+      {links.map((link, idx) => {
+        const key = `nav-item-${idx}`;
 
-          switch (link.type) {
-            case "mega":
-              return <MegaMenuNode key={key} item={link} />;
-            case "default":
-              return <DefaultMenuNode key={key} item={link} />;
-            case "link":
-            case "external":
-              return <LinkNode key={key} item={link} />;
-            default: {
-              const _exhaustiveCheck: never = link;
-              return _exhaustiveCheck;
-            }
+        switch (link.type) {
+          case "mega":
+            return <MegaMenuNode key={key} item={link} />;
+          case "default":
+            return <DefaultMenuNode key={key} item={link} />;
+          case "link":
+          case "external":
+            return <LinkNode key={key} item={link} />;
+          default: {
+            const _exhaustiveCheck: never = link;
+            return _exhaustiveCheck;
           }
-        })}
-      </NavigationMenuList>
-    </NavigationMenu>
+        }
+      })}
+    </NavigationMenuList>
   );
 };
 

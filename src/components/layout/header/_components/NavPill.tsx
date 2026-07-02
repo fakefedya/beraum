@@ -17,7 +17,7 @@ export const NavPill = () => {
   return (
     <div
       className={cn(
-        "flex h-full items-center justify-between rounded-full py-1 pr-4 pl-4 transition-all duration-300 xl:w-full xl:pr-1 xl:pl-8",
+        "flex h-full items-center justify-between rounded-full py-1 pr-4 pl-4 backdrop-blur-2xl transition-all duration-300 xl:w-full xl:pr-1 xl:pl-8",
         isDiscount ? "bg-brand" : "bg-glass",
       )}
     >

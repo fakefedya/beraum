@@ -31,7 +31,7 @@ export const MarketplaceDropdown = () => {
 
       <DropdownMenuContent
         align="end"
-        sideOffset={8}
+        sideOffset={10}
         className="shadow-card rounded-xl border-none p-2"
       >
         {links.map((link) => {
