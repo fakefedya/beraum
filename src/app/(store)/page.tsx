@@ -8,14 +8,11 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  // 1. Сходили в базу
   const { data: slides } = await getActiveSlides();
-  console.log(slides);
 
   return (
     <div className="flex w-full flex-col">
-      {/* 2. Отрендерили секцию */}
-      <section className="relative h-[100dvh] w-full">
+      <section className="relative h-dvh w-full">
         <HeroSlider slides={slides} />
       </section>
     </div>
