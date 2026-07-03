@@ -9,8 +9,6 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   const { data: slides } = await getActiveSlides();
-  console.log(slides);
-
   return (
     <div className="flex w-full flex-col">
       <section className="relative h-dvh w-full">

@@ -30,7 +30,7 @@ export const products = pgTable(
     }),
 
     // Идентификаторы
-    siteArticle: text("site_article").notNull().unique(),
+    siteArticle: text("site_article").notNull(),
     itemArticle: text("item_article").notNull().unique(),
 
     // Статусы
@@ -49,6 +49,8 @@ export const products = pgTable(
     ozonLink: text("ozon_link"),
     ozonPrice: integer("ozon_price"),
     ozonStock: integer("ozon_stock"),
+
+    colorName: text("color_name"),
 
     wbLink: text("wb_link"),
     wbPrice: integer("wb_price"),

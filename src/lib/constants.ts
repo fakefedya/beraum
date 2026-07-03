@@ -44,53 +44,53 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
       sidebarLinks: [
         {
           label: "Варочные панели",
-          href: "/catalog/hobs",
+          href: "/catalog/hob",
           isNew: true,
         },
         {
           label: "Вытяжки",
-          href: "/catalog/hoods",
+          href: "/catalog/hood",
           isNew: true,
         },
         {
           label: "Духовые шкафы",
-          href: "/catalog/ovens",
+          href: "/catalog/oven",
           isNew: false,
         },
         {
           label: "Холодильники",
-          href: "/catalog/fridges",
+          href: "/catalog/refrigerator",
           isNew: false,
         },
         {
           label: "Морозильники",
-          href: "/catalog/freezers",
+          href: "/catalog/freezer",
           isNew: false,
         },
         {
           label: "Посудомоечные машины",
-          href: "/catalog/dishwashers",
+          href: "/catalog/dishwasher",
           isNew: true,
         },
         {
           label: "Микроволновые печи",
-          href: "/catalog/microwaves",
+          href: "/catalog/microwave",
           isNew: false,
         },
         {
           label: "Аэрогрили",
           isNew: false,
-          href: "/catalog/aerogrils",
+          href: "/catalog/air-fryer",
         },
         {
           label: "Термопоты",
           isNew: true,
-          href: "/catalog/thermopots",
+          href: "/catalog/water-dispenser",
         },
         {
           label: "Угольные фильтры",
           isNew: false,
-          href: "/catalog/carbon-filters",
+          href: "/catalog/carbon-filter",
         },
       ],
       promoCards: [

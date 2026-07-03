@@ -22,6 +22,20 @@
       "when": 1783062656595,
       "tag": "0002_redundant_thunderbolts",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1783069498598,
+      "tag": "0003_cuddly_the_watchers",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1783083629602,
+      "tag": "0004_silent_patriot",
+      "breakpoints": true
     }
   ]
 }

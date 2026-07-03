@@ -1,65 +1,72 @@
-'use server'
+"use server";
 
-import { eq, desc, sql } from 'drizzle-orm'
-import { db } from '@/src/server/db/client'
-import { products, categories, productMedia } from '@/src/server/db/schema'
+import { z } from "zod";
+import { eq, desc, and, sql } from "drizzle-orm";
+import { db } from "@/src/server/db/client";
+import { products, categories } from "@/src/server/db/schema";
 
-// Типизация аргументов функции для защиты от мусорных параметров
-interface GetProductsArgs {
-	limit?: number
-	offset?: number
-	categorySlug?: string
-}
+const getProductsSchema = z.object({
+  categorySlug: z.string().min(1).max(100).optional(),
+  limit: z.number().int().min(1).max(50).default(12),
+  offset: z.number().int().min(0).default(0),
+});
 
-export async function getProducts({
-	offset = 0,
-	categorySlug,
-}: GetProductsArgs = {}) {
-	try {
-		// Формируем базовый запрос
-		const query = db
-			.select({
-				id: products.id,
-				itemArticle: products.itemArticle,
-				status: products.status,
-				isLatest: products.isLatest,
-				// SQL-выражение: если задана ручная цена, берем ее, иначе базовую
-				price:
-					sql<number>`COALESCE(${products.manualPrice}, ${products.basePrice})`.as(
-						'price',
-					),
-				// Аналогично для стоков
-				stock:
-					sql<number>`COALESCE(${products.manualStock}, ${products.baseStock})`.as(
-						'stock',
-					),
+export type GetProductsParams = z.input<typeof getProductsSchema>;
+export type CatalogProduct = Awaited<ReturnType<typeof getProducts>>["data"][0];
 
-				categorySlug: categories.slug,
-				categoryTitle: categories.titleRu,
+export async function getProducts(params: GetProductsParams = {}) {
+  try {
+    const { limit, offset, categorySlug } = getProductsSchema.parse(params);
+    const conditions = [eq(products.status, "published")];
 
-				// Вытягиваем только нужные фильтры (например, тип и цвет) для превью в карточке
-				filters: products.filters,
-			})
-			.from(products)
-			.leftJoin(categories, eq(products.categoryId, categories.id))
-			// Показываем только опубликованные товары
-			.where(eq(products.status, 'published'))
-			.orderBy(desc(products.createdAt))
-			// .limit(limit)
-			.offset(offset)
+    if (categorySlug) {
+      const [category] = await db
+        .select({ id: categories.id })
+        .from(categories)
+        .where(eq(categories.slug, categorySlug))
+        .limit(1);
 
-		// Выполняем запрос
-		const items = await query
+      if (!category)
+        return { success: false, error: "Категория не найдена", data: [] };
+      conditions.push(eq(products.categoryId, category.id));
+    }
 
-		return {
-			success: true,
-			data: items,
-		}
-	} catch (error) {
-		console.error('❌ Ошибка Server Action (getProducts):', error)
-		return {
-			success: false,
-			error: 'Ошибка при загрузке каталога',
-		}
-	}
+    const items = await db
+      .select({
+        siteArticle: products.siteArticle,
+        categorySlug: categories.slug,
+        categoryTitle: categories.titleRu,
+
+        // Магия PostgreSQL: Собираем все артикулы-цвета в массив
+        variants: sql<
+          {
+            id: string;
+            itemArticle: string;
+            colorName: string | null;
+            price: number;
+            stock: number;
+          }[]
+        >`jsonb_agg(
+          jsonb_build_object(
+            'id', ${products.id},
+            'itemArticle', ${products.itemArticle},
+            'colorName', ${products.colorName},
+            'price', COALESCE(${products.manualPrice}, ${products.basePrice}),
+            'stock', COALESCE(${products.manualStock}, ${products.baseStock})
+          )
+        )`.as("variants"),
+      })
+      .from(products)
+      .leftJoin(categories, eq(products.categoryId, categories.id))
+      .where(and(...conditions))
+      .groupBy(products.siteArticle, categories.slug, categories.titleRu)
+      .orderBy(desc(sql`MAX(${products.createdAt})`))
+      .limit(limit)
+      .offset(offset);
+
+    return { success: true, data: items };
+  } catch (error) {
+    console.error("❌ Ошибка Server Action (getProducts):", error);
+    return { success: false, error: "Ошибка при загрузке каталога", data: [] };
+  }
 }
