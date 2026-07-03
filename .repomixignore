@@ -2,4 +2,5 @@
 # Example:
 # *.log
 # tmp/
-dataExample.json 
+dataExample.json
+src/server/db/migrations/

@@ -1,4 +1,4 @@
-import { getActiveSlides } from "@/src/server/actions/hero";
+import { getActiveSlides } from "@/src/server/actions/banners";
 import { Metadata } from "next";
 import { HeroSlider } from "./_components/hero/HeroSlider";
 
@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   const { data: slides } = await getActiveSlides();
+  console.log(slides);
 
   return (
     <div className="flex w-full flex-col">

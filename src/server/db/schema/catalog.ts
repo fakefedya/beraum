@@ -6,27 +6,13 @@ import {
   boolean,
   timestamp,
   jsonb,
-  pgEnum,
   index,
 } from "drizzle-orm/pg-core";
+import { productStatusEnum, mediaTypeEnum } from "./enums";
 
-// === СТРОГИЕ ТИПЫ ДЛЯ JSONB ===
 export type ProductFilters = Record<string, string | number | boolean | null>;
 export type ProductSpecifications = Record<string, string | number | null>;
 
-// === ЭНУМЫ ===
-export const productStatusEnum = pgEnum("product_status", [
-  "draft",
-  "published",
-  "archived",
-]);
-export const mediaTypeEnum = pgEnum("media_type", [
-  "image",
-  "instruction",
-  "certificate",
-]);
-
-// === КАТЕГОРИИ ===
 export const categories = pgTable("categories", {
   id: uuid("id").defaultRandom().primaryKey(),
   slug: text("slug").notNull().unique(), // Например: 'hob', 'hood', 'oven'
@@ -35,7 +21,6 @@ export const categories = pgTable("categories", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-// === ТОВАРЫ (Главная таблица) ===
 export const products = pgTable(
   "products",
   {
@@ -92,7 +77,6 @@ export const products = pgTable(
   },
 );
 
-// === МЕДИА-ФАЙЛЫ (Интеграция с MinIO) ===
 export const productMedia = pgTable("product_media", {
   id: uuid("id").defaultRandom().primaryKey(),
   productId: uuid("product_id")
@@ -107,37 +91,4 @@ export const productMedia = pgTable("product_media", {
   sortOrder: integer("sort_order").notNull().default(0),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-export const slideTypeEnum = pgEnum("slide_type", [
-  "product_tags",
-  "promo_card",
-]);
-
-// TypeScript типы для разработки
-export type SlideTagItem = {
-  xPercent: number;
-  yPercent: number;
-  title: string;
-  subtitle: string;
-  href: string;
-};
-
-export type SlidePayload =
-  | { tags: SlideTagItem[] }
-  | { title: string; description: string; buttonText: string; href: string };
-
-export const heroSlides = pgTable("hero_slides", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  internalTitle: text("internal_title").notNull(),
-  bucketName: text("bucket_name").notNull().default("system-assets"),
-  fileKey: text("file_key").notNull(),
-  type: slideTypeEnum("type").notNull(),
-
-  payload: jsonb("payload").$type<SlidePayload>().notNull(),
-
-  isActive: boolean("is_active").default(true).notNull(),
-  sortOrder: integer("sort_order").default(0).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

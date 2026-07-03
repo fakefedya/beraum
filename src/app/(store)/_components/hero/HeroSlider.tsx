@@ -16,7 +16,7 @@ import {
 import {
   getActiveSlides,
   type ValidatedSlide,
-} from "@/src/server/actions/hero";
+} from "@/src/server/actions/banners";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -30,7 +30,7 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
   const { data: slides } = useSWR(
     "hero-slides",
     async () => {
-      const response = await getActiveSlides();
+      const response = await getActiveSlides("home_hero");
       return response.success && response.data ? response.data : [];
     },
     {
@@ -90,17 +90,34 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
           >
             <Image
               src={slide.imageUrl}
-              alt="Hero Banner"
+              alt="Hero Banner Desktop"
               fill
-              className="object-cover"
+              className={
+                slide.mobileImageUrl
+                  ? "hidden object-cover md:block"
+                  : "object-cover"
+              }
               priority={index === 0}
               loading={index === 0 ? "eager" : "lazy"}
               sizes="100vw"
               quality={95}
             />
+
+            {slide.mobileImageUrl && (
+              <Image
+                src={slide.mobileImageUrl}
+                alt="Hero Banner Mobile"
+                fill
+                className="block object-cover md:hidden"
+                priority={index === 0}
+                loading={index === 0 ? "eager" : "lazy"}
+                sizes="100vw"
+                quality={95}
+              />
+            )}
           </div>
 
-          {slide.type === "product_tags" && (
+          {slide.type === "promo_product" && (
             <div className="absolute inset-0 z-20">
               {slide.tags.map((tag, i) => (
                 <Link
@@ -125,7 +142,7 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
           )}
 
           {/* === РЕНДЕР ПРОМО-КАРТОЧКИ === */}
-          {slide.type === "promo_card" && (
+          {slide.type === "promo_information" && (
             <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
               <div
                 className="flex max-w-md flex-col gap-4 rounded-2xl bg-white/20 p-8 shadow-2xl backdrop-blur-xl"

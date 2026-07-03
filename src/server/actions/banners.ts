@@ -1,8 +1,8 @@
 "use server";
 
-import { desc, eq } from "drizzle-orm";
+import { desc, sql } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
-import { heroSlides } from "@/src/server/db/schema";
+import { slides } from "@/src/server/db/schema";
 import { z } from "zod";
 import { env } from "@/src/lib/env";
 
@@ -16,11 +16,11 @@ const tagSchema = z.object({
 
 const slidePayloadSchema = z.discriminatedUnion("type", [
   z.object({
-    type: z.literal("product_tags"),
+    type: z.literal("promo_product"),
     tags: z.array(tagSchema).max(5),
   }),
   z.object({
-    type: z.literal("promo_card"),
+    type: z.literal("promo_information"),
     title: z.string(),
     description: z.string(),
     buttonText: z.string(),
@@ -31,32 +31,39 @@ const slidePayloadSchema = z.discriminatedUnion("type", [
 export type ValidatedSlide = z.infer<typeof slidePayloadSchema> & {
   id: string;
   imageUrl: string;
+  mobileImageUrl?: string;
 };
 
-export async function getActiveSlides() {
+export async function getActiveSlides(
+  placement: "home_hero" | "catalog_hero" = "home_hero",
+) {
   try {
-    const slides = await db
+    const activeSlides = await db
       .select()
-      .from(heroSlides)
-      .where(eq(heroSlides.isActive, true))
-      .orderBy(desc(heroSlides.sortOrder))
+      .from(slides)
+      .where(
+        sql`${slides.isActive} = true AND ${slides.placement} = ${placement}`,
+      )
+      .orderBy(desc(slides.sortOrder))
       .limit(10);
 
     const validSlides: ValidatedSlide[] = [];
 
-    for (const slide of slides) {
-      // Безопасный парсинг JSONB. Совмещаем type и payload для discriminated union
+    for (const slide of activeSlides) {
       const parsed = slidePayloadSchema.safeParse({
         type: slide.type,
         ...((slide.payload as object) || {}),
       });
 
       if (parsed.success) {
+        const baseUrl = `http://${env.MINIO_ENDPOINT}:${env.MINIO_PORT}/${slide.bucketName}`;
         validSlides.push({
           ...parsed.data,
           id: slide.id,
-          // Формируем URL на стороне сервера. Не храним хост в БД!
-          imageUrl: `http://${env.MINIO_ENDPOINT}:${env.MINIO_PORT}/${slide.bucketName}/${slide.fileKey}`,
+          imageUrl: `${baseUrl}/${slide.fileKey}`,
+          mobileImageUrl: slide.mobileFileKey
+            ? `${baseUrl}/${slide.mobileFileKey}`
+            : undefined,
         });
       } else {
         console.error(
