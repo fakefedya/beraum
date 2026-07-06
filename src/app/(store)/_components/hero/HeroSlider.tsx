@@ -21,6 +21,7 @@ import {
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
+import { EmptyState } from "@/src/components/ui/empty-state";
 
 interface HeroSliderProps {
   slides: ValidatedSlide[];
@@ -42,16 +43,11 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
 
   if (!slides || slides.length === 0) {
     return (
-      <div className="bg-surface-gray flex h-full w-full flex-col items-center justify-center">
-        <div className="bg-glass mb-6 flex h-24 w-24 items-center justify-center rounded-full shadow-sm">
-          <span className="animate-pulse text-4xl text-black/20">B</span>
-        </div>
-        <h1 className="text-black-muted text-2xl font-medium">
-          Коллекции Beraum обновляются...
-        </h1>
-        <p className="mt-2 text-sm text-black/40">
-          Скоро здесь появятся новые предложения
-        </p>
+      <div className="bg-surface-gray h-full w-full">
+        <EmptyState
+          title="Коллекции обновляются..."
+          description="Скоро здесь появятся новые предложения."
+        />
       </div>
     );
   }
