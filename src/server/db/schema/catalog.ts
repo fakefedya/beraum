@@ -10,12 +10,13 @@ import {
 } from "drizzle-orm/pg-core";
 import { productStatusEnum, mediaTypeEnum } from "./enums";
 
+// JSONB
 export type ProductFilters = Record<string, string | number | boolean | null>;
 export type ProductSpecifications = Record<string, string | number | null>;
 
 export const categories = pgTable("categories", {
   id: uuid("id").defaultRandom().primaryKey(),
-  slug: text("slug").notNull().unique(), // Например: 'hob', 'hood', 'oven'
+  slug: text("slug").notNull().unique(),
   titleRu: text("title_ru").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -24,56 +25,59 @@ export const categories = pgTable("categories", {
 export const products = pgTable(
   "products",
   {
+    // UUID
     id: uuid("id").defaultRandom().primaryKey(),
+    // Foreign Key с защитой. onDelete: "restrict" не даст удалить категорию, если в ней есть товары. База выдаст ошибку.
     categoryId: uuid("category_id").references(() => categories.id, {
       onDelete: "restrict",
     }),
 
     // Идентификаторы
     siteArticle: text("site_article").notNull(),
-    itemArticle: text("item_article").notNull().unique(),
+    itemArticle: text("item_article").notNull().unique(), // Уникальный
 
     // Статусы
     status: productStatusEnum("status").default("draft").notNull(),
     isLatest: boolean("is_latest").default(false).notNull(),
 
-    // === БАЗОВЫЕ ДАННЫЕ ===
+    // Базовые статусы
     basePrice: integer("base_price").notNull().default(0),
     baseStock: integer("base_stock").notNull().default(0),
 
-    // === РУЧНОЕ ПЕРЕОПРЕДЕЛЕНИЕ (Дашборд) ===
+    // Ручное переопределение
     manualPrice: integer("manual_price"),
     manualStock: integer("manual_stock"),
 
-    // === ИНТЕГРАЦИИ (OZON & WB) ===
+    // Маркетплейсы
     ozonLink: text("ozon_link"),
     ozonPrice: integer("ozon_price"),
     ozonStock: integer("ozon_stock"),
-
-    colorName: text("color_name"),
 
     wbLink: text("wb_link"),
     wbPrice: integer("wb_price"),
     wbStock: integer("wb_stock"),
 
-    // === ЛОГИСТИКА ===
-    // Храним строго в граммах во избежание проблем с плавающей точкой
+    // Цвет
+    colorName: text("color_name"),
+
+    // Веса (граммы)
     weightNetto: integer("weight_netto"),
     weightBrutto: integer("weight_brutto"),
 
-    // === ГИБКИЕ ДАННЫЕ (E-commerce паттерн с типизацией) ===
+    // Фильтры и спецификация
     filters: jsonb("filters").$type<ProductFilters>().default({}).notNull(),
     specifications: jsonb("specifications")
       .$type<ProductSpecifications>()
       .default({})
       .notNull(),
 
+    // Отметки времени
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (table) => {
     return {
-      // GIN индекс для высокоскоростного поиска по фильтрам (jsonb)
+      // GIN индекс
       filtersIdx: index("idx_products_filters").using("gin", table.filters),
     };
   },

@@ -5,17 +5,22 @@ import { eq, desc, and, sql } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
 import { products, categories } from "@/src/server/db/schema";
 
+// Zero trust ZOD валидация
+
 const getProductsSchema = z.object({
   categorySlug: z.string().min(1).max(100).optional(),
-  limit: z.number().int().min(1).max(50).default(12),
+  limit: z.number().int().min(1).max(50).default(12), // Ограничение по кол-ву записей при обращении в БД, защита от DDoS
   offset: z.number().int().min(0).default(0),
 });
 
+// Вывод TS-тип из Zod
 export type GetProductsParams = z.input<typeof getProductsSchema>;
+// Вывод первого элемента из массива в ключе data
 export type CatalogProduct = Awaited<ReturnType<typeof getProducts>>["data"][0];
 
 export async function getProducts(params: GetProductsParams = {}) {
   try {
+    // Парсим ввод
     const { limit, offset, categorySlug } = getProductsSchema.parse(params);
     const conditions = [eq(products.status, "published")];
 
