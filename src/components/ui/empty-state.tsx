@@ -22,7 +22,7 @@ export const EmptyState = ({
   return (
     <div
       className={cn(
-        "animate-in fade-in relative flex h-full min-h-100 w-full flex-col items-center justify-center bg-white text-center duration-500",
+        "animate-in fade-in relative flex h-full min-h-screen w-full flex-col items-center justify-center bg-white text-center duration-500",
         className,
       )}
       {...props}
