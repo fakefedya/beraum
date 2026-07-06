@@ -1,14 +1,14 @@
-// src/app/(store)/catalog/[category]/_components/CatalogGrid.tsx
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import useSWRInfinite from "swr/infinite";
 import { getProducts, type CatalogProduct } from "@/src/server/actions/catalog";
 import { Button } from "@/src/components/ui/button";
 import { COLOR_SWATCH_MAP, DEFAULT_SWATCH_COLOR } from "@/src/lib/constants";
 
-const LIMIT = 12; // Синхронизировано с SSR лимитом из page.tsx
+const LIMIT = 12;
 const VISIBLE_COLORS_LIMIT = 5;
 
 // === ИЗОЛИРОВАННАЯ КАРТОЧКА ТОВАРА ===
@@ -48,6 +48,7 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
               <button
                 key={variant.id}
                 onClick={() => setActiveVariant(variant)}
+                aria-checked={isActive}
                 aria-label={`Цвет: ${variant.colorName || "Стандарт"}`}
                 title={variant.colorName || "Стандарт"}
                 className={`flex h-4 w-4 cursor-pointer items-center justify-center rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:outline-none ${
@@ -109,16 +110,33 @@ export const CatalogGrid = ({
   initialData,
   categorySlug,
 }: CatalogGridProps) => {
+  const searchParams = useSearchParams();
+
   const getKey = (
     pageIndex: number,
     previousPageData: CatalogProduct[] | null,
   ) => {
     // Достигнут конец списка
     if (previousPageData && previousPageData.length < LIMIT) return null;
+
+    // Собираем текущие фильтры из URL для передачи на сервер
+    const filters: Record<string, string | string[]> = {};
+    searchParams.forEach((value, key) => {
+      const existing = filters[key];
+      if (existing) {
+        filters[key] = Array.isArray(existing)
+          ? [...existing, value]
+          : [existing, value];
+      } else {
+        filters[key] = value;
+      }
+    });
+
     return JSON.stringify({
       categorySlug,
       limit: LIMIT,
       offset: pageIndex * LIMIT,
+      filters,
     });
   };
 
@@ -131,13 +149,18 @@ export const CatalogGrid = ({
 
   const { data, error, size, setSize, isValidating, isLoading } =
     useSWRInfinite(getKey, fetcher, {
+      // Важно: если в URL есть фильтры, initialData может быть устаревшей,
+      // но в нашей архитектуре SSR (в page.tsx) уже применяет эти фильтры к initialData,
+      // так что fallbackData всегда синхронизирована с текущим URL.
       fallbackData: initialData.length > 0 ? [initialData] : [],
-      revalidateFirstPage: false, // Экономим запросы, доверяем SSR при первой загрузке
-      revalidateOnFocus: true, // Фоновое обновление цен/остатков
+      revalidateFirstPage: false,
+      revalidateOnFocus: true,
     });
 
   // Схлопываем массив страниц в плоский список товаров
   const products = data ? data.flat() : [];
+
+  // Проверяем статус загрузки новых страниц или применения новых фильтров
   const isLoadingMore =
     isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
   const isEmpty = data?.[0]?.length === 0;
@@ -155,7 +178,7 @@ export const CatalogGrid = ({
   if (isEmpty) {
     return (
       <div className="text-black-muted py-12 text-center">
-        Товары в данной категории пока отсутствуют.
+        По вашему запросу товары не найдены.
       </div>
     );
   }
@@ -174,7 +197,7 @@ export const CatalogGrid = ({
           size="lg"
           onClick={() => setSize(size + 1)}
           disabled={isLoadingMore || isValidating}
-          className="min-w-50"
+          className="min-w-[200px]"
         >
           {isLoadingMore ? "Загрузка..." : "Показать еще"}
         </Button>
