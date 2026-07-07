@@ -84,6 +84,7 @@
   --color-glass: #e8e8e866;
 
   --shadow-card: 2px 4px 12px 0 rgba(0, 0, 0, 0.09);
+  --shadow-card-hover: 2px 4px 16px #00000029;
 
   --font-sans: var(--font-golos-text), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-sans);

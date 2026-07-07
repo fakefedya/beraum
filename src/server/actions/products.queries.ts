@@ -75,6 +75,7 @@ export async function getProducts(params: GetProductsParams = {}) {
             colorName: string | null;
             price: number;
             stock: number;
+            isLatest: boolean;
           }[]
         >`jsonb_agg(
           jsonb_build_object(
@@ -82,7 +83,8 @@ export async function getProducts(params: GetProductsParams = {}) {
             'itemArticle', ${products.itemArticle},
             'colorName', ${products.colorName},
             'price', COALESCE(${products.manualPrice}, ${products.basePrice}),
-            'stock', COALESCE(${products.manualStock}, ${products.baseStock})
+            'stock', COALESCE(${products.manualStock}, ${products.baseStock}),
+            'isLatest', ${products.isLatest}
           )
         )`.as("variants"),
       })

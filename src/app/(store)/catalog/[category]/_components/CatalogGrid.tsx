@@ -12,32 +12,22 @@ import { Button } from "@/src/components/ui/button";
 import { COLOR_SWATCH_MAP, DEFAULT_SWATCH_COLOR } from "@/src/lib/constants";
 
 const LIMIT = 12;
-const VISIBLE_COLORS_LIMIT = 5;
+const VISIBLE_COLORS_LIMIT = 4;
 
-// === ИЗОЛИРОВАННАЯ КАРТОЧКА ТОВАРА ===
 const ProductCard = ({ product }: { product: CatalogProduct }) => {
-  // По умолчанию берем первую вариацию из массива
   const [activeVariant, setActiveVariant] = useState(product.variants[0]);
 
   const visibleVariants = product.variants.slice(0, VISIBLE_COLORS_LIMIT);
   const hiddenCount = product.variants.length - VISIBLE_COLORS_LIMIT;
 
   return (
-    <div className="group hover:shadow-card relative flex flex-col rounded-2xl bg-white p-5 transition-shadow duration-300">
-      {/* Фотография (ведет на конкретный SKU) */}
-      <Link
-        href={`/product/${activeVariant.itemArticle.toLowerCase()}`}
-        className="mb-6 block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-black/20"
-      >
-        <div className="bg-surface-gray text-black-muted flex aspect-[4/5] w-full items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-[1.02]">
-          [ Фото: {activeVariant.itemArticle} ]
+    <article className="transition-[shadow transform] group shadow-card hover:shadow-card-hover relative scale-100 rounded-4xl bg-white p-7 duration-300 ease-[cubic-bezier(0,0,0.5,1)] hover:scale-[1.01]">
+      <div className="flex flex-col gap-4">
+        <div className="bg-accent flex aspect-4/5 items-center justify-center rounded-xl">
+          {activeVariant.itemArticle}
         </div>
-      </Link>
-
-      {/* Селектор цветов (Свотчи) */}
-      {product.variants.length > 1 && (
         <div
-          className="mb-4 flex items-center gap-1.5"
+          className="z-1 flex items-center justify-center gap-1.5"
           role="radiogroup"
           aria-label="Выберите цвет"
         >
@@ -48,14 +38,13 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
               : DEFAULT_SWATCH_COLOR;
 
             return (
-              <button
+              <Button
                 key={variant.id}
                 onClick={() => setActiveVariant(variant)}
                 aria-checked={isActive}
-                aria-label={`Цвет: ${variant.colorName || "Стандарт"}`}
                 title={variant.colorName || "Стандарт"}
-                className={`flex h-4 w-4 cursor-pointer items-center justify-center rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:outline-none ${
-                  isActive
+                className={`flex h-4 w-4 cursor-pointer items-center justify-center rounded-full p-0 shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)] ${
+                  isActive && product.variants.length > 1
                     ? "border-black ring-1 ring-black ring-offset-2"
                     : "border-black/10 hover:border-black/30"
                 }`}
@@ -63,47 +52,32 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
               />
             );
           })}
-
-          {/* Индикатор скрытых цветов */}
           {hiddenCount > 0 && (
             <span className="text-black-muted ml-1 text-xs font-medium">
               +{hiddenCount}
             </span>
           )}
         </div>
-      )}
 
-      <div className="mt-auto flex flex-col">
-        {/* Заголовок: Категория + Базовая модель + Цвет */}
-        <Link
-          href={`/product/${activeVariant.itemArticle.toLowerCase()}`}
-          className="rounded outline-none focus-visible:ring-2 focus-visible:ring-black/20"
-        >
-          <h2 className="mb-2 text-base font-semibold text-black transition-colors group-hover:text-black/80">
-            {product.categoryTitle} {product.siteArticle}
-            {activeVariant.colorName && ` – ${activeVariant.colorName}`}
-          </h2>
-        </Link>
-
-        {/* Цена и остатки */}
-        <div className="mt-1 flex items-end justify-between">
-          <span className="text-lg font-bold tracking-tight text-black">
-            {activeVariant.price > 0
-              ? `${activeVariant.price.toLocaleString("ru-RU")} ₽`
-              : "По запросу"}
-          </span>
-          <span
-            className={`text-xs font-medium ${activeVariant.stock > 0 ? "text-green-600" : "text-red-500"}`}
-          >
-            {activeVariant.stock > 0 ? "В наличии" : "Под заказ"}
-          </span>
+        <div className="flex flex-col gap-1">
+          {activeVariant.isLatest && <span>Новинка</span>}
+          {activeVariant.stock > 0 ? "В наличии" : "Под заказ"}
+          <h2>{product.siteArticle}</h2>
+          {activeVariant.price > 0 ? (
+            <span>{activeVariant.price.toLocaleString("ru-RU")} ₽</span>
+          ) : (
+            <span>По запросу</span>
+          )}
         </div>
       </div>
-    </div>
+      <Link
+        href={`/product/${activeVariant.itemArticle.toLowerCase()}`}
+        className="rounded after:absolute after:inset-0 focus-visible:ring-2 focus-visible:ring-black"
+      ></Link>
+    </article>
   );
 };
 
-// === ОСНОВНАЯ СЕТКА КАТАЛОГА ===
 interface CatalogGridProps {
   initialData: CatalogProduct[];
   categorySlug: string;
