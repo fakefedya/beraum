@@ -16,7 +16,7 @@ import {
 import {
   getActiveSlides,
   type ValidatedSlide,
-} from "@/src/server/actions/banners";
+} from "@/src/server/actions/banners.queries";
 
 import "swiper/css";
 import "swiper/css/pagination";

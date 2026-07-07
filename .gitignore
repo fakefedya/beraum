@@ -27,6 +27,9 @@
 AGENTS.md
 repomix-output.xml
 
+# DB
+*.sql
+
 # debug
 npm-debug.log*
 yarn-debug.log*

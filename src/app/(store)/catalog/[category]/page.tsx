@@ -1,6 +1,6 @@
 // src/app/(store)/catalog/[category]/page.tsx
 import { notFound } from "next/navigation";
-import { getProducts } from "@/src/server/actions/catalog";
+import { getProducts } from "@/src/server/actions/products.queries";
 import { CatalogGrid } from "./_components/CatalogGrid";
 import { CatalogSidebar } from "./_components/CatalogSidebar";
 import { Section } from "@/src/components/layout/Section";

@@ -4,7 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import useSWRInfinite from "swr/infinite";
-import { getProducts, type CatalogProduct } from "@/src/server/actions/catalog";
+import {
+  getProducts,
+  type CatalogProduct,
+} from "@/src/server/actions/products.queries";
 import { Button } from "@/src/components/ui/button";
 import { COLOR_SWATCH_MAP, DEFAULT_SWATCH_COLOR } from "@/src/lib/constants";
 
@@ -185,7 +188,7 @@ export const CatalogGrid = ({
 
   return (
     <div className="flex w-full flex-col items-center gap-12">
-      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
         {products.map((product) => (
           <ProductCard key={product.siteArticle} product={product} />
         ))}

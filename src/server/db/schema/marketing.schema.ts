@@ -7,7 +7,7 @@ import {
   timestamp,
   jsonb,
 } from "drizzle-orm/pg-core";
-import { slideTypeEnum, slidePlacementEnum } from "./enums";
+import { slideTypeEnum, slidePlacementEnum } from "./enums.schema";
 
 // 1. Возвращаем типы для JSONB
 export type SlideTagItem = {

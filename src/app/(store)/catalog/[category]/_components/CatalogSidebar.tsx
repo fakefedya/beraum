@@ -9,6 +9,7 @@ import {
   AccordionContent,
 } from "@/src/components/ui/accordion";
 import { Checkbox } from "@/src/components/ui/checkbox";
+import { Button } from "@/src/components/ui/button";
 
 interface CatalogSidebarProps {
   categorySlug: string;
@@ -23,6 +24,8 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
 
   // Если для категории не описаны фильтры в конфиге, ничего не рендерим
   if (!filters || filters.length === 0) return null;
+
+  const hasActiveFilters = filters.some((f) => searchParams.has(f.key));
 
   // Логика добавления/удаления параметров в URL
   const handleCheck = (key: string, value: string, checked: boolean) => {
@@ -48,6 +51,10 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
 
     // Обновляем URL без полной перезагрузки страницы (scroll: false оставляет экран на месте)
     router.push(`${pathname}?${current.toString()}`, { scroll: false });
+  };
+
+  const handleReset = () => {
+    router.push(pathname, { scroll: false });
   };
 
   return (
@@ -94,6 +101,12 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
           </AccordionItem>
         ))}
       </Accordion>
+
+      {hasActiveFilters && (
+        <Button variant="outline" className="mb-4 w-full" onClick={handleReset}>
+          Сбросить фильтры
+        </Button>
+      )}
     </aside>
   );
 };

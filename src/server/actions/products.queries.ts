@@ -3,10 +3,9 @@
 import { z } from "zod";
 import { eq, desc, and, sql, or } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
-import { products, categories } from "@/src/server/db/schema";
-import { CATEGORY_FILTERS } from "@/src/lib/constants"; // Подключаем белый список фильтров
+import { products, categories } from "@/src/server/db/schema"; // Читаем из index.ts
+import { CATEGORY_FILTERS } from "@/src/lib/constants";
 
-// Zero trust ZOD валидация
 const filterValueSchema = z.union([z.string(), z.array(z.string())]);
 
 const getProductsSchema = z.object({

@@ -23,6 +23,11 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
       label: "Материал поверхности",
       options: ["Стеклокерамика", "Закаленное стекло", "Нержавеющая сталь"],
     },
+    {
+      key: "itemSurfaceType1",
+      label: "Материал поверхности",
+      options: ["Стеклокерамика", "Закаленное стекло", "Нержавеющая сталь"],
+    },
   ],
   oven: [
     {
