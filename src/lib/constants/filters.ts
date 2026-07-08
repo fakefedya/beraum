@@ -14,20 +14,20 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
       options: ["Газовая", "Индукционная", "Электрическая"],
     },
     {
+      type: "oval",
+      key: "itemControlType",
+      label: "Тип управления",
+      options: ["Механическое", "Сенсорное", "Слайдер"],
+    },
+    {
       type: "round",
       key: "itemBurnerCount",
       label: "Количество конфорок",
-      options: ["2", "3", "4", "5"],
+      options: ["2", "3", "4"],
     },
     {
       type: "oval",
       key: "itemSurfaceType",
-      label: "Материал поверхности",
-      options: ["Стеклокерамика", "Закаленное стекло", "Нержавеющая сталь"],
-    },
-    {
-      type: "oval",
-      key: "itemSurfaceType1",
       label: "Материал поверхности",
       options: ["Стеклокерамика", "Закаленное стекло", "Нержавеющая сталь"],
     },
