@@ -8,8 +8,8 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/src/components/ui/accordion";
-import { Checkbox } from "@/src/components/ui/checkbox";
 import { Button } from "@/src/components/ui/button";
+import { cn } from "@/src/lib/utils";
 
 interface CatalogSidebarProps {
   categorySlug: string;
@@ -21,13 +21,27 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
   const searchParams = useSearchParams();
 
   const filters = CATEGORY_FILTERS[categorySlug];
+  const currentSort = searchParams.get("sort") || "newest";
 
-  // Если для категории не описаны фильтры в конфиге, ничего не рендерим
+  const handleSort = (value: string) => {
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
+
+    if (value === "newest") {
+      current.delete("sort");
+    } else {
+      current.set("sort", value);
+    }
+
+    router.push(`${pathname}?${current.toString()}`, { scroll: false });
+  };
+
   if (!filters || filters.length === 0) return null;
 
   const hasActiveFilters = filters.some((f) => searchParams.has(f.key));
+  const hasActiveSort =
+    searchParams.has("sort") && searchParams.get("sort") !== "newest";
+  const canReset = hasActiveFilters || hasActiveSort;
 
-  // Логика добавления/удаления параметров в URL
   const handleCheck = (key: string, value: string, checked: boolean) => {
     // Копируем текущие параметры URL
     const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -49,7 +63,6 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
         .forEach((v) => current.append(key, v));
     }
 
-    // Обновляем URL без полной перезагрузки страницы (scroll: false оставляет экран на месте)
     router.push(`${pathname}?${current.toString()}`, { scroll: false });
   };
 
@@ -59,54 +72,87 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
 
   return (
     <aside className="w-full shrink-0 xl:w-64">
+      <div className="pb-6">
+        <h3 className="pb-4 text-sm font-normal hover:no-underline">
+          Сортировка
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { value: "newest", label: "По умолчанию" },
+            { value: "price_asc", label: "Дешевле" },
+            { value: "price_desc", label: "Дороже" },
+          ].map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => handleSort(option.value)}
+              className={cn(
+                "border-chart-1 transition-[border, font, outline] hover:border-black-muted flex h-10 w-fit cursor-pointer items-center justify-center rounded-full border px-4 text-sm font-normal text-black duration-200 outline-none",
+                // Добавляем a11y классы для фокуса
+                "focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-1",
+                // Изолируем логику состояний
+                currentSort === option.value
+                  ? "border-black font-medium text-black ring-1 ring-black ring-inset"
+                  : "hover:border-black-muted",
+              )}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
       <Accordion
         type="multiple"
-        // По умолчанию раскрываем все аккордеоны
-        defaultValue={filters.map((f) => f.key)}
+        // defaultValue={filters.map((f) => f.key)}
         className="w-full"
       >
         {filters.map((filter) => (
           <AccordionItem
             key={filter.key}
             value={filter.key}
-            className="border-black/5"
+            className="border-b-0"
           >
-            <AccordionTrigger className="text-base font-semibold hover:no-underline">
+            <AccordionTrigger className="text-sm font-normal hover:no-underline">
               {filter.label}
             </AccordionTrigger>
-            <AccordionContent className="flex flex-col gap-3 pt-2 pb-4">
+            <AccordionContent className="flex flex-wrap gap-2 pt-2 pb-6">
               {filter.options.map((opt) => {
-                // Проверяем, есть ли этот конкретный option в текущем URL
                 const isChecked = searchParams.getAll(filter.key).includes(opt);
 
                 return (
-                  <label
+                  <button
                     key={opt}
-                    className="group flex cursor-pointer items-center gap-3"
+                    type="button"
+                    onClick={() => handleCheck(filter.key, opt, !isChecked)}
+                    aria-pressed={isChecked}
+                    data-state={isChecked ? "checked" : "unchecked"}
+                    className={cn(
+                      "border-chart-1 transition-[border, font, outline] hover:border-black-muted flex h-10 cursor-pointer items-center justify-center rounded-full border text-sm font-normal text-black duration-200 outline-none",
+
+                      filter.type === "oval" && "w-fit px-4",
+                      filter.type === "round" && "w-10",
+
+                      "focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-1",
+                      // Состояние: Активно (выбрано)
+                      "data-[state=checked]:border-black data-[state=checked]:font-medium data-[state=checked]:ring-1 data-[state=checked]:ring-black data-[state=checked]:ring-inset",
+                    )}
                   >
-                    <Checkbox
-                      checked={isChecked}
-                      onCheckedChange={(c) =>
-                        handleCheck(filter.key, opt, c as boolean)
-                      }
-                      className="border-black/20 data-[state=checked]:border-black data-[state=checked]:bg-black"
-                    />
-                    <span className="text-black-muted text-sm font-medium transition-colors group-hover:text-black">
-                      {opt}
-                    </span>
-                  </label>
+                    {opt}
+                  </button>
                 );
               })}
             </AccordionContent>
           </AccordionItem>
         ))}
       </Accordion>
-
-      {hasActiveFilters && (
-        <Button variant="outline" className="mb-4 w-full" onClick={handleReset}>
-          Сбросить фильтры
-        </Button>
-      )}
+      <Button
+        variant={"rounded"}
+        disabled={!canReset}
+        className="bg-border mt-4 h-10 w-full"
+        onClick={handleReset}
+      >
+        Сбросить фильтры
+      </Button>
     </aside>
   );
 };

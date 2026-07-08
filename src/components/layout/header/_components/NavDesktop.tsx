@@ -67,7 +67,7 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                   >
                     {link.label}
                     {link.isNew && (
-                      <span className="text-brand text-xs leading-3 font-medium">
+                      <span className="text-latest text-xs leading-3 font-medium">
                         Новые модели
                       </span>
                     )}
@@ -94,7 +94,10 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                       </span>
                     </div>
                     {card.isNew && (
-                      <Badge variant={"new"} className="absolute top-4 right-4">
+                      <Badge
+                        variant={"latest"}
+                        className="absolute top-4 right-4"
+                      >
                         Новинка
                       </Badge>
                     )}

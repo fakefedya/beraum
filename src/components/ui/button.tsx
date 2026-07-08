@@ -25,6 +25,7 @@ const buttonVariants = cva(
           "background-transparent duration-300  hover:background-transparent",
         white:
           "rounded-full px-5 py-0 font-medium color-black text-base bg-white transition-bg duration-300",
+        rounded: "rounded-full font-medium text-sm",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

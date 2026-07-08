@@ -19,10 +19,16 @@ export default async function CategoryPage({
   // Асинхронно распаковываем параметры URL
   const { category } = await params;
   const resolvedSearchParams = await searchParams;
+  const sort = resolvedSearchParams.sort as
+    | "newest"
+    | "price_asc"
+    | "price_desc";
 
   // Очищаем undefined из searchParams перед передачей в Zod
   const filters = Object.fromEntries(
-    Object.entries(resolvedSearchParams).filter(([_, v]) => v !== undefined),
+    Object.entries(resolvedSearchParams).filter(
+      ([k, v]) => v !== undefined && k !== "sort",
+    ),
   ) as Record<string, string | string[]>;
 
   // Делаем SSR запрос в БД с учетом фильтров
@@ -30,6 +36,7 @@ export default async function CategoryPage({
     categorySlug: category,
     limit: 12,
     offset: 0,
+    sort,
     filters, // <-- Передаем фильтры из URL в Action
   });
 

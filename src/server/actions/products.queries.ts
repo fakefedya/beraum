@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { eq, desc, and, sql, or } from "drizzle-orm";
+import { eq, desc, asc, and, sql, or } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
 import { products, categories } from "@/src/server/db/schema"; // Читаем из index.ts
 import { CATEGORY_FILTERS } from "@/src/lib/constants";
@@ -13,6 +13,11 @@ const getProductsSchema = z.object({
   limit: z.number().int().min(1).max(50).default(12), // Защита от DDoS
   offset: z.number().int().min(0).default(0),
   filters: z.record(z.string(), filterValueSchema).optional(),
+  sort: z
+    .union([z.string(), z.array(z.string())])
+    .transform((val) => (Array.isArray(val) ? val[0] : val)) // Берем первый параметр, если их несколько
+    .pipe(z.enum(["newest", "price_asc", "price_desc"]).catch("newest")) // Если пришел мусор, падаем на newest
+    .default("newest"),
 });
 
 export type GetProductsParams = z.input<typeof getProductsSchema>;
@@ -20,9 +25,34 @@ export type CatalogProduct = Awaited<ReturnType<typeof getProducts>>["data"][0];
 
 export async function getProducts(params: GetProductsParams = {}) {
   try {
-    const { limit, offset, categorySlug, filters } =
+    const { limit, offset, categorySlug, filters, sort } =
       getProductsSchema.parse(params);
     const conditions = [eq(products.status, "published")];
+
+    const rowPriceSql = sql`COALESCE(
+      (SELECT MIN(NULLIF(v, 0)) FROM (
+        VALUES 
+          (${products.basePrice}), 
+          (${products.manualPrice}), 
+          (${products.ozonPrice}), 
+          (${products.wbPrice})
+      ) AS t(v)), 
+      0
+    )`;
+
+    // 3. Формируем массив условий сортировки
+    const orderConditions = [];
+
+    if (sort === "price_asc") {
+      // Ищем минимальную цену среди всех цветов модели и сортируем по возрастанию
+      orderConditions.push(asc(sql`MIN(${rowPriceSql})`));
+    } else if (sort === "price_desc") {
+      orderConditions.push(desc(sql`MIN(${rowPriceSql})`));
+    } else {
+      // По умолчанию: сначала новинки, затем свежие
+      orderConditions.push(desc(sql`BOOL_OR(${products.isLatest})`));
+      orderConditions.push(desc(sql`MAX(${products.createdAt})`));
+    }
 
     if (categorySlug) {
       const [category] = await db
@@ -78,21 +108,27 @@ export async function getProducts(params: GetProductsParams = {}) {
             isLatest: boolean;
           }[]
         >`jsonb_agg(
-          jsonb_build_object(
-            'id', ${products.id},
-            'itemArticle', ${products.itemArticle},
-            'colorName', ${products.colorName},
-            'price', COALESCE(${products.manualPrice}, ${products.basePrice}),
-            'stock', COALESCE(${products.manualStock}, ${products.baseStock}),
-            'isLatest', ${products.isLatest}
-          )
-        )`.as("variants"),
+  jsonb_build_object(
+    'id', ${products.id},
+    'itemArticle', ${products.itemArticle},
+    'colorName', ${products.colorName},
+    'isLatest', COALESCE(${products.isLatest}, false),
+    'price', ${rowPriceSql},
+    'stock', (
+      COALESCE(${products.manualStock}, 0) + 
+      COALESCE(${products.baseStock}, 0) + 
+      COALESCE(${products.ozonStock}, 0) + 
+      COALESCE(${products.wbStock}, 0)
+    )
+  )
+    ORDER BY ${products.itemArticle} ASC
+)`.as("variants"),
       })
       .from(products)
       .leftJoin(categories, eq(products.categoryId, categories.id))
       .where(and(...conditions))
       .groupBy(products.siteArticle, categories.slug, categories.titleRu)
-      .orderBy(desc(sql`MAX(${products.createdAt})`))
+      .orderBy(...orderConditions)
       .limit(limit)
       .offset(offset);
 

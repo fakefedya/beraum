@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import useSWRInfinite from "swr/infinite";
@@ -14,6 +14,11 @@ import { COLOR_SWATCH_MAP, DEFAULT_SWATCH_COLOR } from "@/src/lib/constants";
 const LIMIT = 12;
 const VISIBLE_COLORS_LIMIT = 4;
 
+interface CatalogGridProps {
+  initialData: CatalogProduct[];
+  categorySlug: string;
+}
+
 const ProductCard = ({ product }: { product: CatalogProduct }) => {
   const [activeVariant, setActiveVariant] = useState(product.variants[0]);
 
@@ -23,9 +28,7 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
   return (
     <article className="transition-[shadow transform] group shadow-card hover:shadow-card-hover relative scale-100 rounded-4xl bg-white p-7 duration-300 ease-[cubic-bezier(0,0,0.5,1)] hover:scale-[1.01]">
       <div className="flex flex-col gap-4">
-        <div className="bg-accent flex aspect-4/5 items-center justify-center rounded-xl">
-          {activeVariant.itemArticle}
-        </div>
+        <div className="bg-accent flex aspect-4/5 items-center justify-center rounded-xl"></div>
         <div
           className="z-1 flex items-center justify-center gap-1.5"
           role="radiogroup"
@@ -59,12 +62,31 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
           )}
         </div>
 
-        <div className="flex flex-col gap-1">
-          {activeVariant.isLatest && <span>Новинка</span>}
-          {activeVariant.stock > 0 ? "В наличии" : "Под заказ"}
-          <h2>{product.siteArticle}</h2>
+        <div className="mt-4 flex flex-col gap-0">
+          <div className="flex h-4 items-center gap-2">
+            {activeVariant.isLatest && (
+              <span className="text-latest text-xs font-medium">Новинка</span>
+            )}
+            {activeVariant.isLatest && activeVariant.stock <= 0 && (
+              <span
+                className="h-1 w-1 rounded-full bg-black/20"
+                aria-hidden="true"
+              />
+            )}
+
+            {activeVariant.stock <= 0 && (
+              <span className="text-out-of-stock text-xs font-medium">
+                Под заказ
+              </span>
+            )}
+          </div>
+          <h2 className="font-medium">
+            {product.categoryTitle} {product.siteArticle}
+          </h2>
           {activeVariant.price > 0 ? (
-            <span>{activeVariant.price.toLocaleString("ru-RU")} ₽</span>
+            <span className="mt-8">
+              {activeVariant.price.toLocaleString("ru-RU")} ₽
+            </span>
           ) : (
             <span>По запросу</span>
           )}
@@ -78,11 +100,6 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
   );
 };
 
-interface CatalogGridProps {
-  initialData: CatalogProduct[];
-  categorySlug: string;
-}
-
 export const CatalogGrid = ({
   initialData,
   categorySlug,
@@ -93,12 +110,12 @@ export const CatalogGrid = ({
     pageIndex: number,
     previousPageData: CatalogProduct[] | null,
   ) => {
-    // Достигнут конец списка
     if (previousPageData && previousPageData.length < LIMIT) return null;
 
-    // Собираем текущие фильтры из URL для передачи на сервер
     const filters: Record<string, string | string[]> = {};
     searchParams.forEach((value, key) => {
+      if (key === "sort") return;
+
       const existing = filters[key];
       if (existing) {
         filters[key] = Array.isArray(existing)
@@ -109,11 +126,13 @@ export const CatalogGrid = ({
       }
     });
 
+    const sort = searchParams.get("sort") || "newest";
     return JSON.stringify({
       categorySlug,
       limit: LIMIT,
       offset: pageIndex * LIMIT,
       filters,
+      sort,
     });
   };
 
@@ -126,18 +145,17 @@ export const CatalogGrid = ({
 
   const { data, error, size, setSize, isValidating, isLoading } =
     useSWRInfinite(getKey, fetcher, {
-      // Важно: если в URL есть фильтры, initialData может быть устаревшей,
-      // но в нашей архитектуре SSR (в page.tsx) уже применяет эти фильтры к initialData,
-      // так что fallbackData всегда синхронизирована с текущим URL.
       fallbackData: initialData.length > 0 ? [initialData] : [],
       revalidateFirstPage: false,
       revalidateOnFocus: true,
     });
 
-  // Схлопываем массив страниц в плоский список товаров
+  useEffect(() => {
+    setSize(1);
+  }, [searchParams.toString(), setSize]);
+
   const products = data ? data.flat() : [];
 
-  // Проверяем статус загрузки новых страниц или применения новых фильтров
   const isLoadingMore =
     isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
   const isEmpty = data?.[0]?.length === 0;
@@ -174,7 +192,7 @@ export const CatalogGrid = ({
           size="lg"
           onClick={() => setSize(size + 1)}
           disabled={isLoadingMore || isValidating}
-          className="min-w-[200px]"
+          className="min-w-50"
         >
           {isLoadingMore ? "Загрузка..." : "Показать еще"}
         </Button>
