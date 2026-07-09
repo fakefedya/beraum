@@ -21,6 +21,7 @@
     "radix-ui": "^1.6.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "server-only": "^0.0.1",
     "shadcn": "^4.11.0",
     "sharp": "^0.35.3",
     "swiper": "^14.0.1",
