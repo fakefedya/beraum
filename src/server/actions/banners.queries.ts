@@ -4,7 +4,7 @@ import { desc, sql } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
 import { slides } from "@/src/server/db/schema";
 import { z } from "zod";
-import { env } from "@/src/lib/env";
+import { serverEnv } from "@/src/lib/env/server";
 
 const tagSchema = z.object({
   xPercent: z.number().min(0).max(100),
@@ -56,7 +56,7 @@ export async function getActiveSlides(
       });
 
       if (parsed.success) {
-        const baseUrl = `http://${env.MINIO_ENDPOINT}:${env.MINIO_PORT}/${slide.bucketName}`;
+        const baseUrl = `http://${serverEnv.MINIO_ENDPOINT}:${serverEnv.MINIO_PORT}/${slide.bucketName}`;
         validSlides.push({
           ...parsed.data,
           id: slide.id,
