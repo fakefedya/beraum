@@ -3,7 +3,7 @@ import { z } from "zod";
 
 // Схема для конкретного склада (FBO или FBS)
 export const ozonStockItemSchema = z.object({
-  type: z.enum(["fbo", "fbs"]), // Нас интересует fbo
+  type: z.string(), // Нас интересует fbo
   present: z.number(), // Доступно к продаже
   reserved: z.number(), // В резерве
 });
@@ -17,11 +17,9 @@ export const ozonProductStockSchema = z.object({
 
 // Общая схема ответа (API /v3/product/info/stocks)
 export const ozonStocksResponseSchema = z.object({
-  result: z.object({
-    items: z.array(ozonProductStockSchema),
-    last_id: z.string(),
-    total: z.number(),
-  }),
+  items: z.array(ozonProductStockSchema),
+  last_id: z.string().optional().default(""),
+  total: z.number().optional().default(0),
 });
 
 export type OzonProductStock = z.infer<typeof ozonProductStockSchema>;

@@ -33,20 +33,27 @@ export async function getOzonStocksDryRun() {
   try {
     console.log("🚀 [OZON] Запускаем тестовый запрос к API...");
 
-    // Дергаем третью версию API (актуальная для остатков)
-    const rawData = await fetchOzonApi("/v3/product/info/stocks", {
-      filter: {}, // Без фильтров тянем всё
-      last_id: "",
-      limit: 50, // Для теста нам хватит 50 штук
+    // Дергаем третью версию API
+    const rawData = await fetchOzonApi("/v4/product/info/stocks", {
+      filter: {
+        visibility: "ALL",
+      },
+      limit: 500,
     });
 
-    // Пропускаем через строгую валидацию
+    console.log("📦 [OZON] Сырой ответ получен! Ключи Ozon работают.");
+
+    // ВРЕМЕННО: выводим кусок сырых данных в консоль перед валидацией
+    console.log(
+      "Сырые данные (первые 300 символов):",
+      JSON.stringify(rawData).slice(0, 300),
+    );
+
+    // Пропускаем через Zod-мясорубку
     const parsedData = ozonStocksResponseSchema.parse(rawData);
 
-    // Оставляем только нужную информацию для вывода
-    const sample = parsedData.result.items.map((item) => {
+    const sample = parsedData.items.map((item) => {
       const fboStock = item.stocks.find((s) => s.type === "fbo");
-
       return {
         "Ozon Артикул (offer_id)": item.offer_id,
         "FBO Остаток": fboStock ? fboStock.present : 0,
@@ -54,10 +61,24 @@ export async function getOzonStocksDryRun() {
     });
 
     console.table(sample);
-
     return { success: true, data: sample };
-  } catch (error) {
-    console.error("❌ [OZON] Ошибка тестового прогона:", error);
-    return { success: false, error: "Ошибка при получении данных" };
+  } catch (error: any) {
+    // 🚨 Детальный разбор ошибки
+    console.error("\n❌ [OZON] ПРОИЗОШЛА ОШИБКА!");
+
+    if (error.name === "ZodError") {
+      console.error(
+        "⚠️ Ошибка валидации Zod (Ozon поменял формат или прислал неожиданные данные):",
+      );
+      console.error(JSON.stringify(error.format(), null, 2));
+    } else {
+      console.error("⚠️ Ошибка HTTP или сети:", error.message || error);
+    }
+
+    return {
+      success: false,
+      error: "Ошибка при получении данных",
+      details: error.message,
+    };
   }
 }
