@@ -26,6 +26,7 @@ export const products = pgTable(
     itemArticle: text("item_article").notNull().unique(),
     status: productStatusEnum("status").default("draft").notNull(),
     isLatest: boolean("is_latest").default(false).notNull(),
+    colorName: text("color_name"),
 
     basePrice: integer("base_price").notNull().default(0),
     baseStock: integer("base_stock").notNull().default(0),
@@ -33,14 +34,11 @@ export const products = pgTable(
     manualStock: integer("manual_stock"),
 
     ozonLink: text("ozon_link"),
-    ozonPrice: integer("ozon_price"),
-    ozonStock: integer("ozon_stock"),
-
-    colorName: text("color_name"),
+    ozonStockFbo: integer("ozon_stock_fbo"),
 
     wbLink: text("wb_link"),
-    wbPrice: integer("wb_price"),
-    wbStock: integer("wb_stock"),
+    fbsStock: integer("fbs_stock"),
+    wbChrtId: integer("wb_chrt_id"),
 
     weightNetto: integer("weight_netto"),
     weightBrutto: integer("weight_brutto"),

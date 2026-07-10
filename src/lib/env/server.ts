@@ -20,6 +20,8 @@ const serverSchema = z.object({
   OZON_CLIENT_ID: z.string().min(1),
   OZON_API_KEY: z.string().min(1),
 
+  WB_API_KEY: z.string().min(1),
+
   // Крон-задачи (добавляем сразу)
   CRON_SECRET: z
     .string()

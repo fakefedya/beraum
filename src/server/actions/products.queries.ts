@@ -33,9 +33,7 @@ export async function getProducts(params: GetProductsParams = {}) {
       (SELECT MIN(NULLIF(v, 0)) FROM (
         VALUES 
           (${products.basePrice}), 
-          (${products.manualPrice}), 
-          (${products.ozonPrice}), 
-          (${products.wbPrice})
+          (${products.manualPrice})
       ) AS t(v)), 
       0
     )`;
@@ -117,8 +115,8 @@ export async function getProducts(params: GetProductsParams = {}) {
     'stock', (
       COALESCE(${products.manualStock}, 0) + 
       COALESCE(${products.baseStock}, 0) + 
-      COALESCE(${products.ozonStock}, 0) + 
-      COALESCE(${products.wbStock}, 0)
+      COALESCE(${products.ozonStockFbo}, 0) + 
+      COALESCE(${products.fbsStock}, 0)
     )
   )
     ORDER BY ${products.itemArticle} ASC

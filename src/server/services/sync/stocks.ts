@@ -38,8 +38,8 @@ export async function updateStocksInDb(
           chunk.map((item) => {
             const updateField =
               item.marketplace === "ozon"
-                ? { ozonStock: item.stock }
-                : { wbStock: item.stock };
+                ? { ozonStockFbo: item.stock }
+                : { fbsStock: item.stock };
 
             return tx
               .update(products)

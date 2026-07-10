@@ -36,6 +36,20 @@
       "when": 1783083629602,
       "tag": "0004_silent_patriot",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1783673375448,
+      "tag": "0005_tidy_wilson_fisk",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1783686716148,
+      "tag": "0006_first_ronan",
+      "breakpoints": true
     }
   ]
 }
