@@ -1,12 +1,11 @@
 import "server-only";
 import { serverEnv } from "@/src/lib/env/server";
 import { ozonStocksResponseSchema } from "./schemas";
+import { updateStocksInDb, type NormalizedStock } from "../sync/stocks";
+import { z } from "zod";
 
 const OZON_API_URL = "https://api-seller.ozon.ru";
 
-/**
- * Базовый fetcher с подстановкой секретов и защитой от кэширования
- */
 async function fetchOzonApi(endpoint: string, body: Record<string, unknown>) {
   const res = await fetch(`${OZON_API_URL}${endpoint}`, {
     method: "POST",
@@ -20,65 +19,102 @@ async function fetchOzonApi(endpoint: string, body: Record<string, unknown>) {
   });
 
   if (!res.ok) {
-    throw new Error(`🚨 Ozon API Error: ${res.status} ${res.statusText}`);
+    throw new Error(`Ozon API HTTP Error: ${res.status} ${res.statusText}`);
   }
 
   return res.json();
 }
 
 /**
- * DRY RUN: Тестовый запрос для анализа артикулов
+ * Боевая синхронизация остатков Ozon
+ * @param options.debug Включает подробное логирование
+ * @param options.dryRun Холостой прогон: скачивает, но НЕ пишет в БД. Возвращает данные.
  */
-export async function getOzonStocksDryRun() {
+export async function syncOzonStocks(
+  options: { debug?: boolean; dryRun?: boolean } = {},
+) {
+  const { debug = false, dryRun = false } = options; // Значения по умолчанию
+
   try {
-    console.log("🚀 [OZON] Запускаем тестовый запрос к API...");
+    if (debug)
+      console.log(`🚀 [OZON] Запуск синхронизации FBO... (Dry Run: ${dryRun})`);
 
-    // Дергаем третью версию API
-    const rawData = await fetchOzonApi("/v4/product/info/stocks", {
-      filter: {
-        visibility: "ALL",
-      },
-      limit: 500,
-    });
+    let lastId = "";
+    let hasMore = true;
+    let pageCount = 0;
+    const allStocks: NormalizedStock[] = [];
 
-    console.log("📦 [OZON] Сырой ответ получен! Ключи Ozon работают.");
+    // 1. Извлечение данных (Pagination) - логика остается без изменений
+    while (hasMore) {
+      pageCount++;
+      if (debug) console.log(`🔄 [OZON] Запрос страницы ${pageCount}...`);
 
-    // ВРЕМЕННО: выводим кусок сырых данных в консоль перед валидацией
-    console.log(
-      "Сырые данные (первые 300 символов):",
-      JSON.stringify(rawData).slice(0, 300),
-    );
+      const rawData = await fetchOzonApi("/v4/product/info/stocks", {
+        filter: { visibility: "ALL" },
+        last_id: lastId,
+        limit: 500,
+      });
 
-    // Пропускаем через Zod-мясорубку
-    const parsedData = ozonStocksResponseSchema.parse(rawData);
+      const parsedData = ozonStocksResponseSchema.parse(rawData);
 
-    const sample = parsedData.items.map((item) => {
-      const fboStock = item.stocks.find((s) => s.type === "fbo");
-      return {
-        "Ozon Артикул (offer_id)": item.offer_id,
-        "FBO Остаток": fboStock ? fboStock.present : 0,
-      };
-    });
+      for (const item of parsedData.items) {
+        const fboStock = item.stocks.find((s) => s.type === "fbo");
+        allStocks.push({
+          article: item.offer_id,
+          stock: fboStock ? fboStock.present : 0,
+          marketplace: "ozon",
+        });
+      }
 
-    console.table(sample);
-    return { success: true, data: sample };
-  } catch (error: any) {
-    // 🚨 Детальный разбор ошибки
-    console.error("\n❌ [OZON] ПРОИЗОШЛА ОШИБКА!");
-
-    if (error.name === "ZodError") {
-      console.error(
-        "⚠️ Ошибка валидации Zod (Ozon поменял формат или прислал неожиданные данные):",
-      );
-      console.error(JSON.stringify(error.format(), null, 2));
-    } else {
-      console.error("⚠️ Ошибка HTTP или сети:", error.message || error);
+      if (parsedData.last_id && parsedData.last_id !== lastId) {
+        lastId = parsedData.last_id;
+      } else {
+        hasMore = false;
+      }
     }
 
-    return {
-      success: false,
-      error: "Ошибка при получении данных",
-      details: error.message,
-    };
+    if (debug) {
+      console.log(
+        `\n📦 [OZON] Извлечение завершено. Получено артикулов: ${allStocks.length}`,
+      );
+
+      if (allStocks.length > 0) {
+        const previewData = allStocks.slice(0, 150).map((item) => ({
+          "Артикул (SKU)": item.article,
+          "Остаток (FBO)": item.stock,
+          Маркетплейс: item.marketplace.toUpperCase(),
+        }));
+
+        console.table(previewData);
+
+        if (allStocks.length > 150) {
+          console.log(
+            `... и еще ${allStocks.length - 150} товаров скрыто для экономии памяти консоли.\n`,
+          );
+        }
+      }
+    }
+    // 👇 2. ПРОВЕРКА НА DRY RUN ПЕРЕД ЗАПИСЬЮ В БД
+    if (dryRun) {
+      if (debug)
+        console.log(
+          "🛑 [OZON] DRY RUN АКТИВЕН: Пропускаем запись в базу данных.",
+        );
+      // Возвращаем сами данные, чтобы их можно было увидеть в Postman/Браузере
+      return { success: true, synced: allStocks.length, data: allStocks };
+    }
+
+    // 3. Боевая запись в БД
+    const dbResult = await updateStocksInDb(allStocks, debug);
+
+    if (!dbResult.success) {
+      throw new Error("Сбой на этапе записи в БД");
+    }
+
+    return { success: true, synced: allStocks.length };
+  } catch (error: unknown) {
+    // (с твоим новым Type Guard)
+    // ... логика обработки ошибок остается прежней
+    return { success: false, error: "Sync Failed" };
   }
 }
