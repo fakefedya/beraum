@@ -2,7 +2,6 @@ import "server-only";
 import { serverEnv } from "@/src/lib/env/server";
 import { ozonStocksResponseSchema } from "./schemas";
 import { updateStocksInDb, type NormalizedStock } from "../sync/stocks";
-import { z } from "zod";
 
 const OZON_API_URL = "https://api-seller.ozon.ru";
 
@@ -94,7 +93,7 @@ export async function syncOzonStocks(
         }
       }
     }
-    // 👇 2. ПРОВЕРКА НА DRY RUN ПЕРЕД ЗАПИСЬЮ В БД
+
     if (dryRun) {
       if (debug)
         console.log(
@@ -113,8 +112,6 @@ export async function syncOzonStocks(
 
     return { success: true, synced: allStocks.length };
   } catch (error: unknown) {
-    // (с твоим новым Type Guard)
-    // ... логика обработки ошибок остается прежней
     return { success: false, error: "Sync Failed" };
   }
 }

@@ -3,18 +3,28 @@ import { db } from "@/src/server/db/client";
 import { products } from "@/src/server/db/schema";
 import { eq } from "drizzle-orm";
 import { serverEnv } from "@/src/lib/env/server";
+import { chunkArray, delay } from "@/src/server/utils/sync-helpers";
 
 const WB_API_URL = "https://content-api.wildberries.ru";
 
-// Хелпер для паузы между запросами (чтобы не словить бан 429 Too Many Requests от WB)
-const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+type WbCursor = {
+  limit: number;
+  updatedAt?: string;
+  nmID?: number;
+  total?: number;
+};
 
-// Хелпер для батчинга БД
-function chunkArray<T>(array: T[], size: number): T[][] {
-  return Array.from({ length: Math.ceil(array.length / size) }, (_, i) =>
-    array.slice(i * size, i * size + size),
-  );
-}
+type WbCard = {
+  vendorCode: string;
+  sizes?: Array<{
+    chrtID: number;
+  }>;
+};
+
+type WbApiResponse = {
+  cards?: WbCard[];
+  cursor?: WbCursor;
+};
 
 export async function syncWbSkusAutoMapper(debug = true) {
   try {
@@ -23,16 +33,15 @@ export async function syncWbSkusAutoMapper(debug = true) {
         "🚀 [WB MAPPER] Запускаем авто-сопоставление артикулов (с пагинацией)...",
       );
 
-    // 1. Быстро читаем БД
     const localProducts = await db
       .select({ id: products.id, itemArticle: products.itemArticle })
       .from(products);
 
-    // 2. Выкачиваем все карточки с WB в память (Network I/O)
     let hasMore = true;
     let pageCount = 0;
-    let currentCursor: Record<string, any> = { limit: 100 }; // WB принимает максимум 100
-    const allWbCards: any[] = [];
+
+    let currentCursor: WbCursor = { limit: 100 };
+    const allWbCards: WbCard[] = [];
 
     while (hasMore) {
       pageCount++;
@@ -56,11 +65,10 @@ export async function syncWbSkusAutoMapper(debug = true) {
 
       if (!res.ok) throw new Error(`WB HTTP Error: ${res.status}`);
 
-      const wbData = await res.json();
+      const wbData = (await res.json()) as WbApiResponse;
       const cards = wbData.cards || [];
       allWbCards.push(...cards);
 
-      // Логика курсора: если total равен лимиту, значит есть следующая страница
       const responseCursor = wbData.cursor;
       if (responseCursor && responseCursor.total === currentCursor.limit) {
         currentCursor = {
@@ -68,24 +76,23 @@ export async function syncWbSkusAutoMapper(debug = true) {
           updatedAt: responseCursor.updatedAt,
           nmID: responseCursor.nmID,
         };
-        await delay(300); // 300ms пауза для безопасности
+        await delay(300);
       } else {
-        hasMore = false; // Карточки закончились
+        hasMore = false;
       }
     }
-    console.log(allWbCards.length);
+
     if (debug)
       console.log(
         `📦 [WB MAPPER] Скачано ${allWbCards.length} карточек. Начинаем маппинг...`,
       );
 
-    // 3. Сопоставляем данные
     const matchedUpdates: { id: string; wbChrtId: number }[] = [];
     const unmatched: Record<string, string>[] = [];
 
     for (const card of allWbCards) {
       const wbArticle = card.vendorCode;
-      const wbChrtId = card.sizes?.[0]?.chrtID; // 👈 Тянем chrtID
+      const wbChrtId = card.sizes?.[0]?.chrtID;
 
       if (!wbArticle || !wbChrtId) continue;
 
@@ -97,7 +104,7 @@ export async function syncWbSkusAutoMapper(debug = true) {
         matchedUpdates.push({
           id: localProduct.id,
           wbChrtId: Number(wbChrtId),
-        }); // 👈 Сохраняем как число
+        });
       } else {
         unmatched.push({
           "Артикул WB": wbArticle,
@@ -106,7 +113,6 @@ export async function syncWbSkusAutoMapper(debug = true) {
       }
     }
 
-    // 3.5 ОБРАТНАЯ СВЕРКА (Наша БД -> WB)
     const missingOnWb: Record<string, string>[] = [];
     for (const localProduct of localProducts) {
       const existsOnWb = allWbCards.some(
@@ -119,7 +125,6 @@ export async function syncWbSkusAutoMapper(debug = true) {
       }
     }
 
-    // 4. Пишем в БД батчами
     if (matchedUpdates.length > 0) {
       const chunks = chunkArray(matchedUpdates, 100);
 
@@ -129,7 +134,7 @@ export async function syncWbSkusAutoMapper(debug = true) {
             chunk.map((item) =>
               tx
                 .update(products)
-                .set({ wbChrtId: item.wbChrtId }) // 👈 Пишем в новую колонку
+                .set({ wbChrtId: item.wbChrtId })
                 .where(eq(products.id, item.id)),
             ),
           );
@@ -137,7 +142,6 @@ export async function syncWbSkusAutoMapper(debug = true) {
       });
     }
 
-    // 5. Выводим результаты
     if (debug) {
       console.log(
         `✅ [WB MAPPER] Завершено. Обновлено совпадений: ${matchedUpdates.length}`,

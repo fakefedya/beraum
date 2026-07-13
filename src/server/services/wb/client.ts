@@ -6,6 +6,7 @@ import { isNotNull, eq } from "drizzle-orm";
 import { serverEnv } from "@/src/lib/env/server";
 import { wbPricesResponseSchema, wbStocksResponseSchema } from "./schemas";
 import { updateStocksInDb, type NormalizedStock } from "../sync/stocks";
+import { chunkArray, delay } from "@/src/server/utils/sync-helpers";
 
 const WB_API_URL = "https://marketplace-api.wildberries.ru";
 const WB_WAREHOUSES = [1418630, 1397109]; // МГТ и СГТ
@@ -26,13 +27,7 @@ async function fetchWbApi(endpoint: string, body: Record<string, unknown>) {
     console.error(`[WB API ERROR] ${endpoint} -> ${res.status}:`, errorText);
     throw new Error(`WB API HTTP Error: ${res.status}`);
   }
-}
-
-// Хелпер для батчинга массива
-function chunkArray<T>(array: T[], size: number): T[][] {
-  return Array.from({ length: Math.ceil(array.length / size) }, (_, i) =>
-    array.slice(i * size, i * size + size),
-  );
+  return res.json();
 }
 
 export async function syncWbStocks(
@@ -46,7 +41,6 @@ export async function syncWbStocks(
         `🚀 [WB] Запуск синхронизации FBS (МГТ + СГТ)... (Dry Run: ${dryRun})`,
       );
 
-    // 1. Достаем все привязанные chrtId из нашей БД
     const localProducts = await db
       .select({ article: products.itemArticle, chrtId: products.wbChrtId })
       .from(products)
@@ -61,13 +55,12 @@ export async function syncWbStocks(
     }
 
     const allChrtIds = localProducts.map((p) => p.chrtId as number);
-    const stockMap = new Map<string, number>(); // Карта: chrtId -> суммарный остаток
+    const stockMap = new Map<string, number>();
 
-    // 2. Идем по складам и запрашиваем остатки
     for (const warehouseId of WB_WAREHOUSES) {
       if (debug) console.log(`🔄 [WB] Запрашиваем склад ID: ${warehouseId}...`);
 
-      const chunks = chunkArray(allChrtIds, 1000); // WB лимит: 1000 SKU за раз
+      const chunks = chunkArray(allChrtIds, 1000);
 
       for (const chunk of chunks) {
         const rawData = await fetchWbApi(`/api/v3/stocks/${warehouseId}`, {
@@ -102,8 +95,8 @@ export async function syncWbStocks(
 
       allStocks.push({
         article: p.article,
-        stock: stockMap.get(String(p.chrtId)) || 0, // Если WB ничего не вернул — значит остаток 0
-        marketplace: "wb", // Важно! Наш sync-сервис переведет это в колонку fbsStock
+        stock: stockMap.get(String(p.chrtId)) || 0,
+        marketplace: "wb",
       });
     }
 
@@ -114,7 +107,6 @@ export async function syncWbStocks(
       if (allStocks.length > 0) console.table(allStocks.slice(0, 200));
     }
 
-    // 4. Запись (или Dry-Run)
     if (dryRun) {
       if (debug) console.log("🛑 [WB] DRY RUN АКТИВЕН: Запись в БД пропущена.");
       return { success: true, synced: allStocks.length, data: allStocks };
@@ -138,11 +130,8 @@ export async function syncWbStocks(
   }
 }
 
-// === ИНТЕГРАЦИЯ ЦЕН WB ===
-
 const WB_PRICES_API_URL = "https://discounts-prices-api.wildberries.ru";
 
-// Хелпер для запросов к API цен (Тут используется GET)
 async function fetchWbPricesApi(endpoint: string) {
   const res = await fetch(`${WB_PRICES_API_URL}${endpoint}`, {
     method: "GET",
@@ -169,7 +158,6 @@ export async function syncWbPrices(
     if (debug)
       console.log(`🚀 [WB ЦЕНЫ] Запуск выгрузки... (Dry Run: ${dryRun})`);
 
-    // 👇 Достаем все наши артикулы из БД для сверки
     const localProducts = await db
       .select({ article: products.itemArticle })
       .from(products);
@@ -179,7 +167,6 @@ export async function syncWbPrices(
     let hasMore = true;
     const allPrices: { article: string; price: number }[] = [];
 
-    // 1. Выгружаем все цены с пагинацией
     while (hasMore) {
       if (debug)
         console.log(`🔄 [WB ЦЕНЫ] Запрашиваем блок (offset: ${offset})...`);
@@ -200,7 +187,7 @@ export async function syncWbPrices(
         if (discountedPrice !== undefined) {
           allPrices.push({
             article: item.vendorCode,
-            price: Math.round(discountedPrice), // Наше округление
+            price: Math.round(discountedPrice),
           });
         }
       }
@@ -209,11 +196,10 @@ export async function syncWbPrices(
         hasMore = false;
       } else {
         offset += limit;
-        await new Promise((res) => setTimeout(res, 300));
+        await delay(300);
       }
     }
 
-    // 👇 1.5 ОБРАТНАЯ СВЕРКА
     if (debug) {
       const wbArticles = new Set(allPrices.map((p) => p.article));
       const localArticles = new Set(localProducts.map((p) => p.article));
@@ -257,7 +243,6 @@ export async function syncWbPrices(
       return { success: true, synced: allPrices.length, data: allPrices };
     }
 
-    // 2. Запись в БД
     const chunks = chunkArray(allPrices, 100);
     await db.transaction(async (tx) => {
       for (const chunk of chunks) {
