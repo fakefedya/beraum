@@ -2,9 +2,9 @@ import "server-only";
 import { z } from "zod";
 import { db } from "@/src/server/db/client";
 import { products } from "@/src/server/db/schema";
-import { isNotNull } from "drizzle-orm";
+import { isNotNull, eq } from "drizzle-orm";
 import { serverEnv } from "@/src/lib/env/server";
-import { wbStocksResponseSchema } from "./schemas";
+import { wbPricesResponseSchema, wbStocksResponseSchema } from "./schemas";
 import { updateStocksInDb, type NormalizedStock } from "../sync/stocks";
 
 const WB_API_URL = "https://marketplace-api.wildberries.ru";
@@ -21,8 +21,11 @@ async function fetchWbApi(endpoint: string, body: Record<string, unknown>) {
     cache: "no-store",
   });
 
-  if (!res.ok) throw new Error(`WB API HTTP Error: ${res.status}`);
-  return res.json();
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error(`[WB API ERROR] ${endpoint} -> ${res.status}:`, errorText);
+    throw new Error(`WB API HTTP Error: ${res.status}`);
+  }
 }
 
 // Хелпер для батчинга массива
@@ -123,6 +126,156 @@ export async function syncWbStocks(
     return { success: true, synced: allStocks.length };
   } catch (error: unknown) {
     console.error("\n❌ [WB] СИНХРОНИЗАЦИЯ ПРЕРВАНА:");
+    if (error instanceof z.ZodError) {
+      console.error(
+        "⚠️ Нарушен контракт ответа API:",
+        JSON.stringify(error.format()),
+      );
+    } else if (error instanceof Error) {
+      console.error("⚠️ Системная ошибка:", error.message);
+    }
+    return { success: false, error: "Sync Failed" };
+  }
+}
+
+// === ИНТЕГРАЦИЯ ЦЕН WB ===
+
+const WB_PRICES_API_URL = "https://discounts-prices-api.wildberries.ru";
+
+// Хелпер для запросов к API цен (Тут используется GET)
+async function fetchWbPricesApi(endpoint: string) {
+  const res = await fetch(`${WB_PRICES_API_URL}${endpoint}`, {
+    method: "GET",
+    headers: {
+      Authorization: serverEnv.WB_API_KEY,
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error(`[WB PRICES ERROR] ${endpoint} -> ${res.status}:`, errorText);
+    throw new Error(`WB API HTTP Error: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function syncWbPrices(
+  options: { debug?: boolean; dryRun?: boolean } = {},
+) {
+  const { debug = false, dryRun = false } = options;
+
+  try {
+    if (debug)
+      console.log(`🚀 [WB ЦЕНЫ] Запуск выгрузки... (Dry Run: ${dryRun})`);
+
+    // 👇 Достаем все наши артикулы из БД для сверки
+    const localProducts = await db
+      .select({ article: products.itemArticle })
+      .from(products);
+
+    let offset = 0;
+    const limit = 1000;
+    let hasMore = true;
+    const allPrices: { article: string; price: number }[] = [];
+
+    // 1. Выгружаем все цены с пагинацией
+    while (hasMore) {
+      if (debug)
+        console.log(`🔄 [WB ЦЕНЫ] Запрашиваем блок (offset: ${offset})...`);
+
+      const rawData = await fetchWbPricesApi(
+        `/api/v2/list/goods/filter?limit=${limit}&offset=${offset}`,
+      );
+      const parsed = wbPricesResponseSchema.parse(rawData);
+      const goods = parsed.data.listGoods;
+
+      if (goods.length === 0) {
+        hasMore = false;
+        break;
+      }
+
+      for (const item of goods) {
+        const discountedPrice = item.sizes[0]?.discountedPrice;
+        if (discountedPrice !== undefined) {
+          allPrices.push({
+            article: item.vendorCode,
+            price: Math.round(discountedPrice), // Наше округление
+          });
+        }
+      }
+
+      if (goods.length < limit) {
+        hasMore = false;
+      } else {
+        offset += limit;
+        await new Promise((res) => setTimeout(res, 300));
+      }
+    }
+
+    // 👇 1.5 ОБРАТНАЯ СВЕРКА
+    if (debug) {
+      const wbArticles = new Set(allPrices.map((p) => p.article));
+      const localArticles = new Set(localProducts.map((p) => p.article));
+
+      const missingInDb = allPrices.filter(
+        (p) => !localArticles.has(p.article),
+      );
+      const missingOnWb = localProducts.filter(
+        (p) => !wbArticles.has(p.article),
+      );
+
+      if (missingInDb.length > 0) {
+        console.log(
+          `\n⚠️ [WB ЦЕНЫ] На WB есть цены для ${missingInDb.length} товаров, которых НЕТ в нашей базе:`,
+        );
+        console.table(
+          missingInDb.map((i) => ({ "Артикул WB": i.article, Цена: i.price })),
+        );
+      }
+
+      if (missingOnWb.length > 0) {
+        console.log(
+          `\n🔎 [WB ЦЕНЫ] В нашей БД есть ${missingOnWb.length} товаров, которых НЕТ в выгрузке цен WB:`,
+        );
+        console.table(missingOnWb.map((i) => ({ "Наш Артикул": i.article })));
+      }
+
+      if (missingInDb.length === 0 && missingOnWb.length === 0) {
+        console.log(
+          `\n🎉 [WB ЦЕНЫ] Идеально! Базы данных полностью синхронизированы (1:1).`,
+        );
+      }
+    }
+
+    if (debug) {
+      console.log(`\n📦 [WB ЦЕНЫ] Загружено товаров с WB: ${allPrices.length}`);
+    }
+
+    if (dryRun) {
+      if (debug) console.log("🛑 [WB ЦЕНЫ] DRY RUN АКТИВЕН: Запись пропущена.");
+      return { success: true, synced: allPrices.length, data: allPrices };
+    }
+
+    // 2. Запись в БД
+    const chunks = chunkArray(allPrices, 100);
+    await db.transaction(async (tx) => {
+      for (const chunk of chunks) {
+        await Promise.all(
+          chunk.map((item) =>
+            tx
+              .update(products)
+              .set({ wbDiscountedPrice: item.price })
+              .where(eq(products.itemArticle, item.article)),
+          ),
+        );
+      }
+    });
+
+    if (debug) console.log(`✅ [DB] Цены успешно обновлены в базе!`);
+    return { success: true, synced: allPrices.length };
+  } catch (error: unknown) {
+    console.error("\n❌ [WB ЦЕНЫ] СИНХРОНИЗАЦИЯ ПРЕРВАНА:");
     if (error instanceof z.ZodError) {
       console.error(
         "⚠️ Нарушен контракт ответа API:",

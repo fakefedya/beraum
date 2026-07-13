@@ -50,6 +50,13 @@
       "when": 1783686716148,
       "tag": "0006_first_ronan",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1783924008036,
+      "tag": "0007_white_sprite",
+      "breakpoints": true
     }
   ]
 }

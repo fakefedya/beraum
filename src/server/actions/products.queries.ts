@@ -32,7 +32,7 @@ export async function getProducts(params: GetProductsParams = {}) {
     const rowPriceSql = sql`COALESCE(
       (SELECT MIN(NULLIF(v, 0)) FROM (
         VALUES 
-          (${products.basePrice}), 
+          (${products.wbDiscountedPrice}), 
           (${products.manualPrice})
       ) AS t(v)), 
       0
@@ -113,8 +113,7 @@ export async function getProducts(params: GetProductsParams = {}) {
     'isLatest', COALESCE(${products.isLatest}, false),
     'price', ${rowPriceSql},
     'stock', (
-      COALESCE(${products.manualStock}, 0) + 
-      COALESCE(${products.baseStock}, 0) + 
+      COALESCE(${products.manualStock}, 0) +
       COALESCE(${products.ozonStockFbo}, 0) + 
       COALESCE(${products.fbsStock}, 0)
     )

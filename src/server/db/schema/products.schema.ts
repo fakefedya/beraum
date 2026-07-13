@@ -28,8 +28,6 @@ export const products = pgTable(
     isLatest: boolean("is_latest").default(false).notNull(),
     colorName: text("color_name"),
 
-    basePrice: integer("base_price").notNull().default(0),
-    baseStock: integer("base_stock").notNull().default(0),
     manualPrice: integer("manual_price"),
     manualStock: integer("manual_stock"),
 
@@ -39,6 +37,10 @@ export const products = pgTable(
     wbLink: text("wb_link"),
     fbsStock: integer("fbs_stock"),
     wbChrtId: integer("wb_chrt_id"),
+
+    wbDiscountedPrice: integer("wb_discounted_price"),
+    ymarketLink: text("ymarket_link"),
+    mvideoLink: text("mvideo_link"),
 
     weightNetto: integer("weight_netto"),
     weightBrutto: integer("weight_brutto"),
