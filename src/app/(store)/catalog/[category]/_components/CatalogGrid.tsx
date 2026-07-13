@@ -85,10 +85,10 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
           </h2>
           {activeVariant.price > 0 ? (
             <span className="mt-8">
-              {activeVariant.price.toLocaleString("ru-RU")} ₽
+              от {activeVariant.price.toLocaleString("ru-RU")} ₽
             </span>
           ) : (
-            <span>По запросу</span>
+            <span className="mt-8">По запросу</span>
           )}
         </div>
       </div>

@@ -30,13 +30,10 @@ export async function getProducts(params: GetProductsParams = {}) {
     const conditions = [eq(products.status, "published")];
 
     const rowPriceSql = sql`COALESCE(
-      (SELECT MIN(NULLIF(v, 0)) FROM (
-        VALUES 
-          (${products.wbDiscountedPrice}), 
-          (${products.manualPrice})
-      ) AS t(v)), 
-      0
-    )`;
+  NULLIF(${products.wbDiscountedPrice}, 0), -- Приоритет 1: Цена WB (если не 0 и не NULL)
+  NULLIF(${products.manualPrice}, 0),       -- Приоритет 2: Ручная цена (если не 0 и не NULL)
+  0                                         -- Приоритет 3: Дефолт (По запросу)
+)`;
 
     // 3. Формируем массив условий сортировки
     const orderConditions = [];

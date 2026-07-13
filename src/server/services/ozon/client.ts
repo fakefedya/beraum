@@ -32,7 +32,7 @@ async function fetchOzonApi(endpoint: string, body: Record<string, unknown>) {
 export async function syncOzonStocks(
   options: { debug?: boolean; dryRun?: boolean } = {},
 ) {
-  const { debug = false, dryRun = false } = options; // Значения по умолчанию
+  const { debug = false, dryRun = false } = options;
 
   try {
     if (debug)
@@ -43,7 +43,6 @@ export async function syncOzonStocks(
     let pageCount = 0;
     const allStocks: NormalizedStock[] = [];
 
-    // 1. Извлечение данных (Pagination) - логика остается без изменений
     while (hasMore) {
       pageCount++;
       if (debug) console.log(`🔄 [OZON] Запрос страницы ${pageCount}...`);
@@ -99,11 +98,9 @@ export async function syncOzonStocks(
         console.log(
           "🛑 [OZON] DRY RUN АКТИВЕН: Пропускаем запись в базу данных.",
         );
-      // Возвращаем сами данные, чтобы их можно было увидеть в Postman/Браузере
       return { success: true, synced: allStocks.length, data: allStocks };
     }
 
-    // 3. Боевая запись в БД
     const dbResult = await updateStocksInDb(allStocks, debug);
 
     if (!dbResult.success) {
