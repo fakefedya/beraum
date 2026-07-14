@@ -27,24 +27,23 @@ const getProductByArticleSchema = z.object({
 export type GetProductsParams = z.input<typeof getProductsSchema>;
 export type CatalogProduct = Awaited<ReturnType<typeof getProducts>>["data"][0];
 
+const computedPriceSql = sql<number>`COALESCE(
+  NULLIF(${products.wbDiscountedPrice}, 0), -- Приоритет 1: Цена WB
+  NULLIF(${products.manualPrice}, 0),       -- Приоритет 2: Ручная цена
+  0                                         -- Приоритет 3: Дефолт
+)`;
+
 export async function getProducts(params: GetProductsParams = {}) {
   try {
     const { limit, offset, categorySlug, filters, sort } =
       getProductsSchema.parse(params);
     const conditions = [eq(products.status, "published")];
-
-    const rowPriceSql = sql`COALESCE(
-  NULLIF(${products.wbDiscountedPrice}, 0), -- Приоритет 1: Цена WB (если не 0 и не NULL)
-  NULLIF(${products.manualPrice}, 0),       -- Приоритет 2: Ручная цена (если не 0 и не NULL)
-  0                                         -- Приоритет 3: Дефолт (По запросу)
-)`;
-
     const orderConditions = [];
 
     if (sort === "price_asc") {
-      orderConditions.push(asc(sql`MIN(${rowPriceSql})`));
+      orderConditions.push(asc(sql`MIN(${computedPriceSql})`));
     } else if (sort === "price_desc") {
-      orderConditions.push(desc(sql`MIN(${rowPriceSql})`));
+      orderConditions.push(desc(sql`MIN(${computedPriceSql})`));
     } else {
       orderConditions.push(desc(sql`BOOL_OR(${products.isLatest})`));
       orderConditions.push(desc(sql`MAX(${products.createdAt})`));
@@ -105,7 +104,7 @@ export async function getProducts(params: GetProductsParams = {}) {
     'itemArticle', ${products.itemArticle},
     'colorName', ${products.colorName},
     'isLatest', COALESCE(${products.isLatest}, false),
-    'price', ${rowPriceSql},
+    'price', ${computedPriceSql},
     'stock', (
       COALESCE(${products.manualStock}, 0) +
       COALESCE(${products.ozonStockFbo}, 0) + 
@@ -145,8 +144,7 @@ export async function getProductByArticle(rawArticle: string) {
         categoryTitle: categories.titleRu,
         isLatest: products.isLatest,
         specifications: products.specifications,
-        manualPrice: products.manualPrice,
-        wbDiscountedPrice: products.wbDiscountedPrice,
+        price: computedPriceSql.as("price"),
         ozonLink: products.ozonLink,
         ozonStockFbo: products.ozonStockFbo,
         wbLink: products.wbLink,

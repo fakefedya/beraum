@@ -23,7 +23,6 @@ export default async function ProductPage({ params }: PageProps) {
   const product = response.data;
 
   // Логика цены и стоков
-  const price = product.wbDiscountedPrice || product.manualPrice || 0;
   const ozonStock = product.ozonStockFbo || 0;
   const fbsStock = product.fbsStock || 0;
 
@@ -87,8 +86,8 @@ export default async function ProductPage({ params }: PageProps) {
               </h1>
 
               <div className="mt-2 text-3xl font-semibold">
-                {price > 0
-                  ? `${price.toLocaleString("ru-RU")} ₽`
+                {product.price > 0
+                  ? `${product.price.toLocaleString("ru-RU")} ₽`
                   : "По запросу"}
               </div>
             </div>
