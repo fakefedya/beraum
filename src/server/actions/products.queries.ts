@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { eq, desc, asc, and, sql, or } from "drizzle-orm";
+import { eq, desc, asc, and, sql, or, ilike } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
 import { products, categories } from "@/src/server/db/schema"; // Читаем из index.ts
 import { CATEGORY_FILTERS } from "@/src/lib/constants";
@@ -15,9 +15,13 @@ const getProductsSchema = z.object({
   filters: z.record(z.string(), filterValueSchema).optional(),
   sort: z
     .union([z.string(), z.array(z.string())])
-    .transform((val) => (Array.isArray(val) ? val[0] : val)) // Берем первый параметр, если их несколько
-    .pipe(z.enum(["newest", "price_asc", "price_desc"]).catch("newest")) // Если пришел мусор, падаем на newest
+    .transform((val) => (Array.isArray(val) ? val[0] : val))
+    .pipe(z.enum(["newest", "price_asc", "price_desc"]).catch("newest"))
     .default("newest"),
+});
+
+const getProductByArticleSchema = z.object({
+  article: z.string().min(1).max(50).trim(),
 });
 
 export type GetProductsParams = z.input<typeof getProductsSchema>;
@@ -35,16 +39,13 @@ export async function getProducts(params: GetProductsParams = {}) {
   0                                         -- Приоритет 3: Дефолт (По запросу)
 )`;
 
-    // 3. Формируем массив условий сортировки
     const orderConditions = [];
 
     if (sort === "price_asc") {
-      // Ищем минимальную цену среди всех цветов модели и сортируем по возрастанию
       orderConditions.push(asc(sql`MIN(${rowPriceSql})`));
     } else if (sort === "price_desc") {
       orderConditions.push(desc(sql`MIN(${rowPriceSql})`));
     } else {
-      // По умолчанию: сначала новинки, затем свежие
       orderConditions.push(desc(sql`BOOL_OR(${products.isLatest})`));
       orderConditions.push(desc(sql`MAX(${products.createdAt})`));
     }
@@ -61,16 +62,13 @@ export async function getProducts(params: GetProductsParams = {}) {
       conditions.push(eq(products.categoryId, category.id));
     }
 
-    // === БЕЗОПАСНАЯ ФИЛЬТРАЦИЯ И РЕШЕНИЕ ОШИБКИ TS ===
     if (filters && categorySlug && CATEGORY_FILTERS[categorySlug]) {
       const allowedFilters = CATEGORY_FILTERS[categorySlug];
 
       for (const [key, value] of Object.entries(filters)) {
-        // ИБ: Проверяем, есть ли присланный ключ в нашем конфиге для этой категории
         const filterConfig = allowedFilters.find((f) => f.key === key);
         if (!filterConfig) continue;
 
-        // Приводим все к массиву для унификации логики
         const valuesArray = Array.isArray(value) ? value : [value];
 
         if (valuesArray.length > 0) {
@@ -78,7 +76,6 @@ export async function getProducts(params: GetProductsParams = {}) {
             (val) => sql`${products.filters}->>${key} = ${val}`,
           );
 
-          // Явная проверка на undefined удовлетворяет строгую типизацию TypeScript
           const orClause = or(...orConditions);
           if (orClause) {
             conditions.push(orClause);
@@ -130,5 +127,66 @@ export async function getProducts(params: GetProductsParams = {}) {
   } catch (error) {
     console.error("❌ Ошибка Server Action (getProducts):", error);
     return { success: false, error: "Ошибка при загрузке каталога", data: [] };
+  }
+}
+
+export async function getProductByArticle(rawArticle: string) {
+  try {
+    const { article } = getProductByArticleSchema.parse({
+      article: rawArticle,
+    });
+
+    const [product] = await db
+      .select({
+        id: products.id,
+        siteArticle: products.siteArticle,
+        itemArticle: products.itemArticle,
+        colorName: products.colorName,
+        categoryTitle: categories.titleRu,
+        isLatest: products.isLatest,
+        specifications: products.specifications,
+        manualPrice: products.manualPrice,
+        wbDiscountedPrice: products.wbDiscountedPrice,
+        ozonLink: products.ozonLink,
+        ozonStockFbo: products.ozonStockFbo,
+        wbLink: products.wbLink,
+        ymarketLink: products.ymarketLink,
+        mvideoLink: products.mvideoLink,
+        fbsStock: products.fbsStock,
+      })
+      .from(products)
+      .leftJoin(categories, eq(products.categoryId, categories.id))
+      .where(
+        and(
+          eq(products.status, "published"),
+          ilike(products.itemArticle, article),
+        ),
+      )
+      .limit(1);
+
+    if (!product) return { success: false, error: "Товар не найден" };
+
+    const variants = await db
+      .select({
+        id: products.id,
+        itemArticle: products.itemArticle,
+        colorName: products.colorName,
+        ozonStockFbo: products.ozonStockFbo,
+        fbsStock: products.fbsStock,
+        manualStock: products.manualStock,
+      })
+      .from(products)
+      .where(
+        and(
+          eq(products.status, "published"),
+          eq(products.siteArticle, product.siteArticle),
+        ),
+      )
+      .orderBy(products.itemArticle);
+
+    return { success: true, data: { ...product, variants } };
+  } catch (error) {
+    console.error("❌ Ошибка Server Action (getProductByArticle):", error);
+    return { success: false, error: "Недопустимый запрос" };
   }
 }

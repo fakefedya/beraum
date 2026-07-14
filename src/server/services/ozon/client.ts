@@ -29,6 +29,7 @@ async function fetchOzonApi(endpoint: string, body: Record<string, unknown>) {
  * @param options.debug Включает подробное логирование
  * @param options.dryRun Холостой прогон: скачивает, но НЕ пишет в БД. Возвращает данные.
  */
+
 export async function syncOzonStocks(
   options: { debug?: boolean; dryRun?: boolean } = {},
 ) {
