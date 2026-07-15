@@ -28,7 +28,7 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
 
   return (
     <article className="hover:border-brand transition-border group bg-card relative rounded-4xl border-2 border-transparent p-7 duration-300">
-      <div className="flex flex-col gap-4">
+      <div className="relative flex flex-col gap-4">
         <div className="bg-accent flex aspect-4/5 items-center justify-center rounded-xl"></div>
         <div
           className="z-1 flex items-center justify-center gap-1.5"
@@ -62,27 +62,7 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
             </span>
           )}
         </div>
-
         <div className="mt-4 flex flex-col gap-0">
-          <div className="flex h-[22] items-center gap-2">
-            {activeVariant.isLatest && (
-              <Badge className="bg-brand text-foreground px-1 py-px text-[10px] leading-normal font-medium uppercase">
-                Новинка
-              </Badge>
-            )}
-            {/* {activeVariant.isLatest && activeVariant.stock <= 0 && (
-              <span
-                className="h-1 w-1 rounded-full bg-black/20"
-                aria-hidden="true"
-              />
-            )} */}
-
-            {activeVariant.stock <= 0 && (
-              <Badge className="bg-background text-foreground px-1 py-px text-xs leading-normal font-medium">
-                Под заказ
-              </Badge>
-            )}
-          </div>
           <h2 className="font-medium">
             {product.categoryTitle} {product.siteArticle}
           </h2>
@@ -92,6 +72,19 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
             </span>
           ) : (
             <span className="mt-8">По запросу</span>
+          )}
+        </div>
+        <div className="absolute top-0 right-0 flex items-center gap-2">
+          {activeVariant.isLatest && (
+            <Badge className="bg-brand text-foreground px-1 py-px text-xs leading-normal font-medium uppercase">
+              Новинка
+            </Badge>
+          )}
+
+          {activeVariant.stock <= 0 && (
+            <Badge className="bg-background text-foreground px-1 py-px text-xs leading-normal font-medium uppercase">
+              Под заказ
+            </Badge>
           )}
         </div>
       </div>
