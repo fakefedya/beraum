@@ -10,6 +10,7 @@ import {
 } from "@/src/server/actions/products.queries";
 import { Button } from "@/src/components/ui/button";
 import { COLOR_SWATCH_MAP, DEFAULT_SWATCH_COLOR } from "@/src/lib/constants";
+import { Badge } from "@/src/components/ui/badge";
 
 const LIMIT = 12;
 const VISIBLE_COLORS_LIMIT = 4;
@@ -26,7 +27,7 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
   const hiddenCount = product.variants.length - VISIBLE_COLORS_LIMIT;
 
   return (
-    <article className="transition-[shadow transform] group shadow-card hover:shadow-card-hover relative scale-100 rounded-4xl bg-white p-7 duration-300 ease-[cubic-bezier(0,0,0.5,1)] hover:scale-[1.01]">
+    <article className="hover:border-brand transition-border group bg-card relative rounded-4xl border-2 border-transparent p-7 duration-300">
       <div className="flex flex-col gap-4">
         <div className="bg-accent flex aspect-4/5 items-center justify-center rounded-xl"></div>
         <div
@@ -63,28 +64,30 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
         </div>
 
         <div className="mt-4 flex flex-col gap-0">
-          <div className="flex h-4 items-center gap-2">
+          <div className="flex h-[22] items-center gap-2">
             {activeVariant.isLatest && (
-              <span className="text-latest text-xs font-medium">Новинка</span>
+              <Badge className="bg-brand text-foreground px-1 py-px text-[10px] leading-normal font-medium uppercase">
+                Новинка
+              </Badge>
             )}
-            {activeVariant.isLatest && activeVariant.stock <= 0 && (
+            {/* {activeVariant.isLatest && activeVariant.stock <= 0 && (
               <span
                 className="h-1 w-1 rounded-full bg-black/20"
                 aria-hidden="true"
               />
-            )}
+            )} */}
 
             {activeVariant.stock <= 0 && (
-              <span className="text-out-of-stock text-xs font-medium">
+              <Badge className="bg-background text-foreground px-1 py-px text-xs leading-normal font-medium">
                 Под заказ
-              </span>
+              </Badge>
             )}
           </div>
           <h2 className="font-medium">
             {product.categoryTitle} {product.siteArticle}
           </h2>
           {activeVariant.price > 0 ? (
-            <span className="mt-8">
+            <span className="text-muted-foreground mt-8">
               от {activeVariant.price.toLocaleString("ru-RU")} ₽
             </span>
           ) : (
@@ -180,7 +183,7 @@ export const CatalogGrid = ({
 
   return (
     <div className="flex w-full flex-col items-center gap-12">
-      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+      <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
         {products.map((product) => (
           <ProductCard key={product.siteArticle} product={product} />
         ))}

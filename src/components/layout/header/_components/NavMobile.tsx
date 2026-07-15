@@ -41,7 +41,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
         <Button
           variant="transparent"
           size="icon-xs"
-          className="[&_svg:size-6] text-black-muted transition-colors duration-300 xl:hidden"
+          className="[&_svg:size-6] text-muted-foreground transition-colors duration-300 xl:hidden"
           aria-label="Открыть меню"
         >
           <Menu />
@@ -50,24 +50,24 @@ export const NavMobile = ({ links }: NavMobileProps) => {
 
       <SheetContent
         side="left"
-        className="flex w-full flex-col gap-0 border-none bg-white px-7 pt-21 pb-8 sm:max-w-full"
+        className="bg-background flex w-full flex-col gap-0 border-none px-7 pt-21 pb-8 sm:max-w-full"
       >
         <SheetTitle className="sr-only">Навигация по сайту</SheetTitle>
 
         <div
           className={cn(
             "absolute top-4 left-4 h-12 rounded-full p-1",
-            isDiscount ? "bg-brand" : "bg-glass",
+            isDiscount ? "bg-brand" : "bg-frosted-glass",
           )}
         >
           <div
             className={cn(
               "flex h-full items-center justify-center rounded-full px-3",
-              isDiscount ? "bg-white" : "bg-brand",
+              isDiscount ? "bg-background" : "bg-brand",
             )}
           >
             {isDiscount ? (
-              <span className="text-lg font-medium text-black">Дисконт</span>
+              <span className="text-lg font-medium">Дисконт</span>
             ) : (
               <Icons.logo className="h-4 w-fit stroke-current stroke-[0.25] [shape-rendering:crispEdges]" />
             )}
@@ -83,18 +83,18 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                   return (
                     <div
                       key={`mobile-nav-${idx}`}
-                      className="border-b border-black/5 py-4 last:border-0"
+                      className="border-border border-b py-4 last:border-0"
                     >
                       <Link
                         href={link.href}
                         target={isExt ? link.target : "_self"}
                         rel={isExt ? "noopener noreferrer" : undefined}
                         onClick={() => setIsOpen(false)}
-                        className="flex items-center justify-between text-lg font-medium text-black outline-none focus-visible:ring-2 focus-visible:ring-black/20"
+                        className="flex items-center justify-between text-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-black/20"
                       >
                         {link.label}
                         {isExt && (
-                          <ExternalLink className="stroke-black-muted size-3.5" />
+                          <ExternalLink className="stroke-muted-foreground size-3.5" />
                         )}
                       </Link>
                     </div>
@@ -105,9 +105,9 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                   <AccordionItem
                     value={`item-${idx}`}
                     key={`mobile-nav-${idx}`}
-                    className="border-black/5"
+                    className="border-border"
                   >
-                    <AccordionTrigger className="py-4 text-lg font-medium text-black hover:no-underline">
+                    <AccordionTrigger className="py-4 text-lg font-medium hover:no-underline">
                       {link.label}
                     </AccordionTrigger>
                     <AccordionContent className="flex flex-col pt-1 pb-4">
@@ -119,39 +119,31 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                                 key={subItem.href}
                                 href={subItem.href}
                                 onClick={() => setIsOpen(false)}
-                                className="text-black-muted font-base flex flex-col-reverse items-start text-base transition-colors outline-none hover:text-black focus-visible:ring-2 focus-visible:ring-black/20"
+                                className="text-muted-foreground font-base hover:text-foreground flex flex-col-reverse items-start text-base transition-colors outline-none focus-visible:ring-2 focus-visible:ring-black/20"
                               >
                                 {subItem.label}
-                                {subItem.isNew && (
-                                  <span className="text-brand text-xs leading-3 font-medium">
-                                    Новые модели
-                                  </span>
-                                )}
                               </Link>
                             ))}
                           </div>
 
-                          <div className="mt-2 flex flex-col gap-3 border-t border-black/5 pt-4 md:grid md:grid-cols-3">
+                          <div className="border-border mt-2 flex flex-col gap-3 border-t pt-4 md:grid md:grid-cols-3">
                             {link.promoCards.map((card) => (
                               <Link
                                 key={card.href}
                                 href={card.href}
                                 onClick={() => setIsOpen(false)}
-                                className="hover:border-brand relative flex items-end rounded-xl border-2 border-transparent bg-gray-50 transition-colors duration-300"
+                                className="hover:border-brand bg-card relative flex items-end rounded-xl border-2 border-transparent transition-colors duration-300"
                               >
                                 <div className="absolute bottom-2 left-2 flex flex-col gap-0 p-2">
-                                  <span className="font-medium text-black">
+                                  <span className="font-medium">
                                     {card.label}
                                   </span>
-                                  <span className="text-black-muted">
+                                  <span className="text-muted-foreground">
                                     {card.description}
                                   </span>
                                 </div>
                                 {card.isNew && (
-                                  <Badge
-                                    variant={"new"}
-                                    className="absolute top-4 right-4"
-                                  >
+                                  <Badge className="bg-brand text-foreground absolute top-4 right-4 uppercase">
                                     Новинка
                                   </Badge>
                                 )}
@@ -167,7 +159,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                               key={subItem.href}
                               href={subItem.href}
                               onClick={() => setIsOpen(false)}
-                              className="text-black-muted text-base font-normal transition-colors outline-none hover:text-black focus-visible:ring-2 focus-visible:ring-black/20"
+                              className="text-muted-foreground text-base font-normal transition-colors outline-none hover:text-black focus-visible:ring-2 focus-visible:ring-black/20"
                             >
                               {subItem.label}
                             </Link>
@@ -181,8 +173,8 @@ export const NavMobile = ({ links }: NavMobileProps) => {
             </Accordion>
           </div>
 
-          <div className="mt-auto border-t border-black/5 bg-white pt-6 pb-12">
-            <span className="text-black-muted mb-6 block text-lg font-medium">
+          <div className="bg-background mt-auto pt-6 pb-12">
+            <span className="border-border mb-6 block border-b pb-4 text-lg font-medium">
               Где купить
             </span>
             <div className="grid grid-cols-2 gap-3">
@@ -194,12 +186,10 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                     href={market.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-glass flex items-center gap-3 rounded-xl p-1 transition-colors outline-none hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-black/20"
+                    className="bg-card flex items-center gap-3 rounded-xl p-1 transition-colors outline-none hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-black/20"
                   >
-                    <Icon className="size-12 shrink-0 text-black" />
-                    <span className="text-sm font-medium text-black">
-                      {market.label}
-                    </span>
+                    <Icon className="size-12 shrink-0" />
+                    <span className="text-sm font-medium">{market.label}</span>
                   </a>
                 );
               })}

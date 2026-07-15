@@ -63,14 +63,9 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                 <NavigationMenuLink asChild className="flex-col-reverse">
                   <Link
                     href={link.href}
-                    className="color-black transition-300 flex items-start gap-0 rounded-xl p-4 text-base font-medium hover:bg-gray-50"
+                    className="transition-300 hover:bg-hover-background/80 flex items-start gap-0 rounded-xl p-4 text-base font-medium"
                   >
                     {link.label}
-                    {link.isNew && (
-                      <span className="text-latest text-xs leading-3 font-medium">
-                        Новые модели
-                      </span>
-                    )}
                   </Link>
                 </NavigationMenuLink>
               </li>
@@ -83,25 +78,19 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                 <NavigationMenuLink asChild>
                   <Link
                     href={card.href}
-                    className="hover:border-brand relative flex h-full items-end rounded-xl border-2 border-transparent bg-gray-50 transition-colors duration-300"
+                    className="hover:border-brand bg-card relative flex h-full items-end rounded-xl border-2 border-transparent transition-colors duration-300"
                   >
                     <div className="flex flex-col gap-0 p-4">
-                      <span className="font-medium text-black">
-                        {card.label}
-                      </span>
-                      <span className="text-black-muted">
+                      <span className="font-medium">{card.label}</span>
+                      <span className="text-muted-foreground">
                         {card.description}
                       </span>
                     </div>
                     {card.isNew && (
-                      <Badge
-                        variant={"latest"}
-                        className="absolute top-4 right-4"
-                      >
+                      <Badge className="bg-brand text-foreground absolute top-4 right-4 font-medium uppercase">
                         Новинка
                       </Badge>
                     )}
-                    <div className="absolute inset-0 z-0 flex items-end justify-end p-2 text-black opacity-20 transition-opacity group-hover:opacity-40"></div>
                   </Link>
                 </NavigationMenuLink>
               </li>
@@ -135,14 +124,11 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
               <NavigationMenuLink asChild>
                 <Link
                   href={subItem.href}
-                  className="hover:border-brand relative flex h-full items-start rounded-xl border-2 border-transparent bg-gray-50 transition-colors duration-300"
+                  className="hover:border-brand bg-card relative flex h-full items-start rounded-xl border-2 border-transparent transition-colors duration-300"
                 >
                   <div className="flex flex-col gap-0 p-4">
-                    <span className="font-medium text-black">
-                      {subItem.label}
-                    </span>
+                    <span className="font-medium">{subItem.label}</span>
                   </div>
-                  <div className="absolute inset-0 z-0 flex items-end justify-end p-2 text-black opacity-20 transition-opacity group-hover:opacity-40"></div>
                 </Link>
               </NavigationMenuLink>
             </li>
@@ -168,16 +154,19 @@ const LinkNode = ({ item }: { item: NavLink | NavExternal }) => {
             rel={rel}
             className={cn(
               navigationMenuTriggerStyle(),
-              "gap-1.5 bg-transparent",
+              "group text-muted-foreground hover:stroke-foreground gap-1.5 bg-transparent",
             )}
           >
             {item.label}
-            <ExternalLink className="stroke-black-muted size-3.5" />
+            <ExternalLink className="transition-stroke group-hover:stroke-foreground stroke-muted-foreground size-3.5 duration-300" />
           </a>
         ) : (
           <Link
             href={item.href}
-            className={cn(navigationMenuTriggerStyle(), "bg-transparent")}
+            className={cn(
+              navigationMenuTriggerStyle(),
+              "text-muted-foreground bg-transparent",
+            )}
           >
             {item.label}
           </Link>

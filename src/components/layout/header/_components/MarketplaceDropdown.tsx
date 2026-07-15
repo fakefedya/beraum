@@ -41,7 +41,7 @@ export const MarketplaceDropdown = () => {
             <DropdownMenuItem
               key={link.label}
               asChild
-              className="group cursor-pointer rounded-lg p-4 transition-colors hover:bg-gray-50 focus:bg-gray-50"
+              className="group hover:bg-hover-background/80 focus:hover-background/80 cursor-pointer rounded-lg p-4 transition-colors"
             >
               <a
                 href={link.href}
@@ -53,10 +53,10 @@ export const MarketplaceDropdown = () => {
                   <Icon className="size-12" />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-base leading-none font-medium text-black">
+                  <span className="text-base leading-none font-medium">
                     {link.label}
                   </span>
-                  <span className="text-black-muted text-sm font-normal">
+                  <span className="text-muted-foreground text-sm font-normal">
                     {link.description}
                   </span>
                 </div>

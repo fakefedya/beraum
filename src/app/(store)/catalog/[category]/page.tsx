@@ -47,11 +47,11 @@ export default async function CategoryPage({
   return (
     <Section>
       <Container className="pt-30">
-        <div className="mb-10 flex flex-col gap-4">
+        {/* <div className="mb-10 flex flex-col gap-4">
           <h1 className="text-3xl font-medium tracking-tight">
             {response.data?.[0]?.categoryTitle || "Каталог"}
           </h1>
-        </div>
+        </div> */}
 
         {/* Лейаут: Сайдбар слева, Сетка справа */}
         <div className="flex flex-col gap-8 xl:flex-row xl:items-start">

@@ -59,7 +59,7 @@ function NavigationMenuItem({
 }
 
 const navigationMenuTriggerStyle = cva(
-  "group inline-flex h-9 w-max rounded-full flex items-center justify-center gap-1 text-base font-normal text-black-muted transition-color duration-300 outline-none hover:text-black focus:text-black focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-black data-[state=open]:focus:text-black",
+  "text-muted-foreground group inline-flex h-9 w-max rounded-full flex items-center justify-center gap-1 text-base font-normal transition-color duration-300 outline-none hover:text-black focus:text-black focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-black data-[state=open]:focus:text-black",
 );
 
 const navigationMenuContentStyle = cva("p-8 w-full");
@@ -77,7 +77,7 @@ function NavigationMenuTrigger({
     >
       {children}{" "}
       <ChevronDownIcon
-        className="relative top-[1px] size-3 transition duration-300 group-data-[state=open]:rotate-180"
+        className="relative top-px size-3 transition duration-300 group-data-[state=open]:rotate-180"
         aria-hidden="true"
       />
     </NavigationMenuPrimitive.Trigger>

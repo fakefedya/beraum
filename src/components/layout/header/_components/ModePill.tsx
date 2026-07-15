@@ -38,13 +38,13 @@ export const ModePill = () => {
       <div
         className={cn(
           "relative flex h-full items-center rounded-full p-1 backdrop-blur-2xl transition-colors duration-500 ease-out",
-          isDiscount ? "bg-brand" : "bg-glass",
+          isDiscount ? "bg-brand" : "bg-frosted-glass/40",
         )}
       >
         <div
           className={cn(
             "absolute top-1 bottom-1 left-0 rounded-full transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
-            isDiscount ? "bg-white" : "bg-brand",
+            isDiscount ? "bg-background" : "bg-brand",
           )}
           style={{
             width: `${pillStyle.width}px`,
@@ -59,8 +59,10 @@ export const ModePill = () => {
           aria-label="Главная страница"
           aria-current={!isDiscount ? "page" : undefined}
           className={cn(
-            "relative z-10 flex h-full items-center justify-center rounded-full px-3 transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none xl:px-5",
-            !isDiscount ? "text-black" : "text-brand-muted hover:text-black",
+            "focus-visible:ring-foreground relative z-10 flex h-full items-center justify-center rounded-full px-3 transition-colors duration-300 focus-visible:outline-none xl:px-5",
+            !isDiscount
+              ? "text-foreground"
+              : "text-brand-muted hover:text-foreground",
           )}
         >
           <Icons.logo className="h-4 w-fit fill-current stroke-current stroke-[0.25] [shape-rendering:crispEdges] xl:h-5" />
@@ -71,7 +73,9 @@ export const ModePill = () => {
           aria-current={isDiscount ? "page" : undefined}
           className={cn(
             "relative z-10 flex h-full items-center justify-center rounded-full px-3 text-lg font-medium tracking-wide transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none xl:px-5",
-            isDiscount ? "text-black" : "text-black-muted hover:text-black",
+            isDiscount
+              ? "text-foreground"
+              : "hover:text-foreground text-muted-foreground",
           )}
         >
           Дисконт
