@@ -115,7 +115,6 @@ export async function getProducts(params: GetProductsParams = {}) {
     'isLatest', COALESCE(${products.isLatest}, false),
     'price', ${computedPriceSql},
     'stock', (
-      COALESCE(${products.manualStock}, 0) +
       COALESCE(${products.ozonStockFbo}, 0) + 
       COALESCE(${products.fbsStock}, 0)
     )

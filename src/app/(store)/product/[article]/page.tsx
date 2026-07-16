@@ -7,6 +7,7 @@ import { COLOR_SWATCH_MAP, DEFAULT_SWATCH_COLOR } from "@/src/lib/constants";
 import { Icons } from "@/src/components/ui/icons";
 import { ProductGallery } from "./_components/ProductGallery";
 import { Badge } from "@/src/components/ui/badge";
+import { Breadcrumbs } from "@/src/components/layout/Breadcrumbs";
 
 interface PageProps {
   params: Promise<{ article: string }>;
@@ -21,12 +22,9 @@ export default async function ProductPage({ params }: PageProps) {
   }
 
   const product = response.data;
-
-  // Логика цены и стоков
   const ozonStock = product.ozonStockFbo || 0;
   const fbsStock = product.fbsStock || 0;
 
-  // Формируем список доступных маркетплейсов
   const marketplaces = [
     {
       id: "ozon",
@@ -58,25 +56,29 @@ export default async function ProductPage({ params }: PageProps) {
     },
   ].filter((mp) => mp.link && mp.stock > 0);
 
-  // Фильтруем пустые спецификации
   const validSpecs = Object.entries(product.specifications || {}).filter(
     ([_, val]) => val !== null && val !== "",
   );
 
+  const breadcrumbItems = [
+    { label: "Главная", href: "/" },
+    { label: "Каталог" },
+    { label: product.itemArticle },
+  ];
+
   return (
     <Section>
-      <Container className="pt-30">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-3 lg:items-start">
-          {/* Левая колонка: Галерея (Занимает 2/3 (66%) и прилипает к верху) */}
-          <div className="sticky top-30 z-10 h-[calc(100vh-120px)] max-h-[750px] min-h-[400px] w-full lg:col-span-2">
+      <Container className="pt-24">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:items-start">
+          <div className="sticky top-24 z-10 h-[calc(100vh-96px)] max-h-300 min-h-100 w-full lg:col-span-2">
             <ProductGallery />
           </div>
 
-          {/* Правая колонка: Информация (Занимает 1/3 (33%) и скроллится) */}
-          <div className="flex flex-col gap-8 lg:col-span-1">
+          <div className="bg-card flex flex-col gap-8 rounded-lg p-4 lg:col-span-1">
+            <Breadcrumbs items={breadcrumbItems} />
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-2">
-                {product.isLatest && <Badge variant="latest">Новинка</Badge>}
+                {product.isLatest && <Badge>Новинка</Badge>}
                 <span className="text-black-muted text-sm">
                   Арт: {product.itemArticle}
                 </span>

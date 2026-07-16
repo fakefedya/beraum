@@ -35,8 +35,7 @@ export const ProductGallery = () => {
 
   return (
     <div className="relative flex h-full w-full flex-col gap-4">
-      {/* Главный слайдер: занимает 100% высоты родителя */}
-      <div className="group relative h-full w-full overflow-hidden rounded-3xl bg-white shadow-sm">
+      <div className="group bg-card relative h-full w-full overflow-hidden rounded-lg">
         <Swiper
           modules={[Navigation, Pagination]}
           navigation
