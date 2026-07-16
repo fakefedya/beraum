@@ -6,6 +6,7 @@ import { CatalogSidebar } from "./_components/CatalogSidebar";
 import { Section } from "@/src/components/layout/Section";
 import { Container } from "@/src/components/layout/Container";
 import { EmptyState } from "@/src/components/ui/empty-state";
+import { Breadcrumbs } from "@/src/components/layout/Breadcrumbs";
 
 interface PageProps {
   params: Promise<{ category: string }>;
@@ -16,7 +17,6 @@ export default async function CategoryPage({
   params,
   searchParams,
 }: PageProps) {
-  // Асинхронно распаковываем параметры URL
   const { category } = await params;
   const resolvedSearchParams = await searchParams;
   const sort = resolvedSearchParams.sort as
@@ -24,21 +24,26 @@ export default async function CategoryPage({
     | "price_asc"
     | "price_desc";
 
-  // Очищаем undefined из searchParams перед передачей в Zod
   const filters = Object.fromEntries(
     Object.entries(resolvedSearchParams).filter(
       ([k, v]) => v !== undefined && k !== "sort",
     ),
   ) as Record<string, string | string[]>;
 
-  // Делаем SSR запрос в БД с учетом фильтров
   const response = await getProducts({
     categorySlug: category,
     limit: 12,
     offset: 0,
     sort,
-    filters, // <-- Передаем фильтры из URL в Action
+    filters,
   });
+
+  const categoryTitle = response.data?.[0]?.categoryTitle || "Каталог";
+  const breadcrumbItems = [
+    { label: "Главная", href: "/" },
+    { label: "Каталог" },
+    { label: categoryTitle },
+  ];
 
   if (!response.success && response.error === "Категория не найдена") {
     notFound();
@@ -46,14 +51,8 @@ export default async function CategoryPage({
 
   return (
     <Section>
-      <Container className="pt-30">
-        {/* <div className="mb-10 flex flex-col gap-4">
-          <h1 className="text-3xl font-medium tracking-tight">
-            {response.data?.[0]?.categoryTitle || "Каталог"}
-          </h1>
-        </div> */}
-
-        {/* Лейаут: Сайдбар слева, Сетка справа */}
+      <Container className="gap-8 pt-30">
+        <Breadcrumbs items={breadcrumbItems} />
         <div className="flex flex-col gap-8 xl:flex-row xl:items-start">
           <CatalogSidebar categorySlug={category} />
 

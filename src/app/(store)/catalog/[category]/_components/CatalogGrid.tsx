@@ -30,7 +30,7 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
       <div className="relative flex flex-col gap-4">
         <div className="bg-accent flex aspect-4/5 items-center justify-center rounded-xl"></div>
         <div
-          className="z-1 flex items-center justify-center gap-1.5"
+          className="z-1 flex items-center justify-center gap-2"
           role="radiogroup"
           aria-label="Выберите цвет"
         >
