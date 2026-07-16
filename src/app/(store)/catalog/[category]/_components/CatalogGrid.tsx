@@ -25,9 +25,8 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
 
   const visibleVariants = product.variants.slice(0, VISIBLE_COLORS_LIMIT);
   const hiddenCount = product.variants.length - VISIBLE_COLORS_LIMIT;
-
   return (
-    <article className="hover:border-brand transition-border group bg-card relative rounded-4xl border-2 border-transparent p-7 duration-300">
+    <article className="hover:border-brand transition-border group bg-card relative rounded-4xl border-2 border-transparent px-4 pt-4 pb-6 duration-300">
       <div className="relative flex flex-col gap-4">
         <div className="bg-accent flex aspect-4/5 items-center justify-center rounded-xl"></div>
         <div
@@ -63,9 +62,8 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
           )}
         </div>
         <div className="mt-4 flex flex-col gap-0">
-          <h2 className="font-medium">
-            {product.categoryTitle} {product.siteArticle}
-          </h2>
+          <h2 className="text-muted-foreground">{product.productType}</h2>
+          <h2 className="font-medium">{product.siteArticle}</h2>
           {activeVariant.price > 0 ? (
             <span className="text-muted-foreground mt-8">
               от {activeVariant.price.toLocaleString("ru-RU")} ₽
@@ -75,15 +73,14 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
           )}
         </div>
         <div className="absolute top-0 right-0 flex items-center gap-2">
-          {activeVariant.isLatest && (
-            <Badge className="bg-brand text-foreground px-1 py-px text-xs leading-normal font-medium uppercase">
-              Новинка
+          {activeVariant.stock <= 0 && (
+            <Badge className="bg-background text-foreground text-xs leading-normal font-medium uppercase">
+              Под заказ
             </Badge>
           )}
-
-          {activeVariant.stock <= 0 && (
-            <Badge className="bg-background text-foreground px-1 py-px text-xs leading-normal font-medium uppercase">
-              Под заказ
+          {activeVariant.isLatest && (
+            <Badge className="bg-brand text-foreground text-xs leading-normal font-medium uppercase">
+              Новинка
             </Badge>
           )}
         </div>

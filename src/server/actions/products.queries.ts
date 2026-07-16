@@ -33,6 +33,14 @@ const computedPriceSql = sql<number>`COALESCE(
   0                                         -- Приоритет 3: Дефолт
 )`;
 
+const productTypeSql = sql<string>`MAX(
+  CASE 
+    WHEN ${products.filters}->>'type' IS NOT NULL 
+    THEN (${products.filters}->>'type') || ' ' || LOWER(${categories.titleRu})
+    ELSE ${categories.titleRu}
+  END
+)`;
+
 export async function getProducts(params: GetProductsParams = {}) {
   try {
     const { limit, offset, categorySlug, filters, sort } =
@@ -88,6 +96,7 @@ export async function getProducts(params: GetProductsParams = {}) {
         siteArticle: products.siteArticle,
         categorySlug: categories.slug,
         categoryTitle: categories.titleRu,
+        productType: productTypeSql,
 
         variants: sql<
           {

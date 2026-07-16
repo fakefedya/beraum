@@ -9,7 +9,7 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
   hob: [
     {
       type: "oval",
-      key: "itemType",
+      key: "type",
       label: "Тип панели",
       options: ["Газовая", "Индукционная", "Электрическая"],
     },
@@ -35,7 +35,7 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
   oven: [
     {
       type: "oval",
-      key: "itemType",
+      key: "type",
       label: "Тип духовки",
       options: ["Электрическая", "Газовая"],
     },
@@ -49,7 +49,7 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
   refrigerator: [
     {
       type: "oval",
-      key: "itemFridgeType",
+      key: "type",
       label: "Тип холодильника",
       options: ["Встраиваемый", "Отдельностоящий"],
     },

@@ -43,21 +43,14 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
   const canReset = hasActiveFilters || hasActiveSort;
 
   const handleCheck = (key: string, value: string, checked: boolean) => {
-    // Копируем текущие параметры URL
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-
-    // В URL может быть несколько одинаковых ключей: ?type=A&type=B
     const existingValues = current.getAll(key);
-
-    // Удаляем все старые значения этого ключа из объекта
     current.delete(key);
 
     if (checked) {
-      // Возвращаем старые + добавляем новое
       existingValues.forEach((v) => current.append(key, v));
       current.append(key, value);
     } else {
-      // Возвращаем старые, кроме того, которое отжали
       existingValues
         .filter((v) => v !== value)
         .forEach((v) => current.append(key, v));
@@ -87,13 +80,11 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
               type="button"
               onClick={() => handleSort(option.value)}
               className={cn(
-                "border-chart-1 transition-[border, font, outline] hover:border-black-muted flex h-10 w-fit cursor-pointer items-center justify-center rounded-full border px-4 text-sm font-normal text-black duration-200 outline-none",
-                // Добавляем a11y классы для фокуса
+                "text-muted-foreground border-chart-1 transition-[border, font, outline] flex h-10 w-fit cursor-pointer items-center justify-center rounded-full border px-4 text-sm duration-200 outline-none",
                 "focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-1",
-                // Изолируем логику состояний
                 currentSort === option.value
-                  ? "border-black font-medium text-black ring-1 ring-black ring-inset"
-                  : "hover:border-black-muted",
+                  ? "border-foreground ring-foreground font-medium ring-1 ring-inset"
+                  : "border-ring hover:border-muted-foreground",
               )}
             >
               {option.label}
@@ -127,14 +118,14 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
                     aria-pressed={isChecked}
                     data-state={isChecked ? "checked" : "unchecked"}
                     className={cn(
-                      "border-chart-1 transition-[border, font, outline] hover:border-black-muted flex h-10 cursor-pointer items-center justify-center rounded-full border text-sm font-normal text-black duration-200 outline-none",
+                      "text-muted-foreground border-chart-1 transition-[border, font, outline] hover:border-black-muted border-ring hover:border-muted-foreground flex h-10 cursor-pointer items-center justify-center rounded-full border text-sm duration-200 outline-none",
 
                       filter.type === "oval" && "w-fit px-4",
                       filter.type === "round" && "w-10",
 
                       "focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-1",
                       // Состояние: Активно (выбрано)
-                      "data-[state=checked]:border-black data-[state=checked]:font-medium data-[state=checked]:ring-1 data-[state=checked]:ring-black data-[state=checked]:ring-inset",
+                      "data-[state=checked]:border-foreground data-[state=checked]:ring-foreground data-[state=checked]:text-foreground data-[state=checked]:font-medium data-[state=checked]:ring-1 data-[state=checked]:ring-inset",
                     )}
                   >
                     {opt}
