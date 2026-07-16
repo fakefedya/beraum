@@ -109,7 +109,7 @@ function NavigationMenuViewport({
   return (
     <div
       className={cn(
-        "absolute top-full left-1/2 isolate z-50 flex w-full max-w-full -translate-x-1/2 justify-center rounded-full",
+        "absolute top-full left-1/2 isolate z-50 flex w-full max-w-full -translate-x-1/2 justify-center rounded-full px-4",
       )}
     >
       <NavigationMenuPrimitive.Viewport
