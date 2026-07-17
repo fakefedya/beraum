@@ -19,6 +19,7 @@
   --color-hover-background: var(--color-zinc-100);
 
   --shadow-card: rgba(0, 0, 0, 0.1) 0px 6px 45px;
+  --shadow-button: rgba(0, 0, 0, 0.06) 0px 0px 30px 3px;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);

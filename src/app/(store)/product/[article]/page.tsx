@@ -7,7 +7,6 @@ import { COLOR_SWATCH_MAP, DEFAULT_SWATCH_COLOR } from "@/src/lib/constants";
 import { Icons } from "@/src/components/ui/icons";
 import { ProductGallery } from "./_components/ProductGallery";
 import { Badge } from "@/src/components/ui/badge";
-import { Breadcrumbs } from "@/src/components/layout/Breadcrumbs";
 
 interface PageProps {
   params: Promise<{ article: string }>;
@@ -60,12 +59,6 @@ export default async function ProductPage({ params }: PageProps) {
     ([_, val]) => val !== null && val !== "",
   );
 
-  const breadcrumbItems = [
-    { label: "Главная", href: "/" },
-    { label: "Каталог" },
-    { label: product.itemArticle },
-  ];
-
   return (
     <Section>
       <Container className="pt-24">
@@ -75,22 +68,46 @@ export default async function ProductPage({ params }: PageProps) {
           </div>
 
           <div className="bg-card flex flex-col gap-8 rounded-lg p-4 lg:col-span-1">
-            <Breadcrumbs items={breadcrumbItems} />
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-2">
-                {product.isLatest && <Badge>Новинка</Badge>}
-                <span className="text-black-muted text-sm">
-                  Арт: {product.itemArticle}
-                </span>
-              </div>
-              <h1 className="text-3xl font-medium tracking-tight md:text-4xl">
-                {product.categoryTitle} {product.siteArticle}
-              </h1>
+            <div className="flex flex-col">
+              {product.isLatest && (
+                <div className="mb-4">
+                  <Badge className="bg-brand text-foreground text-xs font-medium uppercase">
+                    Новинка
+                  </Badge>
+                </div>
+              )}
 
-              <div className="mt-2 text-3xl font-semibold">
+              <h1 className="text-muted-foreground text-lg">
+                {product.categoryTitle}
+              </h1>
+              <h1 className="text-xl font-medium tracking-tight">
+                {product.siteArticle}
+              </h1>
+              <span className="text-muted-foreground text-sm">
+                Артикул: {product.itemArticle}
+              </span>
+              {/* <div className="mt-4 text-lg font-medium">
                 {product.price > 0
-                  ? `${product.price.toLocaleString("ru-RU")} ₽`
+                  ? `<div className="flex flex-col">
+                    ${product.price.toLocaleString("ru-RU")} ₽
+                    ${Math.ceil(product.price / 6).toLocaleString("ru-RU")} ₽
+                  </div>`
                   : "По запросу"}
+              </div> */}
+              <div className="mt-4">
+                {product.price > 0 ? (
+                  <div className="flex flex-col">
+                    <span className="text-xl font-medium">
+                      от {product.price.toLocaleString("ru-RU")} ₽
+                    </span>
+                    <span className="text-muted-foreground text-sm">
+                      {Math.ceil(product.price / 6).toLocaleString("ru-RU")} ₽ x
+                      6 месяцев
+                    </span>
+                  </div>
+                ) : (
+                  "По запросу"
+                )}
               </div>
             </div>
 
@@ -131,7 +148,7 @@ export default async function ProductPage({ params }: PageProps) {
                       >
                         {/* Индикатор отсутствия стока (диагональная линия) */}
                         {!hasStock && (
-                          <span className="absolute block h-10 w-[1px] -rotate-45 bg-red-500/50" />
+                          <span className="absolute block h-10 w-px -rotate-45 bg-red-500/50" />
                         )}
                       </Link>
                     );
