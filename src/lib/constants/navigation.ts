@@ -70,13 +70,6 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
           isNew: true,
           cover: "",
         },
-        {
-          label: "HI-4CR591",
-          description: "Уникальность технологий",
-          href: "/catalog/oven",
-          isNew: true,
-          cover: "",
-        },
       ],
     },
     { label: "Коллекции", type: "link", href: "/collections" },

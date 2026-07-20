@@ -41,7 +41,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
         <Button
           variant="transparent"
           size="icon-xs"
-          className="[&_svg:size-6] text-muted-foreground transition-colors duration-300 xl:hidden"
+          className="[&_svg:size-6] text-muted-foreground transition-colors duration-300 lg:hidden"
           aria-label="Открыть меню"
         >
           <Menu />

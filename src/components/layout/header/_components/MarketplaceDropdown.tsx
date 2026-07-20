@@ -9,6 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { MARKETPLACE_LINKS } from "@/src/lib/constants";
+import { ChevronDown } from "lucide-react";
+import { cn } from "@/src/lib/utils";
 
 export const MarketplaceDropdown = () => {
   const pathname = usePathname();
@@ -22,10 +24,15 @@ export const MarketplaceDropdown = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant={isDiscount ? "white" : "brand"}
-          className="h-full cursor-pointer outline-none focus-visible:ring-[3px] focus-visible:ring-black/20"
+          variant={"gradient"}
+          className={cn(
+            "hidden h-12 items-center gap-4 rounded-[16px] text-[15px] font-semibold lg:flex",
+
+            "[&[data-state=open]>svg]:rotate-180",
+          )}
         >
           Где купить
+          <ChevronDown className="transition-transform duration-300" />
         </Button>
       </DropdownMenuTrigger>
 

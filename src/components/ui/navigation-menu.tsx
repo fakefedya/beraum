@@ -59,7 +59,7 @@ function NavigationMenuItem({
 }
 
 const navigationMenuTriggerStyle = cva(
-  "text-muted-foreground group inline-flex h-9 w-max rounded-full flex items-center justify-center gap-1 text-base font-normal transition-color duration-300 outline-none hover:text-black focus:text-black focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-black data-[state=open]:focus:text-black",
+  "text-muted-foreground group inline-flex h-9 w-max flex items-center justify-center gap-1 text-base font-normal transition-color duration-300 outline-none hover:text-black focus:text-black focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-black data-[state=open]:focus:text-black",
 );
 
 const navigationMenuContentStyle = cva("p-8 w-full");
@@ -109,7 +109,7 @@ function NavigationMenuViewport({
   return (
     <div
       className={cn(
-        "absolute top-full left-1/2 isolate z-50 flex w-full max-w-full -translate-x-1/2 justify-center rounded-full px-4",
+        "absolute top-full left-1/2 isolate z-50 flex w-full max-w-full -translate-x-1/2 justify-center rounded-full",
       )}
     >
       <NavigationMenuPrimitive.Viewport
@@ -132,7 +132,7 @@ function NavigationMenuLink({
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
       className={cn(
-        "focus-visible:ring-ring/50 flex-row items-center rounded-full text-base transition-all duration-300 outline-none hover:text-black focus:text-black focus-visible:ring-[3px] focus-visible:outline-1 data-[active=true]:text-black [&_svg]:size-3.5",
+        "focus-visible:ring-ring/50 flex-row items-center text-base transition-all duration-300 outline-none hover:text-black focus:text-black focus-visible:ring-[3px] focus-visible:outline-1 data-[active=true]:text-black [&_svg]:size-3.5",
         className,
       )}
       {...props}
@@ -148,7 +148,7 @@ function NavigationMenuIndicator({
     <NavigationMenuPrimitive.Indicator
       data-slot="navigation-menu-indicator"
       className={cn(
-        "data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:animate-in data-[state=visible]:fade-in top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden",
+        "data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:animate-in data-[state=visible]:fade-in top-full z-1 flex h-1.5 items-end justify-center overflow-hidden",
         className,
       )}
       {...props}

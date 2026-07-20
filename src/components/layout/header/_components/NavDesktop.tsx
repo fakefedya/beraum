@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
 
 import { cn } from "@/src/lib/utils";
 import {
@@ -27,10 +26,11 @@ interface NavDesktopProps {
 
 export const NavDesktop = ({ links }: NavDesktopProps) => {
   if (!links || links.length === 0) return null;
+  const internalLinks = links.filter((link) => link.type !== "external");
 
   return (
-    <NavigationMenuList className="hidden h-full gap-8 xl:flex">
-      {links.map((link, idx) => {
+    <NavigationMenuList className="bg-brand-gradient-muted hidden h-12 w-fit items-center gap-0 rounded-[16px] p-1 lg:flex">
+      {internalLinks.map((link, idx) => {
         const key = `nav-item-${idx}`;
 
         switch (link.type) {
@@ -39,7 +39,6 @@ export const NavDesktop = ({ links }: NavDesktopProps) => {
           case "default":
             return <DefaultMenuNode key={key} item={link} />;
           case "link":
-          case "external":
             return <LinkNode key={key} item={link} />;
           default: {
             const _exhaustiveCheck: never = link;
@@ -53,8 +52,16 @@ export const NavDesktop = ({ links }: NavDesktopProps) => {
 
 const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
   return (
-    <NavigationMenuItem>
-      <NavigationMenuTrigger>{item.label}</NavigationMenuTrigger>
+    <NavigationMenuItem className="flex h-full items-center">
+      <NavigationMenuTrigger
+        className={cn(
+          "text-foreground h-full rounded-[12px] px-4 text-[15px] font-medium",
+          "hover:bg-background/80",
+          "data-[state=open]:bg-background",
+        )}
+      >
+        {item.label}
+      </NavigationMenuTrigger>
       <NavigationMenuContent>
         <div className="flex gap-8">
           <ul className="flex h-full min-w-fit flex-col">
@@ -63,7 +70,11 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                 <NavigationMenuLink asChild className="flex-col-reverse">
                   <Link
                     href={link.href}
-                    className="transition-300 hover:bg-hover-background/80 flex items-start gap-0 rounded-xl p-4 text-base font-medium"
+                    className={cn(
+                      "transition-300 flex items-start gap-0 rounded-xl p-4 text-base font-medium",
+                      "hover:bg-hover-background/80",
+                      "data-[state=open]:bg-background",
+                    )}
                   >
                     {link.label}
                   </Link>
@@ -72,7 +83,7 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
             ))}
           </ul>
 
-          <ul className="grid h-auto w-full grid-cols-3 gap-3">
+          <ul className="grid h-auto w-full grid-cols-2 gap-3">
             {item.promoCards.map((card) => (
               <li key={card.href} className={"min-h-full"}>
                 <NavigationMenuLink asChild>
@@ -115,8 +126,16 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
   const gridClass = columnsMap[gridColumnCount] || "grid-cols-3";
 
   return (
-    <NavigationMenuItem>
-      <NavigationMenuTrigger>{item.label}</NavigationMenuTrigger>
+    <NavigationMenuItem className="flex h-full items-center">
+      <NavigationMenuTrigger
+        className={cn(
+          "text-foreground h-full rounded-[12px] px-4 text-[15px] font-medium",
+          "hover:bg-background/80",
+          "data-[state=open]:bg-background",
+        )}
+      >
+        {item.label}
+      </NavigationMenuTrigger>
       <NavigationMenuContent>
         <ul className={cn("grid h-full min-w-fit gap-3", gridClass)}>
           {item.items.map((subItem) => (
@@ -140,37 +159,19 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
 };
 
 const LinkNode = ({ item }: { item: NavLink | NavExternal }) => {
-  const isExternal = item.type === "external";
-  const target = isExternal ? item.target || "_self" : undefined;
-  const rel = target === "_blank" ? "noopener noreferrer" : undefined;
-
   return (
-    <NavigationMenuItem>
+    <NavigationMenuItem className="flex h-full items-center">
       <NavigationMenuLink asChild>
-        {isExternal ? (
-          <a
-            href={item.href}
-            target={target}
-            rel={rel}
-            className={cn(
-              navigationMenuTriggerStyle(),
-              "group text-muted-foreground hover:stroke-foreground gap-1.5 bg-transparent",
-            )}
-          >
-            {item.label}
-            <ExternalLink className="transition-stroke group-hover:stroke-foreground stroke-muted-foreground size-3.5 duration-300" />
-          </a>
-        ) : (
-          <Link
-            href={item.href}
-            className={cn(
-              navigationMenuTriggerStyle(),
-              "text-muted-foreground bg-transparent",
-            )}
-          >
-            {item.label}
-          </Link>
-        )}
+        <Link
+          href={item.href}
+          className={cn(
+            navigationMenuTriggerStyle(),
+            "text-foreground h-full rounded-[12px] px-4 text-[15px] font-medium",
+            "hover:bg-background/80",
+          )}
+        >
+          {item.label}
+        </Link>
       </NavigationMenuLink>
     </NavigationMenuItem>
   );
