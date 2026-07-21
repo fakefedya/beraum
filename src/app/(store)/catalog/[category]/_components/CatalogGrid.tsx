@@ -11,6 +11,7 @@ import {
 import { Button } from "@/src/components/ui/button";
 import { COLOR_SWATCH_MAP, DEFAULT_SWATCH_COLOR } from "@/src/lib/constants";
 import { Badge } from "@/src/components/ui/badge";
+import { cn } from "@/src/lib/utils";
 
 const LIMIT = 12;
 const VISIBLE_COLORS_LIMIT = 4;
@@ -26,7 +27,12 @@ const ProductCard = ({ product }: { product: CatalogProduct }) => {
   const visibleVariants = product.variants.slice(0, VISIBLE_COLORS_LIMIT);
   const hiddenCount = product.variants.length - VISIBLE_COLORS_LIMIT;
   return (
-    <article className="hover:border-brand transition-border group bg-card relative rounded-4xl border-2 border-transparent px-4 pt-4 pb-6 duration-300">
+    <article
+      className={cn(
+        "group bg-card relative rounded-4xl border-2 border-transparent px-4 pt-4 pb-6",
+        "hover:border-brand transition-border duration-300",
+      )}
+    >
       <div className="relative flex flex-col gap-4">
         <div className="bg-accent flex aspect-4/5 items-center justify-center rounded-xl"></div>
         <div
@@ -173,7 +179,12 @@ export const CatalogGrid = ({
 
   return (
     <div className="flex w-full flex-col items-center gap-12">
-      <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+      <div
+        className={cn(
+          "grid w-full grid-cols-1 gap-2",
+          "sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3",
+        )}
+      >
         {products.map((product) => (
           <ProductCard key={product.siteArticle} product={product} />
         ))}

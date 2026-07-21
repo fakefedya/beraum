@@ -26,7 +26,7 @@ export const MarketplaceDropdown = () => {
         <Button
           variant={"gradient"}
           className={cn(
-            "hidden h-12 items-center gap-2 rounded-[16px] text-base font-semibold tracking-tight",
+            "hidden h-12 items-center gap-2 rounded-[16px] text-base font-semibold",
             "lg:flex xl:gap-4 xl:px-4",
             "[&[data-state=open]>svg]:rotate-180",
           )}
@@ -60,10 +60,10 @@ export const MarketplaceDropdown = () => {
                   <Icon className="size-12" />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-base leading-none font-medium tracking-tight">
+                  <span className="text-base leading-none font-medium">
                     {link.label}
                   </span>
-                  <span className="text-foreground text-sm font-normal tracking-tight">
+                  <span className="text-foreground text-sm font-normal">
                     {link.description}
                   </span>
                 </div>

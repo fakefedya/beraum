@@ -80,9 +80,7 @@ export default async function ProductPage({ params }: PageProps) {
               <h1 className="text-muted-foreground text-lg">
                 {product.categoryTitle}
               </h1>
-              <h1 className="text-xl font-medium tracking-tight">
-                {product.siteArticle}
-              </h1>
+              <h1 className="text-xl font-medium">{product.siteArticle}</h1>
               <span className="text-muted-foreground text-sm">
                 Артикул: {product.itemArticle}
               </span>

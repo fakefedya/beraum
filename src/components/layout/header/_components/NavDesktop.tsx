@@ -60,7 +60,7 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
     <NavigationMenuItem className="flex h-full items-center">
       <NavigationMenuTrigger
         className={cn(
-          "text-foreground h-full rounded-[12px] px-2 font-medium tracking-tight",
+          "text-foreground h-full rounded-[12px] px-2 font-medium",
           "hover:bg-background/80",
           "data-[state=open]:bg-background",
           "xl:px-4",
@@ -103,15 +103,13 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                     )}
                   >
                     <div className="flex flex-col gap-0 p-4">
-                      <span className="font-medium tracking-tight">
-                        {card.label}
-                      </span>
-                      <span className="text-muted-foreground tracking-tight">
+                      <span className="font-medium">{card.label}</span>
+                      <span className="text-muted-foreground">
                         {card.description}
                       </span>
                     </div>
                     {card.isNew && (
-                      <Badge className="bg-brand-gradient text-foreground absolute top-4 right-4 font-medium tracking-tight uppercase">
+                      <Badge className="bg-brand text-foreground absolute top-4 right-4 font-medium uppercase">
                         Новинка
                       </Badge>
                     )}
@@ -142,7 +140,7 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
     <NavigationMenuItem className="flex h-full items-center">
       <NavigationMenuTrigger
         className={cn(
-          "text-foreground h-full rounded-[12px] px-2 font-medium tracking-tight",
+          "text-foreground h-full rounded-[12px] px-2 font-medium",
           "hover:bg-background/80",
           "data-[state=open]:bg-background",
           "xl:px-4",
@@ -164,9 +162,7 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
                   )}
                 >
                   <div className="flex flex-col gap-0 p-4">
-                    <span className="font-medium tracking-tight">
-                      {subItem.label}
-                    </span>
+                    <span className="font-medium">{subItem.label}</span>
                   </div>
                 </Link>
               </NavigationMenuLink>
@@ -187,7 +183,7 @@ const LinkNode = ({ item }: { item: NavLink | NavExternal }) => {
           href={item.href}
           className={cn(
             navigationMenuTriggerStyle(),
-            "text-foreground h-full rounded-[12px] px-2 font-medium tracking-tight",
+            "text-foreground h-full rounded-[12px] px-2 font-medium",
             "hover:bg-background/80",
             "xl:px-4",
           )}

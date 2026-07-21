@@ -114,7 +114,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                   >
                     <AccordionTrigger
                       className={cn(
-                        "py-4 text-lg font-medium tracking-tight",
+                        "py-4 text-lg font-medium",
                         "hover:no-underline",
                       )}
                     >
@@ -130,7 +130,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                                 href={subItem.href}
                                 onClick={() => setIsOpen(false)}
                                 className={cn(
-                                  "text-muted-foreground font-base flex flex-col-reverse items-start text-base tracking-tight outline-none",
+                                  "text-muted-foreground font-base flex flex-col-reverse items-start text-base outline-none",
                                   "focus-visible:ring-2 focus-visible:ring-black/20",
                                   "hover:text-foreground transition-colors",
                                 )}
@@ -149,15 +149,15 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                                 className="hover:border-brand bg-card relative flex items-end rounded-xl border-2 border-transparent transition-colors duration-300"
                               >
                                 <div className="absolute bottom-2 left-2 flex flex-col gap-0 p-2">
-                                  <span className="font-medium tracking-tight">
+                                  <span className="font-medium">
                                     {card.label}
                                   </span>
-                                  <span className="text-muted-foreground tracking-tight">
+                                  <span className="text-muted-foreground">
                                     {card.description}
                                   </span>
                                 </div>
                                 {card.isNew && (
-                                  <Badge className="bg-brand-gradient text-foreground absolute top-4 right-4 uppercase">
+                                  <Badge className="bg-brand text-foreground absolute top-4 right-4 uppercase">
                                     Новинка
                                   </Badge>
                                 )}

@@ -52,14 +52,11 @@ export default async function CategoryPage({
 
   return (
     <Section>
-      <Container className="gap-8 pt-40">
+      <Container className="gap-5 pt-40">
         <Breadcrumbs items={breadcrumbItems} />
-        <div
-          className={cn("flex flex-col gap-8", "xl:flex-row xl:items-start")}
-        >
+        <div className="flex flex-col gap-6">
           <CatalogSidebar categorySlug={category} />
-
-          <div className="flex-1">
+          <div className="w-full">
             {!response.success || response.data.length === 0 ? (
               <EmptyState
                 title="Товары не найдены"
