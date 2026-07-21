@@ -75,10 +75,11 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
               <li key={link.href}>
                 <NavigationMenuLink asChild className="flex-col-reverse">
                   <Link
+                    prefetch={false}
                     href={link.href}
                     className={cn(
-                      "transition-300 flex items-start gap-0 rounded-xl p-4 font-medium",
-                      "hover:bg-hover-background/80 transition-300",
+                      "flex items-start gap-0 rounded-xl p-4 font-medium duration-300",
+                      "hover:bg-hover-background/80 duration-300",
                       "data-[state=open]:bg-background",
                     )}
                   >
@@ -94,6 +95,7 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
               <li key={card.href} className="min-h-full">
                 <NavigationMenuLink asChild>
                   <Link
+                    prefetch={false}
                     href={card.href}
                     className={cn(
                       "bg-card relative flex h-full items-end rounded-xl border-2 border-transparent",
@@ -154,6 +156,7 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
             <li key={subItem.href} className={"h-full min-h-95"}>
               <NavigationMenuLink asChild>
                 <Link
+                  prefetch={false}
                   href={subItem.href}
                   className={cn(
                     "relative flex h-full items-start rounded-xl border-2 border-transparent duration-300",
@@ -180,6 +183,7 @@ const LinkNode = ({ item }: { item: NavLink | NavExternal }) => {
     <NavigationMenuItem className="flex h-full items-center">
       <NavigationMenuLink asChild>
         <Link
+          prefetch={false}
           href={item.href}
           className={cn(
             navigationMenuTriggerStyle(),

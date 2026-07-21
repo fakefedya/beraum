@@ -8,6 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/src/components/ui/breadcrumb";
+import { cn } from "@/src/lib/utils";
 
 export interface BreadcrumbType {
   label: string;
@@ -23,7 +24,7 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
   if (!items?.length) return null;
 
   return (
-    <Breadcrumb className={className}>
+    <Breadcrumb className={cn(className, "flex justify-center")}>
       <BreadcrumbList>
         {items.map((item, index) => {
           const isLast = index === items.length - 1;

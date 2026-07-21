@@ -7,6 +7,7 @@ import { Section } from "@/src/components/layout/Section";
 import { Container } from "@/src/components/layout/Container";
 import { EmptyState } from "@/src/components/ui/empty-state";
 import { Breadcrumbs } from "@/src/components/layout/Breadcrumbs";
+import { cn } from "@/src/lib/utils";
 
 interface PageProps {
   params: Promise<{ category: string }>;
@@ -51,9 +52,11 @@ export default async function CategoryPage({
 
   return (
     <Section>
-      <Container className="gap-8 pt-30">
+      <Container className="gap-8 pt-40">
         <Breadcrumbs items={breadcrumbItems} />
-        <div className="flex flex-col gap-8 xl:flex-row xl:items-start">
+        <div
+          className={cn("flex flex-col gap-8", "xl:flex-row xl:items-start")}
+        >
           <CatalogSidebar categorySlug={category} />
 
           <div className="flex-1">
