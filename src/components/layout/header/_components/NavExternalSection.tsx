@@ -7,7 +7,6 @@ import {
 import { NavExternal, NavItem } from "@/src/lib/constants";
 import { cn } from "@/src/lib/utils";
 import { ExternalLink } from "lucide-react";
-import Link from "next/link";
 
 interface NavExternalSectionProps {
   links: readonly NavItem[];
@@ -41,8 +40,9 @@ const ExternalLinkNode = ({ item }: { item: NavExternal }) => {
           rel={rel}
           className={cn(
             navigationMenuTriggerStyle(),
-            "text-foreground h-12 rounded-[14px] px-4 font-medium tracking-tight",
+            "text-foreground px-42font-medium h-12 rounded-[14px] tracking-tight",
             "hover:bg-card gap-2 [&_svg]:size-4.5",
+            "xl:px-4",
           )}
         >
           {item.label}

@@ -60,14 +60,15 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
     <NavigationMenuItem className="flex h-full items-center">
       <NavigationMenuTrigger
         className={cn(
-          "text-foreground h-full rounded-[12px] px-4 font-medium tracking-tight",
+          "text-foreground h-full rounded-[12px] px-2 font-medium tracking-tight",
           "hover:bg-background/80",
           "data-[state=open]:bg-background",
+          "xl:px-4",
         )}
       >
         {item.label}
       </NavigationMenuTrigger>
-      <NavigationMenuContent>
+      <NavigationMenuContent className="p-5">
         <div className="flex gap-8">
           <ul className="flex h-full min-w-fit flex-col">
             {item.sidebarLinks.map((link) => (
@@ -139,14 +140,15 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
     <NavigationMenuItem className="flex h-full items-center">
       <NavigationMenuTrigger
         className={cn(
-          "text-foreground h-full rounded-[12px] px-4 font-medium tracking-tight",
+          "text-foreground h-full rounded-[12px] px-2 font-medium tracking-tight",
           "hover:bg-background/80",
           "data-[state=open]:bg-background",
+          "xl:px-4",
         )}
       >
         {item.label}
       </NavigationMenuTrigger>
-      <NavigationMenuContent>
+      <NavigationMenuContent className="p-5">
         <ul className={cn("grid h-full min-w-fit gap-3", gridClass)}>
           {item.items.map((subItem) => (
             <li key={subItem.href} className={"h-full min-h-95"}>
@@ -181,8 +183,9 @@ const LinkNode = ({ item }: { item: NavLink | NavExternal }) => {
           href={item.href}
           className={cn(
             navigationMenuTriggerStyle(),
-            "text-foreground h-full rounded-[12px] px-4 font-medium tracking-tight",
+            "text-foreground h-full rounded-[12px] px-2 font-medium tracking-tight",
             "hover:bg-background/80",
+            "xl:px-4",
           )}
         >
           {item.label}

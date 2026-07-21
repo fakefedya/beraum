@@ -38,8 +38,9 @@ export const ModeSection = () => {
     >
       <div
         className={cn(
-          "bg-card relative flex h-12 items-center rounded-[16px]",
+          "bg-card relative flex h-11 items-center rounded-[16px]",
           "transition-colors duration-500 ease-out",
+          "lg:h-12",
         )}
       >
         <div
@@ -62,7 +63,7 @@ export const ModeSection = () => {
           aria-label="Главная страница"
           aria-current={!isDiscount ? "page" : undefined}
           className={cn(
-            "relative z-10 flex h-full items-center justify-center rounded-[12px] px-3",
+            "relative z-10 flex h-full items-center justify-center rounded-[12px] px-2",
             "focus-visible:ring-foreground focus-visible:outline-none",
             "transition-colors duration-300",
             "xl:px-4",
@@ -83,10 +84,10 @@ export const ModeSection = () => {
           ref={isDiscount ? activeRef : null}
           aria-current={isDiscount ? "page" : undefined}
           className={cn(
-            "relative z-10 flex h-full items-center justify-center rounded-[12px] px-3 text-lg font-semibold tracking-wide",
+            "relative z-10 flex h-full items-center justify-center rounded-[12px] px-2 text-base font-semibold tracking-wide",
             "focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none",
             "transition-colors duration-300",
-            "xl:px-4",
+            "lg:text-lg xl:px-4",
             isDiscount
               ? "text-foreground hover:bg-background/25"
               : "hover:text-foreground text-muted-foreground",

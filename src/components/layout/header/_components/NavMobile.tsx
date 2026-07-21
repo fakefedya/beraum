@@ -41,7 +41,12 @@ export const NavMobile = ({ links }: NavMobileProps) => {
         <Button
           variant="transparent"
           size="icon-xs"
-          className="[&_svg:size-6] text-muted-foreground transition-colors duration-300 lg:hidden"
+          className={cn(
+            "text-foreground",
+            "transition-colors duration-300",
+            "[&_svg:size-6]",
+            "lg:hidden",
+          )}
           aria-label="Открыть меню"
         >
           <Menu />
@@ -50,24 +55,21 @@ export const NavMobile = ({ links }: NavMobileProps) => {
 
       <SheetContent
         side="left"
-        className="bg-background flex w-full flex-col gap-0 border-none px-7 pt-21 pb-8 sm:max-w-full"
+        className={cn(
+          "bg-background flex w-full flex-col gap-0 border-none px-7 pt-21 pb-8",
+          "sm:max-w-full",
+        )}
       >
         <SheetTitle className="sr-only">Навигация по сайту</SheetTitle>
 
         <div
           className={cn(
-            "absolute top-4 left-4 h-12 rounded-full p-1",
-            isDiscount ? "bg-brand" : "bg-frosted-glass",
+            "bg-brand-gradient absolute top-4 left-4 h-11 rounded-[12px] px-2",
           )}
         >
-          <div
-            className={cn(
-              "flex h-full items-center justify-center rounded-full px-3",
-              isDiscount ? "bg-background" : "bg-brand",
-            )}
-          >
+          <div className="flex h-full items-center justify-center">
             {isDiscount ? (
-              <span className="text-lg font-medium">Дисконт</span>
+              <span className="font-semibold">Дисконт</span>
             ) : (
               <Icons.logo className="h-4 w-fit stroke-current stroke-[0.25] [shape-rendering:crispEdges]" />
             )}
@@ -90,7 +92,10 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                         target={isExt ? link.target : "_self"}
                         rel={isExt ? "noopener noreferrer" : undefined}
                         onClick={() => setIsOpen(false)}
-                        className="flex items-center justify-between text-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-black/20"
+                        className={cn(
+                          "flex items-center justify-between text-lg font-medium outline-none",
+                          "focus-visible:ring-2 focus-visible:ring-black/20",
+                        )}
                       >
                         {link.label}
                         {isExt && (
@@ -107,7 +112,12 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                     key={`mobile-nav-${idx}`}
                     className="border-border"
                   >
-                    <AccordionTrigger className="py-4 text-lg font-medium hover:no-underline">
+                    <AccordionTrigger
+                      className={cn(
+                        "py-4 text-lg font-medium tracking-tight",
+                        "hover:no-underline",
+                      )}
+                    >
                       {link.label}
                     </AccordionTrigger>
                     <AccordionContent className="flex flex-col pt-1 pb-4">
@@ -119,7 +129,11 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                                 key={subItem.href}
                                 href={subItem.href}
                                 onClick={() => setIsOpen(false)}
-                                className="text-muted-foreground font-base hover:text-foreground flex flex-col-reverse items-start text-base transition-colors outline-none focus-visible:ring-2 focus-visible:ring-black/20"
+                                className={cn(
+                                  "text-muted-foreground font-base flex flex-col-reverse items-start text-base tracking-tight outline-none",
+                                  "focus-visible:ring-2 focus-visible:ring-black/20",
+                                  "hover:text-foreground transition-colors",
+                                )}
                               >
                                 {subItem.label}
                               </Link>
@@ -135,15 +149,15 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                                 className="hover:border-brand bg-card relative flex items-end rounded-xl border-2 border-transparent transition-colors duration-300"
                               >
                                 <div className="absolute bottom-2 left-2 flex flex-col gap-0 p-2">
-                                  <span className="font-medium">
+                                  <span className="font-medium tracking-tight">
                                     {card.label}
                                   </span>
-                                  <span className="text-muted-foreground">
+                                  <span className="text-muted-foreground tracking-tight">
                                     {card.description}
                                   </span>
                                 </div>
                                 {card.isNew && (
-                                  <Badge className="bg-brand text-foreground absolute top-4 right-4 uppercase">
+                                  <Badge className="bg-brand-gradient text-foreground absolute top-4 right-4 uppercase">
                                     Новинка
                                   </Badge>
                                 )}
@@ -159,7 +173,11 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                               key={subItem.href}
                               href={subItem.href}
                               onClick={() => setIsOpen(false)}
-                              className="text-muted-foreground text-base font-normal transition-colors outline-none hover:text-black focus-visible:ring-2 focus-visible:ring-black/20"
+                              className={cn(
+                                "text-muted-foreground text-base font-normal transition-colors outline-none",
+                                "focus-visible:ring-2 focus-visible:ring-black/20",
+                                "hover:text-black",
+                              )}
                             >
                               {subItem.label}
                             </Link>
@@ -186,7 +204,11 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                     href={market.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-card flex items-center gap-3 rounded-xl p-1 transition-colors outline-none hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-black/20"
+                    className={cn(
+                      "bg-card flex items-center gap-3 rounded-xl p-1 outline-none",
+                      "focus-visible:ring-2 focus-visible:ring-black/20",
+                      "transition-colors hover:bg-gray-100",
+                    )}
                   >
                     <Icon className="size-12 shrink-0" />
                     <span className="text-sm font-medium">{market.label}</span>

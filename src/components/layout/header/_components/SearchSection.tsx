@@ -16,9 +16,10 @@ export const SearchSection = () => {
         variant="transparent"
         size="icon-xs"
         className={cn(
-          "text-foreground h-12 w-12 rounded-[16px] transition-colors",
-          "[&_svg]:stroke-[2.5] [&_svg:not([class*='size-'])]:size-4.5",
+          "text-foreground rounded-[16px] transition-colors",
+          "[&_svg:not([class*='size-'])]:size-6",
           "hover:bg-card duration-300",
+          "lg:h-12 lg:w-12 lg:[&_svg]:stroke-[2.5] lg:[&_svg:not([class*='size-'])]:size-4.5",
         )}
         aria-label="Поиск"
       >

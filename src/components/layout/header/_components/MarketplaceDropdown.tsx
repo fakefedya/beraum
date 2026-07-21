@@ -26,8 +26,8 @@ export const MarketplaceDropdown = () => {
         <Button
           variant={"gradient"}
           className={cn(
-            "hidden h-12 items-center gap-4 rounded-[16px] text-base font-semibold tracking-tight",
-            "lg:flex",
+            "hidden h-12 items-center gap-2 rounded-[16px] text-base font-semibold tracking-tight",
+            "lg:flex xl:gap-4 xl:px-4",
             "[&[data-state=open]>svg]:rotate-180",
           )}
         >

@@ -18,11 +18,13 @@ export const NavSection = () => {
   return (
     <div
       className={cn(
-        "flex w-full flex-row-reverse items-center justify-end gap-1.5",
-        "lg:flex-row",
+        "flex w-full flex-row-reverse items-center justify-start gap-3",
+        "lg:flex-row lg:gap-1.5",
       )}
     >
-      <NavigationMenu className="static flex gap-1.5 lg:mx-auto">
+      <NavigationMenu
+        className={cn("hidden gap-1.5", "lg:static lg:mx-auto lg:flex")}
+      >
         <NavDesktop links={links} />
         <NavExternalSection links={links} />
       </NavigationMenu>
