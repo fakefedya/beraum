@@ -41,7 +41,7 @@ const ExternalLinkNode = ({ item }: { item: NavExternal }) => {
           rel={rel}
           className={cn(
             navigationMenuTriggerStyle(),
-            "text-muted-foreground h-12 rounded-[14px] px-4 text-[15px] font-medium",
+            "text-foreground h-12 rounded-[14px] px-4 font-medium tracking-tight",
             "hover:bg-card gap-2 [&_svg]:size-4.5",
           )}
         >

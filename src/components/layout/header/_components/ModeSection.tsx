@@ -38,7 +38,8 @@ export const ModeSection = () => {
     >
       <div
         className={cn(
-          "bg-card relative flex h-12 items-center rounded-[16px] transition-colors duration-500 ease-out",
+          "bg-card relative flex h-12 items-center rounded-[16px]",
+          "transition-colors duration-500 ease-out",
         )}
       >
         <div
@@ -61,22 +62,31 @@ export const ModeSection = () => {
           aria-label="Главная страница"
           aria-current={!isDiscount ? "page" : undefined}
           className={cn(
-            "relative z-10 flex h-full items-center justify-center rounded-[12px] px-3 transition-colors duration-300 xl:px-4",
+            "relative z-10 flex h-full items-center justify-center rounded-[12px] px-3",
             "focus-visible:ring-foreground focus-visible:outline-none",
+            "transition-colors duration-300",
+            "xl:px-4",
             !isDiscount
               ? "text-foreground"
               : "text-muted-foreground hover:text-foreground hover:bg-background/25",
           )}
         >
-          <Icons.logo className="h-4 w-fit fill-current stroke-current stroke-[0.25] [shape-rendering:crispEdges] xl:h-5" />
+          <Icons.logo
+            className={cn(
+              "h-4 w-fit fill-current stroke-current stroke-[0.25] [shape-rendering:crispEdges]",
+              "xl:h-5",
+            )}
+          />
         </Link>
         <Link
           href="/discount"
           ref={isDiscount ? activeRef : null}
           aria-current={isDiscount ? "page" : undefined}
           className={cn(
-            "relative z-10 flex h-full items-center justify-center rounded-[12px] px-3 font-semibold tracking-wide transition-colors duration-300 focus-visible:ring-2 xl:px-4",
-            "focus-visible:ring-black focus-visible:outline-none",
+            "relative z-10 flex h-full items-center justify-center rounded-[12px] px-3 text-lg font-semibold tracking-wide",
+            "focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none",
+            "transition-colors duration-300",
+            "xl:px-4",
             isDiscount
               ? "text-foreground hover:bg-background/25"
               : "hover:text-foreground text-muted-foreground",

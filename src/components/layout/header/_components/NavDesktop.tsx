@@ -29,7 +29,12 @@ export const NavDesktop = ({ links }: NavDesktopProps) => {
   const internalLinks = links.filter((link) => link.type !== "external");
 
   return (
-    <NavigationMenuList className="bg-brand-gradient-muted hidden h-12 w-fit items-center gap-0 rounded-[16px] p-1 lg:flex">
+    <NavigationMenuList
+      className={cn(
+        "bg-brand-gradient-muted hidden h-12 w-fit items-center gap-0 rounded-[16px] p-1",
+        "lg:flex",
+      )}
+    >
       {internalLinks.map((link, idx) => {
         const key = `nav-item-${idx}`;
 
@@ -55,7 +60,7 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
     <NavigationMenuItem className="flex h-full items-center">
       <NavigationMenuTrigger
         className={cn(
-          "text-foreground h-full rounded-[12px] px-4 text-[15px] font-medium",
+          "text-foreground h-full rounded-[12px] px-4 font-medium tracking-tight",
           "hover:bg-background/80",
           "data-[state=open]:bg-background",
         )}
@@ -71,8 +76,8 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                   <Link
                     href={link.href}
                     className={cn(
-                      "transition-300 flex items-start gap-0 rounded-xl p-4 text-base font-medium",
-                      "hover:bg-hover-background/80",
+                      "transition-300 flex items-start gap-0 rounded-xl p-4 font-medium",
+                      "hover:bg-hover-background/80 transition-300",
                       "data-[state=open]:bg-background",
                     )}
                   >
@@ -85,20 +90,25 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
 
           <ul className="grid h-auto w-full grid-cols-2 gap-3">
             {item.promoCards.map((card) => (
-              <li key={card.href} className={"min-h-full"}>
+              <li key={card.href} className="min-h-full">
                 <NavigationMenuLink asChild>
                   <Link
                     href={card.href}
-                    className="hover:border-brand bg-card relative flex h-full items-end rounded-xl border-2 border-transparent transition-colors duration-300"
+                    className={cn(
+                      "bg-card relative flex h-full items-end rounded-xl border-2 border-transparent",
+                      "hover:border-brand transition-colors duration-300",
+                    )}
                   >
                     <div className="flex flex-col gap-0 p-4">
-                      <span className="font-medium">{card.label}</span>
-                      <span className="text-muted-foreground">
+                      <span className="font-medium tracking-tight">
+                        {card.label}
+                      </span>
+                      <span className="text-muted-foreground tracking-tight">
                         {card.description}
                       </span>
                     </div>
                     {card.isNew && (
-                      <Badge className="bg-brand text-foreground absolute top-4 right-4 font-medium uppercase">
+                      <Badge className="bg-brand-gradient text-foreground absolute top-4 right-4 font-medium tracking-tight uppercase">
                         Новинка
                       </Badge>
                     )}
@@ -129,7 +139,7 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
     <NavigationMenuItem className="flex h-full items-center">
       <NavigationMenuTrigger
         className={cn(
-          "text-foreground h-full rounded-[12px] px-4 text-[15px] font-medium",
+          "text-foreground h-full rounded-[12px] px-4 font-medium tracking-tight",
           "hover:bg-background/80",
           "data-[state=open]:bg-background",
         )}
@@ -143,10 +153,15 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
               <NavigationMenuLink asChild>
                 <Link
                   href={subItem.href}
-                  className="hover:border-brand bg-card relative flex h-full items-start rounded-xl border-2 border-transparent transition-colors duration-300"
+                  className={cn(
+                    "relative flex h-full items-start rounded-xl border-2 border-transparent duration-300",
+                    "bg-card hover:border-brand transition-colors",
+                  )}
                 >
                   <div className="flex flex-col gap-0 p-4">
-                    <span className="font-medium">{subItem.label}</span>
+                    <span className="font-medium tracking-tight">
+                      {subItem.label}
+                    </span>
                   </div>
                 </Link>
               </NavigationMenuLink>
@@ -166,7 +181,7 @@ const LinkNode = ({ item }: { item: NavLink | NavExternal }) => {
           href={item.href}
           className={cn(
             navigationMenuTriggerStyle(),
-            "text-foreground h-full rounded-[12px] px-4 text-[15px] font-medium",
+            "text-foreground h-full rounded-[12px] px-4 font-medium tracking-tight",
             "hover:bg-background/80",
           )}
         >

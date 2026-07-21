@@ -8,6 +8,7 @@ import { NavMobile } from "./NavMobile";
 import { SearchSection } from "./SearchSection";
 import { MarketplaceDropdown } from "./MarketplaceDropdown";
 import { NavigationMenu } from "@/src/components/ui/navigation-menu";
+import { cn } from "@/src/lib/utils";
 
 export const NavSection = () => {
   const pathname = usePathname();
@@ -15,8 +16,13 @@ export const NavSection = () => {
   const links = isDiscount ? NAV_LINKS.discount : NAV_LINKS.store;
 
   return (
-    <div className="flex w-full flex-row-reverse items-center justify-end gap-1.5 lg:flex-row">
-      <NavigationMenu className="static flex gap-1.5">
+    <div
+      className={cn(
+        "flex w-full flex-row-reverse items-center justify-end gap-1.5",
+        "lg:flex-row",
+      )}
+    >
+      <NavigationMenu className="static flex gap-1.5 lg:mx-auto">
         <NavDesktop links={links} />
         <NavExternalSection links={links} />
       </NavigationMenu>
