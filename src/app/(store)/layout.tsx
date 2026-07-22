@@ -1,9 +1,9 @@
 import "@/src/app/globals.css";
 import { Golos_Text } from "next/font/google";
 
-import { Footer } from "@/src/components/layout/Footer";
-import { Header } from "@/src/components/layout/header/Header";
-import { Main } from "@/src/components/layout/Main";
+import { Footer } from "@/src/components/shared/Footer";
+import { Header } from "@/src/components/shared/header/Header";
+import { Main } from "@/src/components/shared/Main";
 import { cn } from "@/src/lib/utils";
 
 const golosText = Golos_Text({

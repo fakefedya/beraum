@@ -1,10 +1,11 @@
 "use server";
 
 import { z } from "zod";
-import { eq, desc, asc, and, sql, or, ilike } from "drizzle-orm";
+import { eq, desc, asc, and, sql, or, ilike, ne } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
-import { products, categories } from "@/src/server/db/schema"; // Читаем из index.ts
+import { products, categories, productMedia } from "@/src/server/db/schema"; // Читаем из index.ts
 import { CATEGORY_FILTERS } from "@/src/lib/constants";
+import { serverEnv } from "@/src/lib/env/server";
 
 const filterValueSchema = z.union([z.string(), z.array(z.string())]);
 
@@ -28,18 +29,26 @@ export type GetProductsParams = z.input<typeof getProductsSchema>;
 export type CatalogProduct = Awaited<ReturnType<typeof getProducts>>["data"][0];
 
 const computedPriceSql = sql<number>`COALESCE(
-  NULLIF(${products.wbDiscountedPrice}, 0), -- Приоритет 1: Цена WB
-  NULLIF(${products.manualPrice}, 0),       -- Приоритет 2: Ручная цена
-  0                                         -- Приоритет 3: Дефолт
+  NULLIF(${products.wbDiscountedPrice}, 0),
+  NULLIF(${products.manualPrice}, 0),      
+  0                                        
 )`;
 
-const productTypeSql = sql<string>`MAX(
+const computedStockSql = sql<number>`(
+  COALESCE(${products.ozonStockFbo}, 0) + 
+  COALESCE(${products.fbsStock}, 0) +
+  COALESCE(${products.manualStock}, 0)
+)`;
+
+const productTypeScalarSql = sql<string>`
   CASE 
     WHEN ${products.filters}->>'type' IS NOT NULL 
     THEN (${products.filters}->>'type') || ' ' || LOWER(${categories.titleRu})
     ELSE ${categories.titleRu}
   END
-)`;
+`;
+
+const productTypeAggSql = sql<string>`MAX(${productTypeScalarSql})`;
 
 export async function getProducts(params: GetProductsParams = {}) {
   try {
@@ -48,11 +57,11 @@ export async function getProducts(params: GetProductsParams = {}) {
     const conditions = [eq(products.status, "published")];
     const orderConditions = [];
 
-    if (sort === "price_asc") {
+    if (sort === "price_asc")
       orderConditions.push(asc(sql`MIN(${computedPriceSql})`));
-    } else if (sort === "price_desc") {
+    else if (sort === "price_desc")
       orderConditions.push(desc(sql`MIN(${computedPriceSql})`));
-    } else {
+    else {
       orderConditions.push(desc(sql`BOOL_OR(${products.isLatest})`));
       orderConditions.push(desc(sql`MAX(${products.createdAt})`));
     }
@@ -63,7 +72,6 @@ export async function getProducts(params: GetProductsParams = {}) {
         .from(categories)
         .where(eq(categories.slug, categorySlug))
         .limit(1);
-
       if (!category)
         return { success: false, error: "Категория не найдена", data: [] };
       conditions.push(eq(products.categoryId, category.id));
@@ -71,22 +79,16 @@ export async function getProducts(params: GetProductsParams = {}) {
 
     if (filters && categorySlug && CATEGORY_FILTERS[categorySlug]) {
       const allowedFilters = CATEGORY_FILTERS[categorySlug];
-
       for (const [key, value] of Object.entries(filters)) {
         const filterConfig = allowedFilters.find((f) => f.key === key);
         if (!filterConfig) continue;
-
         const valuesArray = Array.isArray(value) ? value : [value];
-
         if (valuesArray.length > 0) {
           const orConditions = valuesArray.map(
             (val) => sql`${products.filters}->>${key} = ${val}`,
           );
-
           const orClause = or(...orConditions);
-          if (orClause) {
-            conditions.push(orClause);
-          }
+          if (orClause) conditions.push(orClause);
         }
       }
     }
@@ -96,8 +98,7 @@ export async function getProducts(params: GetProductsParams = {}) {
         siteArticle: products.siteArticle,
         categorySlug: categories.slug,
         categoryTitle: categories.titleRu,
-        productType: productTypeSql,
-
+        productType: productTypeAggSql,
         variants: sql<
           {
             id: string;
@@ -108,19 +109,15 @@ export async function getProducts(params: GetProductsParams = {}) {
             isLatest: boolean;
           }[]
         >`jsonb_agg(
-  jsonb_build_object(
-    'id', ${products.id},
-    'itemArticle', ${products.itemArticle},
-    'colorName', ${products.colorName},
-    'isLatest', COALESCE(${products.isLatest}, false),
-    'price', ${computedPriceSql},
-    'stock', (
-      COALESCE(${products.ozonStockFbo}, 0) + 
-      COALESCE(${products.fbsStock}, 0)
-    )
-  )
-    ORDER BY ${products.itemArticle} ASC
-)`.as("variants"),
+          jsonb_build_object(
+            'id', ${products.id},
+            'itemArticle', ${products.itemArticle},
+            'colorName', ${products.colorName},
+            'isLatest', COALESCE(${products.isLatest}, false),
+            'price', ${computedPriceSql},
+            'stock', ${computedStockSql}
+          ) ORDER BY ${products.itemArticle} ASC
+        )`.as("variants"),
       })
       .from(products)
       .leftJoin(categories, eq(products.categoryId, categories.id))
@@ -146,10 +143,12 @@ export async function getProductByArticle(rawArticle: string) {
     const [product] = await db
       .select({
         id: products.id,
+        categoryId: products.categoryId,
         siteArticle: products.siteArticle,
         itemArticle: products.itemArticle,
         colorName: products.colorName,
         categoryTitle: categories.titleRu,
+        productType: productTypeScalarSql.as("productType"),
         isLatest: products.isLatest,
         specifications: products.specifications,
         price: computedPriceSql.as("price"),
@@ -190,9 +189,84 @@ export async function getProductByArticle(rawArticle: string) {
       )
       .orderBy(products.itemArticle);
 
-    return { success: true, data: { ...product, variants } };
+    // Документы
+    const documents = await db
+      .select({
+        type: productMedia.type,
+        fileKey: productMedia.fileKey,
+        bucketName: productMedia.bucketName,
+      })
+      .from(productMedia)
+      .where(
+        and(
+          eq(productMedia.productId, product.id),
+          ne(productMedia.type, "image"),
+        ),
+      );
+
+    const formattedDocs = documents.map((doc) => ({
+      type: doc.type,
+      url: `http://${serverEnv.MINIO_ENDPOINT}:${serverEnv.MINIO_PORT}/${doc.bucketName}/${doc.fileKey}`,
+    }));
+
+    return {
+      success: true,
+      data: { ...product, variants, documents: formattedDocs },
+    };
   } catch (error) {
     console.error("❌ Ошибка Server Action (getProductByArticle):", error);
     return { success: false, error: "Недопустимый запрос" };
+  }
+}
+
+export async function getSimilarProducts(
+  categoryId: string,
+  excludeSiteArticle: string,
+  limitNum = 3,
+) {
+  try {
+    const conditions = [
+      eq(products.status, "published"),
+      eq(products.categoryId, categoryId),
+      ne(products.siteArticle, excludeSiteArticle),
+    ];
+
+    const items = await db
+      .select({
+        siteArticle: products.siteArticle,
+        categorySlug: categories.slug,
+        categoryTitle: categories.titleRu,
+        productType: productTypeAggSql,
+        variants: sql<
+          {
+            id: string;
+            itemArticle: string;
+            colorName: string | null;
+            price: number;
+            stock: number;
+            isLatest: boolean;
+          }[]
+        >`jsonb_agg(
+          jsonb_build_object(
+            'id', ${products.id},
+            'itemArticle', ${products.itemArticle},
+            'colorName', ${products.colorName},
+            'isLatest', COALESCE(${products.isLatest}, false),
+            'price', ${computedPriceSql},
+            'stock', (COALESCE(${products.ozonStockFbo}, 0) + COALESCE(${products.fbsStock}, 0))
+          ) ORDER BY ${products.itemArticle} ASC
+        )`.as("variants"),
+      })
+      .from(products)
+      .leftJoin(categories, eq(products.categoryId, categories.id))
+      .where(and(...conditions))
+      .groupBy(products.siteArticle, categories.slug, categories.titleRu)
+      .orderBy(sql`RANDOM()`)
+      .limit(limitNum);
+
+    return { success: true, data: items };
+  } catch (error) {
+    console.error("❌ Ошибка Server Action (getSimilarProducts):", error);
+    return { success: false, data: [] };
   }
 }

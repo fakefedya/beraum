@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import { getProducts } from "@/src/server/actions/products.queries";
 import { CatalogGrid } from "./_components/CatalogGrid";
 import { CatalogSidebar } from "./_components/CatalogSidebar";
-import { Section } from "@/src/components/layout/Section";
-import { Container } from "@/src/components/layout/Container";
+import { Section } from "@/src/components/shared/Section";
+import { Container } from "@/src/components/shared/Container";
 import { EmptyState } from "@/src/components/ui/empty-state";
-import { Breadcrumbs } from "@/src/components/layout/Breadcrumbs";
+import { Breadcrumbs } from "@/src/components/shared/Breadcrumbs";
 import { cn } from "@/src/lib/utils";
 
 interface PageProps {
@@ -52,7 +52,7 @@ export default async function CategoryPage({
 
   return (
     <Section>
-      <Container className="gap-5 pt-40">
+      <Container className="gap-5 pt-32">
         <Breadcrumbs items={breadcrumbItems} />
         <div className="flex flex-col gap-6">
           <CatalogSidebar categorySlug={category} />

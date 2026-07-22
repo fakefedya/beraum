@@ -1,12 +1,24 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getProductByArticle } from "@/src/server/actions/products.queries";
-import { Container } from "@/src/components/layout/Container";
-import { Section } from "@/src/components/layout/Section";
+import {
+  getProductByArticle,
+  getSimilarProducts,
+} from "@/src/server/actions/products.queries";
+import { Container } from "@/src/components/shared/Container";
+import { Section } from "@/src/components/shared/Section";
 import { COLOR_SWATCH_MAP, DEFAULT_SWATCH_COLOR } from "@/src/lib/constants";
 import { Icons } from "@/src/components/ui/icons";
 import { ProductGallery } from "./_components/ProductGallery";
 import { Badge } from "@/src/components/ui/badge";
+import { cn } from "@/src/lib/utils";
+import { FileText, Wrench, ShieldCheck } from "lucide-react";
+import { ProductCard } from "@/src/components/shared/ProductCard";
+
+const DOC_META: Record<string, { label: string; icon: React.ElementType }> = {
+  user_instruction: { label: "Инструкция по эксплуатации", icon: FileText },
+  service_instruction: { label: "Сервисное руководство", icon: Wrench },
+  certificate: { label: "Сертификат соответствия", icon: ShieldCheck },
+};
 
 interface PageProps {
   params: Promise<{ article: string }>;
@@ -21,6 +33,12 @@ export default async function ProductPage({ params }: PageProps) {
   }
 
   const product = response.data;
+
+  const similarProducts = product.categoryId
+    ? (await getSimilarProducts(product.categoryId, product.siteArticle, 3))
+        .data
+    : [];
+
   const ozonStock = product.ozonStockFbo || 0;
   const fbsStock = product.fbsStock || 0;
 
@@ -61,60 +79,74 @@ export default async function ProductPage({ params }: PageProps) {
 
   return (
     <Section>
-      <Container className="pt-24">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:items-start">
-          <div className="sticky top-24 z-10 h-[calc(100vh-96px)] max-h-300 min-h-100 w-full lg:col-span-2">
+      <Container className="max-w-7xl pt-32 pb-16">
+        <div
+          className={cn(
+            "grid grid-cols-1 gap-6 lg:grid-cols-12",
+            "lg:items-start",
+          )}
+        >
+          <div
+            className={cn(
+              "sticky top-32 z-10 h-[calc(100vh-140px)] min-h-125 w-full",
+              "lg:col-span-8",
+            )}
+          >
             <ProductGallery />
           </div>
 
-          <div className="bg-card flex flex-col gap-8 rounded-lg p-4 lg:col-span-1">
-            <div className="flex flex-col">
-              {product.isLatest && (
-                <div className="mb-4">
+          <div
+            className={cn(
+              "bg-background shadow-card flex flex-col gap-8 rounded-[24px] p-6 lg:col-span-4",
+              "lg:p-8",
+            )}
+          >
+            <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-1">
+                {product.isLatest && (
                   <Badge className="bg-brand text-foreground text-xs font-medium uppercase">
                     Новинка
                   </Badge>
-                </div>
-              )}
-
-              <h1 className="text-muted-foreground text-lg">
-                {product.categoryTitle}
-              </h1>
-              <h1 className="text-xl font-medium">{product.siteArticle}</h1>
-              <span className="text-muted-foreground text-sm">
-                Артикул: {product.itemArticle}
-              </span>
-              {/* <div className="mt-4 text-lg font-medium">
-                {product.price > 0
-                  ? `<div className="flex flex-col">
-                    ${product.price.toLocaleString("ru-RU")} ₽
-                    ${Math.ceil(product.price / 6).toLocaleString("ru-RU")} ₽
-                  </div>`
-                  : "По запросу"}
-              </div> */}
-              <div className="mt-4">
-                {product.price > 0 ? (
-                  <div className="flex flex-col">
-                    <span className="text-xl font-medium">
-                      от {product.price.toLocaleString("ru-RU")} ₽
-                    </span>
-                    <span className="text-muted-foreground text-sm">
-                      {Math.ceil(product.price / 6).toLocaleString("ru-RU")} ₽ x
-                      6 месяцев
-                    </span>
-                  </div>
-                ) : (
-                  "По запросу"
                 )}
+                <h1
+                  className={cn(
+                    "text-2xl font-medium tracking-tight",
+                    "xl:text-3xl",
+                  )}
+                >
+                  {product.productType} {""}
+                  <span className="whitespace-nowrap">
+                    {product.siteArticle}
+                  </span>
+                </h1>
+                <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                  Артикул:{" "}
+                  <span className="text-foreground bg-card rounded-sm p-1 font-medium">
+                    {product.itemArticle}
+                  </span>
+                </div>
               </div>
+
+              {product.price > 0 ? (
+                <div className="flex flex-col gap-1">
+                  <span className="bg-brand w-fit rounded-lg p-1 text-2xl font-medium">
+                    от {product.price.toLocaleString("ru-RU")} ₽
+                  </span>
+                  <span className="text-muted-foreground mt-1 text-sm">
+                    или {Math.ceil(product.price / 6).toLocaleString("ru-RU")} ₽
+                    x 6 месяцев
+                  </span>
+                </div>
+              ) : (
+                <span className="text-2xl font-semibold">По запросу</span>
+              )}
             </div>
 
-            {/* Выбор цвета */}
-            {product.variants.length > 1 && (
-              <div className="flex flex-col gap-3 border-y border-black/5 py-6">
+            {product.variants.length > 0 && (
+              <div className="flex flex-col gap-4 border-y border-black/5 py-6">
                 <span className="text-sm font-medium">
-                  Цвет:{" "}
-                  <span className="text-black-muted">
+                  Цвет:
+                  <span className="text-muted-foreground">
                     {product.colorName || "Стандартный"}
                   </span>
                 </span>
@@ -138,13 +170,13 @@ export default async function ProductPage({ params }: PageProps) {
                         key={variant.id}
                         href={`/product/${variant.itemArticle.toLowerCase()}`}
                         title={variant.colorName || "Стандарт"}
-                        className={`relative flex h-8 w-8 items-center justify-center rounded-full shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)] transition-transform hover:scale-110 focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 ${
-                          isActive ? "ring-2 ring-black ring-offset-2" : ""
-                        }`}
+                        className={cn(
+                          "relative flex h-9 w-9 items-center justify-center rounded-full shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)] transition-transform hover:scale-110 focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2",
+                          isActive && "ring-2 ring-black ring-offset-2",
+                        )}
                         style={{ backgroundColor: hexColor }}
                         aria-current={isActive ? "page" : undefined}
                       >
-                        {/* Индикатор отсутствия стока (диагональная линия) */}
                         {!hasStock && (
                           <span className="absolute block h-10 w-px -rotate-45 bg-red-500/50" />
                         )}
@@ -155,7 +187,6 @@ export default async function ProductPage({ params }: PageProps) {
               </div>
             )}
 
-            {/* Маркетплейсы */}
             {marketplaces.length > 0 && (
               <div className="flex flex-col gap-4">
                 <span className="text-sm font-medium">Где купить:</span>
@@ -168,7 +199,10 @@ export default async function ProductPage({ params }: PageProps) {
                         href={mp.link as string}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group hover:shadow-card-hover flex aspect-square flex-col items-center justify-center gap-3 rounded-2xl bg-white p-4 shadow-sm transition-all duration-300 focus-visible:ring-2 focus-visible:ring-black"
+                        className={cn(
+                          "bg-background hover:shadow-card-hover group flex aspect-video flex-col items-center justify-center gap-3 rounded-2xl p-4 shadow-sm transition-all duration-300 focus-visible:ring-2 focus-visible:ring-black",
+                          "sm:aspect-square",
+                        )}
                       >
                         <Icon className="h-10 w-10 transition-transform group-hover:scale-110" />
                         <span className="text-center text-xs font-medium">
@@ -181,21 +215,22 @@ export default async function ProductPage({ params }: PageProps) {
               </div>
             )}
 
-            {/* Характеристики */}
             {validSpecs.length > 0 && (
-              <div className="mt-4 flex flex-col gap-4">
-                <h3 className="text-xl font-medium">Характеристики</h3>
+              <div className="mt-2 flex flex-col gap-4">
+                <h3 className="text-lg font-medium">Характеристики</h3>
                 <dl className="flex flex-col text-sm">
                   {validSpecs.map(([key, value], idx) => (
                     <div
                       key={key}
-                      className={`flex justify-between py-3 ${
-                        idx !== validSpecs.length - 1
-                          ? "border-b border-black/5"
-                          : ""
-                      }`}
+                      className={cn(
+                        "flex justify-between py-3",
+                        idx !== validSpecs.length - 1 &&
+                          "border-b border-black/5",
+                      )}
                     >
-                      <dt className="text-black-muted w-1/2 pr-4">{key}</dt>
+                      <dt className="text-muted-foreground w-1/2 pr-4">
+                        {key}
+                      </dt>
                       <dd className="w-1/2 text-right font-medium">{value}</dd>
                     </div>
                   ))}
@@ -204,6 +239,52 @@ export default async function ProductPage({ params }: PageProps) {
             )}
           </div>
         </div>
+        {/* Заглушка */}
+        {product.documents && product.documents.length >= 0 && (
+          <div className="mt-24 flex flex-col items-center justify-center gap-8">
+            <h2 className="text-2xl font-medium tracking-tight xl:text-3xl">
+              Документация
+            </h2>
+            <div className="flex flex-wrap justify-center gap-4">
+              {product.documents.map((doc, idx) => {
+                const meta = DOC_META[doc.type];
+                if (!meta) return null;
+                const Icon = meta.icon;
+
+                return (
+                  <a
+                    key={idx}
+                    href={doc.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cn(
+                      "bg-card hover:shadow-card-hover group flex w-full items-center gap-4 rounded-2xl p-4 transition-all duration-300 sm:w-auto md:min-w-64",
+                      "outline-none focus-visible:ring-2 focus-visible:ring-black",
+                    )}
+                  >
+                    <div className="bg-background flex h-12 w-12 shrink-0 items-center justify-center rounded-full transition-transform group-hover:scale-110">
+                      <Icon className="text-muted-foreground h-5 w-5" />
+                    </div>
+                    <span className="text-sm font-medium">{meta.label}</span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        )}
+        {/* Вам может понравиться */}
+        {similarProducts && similarProducts.length > 0 && (
+          <div className="mt-24 flex flex-col items-center gap-8">
+            <h2 className="text-2xl font-medium tracking-tight xl:text-3xl">
+              Вам может понравиться
+            </h2>
+            <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {similarProducts.map((p) => (
+                <ProductCard key={p.siteArticle} product={p} />
+              ))}
+            </div>
+          </div>
+        )}
       </Container>
     </Section>
   );
