@@ -53,7 +53,7 @@ export default async function CategoryPage({
   return (
     <Section>
       <Container className="gap-5 pt-32">
-        <Breadcrumbs items={breadcrumbItems} />
+        <Breadcrumbs items={breadcrumbItems} className="flex justify-center" />
         <div className="flex flex-col gap-6">
           <CatalogSidebar categorySlug={category} />
           <div className="w-full">

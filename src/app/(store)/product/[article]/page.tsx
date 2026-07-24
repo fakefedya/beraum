@@ -146,6 +146,12 @@ export default async function ProductPage({ params }: PageProps) {
               "lg:col-span-8",
             )}
           >
+            {/* <div
+            className={cn(
+              "sticky top-32 z-10 aspect-square w-full",
+              "lg:col-span-8",
+            )}
+          > */}
             <ProductGallery />
           </div>
 
@@ -175,7 +181,7 @@ export default async function ProductPage({ params }: PageProps) {
                 </h1>
                 <div className="text-muted-foreground flex items-center gap-2 text-sm">
                   Артикул:{" "}
-                  <span className="text-foreground bg-card rounded-sm p-1 font-medium">
+                  <span className="text-foreground bg-card/80 rounded-sm p-1 font-medium">
                     {product.itemArticle}
                   </span>
                 </div>
@@ -204,7 +210,7 @@ export default async function ProductPage({ params }: PageProps) {
                 <span className="text-2xl font-semibold">По запросу</span>
               )}
 
-              <div className="bg-card flex w-full items-center justify-center gap-4 rounded-[12px] p-4 text-sm font-medium">
+              <div className="bg-card/80 flex w-full items-center justify-center gap-4 rounded-[12px] p-4 text-sm font-medium">
                 {StockStatusUI}
               </div>
             </div>
@@ -213,7 +219,7 @@ export default async function ProductPage({ params }: PageProps) {
               <div className="flex flex-col gap-4">
                 <span className="text-muted-foreground text-sm">
                   Цвет:{" "}
-                  <span className="text-foreground bg-card rounded-sm p-1 font-medium">
+                  <span className="text-foreground bg-card/80 rounded-sm p-1 font-medium">
                     {product.colorName || "Стандартный"}
                   </span>
                 </span>
@@ -290,7 +296,7 @@ export default async function ProductPage({ params }: PageProps) {
 
             {validSpecs.length > 0 && (
               <div className="mt-2 flex flex-col gap-4">
-                <h3 className="text-lg font-medium">Характеристики</h3>
+                <h3 className="font-medium">Характеристики</h3>
                 <dl className="flex flex-col text-sm">
                   {validSpecs.map(([key, value], idx) => (
                     <div

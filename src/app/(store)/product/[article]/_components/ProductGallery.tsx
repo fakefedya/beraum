@@ -83,7 +83,6 @@ export const ProductGallery = () => {
 
   return (
     <div className="relative flex h-full w-full flex-col gap-4">
-      {/* Скругление увеличено до 24px для синхронизации с хедером */}
       <div className="group bg-card relative h-full w-full overflow-hidden rounded-[24px]">
         <Swiper
           modules={[Pagination]}
