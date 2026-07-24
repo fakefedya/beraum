@@ -28,11 +28,20 @@ const getProductByArticleSchema = z.object({
 export type GetProductsParams = z.input<typeof getProductsSchema>;
 export type CatalogProduct = Awaited<ReturnType<typeof getProducts>>["data"][0];
 
-const computedPriceSql = sql<number>`COALESCE(
+const computedBasePriceSql = sql<number>`COALESCE(
   NULLIF(${products.wbDiscountedPrice}, 0),
   NULLIF(${products.manualPrice}, 0),      
   0                                        
 )`;
+
+const computedPriceSql = sql<number>`
+  CASE 
+    WHEN ${products.discountPercentage} > 0 THEN
+      ROUND(${computedBasePriceSql} * (100.0 - ${products.discountPercentage}) / 100.0)::integer
+    ELSE
+      ${computedBasePriceSql}
+  END
+`;
 
 const computedStockSql = sql<number>`(
   COALESCE(${products.ozonStockFbo}, 0) + 
@@ -42,8 +51,8 @@ const computedStockSql = sql<number>`(
 
 const productTypeScalarSql = sql<string>`
   CASE 
-    WHEN ${products.filters}->>'type' IS NOT NULL 
-    THEN (${products.filters}->>'type') || ' ' || LOWER(${categories.titleRu})
+    WHEN ${products.filters} ? 'type' 
+    THEN COALESCE(${products.filters}->>'type', '') || ' ' || LOWER(${categories.titleRu})
     ELSE ${categories.titleRu}
   END
 `;

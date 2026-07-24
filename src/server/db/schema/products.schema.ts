@@ -31,6 +31,8 @@ export const products = pgTable(
     manualPrice: integer("manual_price"),
     manualStock: integer("manual_stock"),
 
+    discountPercentage: integer("discount_percentage").default(0).notNull(),
+
     ozonLink: text("ozon_link"),
     ozonStockFbo: integer("ozon_stock_fbo"),
 

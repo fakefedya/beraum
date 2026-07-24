@@ -28,7 +28,7 @@ AGENTS.md
 repomix-output.xml
 
 # DB
-*.sql
+*.dump.sql
 
 # debug
 npm-debug.log*

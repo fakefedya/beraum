@@ -5,7 +5,7 @@ export const MARKETPLACE_LINKS = {
     {
       icon: Icons.ozon,
       label: "OZON",
-      description: "Более 90 000 довольных клиентов",
+      description: "Более 125 000 довольных клиентов",
       href: "https://ozon.ru/seller/...",
     },
     {

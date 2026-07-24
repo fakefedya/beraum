@@ -57,6 +57,13 @@
       "when": 1783924008036,
       "tag": "0007_white_sprite",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1784893546503,
+      "tag": "0008_military_boom_boom",
+      "breakpoints": true
     }
   ]
 }

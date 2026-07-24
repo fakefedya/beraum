@@ -100,7 +100,7 @@ export const CatalogGrid = ({
       <div
         className={cn(
           "grid w-full grid-cols-1 gap-2",
-          "sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3",
+          "sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
         )}
       >
         {products.map((product) => (

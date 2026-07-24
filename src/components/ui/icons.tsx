@@ -205,4 +205,18 @@ export const Icons = {
       </defs>
     </svg>
   ),
+  available: ({ props, className }: Props) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      className={className}
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        d="M12 21c5.584 0 9-3.416 9-9s-3.416-9-9-9-9 3.416-9 9 3.416 9 9 9m4.707-10.293-5 5a1 1 0 0 1-1.414 0l-3-3a1 1 0 1 1 1.414-1.414L11 13.586l4.293-4.293a1 1 0 1 1 1.414 1.414"
+      ></path>
+    </svg>
+  ),
 };

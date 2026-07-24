@@ -11,7 +11,13 @@ import { Icons } from "@/src/components/ui/icons";
 import { ProductGallery } from "./_components/ProductGallery";
 import { Badge } from "@/src/components/ui/badge";
 import { cn } from "@/src/lib/utils";
-import { FileText, Wrench, ShieldCheck } from "lucide-react";
+import {
+  FileText,
+  Wrench,
+  ShieldCheck,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 import { ProductCard } from "@/src/components/shared/ProductCard";
 
 const DOC_META: Record<string, { label: string; icon: React.ElementType }> = {
@@ -41,6 +47,54 @@ export default async function ProductPage({ params }: PageProps) {
 
   const ozonStock = product.ozonStockFbo || 0;
   const fbsStock = product.fbsStock || 0;
+
+  let StockStatusUI: React.ReactNode = null;
+
+  if (ozonStock > 0 && fbsStock > 0) {
+    const minStock = Math.min(ozonStock, fbsStock);
+    StockStatusUI =
+      minStock < 10 ? (
+        <>
+          <CheckCircle2 className="size-5" aria-hidden="true" />
+          <div>
+            В наличии
+            <span className="text-red-500"> — осталось {minStock} шт!</span>
+          </div>
+        </>
+      ) : (
+        <>
+          <CheckCircle2 className="size-5" aria-hidden="true" />
+          <span className="">В наличии</span>
+        </>
+      );
+  } else if (ozonStock > 0 || fbsStock > 0) {
+    const availableStock = Math.max(ozonStock, fbsStock);
+    StockStatusUI =
+      availableStock < 10 ? (
+        <>
+          <CheckCircle2 size={5} className="size-5" aria-hidden="true" />
+          <div>
+            В наличии
+            <span className="text-red-500">
+              {" "}
+              — осталось {availableStock} шт!
+            </span>
+          </div>
+        </>
+      ) : (
+        <>
+          <CheckCircle2 className="size-5" aria-hidden="true" />
+          <span className="">В наличии</span>
+        </>
+      );
+  } else {
+    StockStatusUI = (
+      <>
+        <XCircle className="text-destructive size-5" aria-hidden="true" />
+        <span className="text-red-500">Товар доступен под заказ</span>
+      </>
+    );
+  }
 
   const marketplaces = [
     {
@@ -101,7 +155,7 @@ export default async function ProductPage({ params }: PageProps) {
               "lg:p-8",
             )}
           >
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-1">
                 {product.isLatest && (
                   <Badge className="bg-brand text-foreground text-xs font-medium uppercase">
@@ -129,24 +183,37 @@ export default async function ProductPage({ params }: PageProps) {
 
               {product.price > 0 ? (
                 <div className="flex flex-col gap-1">
-                  <span className="bg-brand w-fit rounded-lg p-1 text-2xl font-medium">
+                  <span className="bg-brand-secondary w-fit rounded-lg p-1 text-2xl font-medium">
                     от {product.price.toLocaleString("ru-RU")} ₽
                   </span>
-                  <span className="text-muted-foreground mt-1 text-sm">
+                  <span className="text-muted-foreground text-sm">
                     или {Math.ceil(product.price / 6).toLocaleString("ru-RU")} ₽
                     x 6 месяцев
                   </span>
+                  <div
+                    className={cn(
+                      "relative mt-2 w-full rounded-[12px] bg-[#e7ffbc] p-4 text-sm",
+                      "after:absolute after:top-[-5.5px] after:left-4 after:h-4 after:w-4 after:rotate-45 after:bg-[#e7ffbc]",
+                    )}
+                  >
+                    Размер предоставляемой скидки определяется условиями
+                    маркетплейса и может отличаться от стоимости на данном сайте
+                  </div>
                 </div>
               ) : (
                 <span className="text-2xl font-semibold">По запросу</span>
               )}
+
+              <div className="bg-card flex w-full items-center justify-center gap-4 rounded-[12px] p-4 text-sm font-medium">
+                {StockStatusUI}
+              </div>
             </div>
 
             {product.variants.length > 0 && (
-              <div className="flex flex-col gap-4 border-y border-black/5 py-6">
-                <span className="text-sm font-medium">
-                  Цвет:
-                  <span className="text-muted-foreground">
+              <div className="flex flex-col gap-4">
+                <span className="text-muted-foreground text-sm">
+                  Цвет:{" "}
+                  <span className="text-foreground bg-card rounded-sm p-1 font-medium">
                     {product.colorName || "Стандартный"}
                   </span>
                 </span>
@@ -171,14 +238,20 @@ export default async function ProductPage({ params }: PageProps) {
                         href={`/product/${variant.itemArticle.toLowerCase()}`}
                         title={variant.colorName || "Стандарт"}
                         className={cn(
-                          "relative flex h-9 w-9 items-center justify-center rounded-full shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)] transition-transform hover:scale-110 focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2",
-                          isActive && "ring-2 ring-black ring-offset-2",
+                          "relative flex h-9 w-9 items-center justify-center rounded-full shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)]",
+                          "cursor-auto focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2",
+                          "transition-transform",
+                          product.variants.length > 1 &&
+                            "cursor-pointer hover:scale-105",
+                          isActive &&
+                            product.variants.length > 1 &&
+                            "ring-brand-secondary ring-2 ring-offset-2",
                         )}
                         style={{ backgroundColor: hexColor }}
                         aria-current={isActive ? "page" : undefined}
                       >
                         {!hasStock && (
-                          <span className="absolute block h-10 w-px -rotate-45 bg-red-500/50" />
+                          <span className="absolute block h-10 w-px -rotate-45 bg-red-500" />
                         )}
                       </Link>
                     );
@@ -189,8 +262,8 @@ export default async function ProductPage({ params }: PageProps) {
 
             {marketplaces.length > 0 && (
               <div className="flex flex-col gap-4">
-                <span className="text-sm font-medium">Где купить:</span>
-                <div className="grid grid-cols-2 gap-3">
+                <span className="font-lg font-medium">Где купить</span>
+                <div className="grid grid-cols-2 gap-2">
                   {marketplaces.map((mp) => {
                     const Icon = mp.icon;
                     return (
@@ -200,12 +273,12 @@ export default async function ProductPage({ params }: PageProps) {
                         target="_blank"
                         rel="noopener noreferrer"
                         className={cn(
-                          "bg-background hover:shadow-card-hover group flex aspect-video flex-col items-center justify-center gap-3 rounded-2xl p-4 shadow-sm transition-all duration-300 focus-visible:ring-2 focus-visible:ring-black",
-                          "sm:aspect-square",
+                          "bg-card group focus:hover-background/80 flex cursor-pointer items-center gap-4 rounded-lg border-2 border-transparent p-4",
+                          "hover:border-brand transition-colors duration-300",
                         )}
                       >
-                        <Icon className="h-10 w-10 transition-transform group-hover:scale-110" />
-                        <span className="text-center text-xs font-medium">
+                        <Icon className="size-12" />
+                        <span className="text-base leading-none font-medium">
                           {mp.label}
                         </span>
                       </a>
