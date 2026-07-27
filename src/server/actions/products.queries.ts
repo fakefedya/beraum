@@ -157,6 +157,7 @@ export async function getProductByArticle(rawArticle: string) {
         itemArticle: products.itemArticle,
         colorName: products.colorName,
         categoryTitle: categories.titleRu,
+        categorySlug: categories.slug,
         productType: productTypeScalarSql.as("productType"),
         isLatest: products.isLatest,
         specifications: products.specifications,
@@ -231,7 +232,7 @@ export async function getProductByArticle(rawArticle: string) {
 export async function getSimilarProducts(
   categoryId: string,
   excludeSiteArticle: string,
-  limitNum = 3,
+  limitNum = 4,
 ) {
   try {
     const conditions = [

@@ -4,7 +4,6 @@ import path from "node:path";
 import { db } from "./client";
 import { categories, products } from "./schema";
 
-// Строгий словарь для нормализации слэгов
 const SLUG_MAP: Record<string, string> = {
   hob: "hob",
   hood: "hood",

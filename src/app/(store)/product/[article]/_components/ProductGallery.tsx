@@ -6,9 +6,17 @@ import { Pagination } from "swiper/modules";
 import { Maximize2, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
+import {
+  Breadcrumbs,
+  type BreadcrumbType,
+} from "@/src/components/shared/Breadcrumbs";
 
 import "swiper/css";
 import "swiper/css/pagination";
+
+interface ProductGalleryProps {
+  breadcrumbs?: BreadcrumbType[];
+}
 
 const GalleryNavigation = () => {
   const swiper = useSwiper();
@@ -63,7 +71,7 @@ const GalleryNavigation = () => {
   );
 };
 
-export const ProductGallery = () => {
+export const ProductGallery = ({ breadcrumbs }: ProductGalleryProps) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -83,7 +91,18 @@ export const ProductGallery = () => {
 
   return (
     <div className="relative flex h-full w-full flex-col gap-4">
-      <div className="group bg-card relative h-full w-full overflow-hidden rounded-[24px]">
+      <div className="group bg-card relative h-full w-full items-center overflow-hidden rounded-[24px]">
+        {breadcrumbs && breadcrumbs.length > 0 && (
+          <div
+            className={cn(
+              "pointer-events-auto absolute top-6 left-0 z-30 hidden w-full justify-center",
+              "lg:flex",
+            )}
+          >
+            <Breadcrumbs items={breadcrumbs} />
+          </div>
+        )}
+
         <Swiper
           modules={[Pagination]}
           pagination={{ clickable: true }}

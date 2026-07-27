@@ -50,7 +50,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                 className={cn(
                   "flex h-4 w-4 cursor-pointer items-center justify-center rounded-full p-0 shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)]",
                   isActive && product.variants.length > 1
-                    ? "border-brand-variant ring-brand-variant ring-2 ring-offset-2"
+                    ? "border-brand-secondary ring-brand-secondary ring-2 ring-offset-2"
                     : "border-black/10 hover:border-black/30",
                 )}
                 style={{ backgroundColor: hexColor }}

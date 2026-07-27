@@ -19,6 +19,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { ProductCard } from "@/src/components/shared/ProductCard";
+import { BreadcrumbType } from "@/src/components/shared/Breadcrumbs";
 
 const DOC_META: Record<string, { label: string; icon: React.ElementType }> = {
   user_instruction: { label: "Инструкция по эксплуатации", icon: FileText },
@@ -41,7 +42,7 @@ export default async function ProductPage({ params }: PageProps) {
   const product = response.data;
 
   const similarProducts = product.categoryId
-    ? (await getSimilarProducts(product.categoryId, product.siteArticle, 3))
+    ? (await getSimilarProducts(product.categoryId, product.siteArticle, 4))
         .data
     : [];
 
@@ -72,7 +73,7 @@ export default async function ProductPage({ params }: PageProps) {
     StockStatusUI =
       availableStock < 10 ? (
         <>
-          <CheckCircle2 size={5} className="size-5" aria-hidden="true" />
+          <CheckCircle2 className="size-5" aria-hidden="true" />
           <div>
             В наличии
             <span className="text-red-500">
@@ -131,6 +132,18 @@ export default async function ProductPage({ params }: PageProps) {
     ([_, val]) => val !== null && val !== "",
   );
 
+  const productArticle = product.siteArticle || "Артикул";
+  const breadcrumbItems: BreadcrumbType[] = [{ label: "Главная", href: "/" }];
+
+  if (product.categoryTitle && product.categorySlug) {
+    breadcrumbItems.push({
+      label: product.categoryTitle,
+      href: `/catalog/${product.categorySlug}`,
+    });
+  }
+
+  breadcrumbItems.push({ label: productArticle });
+
   return (
     <Section>
       <Container className="max-w-7xl pt-32 pb-16">
@@ -146,13 +159,7 @@ export default async function ProductPage({ params }: PageProps) {
               "lg:col-span-8",
             )}
           >
-            {/* <div
-            className={cn(
-              "sticky top-32 z-10 aspect-square w-full",
-              "lg:col-span-8",
-            )}
-          > */}
-            <ProductGallery />
+            <ProductGallery breadcrumbs={breadcrumbItems} />
           </div>
 
           <div
@@ -214,7 +221,6 @@ export default async function ProductPage({ params }: PageProps) {
                 {StockStatusUI}
               </div>
             </div>
-
             {product.variants.length > 0 && (
               <div className="flex flex-col gap-4">
                 <span className="text-muted-foreground text-sm">
@@ -265,7 +271,6 @@ export default async function ProductPage({ params }: PageProps) {
                 </div>
               </div>
             )}
-
             {marketplaces.length > 0 && (
               <div className="flex flex-col gap-4">
                 <span className="font-lg font-medium">Где купить</span>
@@ -279,7 +284,7 @@ export default async function ProductPage({ params }: PageProps) {
                         target="_blank"
                         rel="noopener noreferrer"
                         className={cn(
-                          "bg-card group focus:hover-background/80 flex cursor-pointer items-center gap-4 rounded-lg border-2 border-transparent p-4",
+                          "bg-card group focus:hover-background/80 flex cursor-pointer items-center gap-4 rounded-lg border-2 border-transparent p-1.5",
                           "hover:border-brand transition-colors duration-300",
                         )}
                       >
@@ -293,7 +298,6 @@ export default async function ProductPage({ params }: PageProps) {
                 </div>
               </div>
             )}
-
             {validSpecs.length > 0 && (
               <div className="mt-2 flex flex-col gap-4">
                 <h3 className="font-medium">Характеристики</h3>
@@ -318,7 +322,8 @@ export default async function ProductPage({ params }: PageProps) {
             )}
           </div>
         </div>
-        {/* Заглушка */}
+
+        {/* Документация */}
         {product.documents && product.documents.length >= 0 && (
           <div className="mt-24 flex flex-col items-center justify-center gap-8">
             <h2 className="text-2xl font-medium tracking-tight xl:text-3xl">
@@ -351,13 +356,14 @@ export default async function ProductPage({ params }: PageProps) {
             </div>
           </div>
         )}
+
         {/* Вам может понравиться */}
         {similarProducts && similarProducts.length > 0 && (
           <div className="mt-24 flex flex-col items-center gap-8">
             <h2 className="text-2xl font-medium tracking-tight xl:text-3xl">
               Вам может понравиться
             </h2>
-            <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
               {similarProducts.map((p) => (
                 <ProductCard key={p.siteArticle} product={p} />
               ))}
