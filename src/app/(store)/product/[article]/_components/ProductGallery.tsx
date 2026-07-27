@@ -124,10 +124,10 @@ export const ProductGallery = ({
               key={i}
               className="relative flex h-full w-full items-center justify-center"
             >
-              <div
+              <button
                 className="absolute inset-0 z-0 cursor-zoom-in outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-inset"
                 onClick={openFullscreen}
-                role="button"
+                type="button"
                 tabIndex={0}
                 aria-label="Открыть изображение на весь экран"
                 onKeyDown={(e) => {
@@ -148,7 +148,7 @@ export const ProductGallery = ({
                   sizes="(max-width: 1024px) 100vw, 66vw"
                   priority={i === 0}
                 />
-              </div>
+              </button>
             </SwiperSlide>
           ))}
 

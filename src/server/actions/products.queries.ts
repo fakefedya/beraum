@@ -116,6 +116,11 @@ export async function getProducts(params: GetProductsParams = {}) {
             price: number;
             stock: number;
             isLatest: boolean;
+            image: {
+              fileKey: string;
+              bucketName: string;
+              fit: "contain" | "cover";
+            } | null;
           }[]
         >`jsonb_agg(
           jsonb_build_object(
@@ -124,7 +129,18 @@ export async function getProducts(params: GetProductsParams = {}) {
             'colorName', ${products.colorName},
             'isLatest', COALESCE(${products.isLatest}, false),
             'price', ${computedPriceSql},
-            'stock', ${computedStockSql}
+            'stock', ${computedStockSql},
+            'image', (
+              SELECT jsonb_build_object(
+                'fileKey', pm.file_key,
+                'bucketName', pm.bucket_name,
+                'fit', pm.image_fit
+              )
+              FROM ${productMedia} pm
+              WHERE pm.product_id = ${products.id} AND pm.type = 'image'
+              ORDER BY pm.sort_order ASC
+              LIMIT 1
+            )
           ) ORDER BY ${products.itemArticle} ASC
         )`.as("variants"),
       })
@@ -226,7 +242,7 @@ export async function getProductByArticle(rawArticle: string) {
       .filter((m) => m.type === "image")
       .map((img) => ({
         url: `${baseUrl}/${img.bucketName}/${img.fileKey}`,
-        fit: img.imageFit,
+        fit: (img.imageFit || "contain") as "contain" | "cover",
       }));
 
     return {
@@ -265,6 +281,11 @@ export async function getSimilarProducts(
             price: number;
             stock: number;
             isLatest: boolean;
+            image: {
+              fileKey: string;
+              bucketName: string;
+              fit: "contain" | "cover";
+            } | null;
           }[]
         >`jsonb_agg(
           jsonb_build_object(
@@ -273,7 +294,18 @@ export async function getSimilarProducts(
             'colorName', ${products.colorName},
             'isLatest', COALESCE(${products.isLatest}, false),
             'price', ${computedPriceSql},
-            'stock', (COALESCE(${products.ozonStockFbo}, 0) + COALESCE(${products.fbsStock}, 0))
+            'stock', ${computedStockSql},
+            'image', (
+              SELECT jsonb_build_object(
+                'fileKey', pm.file_key,
+                'bucketName', pm.bucket_name,
+                'fit', pm.image_fit
+              )
+              FROM ${productMedia} pm
+              WHERE pm.product_id = ${products.id} AND pm.type = 'image'
+              ORDER BY pm.sort_order ASC
+              LIMIT 1
+            )
           ) ORDER BY ${products.itemArticle} ASC
         )`.as("variants"),
       })

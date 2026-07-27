@@ -1,19 +1,38 @@
-import { pgTable, uuid, text, integer, timestamp } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  text,
+  integer,
+  timestamp,
+  index,
+} from "drizzle-orm/pg-core";
 import { mediaTypeEnum } from "./enums.schema";
 import { products } from "./products.schema";
 
-export const productMedia = pgTable("product_media", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  productId: uuid("product_id")
-    .notNull()
-    .references(() => products.id, { onDelete: "cascade" }),
-  type: mediaTypeEnum("type").notNull(),
-  bucketName: text("bucket_name").notNull().default("products"),
-  fileKey: text("file_key").notNull(),
-  imageFit: text("image_fit", { enum: ["contain", "cover"] })
-    .default("contain")
-    .notNull(),
-  mimeType: text("mime_type"),
-  sortOrder: integer("sort_order").notNull().default(0),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+export const productMedia = pgTable(
+  "product_media",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    type: mediaTypeEnum("type").notNull(),
+    bucketName: text("bucket_name").notNull().default("products"),
+    fileKey: text("file_key").notNull(),
+    imageFit: text("image_fit", { enum: ["contain", "cover"] })
+      .default("contain")
+      .notNull(),
+    mimeType: text("mime_type"),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => {
+    return {
+      productTypeSortIdx: index("idx_product_media_product_type_sort").on(
+        table.productId,
+        table.type,
+        table.sortOrder,
+      ),
+    };
+  },
+);

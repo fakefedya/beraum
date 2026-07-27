@@ -1,7 +1,9 @@
+// src/components/shared/ProductCard.tsx
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { type CatalogProduct } from "@/src/server/actions/products.queries";
 import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
@@ -9,6 +11,9 @@ import { COLOR_SWATCH_MAP, DEFAULT_SWATCH_COLOR } from "@/src/lib/constants";
 import { cn } from "@/src/lib/utils";
 
 const VISIBLE_COLORS_LIMIT = 4;
+// Используем переменную окружения (как в EmptyState) для гибкости деплоя
+const STORAGE_URL =
+  process.env.NEXT_PUBLIC_STORAGE_URL || "http://localhost:9000";
 
 interface ProductCardProps {
   product: CatalogProduct;
@@ -20,6 +25,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const visibleVariants = product.variants.slice(0, VISIBLE_COLORS_LIMIT);
   const hiddenCount = product.variants.length - VISIBLE_COLORS_LIMIT;
 
+  // Формируем безопасный URL и определяем fallback
+  const imageUrl = activeVariant.image
+    ? `${STORAGE_URL}/${activeVariant.image.bucketName}/${activeVariant.image.fileKey}`
+    : `${STORAGE_URL}/system-assets/placeholder.png`;
   return (
     <article
       className={cn(
@@ -28,7 +37,20 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       )}
     >
       <div className="relative flex flex-col gap-4">
-        <div className="bg-accent flex aspect-4/5 items-center justify-center rounded-xl"></div>
+        <div className="bg-accent relative flex aspect-4/5 items-center justify-center overflow-hidden rounded-xl">
+          <Image
+            src={imageUrl}
+            alt={`${product.productType} ${product.siteArticle}`}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className={cn(
+              "transition-transform duration-500 group-hover:scale-105",
+              activeVariant.image?.fit === "cover"
+                ? "object-cover"
+                : "object-contain",
+            )}
+          />
+        </div>
 
         <div
           className="z-1 flex items-center justify-center gap-2"
@@ -92,12 +114,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
       <Link
         href={`/product/${activeVariant.itemArticle.toLowerCase()}`}
+        aria-label={`Перейти к товару ${product.siteArticle}`}
         className={cn(
           "rounded focus-visible:ring-2",
           "focus-visible:ring-black",
           "after:absolute after:inset-0",
         )}
-      ></Link>
+      />
     </article>
   );
 };
