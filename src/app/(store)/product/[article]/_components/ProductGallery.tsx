@@ -3,19 +3,26 @@
 import { useState, useRef, useEffect } from "react";
 import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
 import { Pagination } from "swiper/modules";
-import { Maximize2, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
 import {
   Breadcrumbs,
   type BreadcrumbType,
 } from "@/src/components/shared/Breadcrumbs";
+import Image from "next/image";
 
 import "swiper/css";
 import "swiper/css/pagination";
 
+export type GalleryImage = {
+  url: string;
+  fit: "contain" | "cover";
+};
+
 interface ProductGalleryProps {
   breadcrumbs?: BreadcrumbType[];
+  images?: GalleryImage[];
 }
 
 const GalleryNavigation = () => {
@@ -42,7 +49,7 @@ const GalleryNavigation = () => {
         onClick={() => swiper.slidePrev()}
         disabled={isBeginning}
         className={cn(
-          "bg-background shadow-nav pointer-events-auto h-12 w-12 rounded-full backdrop-blur-md",
+          "bg-background/80 shadow-nav pointer-events-auto h-12 w-12 rounded-full backdrop-blur-xl backdrop-saturate-150",
           "hover:text-foreground hover:bg-background transition-all duration-300",
           "focus:opacity-100",
           "disabled:pointer-events-none disabled:opacity-0",
@@ -57,7 +64,7 @@ const GalleryNavigation = () => {
         onClick={() => swiper.slideNext()}
         disabled={isEnd}
         className={cn(
-          "bg-background shadow-nav pointer-events-auto h-12 w-12 rounded-full backdrop-blur-md",
+          "bg-background/80 shadow-nav pointer-events-auto h-12 w-12 rounded-full backdrop-blur-xl backdrop-saturate-150",
           "hover:text-foreground hover:bg-background transition-all duration-300",
           "focus:opacity-100",
           "disabled:pointer-events-none disabled:opacity-0",
@@ -71,23 +78,20 @@ const GalleryNavigation = () => {
   );
 };
 
-export const ProductGallery = ({ breadcrumbs }: ProductGalleryProps) => {
+export const ProductGallery = ({
+  breadcrumbs,
+  images = [],
+}: ProductGalleryProps) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const placeholders = Array.from({ length: 4 });
+  const displayImages: GalleryImage[] =
+    images.length > 0
+      ? images
+      : [{ url: "/system-assets/placeholder.png", fit: "contain" }];
 
   const openFullscreen = () => dialogRef.current?.showModal();
   const closeFullscreen = () => dialogRef.current?.close();
-
-  const PlaceholderCard = ({ className }: { className?: string }) => (
-    <div
-      className={cn(
-        "flex h-full w-full items-center justify-center",
-        className,
-      )}
-    ></div>
-  );
 
   return (
     <div className="relative flex h-full w-full flex-col gap-4">
@@ -95,11 +99,14 @@ export const ProductGallery = ({ breadcrumbs }: ProductGalleryProps) => {
         {breadcrumbs && breadcrumbs.length > 0 && (
           <div
             className={cn(
-              "pointer-events-auto absolute top-6 left-0 z-30 hidden w-full justify-center",
+              "pointer-events-auto absolute top-6 left-6 z-30 hidden w-full justify-start",
               "lg:flex",
             )}
           >
-            <Breadcrumbs items={breadcrumbs} />
+            <Breadcrumbs
+              items={breadcrumbs}
+              className="bg-background/80 shadow-nav flex gap-2 rounded-[12px] px-4 py-1.5 backdrop-blur-xl backdrop-saturate-150"
+            />
           </div>
         )}
 
@@ -107,55 +114,91 @@ export const ProductGallery = ({ breadcrumbs }: ProductGalleryProps) => {
           modules={[Pagination]}
           pagination={{ clickable: true }}
           onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
-          className="[&_.swiper-pagination-bullet-active]:bg-foreground! h-full w-full [&_.swiper-pagination]:bottom-6!"
+          className={cn(
+            "h-full w-full",
+            "[&_.swiper-pagination-bullet-active]:bg-background! [&_.swiper-pagination]:bottom-6!",
+          )}
         >
-          {placeholders.map((_, i) => (
+          {displayImages.map((image, i) => (
             <SwiperSlide
               key={i}
-              className="flex h-full w-full items-center justify-center p-8"
+              className="relative flex h-full w-full items-center justify-center"
             >
-              <PlaceholderCard />
+              <div
+                className="absolute inset-0 z-0 cursor-zoom-in outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-inset"
+                onClick={openFullscreen}
+                role="button"
+                tabIndex={0}
+                aria-label="Открыть изображение на весь экран"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    openFullscreen();
+                  }
+                }}
+              >
+                <Image
+                  src={image.url}
+                  alt={`Фото товара ${i + 1}`}
+                  fill
+                  className={cn(
+                    "transition-all duration-300",
+                    image.fit === "cover" ? "object-cover" : "object-contain",
+                  )}
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  priority={i === 0}
+                />
+              </div>
             </SwiperSlide>
           ))}
 
           <GalleryNavigation />
         </Swiper>
-
-        <Button
-          size="icon"
-          onClick={openFullscreen}
-          className="bg-background absolute top-6 right-6 z-20 opacity-0 shadow-md transition-opacity duration-300 group-hover:opacity-100 focus:opacity-100"
-          aria-label="Открыть на весь экран"
-        >
-          <Maximize2 className="text-foreground h-4 w-4" />
-        </Button>
       </div>
 
       <dialog
         ref={dialogRef}
-        className="open:animate-in open:fade-in-0 m-auto h-[95dvh] w-[95dvw] max-w-7xl rounded-2xl bg-white p-0 shadow-2xl backdrop:bg-black/80 backdrop:backdrop-blur-sm"
+        className={cn(
+          "m-auto h-[95dvh] w-[95dvw] max-w-7xl rounded-2xl bg-white p-0 shadow-2xl backdrop:bg-[#202028]/80 backdrop:backdrop-blur-sm",
+          "open:animate-in open:fade-in-0",
+        )}
         onCancel={closeFullscreen}
       >
         <div className="group relative h-full w-full bg-white">
           <Button
-            size="icon"
             onClick={closeFullscreen}
-            className="absolute top-4 right-4 z-50 shadow-md"
+            className={cn(
+              "bg-background/80 shadow-nav absolute top-4 right-4 z-50 h-12 w-12 rounded-full backdrop-blur-xl backdrop-saturate-150",
+              "hover:bg-background duration-300",
+            )}
           >
-            <X className="h-5 w-5 text-black" />
+            <X className="text-foreground size-6" />
           </Button>
           <Swiper
             modules={[Pagination]}
-            pagination={{ type: "fraction" }}
+            pagination={{ type: "bullets", clickable: true }}
             initialSlide={activeIndex}
-            className="h-full w-full"
+            className={cn(
+              "h-full w-full",
+              "[&_.swiper-pagination-bullet-active]:bg-background! [&_.swiper-pagination]:bottom-6!",
+            )}
           >
-            {placeholders.map((_, i) => (
+            {displayImages.map((image, i) => (
               <SwiperSlide
-                key={`fs-${i}`}
-                className="flex h-full w-full items-center justify-center p-4 md:p-12"
+                key={i}
+                className="relative flex h-full w-full items-center justify-center text-sm"
               >
-                <PlaceholderCard />
+                <Image
+                  src={image.url}
+                  alt={`Фото товара ${i + 1} крупно`}
+                  fill
+                  className={cn(
+                    "transition-all duration-300",
+                    image.fit === "cover" ? "object-cover" : "object-contain",
+                  )}
+                  sizes="(max-width: 1024px) 100vw, 95vw"
+                  priority={i === activeIndex}
+                />
               </SwiperSlide>
             ))}
 

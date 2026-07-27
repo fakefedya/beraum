@@ -11,20 +11,14 @@ import { Icons } from "@/src/components/ui/icons";
 import { ProductGallery } from "./_components/ProductGallery";
 import { Badge } from "@/src/components/ui/badge";
 import { cn } from "@/src/lib/utils";
-import {
-  FileText,
-  Wrench,
-  ShieldCheck,
-  CheckCircle2,
-  XCircle,
-} from "lucide-react";
+import { CheckCircle2, XCircle } from "lucide-react";
 import { ProductCard } from "@/src/components/shared/ProductCard";
 import { BreadcrumbType } from "@/src/components/shared/Breadcrumbs";
 
-const DOC_META: Record<string, { label: string; icon: React.ElementType }> = {
-  user_instruction: { label: "Инструкция по эксплуатации", icon: FileText },
-  service_instruction: { label: "Сервисное руководство", icon: Wrench },
-  certificate: { label: "Сертификат соответствия", icon: ShieldCheck },
+const DOC_META: Record<string, { label: string }> = {
+  user_instruction: { label: "Руководство пользователя" },
+  service_instruction: { label: "Инструкция по установке" },
+  certificate: { label: "Сертификат соответствия" },
 };
 
 interface PageProps {
@@ -156,15 +150,18 @@ export default async function ProductPage({ params }: PageProps) {
           <div
             className={cn(
               "sticky top-32 z-10 h-[calc(100vh-140px)] min-h-125 w-full",
-              "lg:col-span-8",
+              "lg:col-span-7",
             )}
           >
-            <ProductGallery breadcrumbs={breadcrumbItems} />
+            <ProductGallery
+              breadcrumbs={breadcrumbItems}
+              images={product.images}
+            />
           </div>
 
           <div
             className={cn(
-              "bg-background shadow-card flex flex-col gap-8 rounded-[24px] p-6 lg:col-span-4",
+              "bg-background shadow-card flex flex-col gap-8 rounded-[24px] p-6 lg:col-span-5",
               "lg:p-8",
             )}
           >
@@ -324,7 +321,7 @@ export default async function ProductPage({ params }: PageProps) {
         </div>
 
         {/* Документация */}
-        {product.documents && product.documents.length >= 0 && (
+        {product.documents && product.documents.length > 0 && (
           <div className="mt-24 flex flex-col items-center justify-center gap-8">
             <h2 className="text-2xl font-medium tracking-tight xl:text-3xl">
               Документация
@@ -333,7 +330,6 @@ export default async function ProductPage({ params }: PageProps) {
               {product.documents.map((doc, idx) => {
                 const meta = DOC_META[doc.type];
                 if (!meta) return null;
-                const Icon = meta.icon;
 
                 return (
                   <a
@@ -342,14 +338,15 @@ export default async function ProductPage({ params }: PageProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={cn(
-                      "bg-card hover:shadow-card-hover group flex w-full items-center gap-4 rounded-2xl p-4 transition-all duration-300 sm:w-auto md:min-w-64",
+                      "bg-card flex flex-col gap-4 rounded-2xl border-2 border-transparent p-4",
                       "outline-none focus-visible:ring-2 focus-visible:ring-black",
+                      "hover:border-brand transition-colors duration-300",
                     )}
                   >
-                    <div className="bg-background flex h-12 w-12 shrink-0 items-center justify-center rounded-full transition-transform group-hover:scale-110">
-                      <Icon className="text-muted-foreground h-5 w-5" />
-                    </div>
-                    <span className="text-sm font-medium">{meta.label}</span>
+                    <span className="text-background w-fit rounded-sm bg-[linear-gradient(to_right_bottom,#fe6455,#fd5b4c,#fc5242,#fb4839,#fa3d2f)] px-1.5 py-1 text-[10px] font-medium">
+                      PDF
+                    </span>
+                    <span className="text-sm">{meta.label}</span>
                   </a>
                 );
               })}

@@ -10,6 +10,9 @@ export const productMedia = pgTable("product_media", {
   type: mediaTypeEnum("type").notNull(),
   bucketName: text("bucket_name").notNull().default("products"),
   fileKey: text("file_key").notNull(),
+  imageFit: text("image_fit", { enum: ["contain", "cover"] })
+    .default("contain")
+    .notNull(),
   mimeType: text("mime_type"),
   sortOrder: integer("sort_order").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),

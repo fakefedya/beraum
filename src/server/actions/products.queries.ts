@@ -199,29 +199,39 @@ export async function getProductByArticle(rawArticle: string) {
       )
       .orderBy(products.itemArticle);
 
-    // Документы
-    const documents = await db
+    const allMedia = await db
       .select({
         type: productMedia.type,
         fileKey: productMedia.fileKey,
         bucketName: productMedia.bucketName,
+        sortOrder: productMedia.sortOrder,
+        imageFit: productMedia.imageFit,
       })
       .from(productMedia)
-      .where(
-        and(
-          eq(productMedia.productId, product.id),
-          ne(productMedia.type, "image"),
-        ),
-      );
+      .where(eq(productMedia.productId, product.id))
+      .orderBy(productMedia.sortOrder);
 
-    const formattedDocs = documents.map((doc) => ({
-      type: doc.type,
-      url: `http://${serverEnv.MINIO_ENDPOINT}:${serverEnv.MINIO_PORT}/${doc.bucketName}/${doc.fileKey}`,
-    }));
+    const baseUrl = `http://${serverEnv.MINIO_ENDPOINT}:${serverEnv.MINIO_PORT}`;
+
+    // Фильтруем документы
+    const formattedDocs = allMedia
+      .filter((m) => m.type !== "image")
+      .map((doc) => ({
+        type: doc.type,
+        url: `${baseUrl}/${doc.bucketName}/${doc.fileKey}`,
+      }));
+
+    // Фильтруем изображения
+    const images = allMedia
+      .filter((m) => m.type === "image")
+      .map((img) => ({
+        url: `${baseUrl}/${img.bucketName}/${img.fileKey}`,
+        fit: img.imageFit,
+      }));
 
     return {
       success: true,
-      data: { ...product, variants, documents: formattedDocs },
+      data: { ...product, variants, documents: formattedDocs, images },
     };
   } catch (error) {
     console.error("❌ Ошибка Server Action (getProductByArticle):", error);

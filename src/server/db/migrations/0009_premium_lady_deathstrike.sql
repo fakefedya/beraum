@@ -1,0 +1,1 @@
+ALTER TABLE "product_media" ADD COLUMN "image_fit" text DEFAULT 'contain' NOT NULL;

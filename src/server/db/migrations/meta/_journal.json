@@ -64,6 +64,13 @@
       "when": 1784893546503,
       "tag": "0008_military_boom_boom",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1785139339580,
+      "tag": "0009_premium_lady_deathstrike",
+      "breakpoints": true
     }
   ]
 }
