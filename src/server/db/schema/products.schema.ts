@@ -8,6 +8,7 @@ import {
   jsonb,
   index,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import { productStatusEnum } from "./enums.schema";
 import { categories } from "./categories.schema";
 
@@ -59,6 +60,10 @@ export const products = pgTable(
   (table) => {
     return {
       filtersIdx: index("idx_products_filters").using("gin", table.filters),
+      articleTrgmIdx: index("idx_products_article_trgm").using(
+        "gin",
+        sql`${table.itemArticle} gin_trgm_ops`,
+      ),
     };
   },
 );

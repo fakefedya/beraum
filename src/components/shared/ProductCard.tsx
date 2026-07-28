@@ -86,7 +86,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           <h2 className="text-muted-foreground">{product.productType}</h2>
           <h2 className="font-medium">{product.siteArticle}</h2>
           {activeVariant.price > 0 ? (
-            <span className="text-muted-foreground mt-8">
+            <span className="text-foreground mt-8">
               от {activeVariant.price.toLocaleString("ru-RU")} ₽
             </span>
           ) : (

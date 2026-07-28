@@ -1,0 +1,2 @@
+CREATE INDEX "idx_categories_title_trgm" ON "categories" USING gin ("title_ru" gin_trgm_ops);--> statement-breakpoint
+CREATE INDEX "idx_products_article_trgm" ON "products" USING gin ("item_article" gin_trgm_ops);

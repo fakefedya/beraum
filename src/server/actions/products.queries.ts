@@ -11,8 +11,9 @@ const filterValueSchema = z.union([z.string(), z.array(z.string())]);
 
 const getProductsSchema = z.object({
   categorySlug: z.string().min(1).max(100).optional(),
-  limit: z.number().int().min(1).max(50).default(12), // Защита от DDoS
+  limit: z.number().int().min(1).max(50).default(12),
   offset: z.number().int().min(0).default(0),
+  q: z.string().max(100, "Слишком длинный запрос").optional(),
   filters: z.record(z.string(), filterValueSchema).optional(),
   sort: z
     .union([z.string(), z.array(z.string())])
@@ -61,7 +62,7 @@ const productTypeAggSql = sql<string>`MAX(${productTypeScalarSql})`;
 
 export async function getProducts(params: GetProductsParams = {}) {
   try {
-    const { limit, offset, categorySlug, filters, sort } =
+    const { limit, offset, categorySlug, filters, sort, q } =
       getProductsSchema.parse(params);
     const conditions = [eq(products.status, "published")];
     const orderConditions = [];
@@ -73,6 +74,18 @@ export async function getProducts(params: GetProductsParams = {}) {
     else {
       orderConditions.push(desc(sql`BOOL_OR(${products.isLatest})`));
       orderConditions.push(desc(sql`MAX(${products.createdAt})`));
+    }
+
+    if (q && q.trim().length > 0) {
+      const searchTerm = `%${q.trim()}%`;
+      const searchCondition = or(
+        ilike(products.itemArticle, searchTerm),
+        ilike(categories.titleRu, searchTerm),
+      );
+
+      if (searchCondition) {
+        conditions.push(searchCondition);
+      }
     }
 
     if (categorySlug) {
