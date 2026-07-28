@@ -14,7 +14,7 @@ export type NavMenuMega = {
     description: string;
     href: string;
     isNew?: boolean;
-    cover: string;
+    cover?: string;
   }[];
 };
 export type NavMenuDefault = {
@@ -57,18 +57,18 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
       ],
       promoCards: [
         {
-          label: "HI-2CR591",
+          label: "HE-3C001",
           description: "Дизайнерская овальная панель",
-          href: "/catalog/hob",
+          href: "/product/HE-3C001",
           isNew: true,
-          cover: "",
+          cover: "products/HE-3C002/images/promo_cover.png",
         },
         {
-          label: "HI-3CR451",
-          description: "Овальная панель",
-          href: "/catalog/hood",
+          label: "HE-3C101",
+          description: "Дизайнерская овальная панель",
+          href: "/product/HE-3C101",
           isNew: true,
-          cover: "",
+          // cover: "products/HE-3C002/images/promo_cover.p1g",
         },
       ],
     },

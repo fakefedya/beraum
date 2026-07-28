@@ -1,4 +1,3 @@
-// src/components/shared/ProductCard.tsx
 "use client";
 
 import { useState } from "react";
@@ -9,11 +8,9 @@ import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
 import { COLOR_SWATCH_MAP, DEFAULT_SWATCH_COLOR } from "@/src/lib/constants";
 import { cn } from "@/src/lib/utils";
+import { STORAGE_URL, SYSTEM_ASSETS } from "@/src/lib/constants";
 
 const VISIBLE_COLORS_LIMIT = 4;
-// Используем переменную окружения (как в EmptyState) для гибкости деплоя
-const STORAGE_URL =
-  process.env.NEXT_PUBLIC_STORAGE_URL || "http://localhost:9000";
 
 interface ProductCardProps {
   product: CatalogProduct;
@@ -25,10 +22,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const visibleVariants = product.variants.slice(0, VISIBLE_COLORS_LIMIT);
   const hiddenCount = product.variants.length - VISIBLE_COLORS_LIMIT;
 
-  // Формируем безопасный URL и определяем fallback
   const imageUrl = activeVariant.image
     ? `${STORAGE_URL}/${activeVariant.image.bucketName}/${activeVariant.image.fileKey}`
-    : `${STORAGE_URL}/system-assets/placeholder.png`;
+    : SYSTEM_ASSETS.placeholder;
   return (
     <article
       className={cn(

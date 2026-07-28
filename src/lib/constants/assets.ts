@@ -1,0 +1,7 @@
+export const STORAGE_URL =
+  process.env.NEXT_PUBLIC_STORAGE_URL || "http://localhost:9000";
+
+export const SYSTEM_ASSETS = {
+  placeholder: `${STORAGE_URL}/system-assets/placeholder.png`,
+  emptyStateCover: `${STORAGE_URL}/system-assets/empty_state_cover.png`,
+} as const;

@@ -11,6 +11,7 @@ import {
   type BreadcrumbType,
 } from "@/src/components/shared/Breadcrumbs";
 import Image from "next/image";
+import { SYSTEM_ASSETS } from "@/src/lib/constants";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -88,7 +89,7 @@ export const ProductGallery = ({
   const displayImages: GalleryImage[] =
     images.length > 0
       ? images
-      : [{ url: "/system-assets/placeholder.png", fit: "contain" }];
+      : [{ url: SYSTEM_ASSETS.placeholder, fit: "contain" }];
 
   const openFullscreen = () => dialogRef.current?.showModal();
   const closeFullscreen = () => dialogRef.current?.close();
@@ -125,7 +126,10 @@ export const ProductGallery = ({
               className="relative flex h-full w-full items-center justify-center"
             >
               <button
-                className="absolute inset-0 z-0 cursor-zoom-in outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-inset"
+                className={cn(
+                  "absolute inset-0 z-0 cursor-zoom-in outline-none",
+                  "focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-inset",
+                )}
                 onClick={openFullscreen}
                 type="button"
                 tabIndex={0}

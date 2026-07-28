@@ -320,7 +320,6 @@ export default async function ProductPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Документация */}
         {product.documents && product.documents.length > 0 && (
           <div className="mt-24 flex flex-col items-center justify-center gap-8">
             <h2 className="text-2xl font-medium tracking-tight xl:text-3xl">
@@ -354,7 +353,6 @@ export default async function ProductPage({ params }: PageProps) {
           </div>
         )}
 
-        {/* Вам может понравиться */}
         {similarProducts && similarProducts.length > 0 && (
           <div className="mt-24 flex flex-col items-center gap-8">
             <h2 className="text-2xl font-medium tracking-tight xl:text-3xl">

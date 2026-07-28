@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import Image from "next/image";
 import { cn } from "@/src/lib/utils";
 import {
   NavigationMenuContent,
@@ -19,6 +20,7 @@ import type {
   NavLink,
 } from "@/src/lib/constants";
 import { Badge } from "@/src/components/ui/badge";
+import { STORAGE_URL, SYSTEM_ASSETS } from "@/src/lib/constants";
 
 interface NavDesktopProps {
   links: readonly NavItem[];
@@ -60,7 +62,7 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
     <NavigationMenuItem className="flex h-full items-center">
       <NavigationMenuTrigger
         className={cn(
-          "text-foreground h-full rounded-[12px] px-2 font-medium",
+          "text-foreground h-full rounded-[12px] px-2 font-medium tracking-tight transition-colors duration-300",
           "hover:bg-background/80",
           "data-[state=open]:bg-background",
           "xl:px-4",
@@ -78,8 +80,8 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                     prefetch={false}
                     href={link.href}
                     className={cn(
-                      "flex items-start gap-0 rounded-xl p-4 font-medium duration-300",
-                      "hover:bg-hover-background/80 duration-300",
+                      "flex items-start gap-0 rounded-xl p-4 font-medium transition-colors duration-300",
+                      "hover:bg-hover-background/80",
                       "data-[state=open]:bg-background",
                     )}
                   >
@@ -91,32 +93,55 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
           </ul>
 
           <ul className="grid h-auto w-full grid-cols-2 gap-3">
-            {item.promoCards.map((card) => (
-              <li key={card.href} className="min-h-full">
-                <NavigationMenuLink asChild>
-                  <Link
-                    prefetch={false}
-                    href={card.href}
-                    className={cn(
-                      "bg-card relative flex h-full items-end rounded-xl border-2 border-transparent",
-                      "hover:border-brand transition-colors duration-300",
-                    )}
-                  >
-                    <div className="flex flex-col gap-0 p-4">
-                      <span className="font-medium">{card.label}</span>
-                      <span className="text-muted-foreground">
-                        {card.description}
-                      </span>
-                    </div>
-                    {card.isNew && (
-                      <Badge className="bg-brand text-foreground absolute top-4 right-4 font-medium uppercase">
-                        Новинка
-                      </Badge>
-                    )}
-                  </Link>
-                </NavigationMenuLink>
-              </li>
-            ))}
+            {item.promoCards.map((card) => {
+              const imageUrl = card.cover
+                ? `${STORAGE_URL}/${card.cover}`
+                : SYSTEM_ASSETS.placeholder;
+
+              return (
+                <li key={card.href} className="min-h-full">
+                  <NavigationMenuLink asChild>
+                    <Link
+                      prefetch={false}
+                      href={card.href}
+                      className={cn(
+                        "group bg-card relative flex h-full flex-col gap-4 overflow-hidden rounded-xl border-2 border-transparent",
+                        "hover:border-brand transition-colors duration-300",
+                        "outline-none focus-visible:ring-2 focus-visible:ring-black",
+                      )}
+                    >
+                      <div className="bg-accent relative flex h-full w-full shrink-0 items-center justify-center overflow-hidden rounded-lg">
+                        <Image
+                          src={imageUrl}
+                          alt={card.description}
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className={cn(
+                            "object-cover",
+                            "transition-transform duration-500 group-hover:scale-105",
+                          )}
+                        />
+                      </div>
+
+                      <div className="bg-background/80 shadow-nav absolute bottom-4 left-4 flex w-fit flex-col gap-0 rounded-[12px] px-4 py-1.5 backdrop-blur-xl backdrop-saturate-150">
+                        <span className="line-clamp-1 font-medium tracking-tight">
+                          {card.label}
+                        </span>
+                        <span className="text-muted-foreground line-clamp-2 text-sm tracking-tight">
+                          {card.description}
+                        </span>
+                      </div>
+
+                      {card.isNew && (
+                        <Badge className="bg-brand text-foreground absolute top-4 right-4 font-medium uppercase">
+                          Новинка
+                        </Badge>
+                      )}
+                    </Link>
+                  </NavigationMenuLink>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </NavigationMenuContent>
