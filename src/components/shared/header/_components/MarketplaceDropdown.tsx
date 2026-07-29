@@ -24,9 +24,8 @@ export const MarketplaceDropdown = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant={"gradient"}
           className={cn(
-            "hidden h-12 items-center gap-2 rounded-[16px] text-base font-semibold",
+            "text-foreground bg-brand-secondary hidden h-12 items-center gap-2 rounded-[16px] px-2 text-base font-semibold",
             "lg:flex xl:gap-4 xl:px-4",
             "[&[data-state=open]>svg]:rotate-180",
           )}

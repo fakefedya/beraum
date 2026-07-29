@@ -62,7 +62,7 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
     <NavigationMenuItem className="flex h-full items-center">
       <NavigationMenuTrigger
         className={cn(
-          "text-foreground h-full rounded-[12px] px-2 font-medium tracking-tight transition-colors duration-300",
+          "text-foreground h-full rounded-[12px] bg-transparent px-2 font-medium tracking-tight transition-colors duration-300",
           "hover:bg-background/80",
           "data-[state=open]:bg-background",
           "xl:px-4",
@@ -165,7 +165,7 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
     <NavigationMenuItem className="flex h-full items-center">
       <NavigationMenuTrigger
         className={cn(
-          "text-foreground h-full rounded-[12px] px-2 font-medium",
+          "text-foreground h-full rounded-[12px] bg-transparent px-2 font-medium",
           "hover:bg-background/80",
           "data-[state=open]:bg-background",
           "xl:px-4",
@@ -208,7 +208,7 @@ const LinkNode = ({ item }: { item: NavLink | NavExternal }) => {
           href={item.href}
           className={cn(
             navigationMenuTriggerStyle(),
-            "text-foreground h-full rounded-[12px] px-2 font-medium",
+            "text-foreground h-full rounded-[12px] bg-transparent px-2 font-medium",
             "hover:bg-background/80",
             "xl:px-4",
           )}

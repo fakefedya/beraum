@@ -68,7 +68,7 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
           description: "Дизайнерская овальная панель",
           href: "/product/HE-3C101",
           isNew: true,
-          // cover: "products/HE-3C002/images/promo_cover.p1g",
+          cover: "products/HE-3C002/images/promo_cover.png",
         },
       ],
     },

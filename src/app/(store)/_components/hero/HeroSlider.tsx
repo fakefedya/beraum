@@ -22,6 +22,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import { EmptyState } from "@/src/components/ui/empty-state";
+import { cn } from "@/src/lib/utils";
 
 interface HeroSliderProps {
   slides: ValidatedSlide[];
@@ -117,12 +118,15 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
                 <Link
                   key={i}
                   href={tag.href}
-                  className="bg-brand shadow-card absolute flex items-center gap-2 rounded-full p-1 backdrop-blur-md transition-colors duration-300 hover:bg-white"
+                  className={cn(
+                    "bg-background/90 border-brand/90 shadow-nav absolute flex items-center gap-2 rounded-full border-4 backdrop-blur-xl backdrop-saturate-150",
+                    "hover:bg-background hover:border-brand transition-colors duration-300",
+                  )}
                   style={{ left: `${tag.xPercent}%`, top: `${tag.yPercent}%` }}
                   data-swiper-parallax="-300"
                   data-swiper-parallax-opacity="0"
                 >
-                  <div className="bg-surface-gray hover:bg-brand flex flex-col items-end rounded-full px-6 py-2 transition-colors duration-300">
+                  <div className="flex flex-col rounded-full px-6 py-2">
                     <span className="text-black-muted text-xs leading-3">
                       {tag.title}
                     </span>
