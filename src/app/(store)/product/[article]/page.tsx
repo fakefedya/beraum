@@ -342,7 +342,7 @@ export default async function ProductPage({ params }: PageProps) {
                       "hover:border-brand transition-colors duration-300",
                     )}
                   >
-                    <span className="text-background w-fit rounded-sm bg-[linear-gradient(to_right_bottom,#fe6455,#fd5b4c,#fc5242,#fb4839,#fa3d2f)] px-1.5 py-1 text-[10px] font-medium">
+                    <span className="text-background w-fit rounded-sm bg-[linear-gradient(to_right_bottom,#fe6455,#fd5b4c,#fc5242,#fb4839,#fa3d2f)] px-1.5 py-1 text-[10px] font-medium tracking-wider">
                       PDF
                     </span>
                     <span className="text-sm">{meta.label}</span>
