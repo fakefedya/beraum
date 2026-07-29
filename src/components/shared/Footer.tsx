@@ -27,7 +27,7 @@ export const Footer = () => {
           <div
             className={cn(
               "text-xs font-medium tracking-wider",
-              pathname === "/" ? "text-background/50" : "text-muted-foreground",
+              pathname === "/" ? "text-background/70" : "text-muted-foreground",
             )}
           >
             © {new Date().getFullYear()} BERAUM
@@ -41,7 +41,7 @@ export const Footer = () => {
                 "focus-visible:ring-2 focus-visible:ring-black",
                 "[&[data-state=open]>svg]:rotate-180",
                 pathname === "/"
-                  ? "hover:text-background text-background/50 data-[state=open]:text-background"
+                  ? "hover:text-background text-background/70 data-[state=open]:text-background"
                   : "hover:text-foreground text-muted-foreground data-[state=open]:text-foreground",
               )}
             >
@@ -63,7 +63,7 @@ export const Footer = () => {
                 >
                   <Link
                     href={link.href}
-                    prefetch={false} // 🛡 Защита от спама префетчами
+                    prefetch={false}
                     className="w-full text-sm font-medium tracking-tight"
                   >
                     {link.label}
