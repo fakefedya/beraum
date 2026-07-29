@@ -96,7 +96,6 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
               priority={index === 0}
               loading={index === 0 ? "eager" : "lazy"}
               sizes="100vw"
-              quality={95}
             />
 
             {slide.mobileImageUrl && (
@@ -108,7 +107,6 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
                 priority={index === 0}
                 loading={index === 0 ? "eager" : "lazy"}
                 sizes="100vw"
-                quality={95}
               />
             )}
           </div>
