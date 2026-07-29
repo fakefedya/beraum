@@ -1,5 +1,5 @@
 {
-  "id": "1158e2ec-29a2-44af-8df4-a23af7227f60",
+  "id": "94a40d95-8a40-4286-85de-b91e4533284a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -42,7 +42,23 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "idx_categories_title_trgm": {
+          "name": "idx_categories_title_trgm",
+          "columns": [
+            {
+              "expression": "\"title_ru\" gin_trgm_ops",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
@@ -58,8 +74,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.product_media": {
-      "name": "product_media",
+    "public.slides": {
+      "name": "slides",
       "schema": "",
       "columns": {
         "id": {
@@ -69,25 +85,26 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "product_id": {
-          "name": "product_id",
-          "type": "uuid",
+        "internal_title": {
+          "name": "internal_title",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "type": {
-          "name": "type",
-          "type": "media_type",
+        "placement": {
+          "name": "placement",
+          "type": "slide_placement",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'home_hero'"
         },
         "bucket_name": {
           "name": "bucket_name",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "default": "'products'"
+          "default": "'system-assets'"
         },
         "file_key": {
           "name": "file_key",
@@ -95,11 +112,31 @@
           "primaryKey": false,
           "notNull": true
         },
-        "mime_type": {
-          "name": "mime_type",
+        "mobile_file_key": {
+          "name": "mobile_file_key",
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "slide_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payload": {
+          "name": "payload",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
         },
         "sort_order": {
           "name": "sort_order",
@@ -114,24 +151,17 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "product_media_product_id_products_id_fk": {
-          "name": "product_media_product_id_products_id_fk",
-          "tableFrom": "product_media",
-          "tableTo": "products",
-          "columnsFrom": [
-            "product_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -182,19 +212,11 @@
           "notNull": true,
           "default": false
         },
-        "base_price": {
-          "name": "base_price",
-          "type": "integer",
+        "color_name": {
+          "name": "color_name",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        },
-        "base_stock": {
-          "name": "base_stock",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
+          "notNull": false
         },
         "manual_price": {
           "name": "manual_price",
@@ -208,20 +230,21 @@
           "primaryKey": false,
           "notNull": false
         },
+        "discount_percentage": {
+          "name": "discount_percentage",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
         "ozon_link": {
           "name": "ozon_link",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "ozon_price": {
-          "name": "ozon_price",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "ozon_stock": {
-          "name": "ozon_stock",
+        "ozon_stock_fbo": {
+          "name": "ozon_stock_fbo",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -232,15 +255,33 @@
           "primaryKey": false,
           "notNull": false
         },
-        "wb_price": {
-          "name": "wb_price",
+        "fbs_stock": {
+          "name": "fbs_stock",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "wb_stock": {
-          "name": "wb_stock",
+        "wb_chrt_id": {
+          "name": "wb_chrt_id",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "wb_discounted_price": {
+          "name": "wb_discounted_price",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ymarket_link": {
+          "name": "ymarket_link",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mvideo_link": {
+          "name": "mvideo_link",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -300,6 +341,21 @@
           "concurrently": false,
           "method": "gin",
           "with": {}
+        },
+        "idx_products_article_trgm": {
+          "name": "idx_products_article_trgm",
+          "columns": [
+            {
+              "expression": "\"item_article\" gin_trgm_ops",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -319,13 +375,6 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "products_site_article_unique": {
-          "name": "products_site_article_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "site_article"
-          ]
-        },
         "products_item_article_unique": {
           "name": "products_item_article_unique",
           "nullsNotDistinct": false,
@@ -337,6 +386,121 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
+    },
+    "public.product_media": {
+      "name": "product_media",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "product_id": {
+          "name": "product_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "media_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bucket_name": {
+          "name": "bucket_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'products'"
+        },
+        "file_key": {
+          "name": "file_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image_fit": {
+          "name": "image_fit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'contain'"
+        },
+        "mime_type": {
+          "name": "mime_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sort_order": {
+          "name": "sort_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_product_media_product_type_sort": {
+          "name": "idx_product_media_product_type_sort",
+          "columns": [
+            {
+              "expression": "product_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "sort_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "product_media_product_id_products_id_fk": {
+          "name": "product_media_product_id_products_id_fk",
+          "tableFrom": "product_media",
+          "tableTo": "products",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
   "enums": {
@@ -345,7 +509,8 @@
       "schema": "public",
       "values": [
         "image",
-        "instruction",
+        "user_instruction",
+        "service_instruction",
         "certificate"
       ]
     },
@@ -356,6 +521,22 @@
         "draft",
         "published",
         "archived"
+      ]
+    },
+    "public.slide_placement": {
+      "name": "slide_placement",
+      "schema": "public",
+      "values": [
+        "home_hero",
+        "catalog_hero"
+      ]
+    },
+    "public.slide_type": {
+      "name": "slide_type",
+      "schema": "public",
+      "values": [
+        "promo_product",
+        "promo_information"
       ]
     }
   },

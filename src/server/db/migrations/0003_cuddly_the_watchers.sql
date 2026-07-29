@@ -1,1 +1,0 @@
-ALTER TABLE "products" DROP CONSTRAINT "products_site_article_unique";

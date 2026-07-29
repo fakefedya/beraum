@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:seed": "tsx --env-file=.env.local src/server/db/seed.ts"
+    "db:migrate": "tsx --conditions=react-server src/server/db/migrate.ts",
+    "db:seed": "tsx --conditions=react-server --env-file=.env.local src/server/db/seed.ts"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

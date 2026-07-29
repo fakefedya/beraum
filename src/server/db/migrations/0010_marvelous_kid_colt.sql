@@ -1,1 +1,0 @@
-CREATE INDEX "idx_product_media_product_type_sort" ON "product_media" USING btree ("product_id","type","sort_order");

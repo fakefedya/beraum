@@ -100,7 +100,7 @@ export const ProductGallery = ({
         {breadcrumbs && breadcrumbs.length > 0 && (
           <div
             className={cn(
-              "pointer-events-auto absolute top-6 left-6 z-30 hidden w-full justify-start",
+              "pointer-events-auto absolute top-6 left-6 z-30 hidden w-fit justify-start",
               "lg:flex",
             )}
           >

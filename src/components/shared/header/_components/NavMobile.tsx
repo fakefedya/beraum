@@ -19,7 +19,11 @@ import {
   AccordionTrigger,
 } from "@/src/components/ui/accordion";
 import { Badge } from "@/src/components/ui/badge";
-import { MARKETPLACE_LINKS, type NavItem } from "@/src/lib/constants";
+import {
+  MARKETPLACE_LINKS,
+  type NavItem,
+  FOOTER_LINKS,
+} from "@/src/lib/constants";
 import { Icons } from "@/src/components/ui/icons";
 import { cn } from "@/src/lib/utils";
 
@@ -188,6 +192,34 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                   </AccordionItem>
                 );
               })}
+
+              <AccordionItem value="legal-links" className="border-border">
+                <AccordionTrigger
+                  className={cn(
+                    "py-4 text-lg font-medium",
+                    "hover:no-underline",
+                  )}
+                >
+                  T&C
+                </AccordionTrigger>
+                <AccordionContent className="flex flex-col gap-4 pt-1 pb-4">
+                  {FOOTER_LINKS.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      prefetch={false}
+                      onClick={() => setIsOpen(false)}
+                      className={cn(
+                        "text-muted-foreground text-base font-normal transition-colors outline-none",
+                        "focus-visible:ring-2 focus-visible:ring-black/20",
+                        "hover:text-foreground",
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
             </Accordion>
           </div>
 

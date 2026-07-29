@@ -5,85 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1782130827883,
-      "tag": "0000_sweet_tag",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1782910733437,
-      "tag": "0001_ancient_butterfly",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1783062656595,
-      "tag": "0002_redundant_thunderbolts",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1783069498598,
-      "tag": "0003_cuddly_the_watchers",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1783083629602,
-      "tag": "0004_silent_patriot",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1783673375448,
-      "tag": "0005_tidy_wilson_fisk",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1783686716148,
-      "tag": "0006_first_ronan",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1783924008036,
-      "tag": "0007_white_sprite",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1784893546503,
-      "tag": "0008_military_boom_boom",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1785139339580,
-      "tag": "0009_premium_lady_deathstrike",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "7",
-      "when": 1785160049417,
-      "tag": "0010_marvelous_kid_colt",
-      "breakpoints": true
-    },
-    {
-      "idx": 11,
-      "version": "7",
-      "when": 1785236475751,
-      "tag": "0011_serious_blockbuster",
+      "when": 1785313336731,
+      "tag": "0000_parched_nitro",
       "breakpoints": true
     }
   ]

@@ -120,3 +120,15 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
     },
   ],
 } as const;
+
+export type FooterLink = {
+  label: string;
+  href: string;
+};
+
+export const FOOTER_LINKS: FooterLink[] = [
+  { label: "Политика конфиденциальности", href: "/policies/privacy" },
+  { label: "Пользовательское соглашение", href: "/policies/terms" },
+  { label: "Комплектация и возврат", href: "/policies/returns" },
+  { label: "Реквизиты", href: "/policies/returns1" },
+] as const;
