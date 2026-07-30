@@ -3,7 +3,12 @@
 import { z } from "zod";
 import { eq, desc, asc, and, sql, or, ilike, ne } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
-import { products, categories, productMedia } from "@/src/server/db/schema"; // Читаем из index.ts
+import {
+  products,
+  categories,
+  productImages,
+  productDocuments,
+} from "@/src/server/db/schema";
 import { CATEGORY_FILTERS } from "@/src/lib/constants";
 import { serverEnv } from "@/src/lib/env/server";
 
@@ -145,13 +150,13 @@ export async function getProducts(params: GetProductsParams = {}) {
             'stock', ${computedStockSql},
             'image', (
               SELECT jsonb_build_object(
-                'fileKey', pm.file_key,
-                'bucketName', pm.bucket_name,
-                'fit', pm.image_fit
+                'fileKey', pi.file_key,
+                'bucketName', pi.bucket_name,
+                'fit', pi.image_fit
               )
-              FROM ${productMedia} pm
-              WHERE pm.product_id = ${products.id} AND pm.type = 'image'
-              ORDER BY pm.sort_order ASC
+              FROM ${productImages} pi
+              WHERE pi.product_id = ${products.id}
+              ORDER BY pi.sort_order ASC
               LIMIT 1
             )
           ) ORDER BY ${products.itemArticle} ASC
@@ -210,7 +215,7 @@ export async function getProductByArticle(rawArticle: string) {
 
     if (!product) return { success: false, error: "Товар не найден" };
 
-    const variants = await db
+    const variantsPromise = db
       .select({
         id: products.id,
         itemArticle: products.itemArticle,
@@ -228,35 +233,43 @@ export async function getProductByArticle(rawArticle: string) {
       )
       .orderBy(products.itemArticle);
 
-    const allMedia = await db
+    const imagesPromise = db
       .select({
-        type: productMedia.type,
-        fileKey: productMedia.fileKey,
-        bucketName: productMedia.bucketName,
-        sortOrder: productMedia.sortOrder,
-        imageFit: productMedia.imageFit,
+        fileKey: productImages.fileKey,
+        bucketName: productImages.bucketName,
+        imageFit: productImages.imageFit,
       })
-      .from(productMedia)
-      .where(eq(productMedia.productId, product.id))
-      .orderBy(productMedia.sortOrder);
+      .from(productImages)
+      .where(eq(productImages.productId, product.id))
+      .orderBy(productImages.sortOrder);
+
+    const documentsPromise = db
+      .select({
+        type: productDocuments.type,
+        fileKey: productDocuments.fileKey,
+        bucketName: productDocuments.bucketName,
+      })
+      .from(productDocuments)
+      .where(eq(productDocuments.productId, product.id));
+
+    // Выполняем независимые запросы параллельно
+    const [variants, rawImages, rawDocs] = await Promise.all([
+      variantsPromise,
+      imagesPromise,
+      documentsPromise,
+    ]);
 
     const baseUrl = `http://${serverEnv.MINIO_ENDPOINT}:${serverEnv.MINIO_PORT}`;
 
-    // Фильтруем документы
-    const formattedDocs = allMedia
-      .filter((m) => m.type !== "image")
-      .map((doc) => ({
-        type: doc.type,
-        url: `${baseUrl}/${doc.bucketName}/${doc.fileKey}`,
-      }));
+    const formattedDocs = rawDocs.map((doc) => ({
+      type: doc.type,
+      url: `${baseUrl}/${doc.bucketName}/${doc.fileKey}`,
+    }));
 
-    // Фильтруем изображения
-    const images = allMedia
-      .filter((m) => m.type === "image")
-      .map((img) => ({
-        url: `${baseUrl}/${img.bucketName}/${img.fileKey}`,
-        fit: (img.imageFit || "contain") as "contain" | "cover",
-      }));
+    const images = rawImages.map((img) => ({
+      url: `${baseUrl}/${img.bucketName}/${img.fileKey}`,
+      fit: (img.imageFit || "contain") as "contain" | "cover",
+    }));
 
     return {
       success: true,
@@ -310,13 +323,13 @@ export async function getSimilarProducts(
             'stock', ${computedStockSql},
             'image', (
               SELECT jsonb_build_object(
-                'fileKey', pm.file_key,
-                'bucketName', pm.bucket_name,
-                'fit', pm.image_fit
+                'fileKey', pi.file_key,
+                'bucketName', pi.bucket_name,
+                'fit', pi.image_fit
               )
-              FROM ${productMedia} pm
-              WHERE pm.product_id = ${products.id} AND pm.type = 'image'
-              ORDER BY pm.sort_order ASC
+              FROM ${productImages} pi
+              WHERE pi.product_id = ${products.id}
+              ORDER BY pi.sort_order ASC
               LIMIT 1
             )
           ) ORDER BY ${products.itemArticle} ASC
