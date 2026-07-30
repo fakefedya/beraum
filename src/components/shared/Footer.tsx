@@ -30,7 +30,7 @@ export const Footer = () => {
               pathname === "/" ? "text-background/70" : "text-muted-foreground",
             )}
           >
-            © {new Date().getFullYear()} BERAUM
+            © 2017 - {new Date().getFullYear()} BERAUM
           </div>
 
           <DropdownMenu>

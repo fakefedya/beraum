@@ -273,11 +273,12 @@ export default async function ProductPage({ params }: PageProps) {
                 <span className="font-lg font-medium">Где купить</span>
                 <div className="grid grid-cols-2 gap-2">
                   {marketplaces.map((mp) => {
+                    const redirectUrl = `/api/go?marketplace=${mp.id}&article=${product.itemArticle}&url=${encodeURIComponent(mp.link as string)}`;
                     const Icon = mp.icon;
                     return (
                       <a
                         key={mp.id}
-                        href={mp.link as string}
+                        href={redirectUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className={cn(

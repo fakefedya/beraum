@@ -24,7 +24,9 @@ export const productMedia = pgTable(
       .notNull(),
     mimeType: text("mime_type"),
     sortOrder: integer("sort_order").notNull().default(0),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+      .defaultNow()
+      .notNull(),
   },
   (table) => {
     return {

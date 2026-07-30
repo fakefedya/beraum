@@ -28,6 +28,7 @@ export const MarketplaceDropdown = () => {
             "text-foreground bg-brand-secondary hidden h-12 items-center gap-2 rounded-[16px] px-2 text-base font-semibold",
             "lg:flex xl:gap-4 xl:px-4",
             "[&[data-state=open]>svg]:rotate-180",
+            "hover:bg-brand/90 transition-colors duration-300",
           )}
         >
           Где купить
