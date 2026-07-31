@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { Pagination, Keyboard } from "swiper/modules";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
@@ -112,8 +112,9 @@ export const ProductGallery = ({
         )}
 
         <Swiper
-          modules={[Pagination]}
+          modules={[Pagination, Keyboard]}
           pagination={{ clickable: true }}
+          keyboard={{ enabled: true }}
           onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
           className={cn(
             "h-full w-full",
