@@ -32,6 +32,7 @@ repomix-output.xml
 # DB
 *.dump.sql
 src/server/db/data/
+/backup
 
 # debug
 npm-debug.log*
