@@ -105,12 +105,12 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                       prefetch={false}
                       href={card.href}
                       className={cn(
-                        "group bg-card relative flex h-full flex-col gap-4 overflow-hidden rounded-xl border-2 border-transparent",
+                        "group bg-card relative flex aspect-2/3 w-full overflow-hidden rounded-xl border-2 border-transparent",
                         "hover:border-brand transition-colors duration-300",
                         "outline-none focus-visible:ring-2 focus-visible:ring-black",
                       )}
                     >
-                      <div className="bg-accent relative flex h-full w-full shrink-0 items-center justify-center overflow-hidden rounded-lg">
+                      <div className="bg-accent relative h-full w-full overflow-hidden rounded-lg">
                         <Image
                           src={imageUrl}
                           alt={card.description}
@@ -123,7 +123,7 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                         />
                       </div>
 
-                      <div className="bg-background/80 shadow-nav absolute bottom-4 left-4 flex w-fit flex-col gap-0 rounded-[12px] px-4 py-1.5 backdrop-blur-xl backdrop-saturate-150">
+                      <div className="bg-background/80 shadow-nav absolute bottom-4 left-4 flex w-fit max-w-[calc(100%-32px)] flex-col gap-0 rounded-[12px] px-4 py-1.5 backdrop-blur-xl backdrop-saturate-150">
                         <span className="line-clamp-1 font-medium tracking-tight">
                           {card.label}
                         </span>

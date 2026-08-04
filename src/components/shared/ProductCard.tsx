@@ -40,7 +40,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className={cn(
-              "transition-transform duration-500 group-hover:scale-105",
+              "transition-transform duration-500 group-hover:scale-102",
               activeVariant.image?.fit === "cover"
                 ? "object-cover"
                 : "object-contain",
