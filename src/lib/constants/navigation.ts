@@ -47,8 +47,6 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
           href: "/catalog/microwave",
           isNew: false,
         },
-        { label: "Аэрогрили", href: "/catalog/air-fryer", isNew: false },
-        { label: "Термопоты", href: "/catalog/water-dispenser", isNew: true },
         {
           label: "Угольные фильтры",
           href: "/catalog/carbon-filter",
