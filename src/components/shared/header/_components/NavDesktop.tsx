@@ -115,10 +115,10 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                           src={imageUrl}
                           alt={card.description}
                           fill
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          sizes="(max-width: 1024px) 100vw, 66vw"
                           className={cn(
                             "object-cover",
-                            "transition-transform duration-500 group-hover:scale-105",
+                            "transition-transform duration-500 group-hover:scale-102",
                           )}
                         />
                       </div>

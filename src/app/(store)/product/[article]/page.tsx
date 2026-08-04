@@ -36,7 +36,7 @@ export default async function ProductPage({ params }: PageProps) {
   const product = response.data;
 
   const similarProducts = product.categoryId
-    ? (await getSimilarProducts(product.categoryId, product.siteArticle, 4))
+    ? (await getSimilarProducts(product.categoryId, product.siteArticle, 3))
         .data
     : [];
 
@@ -359,7 +359,7 @@ export default async function ProductPage({ params }: PageProps) {
             <h2 className="text-2xl font-medium tracking-tight xl:text-3xl">
               Вам может понравиться
             </h2>
-            <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {similarProducts.map((p) => (
                 <ProductCard key={p.siteArticle} product={p} />
               ))}

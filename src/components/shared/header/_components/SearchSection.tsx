@@ -186,70 +186,68 @@ export const SearchSection = () => {
                 </div>
               ) : results.length > 0 ? (
                 <div className="flex max-h-[60vh] flex-col gap-2 overflow-y-auto pr-2">
-                  {results.map((product) => {
-                    const variant = product.variants[0];
-                    if (!variant) return null;
+                  {results.flatMap((product) =>
+                    product.variants.map((variant) => {
+                      const imgUrl = variant.image
+                        ? `${STORAGE_URL}/${variant.image.bucketName}/${variant.image.fileKey}`
+                        : SYSTEM_ASSETS.placeholder;
 
-                    const imgUrl = variant.image
-                      ? `${STORAGE_URL}/${variant.image.bucketName}/${variant.image.fileKey}`
-                      : SYSTEM_ASSETS.placeholder;
-
-                    return (
-                      <Link
-                        key={variant.itemArticle}
-                        prefetch={false}
-                        href={`/product/${variant.itemArticle.toLowerCase()}`}
-                        className={cn(
-                          "group flex items-center gap-4 rounded-xl p-2 transition-colors outline-none",
-                          "hover:bg-background",
-                          "focus-visible:bg-card focus-visible:ring-2 focus-visible:ring-black",
-                        )}
-                      >
-                        {/* Изображение */}
-                        <div className="bg-accent relative flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg">
-                          <Image
-                            src={imgUrl}
-                            alt={variant.itemArticle}
-                            fill
-                            sizes="56px"
-                            className={cn(
-                              "transition-transform duration-500 group-hover:scale-105",
-                              variant.image?.fit === "cover"
-                                ? "object-cover"
-                                : "object-contain",
-                            )}
-                          />
-                        </div>
-
-                        {/* Инфо (Название и тип) */}
-                        <div className="flex flex-1 flex-col overflow-hidden">
-                          <span className="text-foreground truncate font-medium">
-                            {variant.itemArticle}
-                          </span>
-                          <span className="text-muted-foreground truncate">
-                            {product.productType}
-                          </span>
-                        </div>
-
-                        <div className="flex shrink-0 flex-col items-end justify-center pl-2">
-                          {variant.price > 0 ? (
-                            <span className="text-foreground whitespace-nowrap">
-                              от {variant.price.toLocaleString("ru-RU")} ₽
-                            </span>
-                          ) : (
-                            <span className="text-muted-foreground whitespace-nowrap">
-                              По запросу
-                            </span>
+                      return (
+                        <Link
+                          key={variant.itemArticle}
+                          prefetch={false}
+                          href={`/product/${variant.itemArticle.toLowerCase()}`}
+                          className={cn(
+                            "group flex items-center gap-4 rounded-xl p-2 transition-colors outline-none",
+                            "hover:bg-background",
+                            "focus-visible:bg-card focus-visible:ring-2 focus-visible:ring-black",
                           )}
-                        </div>
-                      </Link>
-                    );
-                  })}
+                        >
+                          <div className="bg-accent relative flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg">
+                            <Image
+                              src={imgUrl}
+                              alt={variant.itemArticle}
+                              fill
+                              sizes="56px"
+                              className={cn(
+                                "transition-transform duration-500 group-hover:scale-105",
+                                variant.image?.fit === "cover"
+                                  ? "object-cover"
+                                  : "object-contain",
+                              )}
+                            />
+                          </div>
+
+                          {/* Инфо (Название и тип) */}
+                          <div className="flex flex-1 flex-col overflow-hidden">
+                            <span className="text-foreground truncate font-medium">
+                              {variant.itemArticle}
+                            </span>
+                            <span className="text-muted-foreground truncate">
+                              {product.productType}
+                            </span>
+                          </div>
+
+                          <div className="flex shrink-0 flex-col items-end justify-center pl-2">
+                            {variant.price > 0 ? (
+                              <span className="text-foreground whitespace-nowrap">
+                                от {variant.price.toLocaleString("ru-RU")} ₽
+                              </span>
+                            ) : (
+                              <span className="text-muted-foreground whitespace-nowrap">
+                                По запросу
+                              </span>
+                            )}
+                          </div>
+                        </Link>
+                      );
+                    }),
+                  )}
 
                   {hasMore ? (
                     <Button
                       className={cn(
-                        "bg-card text-foreground h-12 gap-4 rounded-[16px] px-4 text-base font-medium",
+                        "bg-background text-foreground h-12 gap-4 rounded-[16px] px-4 text-base font-medium",
                         "duration-300 hover:bg-gray-200",
                       )}
                       onClick={handleLoadMore}

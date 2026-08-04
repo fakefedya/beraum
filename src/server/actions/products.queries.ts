@@ -81,6 +81,8 @@ export async function getProducts(params: GetProductsParams = {}) {
       orderConditions.push(desc(sql`MAX(${products.createdAt})`));
     }
 
+    orderConditions.push(asc(products.siteArticle));
+
     if (q && q.trim().length > 0) {
       const searchTerm = `%${q.trim()}%`;
       const searchCondition = or(
@@ -284,7 +286,7 @@ export async function getProductByArticle(rawArticle: string) {
 export async function getSimilarProducts(
   categoryId: string,
   excludeSiteArticle: string,
-  limitNum = 4,
+  limitNum = 3,
 ) {
   try {
     const conditions = [
