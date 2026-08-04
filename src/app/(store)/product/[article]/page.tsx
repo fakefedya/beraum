@@ -140,7 +140,7 @@ export default async function ProductPage({ params }: PageProps) {
 
   return (
     <Section>
-      <Container className="max-w-7xl pt-32 pb-16">
+      <Container className="pt-32 pb-16">
         <div
           className={cn(
             "grid grid-cols-1 gap-6 lg:grid-cols-12",
