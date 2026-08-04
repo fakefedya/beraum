@@ -9,7 +9,8 @@
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx --conditions=react-server src/server/db/migrate.ts",
-    "db:seed": "tsx --conditions=react-server --env-file=.env.local src/server/db/seed.ts"
+    "db:seed": "tsx --conditions=react-server --env-file=.env.local src/server/db/seed.ts",
+    "db:seed-media": "tsx --conditions=react-server src/server/db/generate-media-seeds.ts"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

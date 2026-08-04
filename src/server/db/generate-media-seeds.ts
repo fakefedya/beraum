@@ -48,7 +48,7 @@ type DocumentSeed = {
 
 // 🛡️ Security: Type Guard для runtime и compile-time проверки папок
 function isValidDocType(type: string): type is DocumentType {
-  return ALLOWED_DOC_TYPES.has(type as any);
+  return ALLOWED_DOC_TYPES.has(type as DocumentType);
 }
 
 function generateSeeds() {
