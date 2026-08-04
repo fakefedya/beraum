@@ -83,19 +83,23 @@ async function main() {
         console.log(`📦 Загрузка categories: ${categoriesData.length}`);
         await tx
           .insert(categories)
-          .values(categoriesData as (typeof categories.$inferInsert)[]);
+          .values(categoriesData as (typeof categories.$inferInsert)[])
+          // 🛡️ Security/Arch: Защита от дубликатов. Если ID существует — игнорируем ошибку и идем дальше
+          .onConflictDoNothing();
       }
       if (slidesData.length > 0) {
         console.log(`📦 Загрузка slides: ${slidesData.length}`);
         await tx
           .insert(slides)
-          .values(slidesData as (typeof slides.$inferInsert)[]);
+          .values(slidesData as (typeof slides.$inferInsert)[])
+          .onConflictDoNothing();
       }
       if (clicksData.length > 0) {
         console.log(`📊 Загрузка marketplace_clicks: ${clicksData.length}`);
         await tx
           .insert(marketplaceClicks)
-          .values(clicksData as (typeof marketplaceClicks.$inferInsert)[]);
+          .values(clicksData as (typeof marketplaceClicks.$inferInsert)[])
+          .onConflictDoNothing();
       }
 
       // 2. Таблицы с FK-зависимостями
@@ -103,19 +107,22 @@ async function main() {
         console.log(`📦 Загрузка products: ${productsData.length}`);
         await tx
           .insert(products)
-          .values(productsData as (typeof products.$inferInsert)[]);
+          .values(productsData as (typeof products.$inferInsert)[])
+          .onConflictDoNothing();
       }
       if (imagesData.length > 0) {
         console.log(`🖼️ Загрузка product_images: ${imagesData.length}`);
         await tx
           .insert(productImages)
-          .values(imagesData as (typeof productImages.$inferInsert)[]);
+          .values(imagesData as (typeof productImages.$inferInsert)[])
+          .onConflictDoNothing();
       }
       if (documentsData.length > 0) {
         console.log(`📄 Загрузка product_documents: ${documentsData.length}`);
         await tx
           .insert(productDocuments)
-          .values(documentsData as (typeof productDocuments.$inferInsert)[]);
+          .values(documentsData as (typeof productDocuments.$inferInsert)[])
+          .onConflictDoNothing();
       }
     });
 

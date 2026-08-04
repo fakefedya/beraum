@@ -98,7 +98,6 @@ function generateSeeds() {
 
         const name = path.basename(file, ext);
         const isCover = name === "cover";
-        // 🛡️ Всегда указываем radix (10) для безопасности парсинга
         const sortOrder = isCover ? 0 : parseInt(name, 10);
 
         if (!isCover && isNaN(sortOrder)) {
@@ -107,12 +106,16 @@ function generateSeeds() {
           );
         }
 
+        // 🛡️ Динамическое определение типа заполнения на основе расширения
+        const imageFit =
+          ext === ".jpg" || ext === ".jpeg" ? "cover" : "contain";
+
         imagesSeed.push({
           id: crypto.randomUUID(),
           product_id: product.id,
           bucket_name: "products",
           file_key: `${article}/images/${file}`,
-          image_fit: "contain", // по умолчанию
+          image_fit: imageFit, // <--- Применяем переменную
           is_cover: isCover,
           sort_order: isNaN(sortOrder) ? 99 : sortOrder,
           created_at: new Date().toISOString(),
