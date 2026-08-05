@@ -35,22 +35,6 @@ export default function AboutPage() {
 
       <Section>
         <Container className="flex flex-col gap-24">
-          {/* 1. HERO: Манифест честности */}
-          <div className="mx-auto flex max-w-4xl flex-col items-center justify-center gap-8 text-center">
-            <h1 className="text-5xl font-medium lg:text-6xl">
-              Мы не придумываем легенды. <br className="hidden md:block" />
-              Мы создаем продукт.
-            </h1>
-            <p className="text-muted-foreground text-lg leading-relaxed lg:text-lg">
-              Рынок переполнен «брендами-оборотнями», маскирующимися под
-              несуществующие европейские заводы. Мы выбрали другой путь —
-              абсолютную прозрачность. Beraum — это российский бренд. Наша
-              техника проектируется с учетом строгих требований к эстетике и
-              собирается на передовых производственных линиях Китая, на тех же
-              заводах, где создают продукцию мировые лидеры индустрии.
-            </p>
-          </div>
-
           {/* 2. STATS: Опора на цифры */}
           <div className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-4 md:grid-cols-3">
             {[
