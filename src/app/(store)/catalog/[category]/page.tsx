@@ -21,9 +21,7 @@ export default async function CategoryPage({
   const { category } = await params;
   const resolvedSearchParams = await searchParams;
   const sort = resolvedSearchParams.sort as
-    | "newest"
-    | "price_asc"
-    | "price_desc";
+    "newest" | "price_asc" | "price_desc";
 
   const filters = Object.fromEntries(
     Object.entries(resolvedSearchParams).filter(
@@ -51,7 +49,7 @@ export default async function CategoryPage({
   }
 
   return (
-    <Section>
+    <Section className="mb-32">
       <Container className="gap-5 pt-32">
         <Breadcrumbs items={breadcrumbItems} className="flex justify-center" />
         <div className="flex flex-col gap-6">

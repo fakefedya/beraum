@@ -1,6 +1,6 @@
 import { getActiveSlides } from "@/src/server/actions/banners.queries";
 import { Metadata } from "next";
-import { HeroSlider } from "./_components/hero/HeroSlider";
+import { HeroSlider } from "./_components/HeroSlider";
 
 export const metadata: Metadata = {
   title: "Beraum",
