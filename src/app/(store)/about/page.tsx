@@ -7,6 +7,7 @@ import { Icons } from "@/src/components/ui/icons";
 import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
 import { HeroSection } from "./_components/Hero";
+import { Statistics } from "./_components/Statistics";
 
 export const metadata: Metadata = {
   title: "О бренде Beraum | Честная техника для современного интерьера",
@@ -32,6 +33,7 @@ export default function AboutPage() {
       </Section>
 
       <HeroSection />
+      <Statistics />
 
       <Section>
         <Container className="flex flex-col gap-24">

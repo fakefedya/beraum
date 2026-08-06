@@ -9,9 +9,9 @@ type DescProps = {
 };
 
 export const ABOUT_STATS: StatsProps[] = [
-  { value: "125 000+", label: "Довольных клиентов на маркетплейсах" },
-  { value: "OEM/ODM", label: "Сборка на топовых фабриках Азии" },
-  { value: "ЕАС", label: "Полная официальная сертификация" },
+  { value: "275 000+", label: "Довольных клиентов" },
+  { value: "OEM/ODM", label: "Сборка на топовых фабриках Китая" },
+  { value: "ЕАС", label: "Официальная сертификация" },
 ] as const;
 
 export const QUALITY_CONTROLS: DescProps[] = [
