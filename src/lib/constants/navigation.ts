@@ -75,17 +75,37 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
       label: "О бренде",
       type: "default",
       items: [
-        { label: "О бренде", href: "/about", cover: "" },
-        { label: "Сотрудничество", href: "/partnership", cover: "" },
+        {
+          label: "О бренде",
+          href: "/about",
+          cover: "system-assets/navigation-covers/about_cover.png",
+        },
+        {
+          label: "Сотрудничество",
+          href: "/partnership",
+          cover: "system-assets/navigation-covers/partnership_cover.png",
+        },
       ],
     },
     {
       label: "Сервис",
       type: "default",
       items: [
-        { label: "Поддержка", href: "/support", cover: "" },
-        { label: "Гарантия", href: "/service", cover: "" },
-        { label: "Частые вопросы", href: "/faq", cover: "" },
+        {
+          label: "Поддержка",
+          href: "/support",
+          cover: "system-assets/navigation-covers/support_cover.png",
+        },
+        {
+          label: "Гарантия",
+          href: "/service",
+          cover: "system-assets/navigation-covers/service_cover.png",
+        },
+        {
+          label: "Частые вопросы",
+          href: "/faq",
+          cover: "system-assets/navigation-covers/faq_cover.png",
+        },
       ],
     },
     {

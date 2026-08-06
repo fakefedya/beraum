@@ -175,24 +175,41 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
       </NavigationMenuTrigger>
       <NavigationMenuContent className="p-5">
         <ul className={cn("grid h-full min-w-fit gap-3", gridClass)}>
-          {item.items.map((subItem) => (
-            <li key={subItem.href} className={"h-full min-h-95"}>
-              <NavigationMenuLink asChild>
-                <Link
-                  prefetch={false}
-                  href={subItem.href}
-                  className={cn(
-                    "relative flex h-full items-start rounded-xl border-2 border-transparent duration-300",
-                    "bg-card hover:border-brand transition-colors",
-                  )}
-                >
-                  <div className="flex flex-col gap-0 p-4">
-                    <span className="font-medium">{subItem.label}</span>
-                  </div>
-                </Link>
-              </NavigationMenuLink>
-            </li>
-          ))}
+          {item.items.map((subItem) => {
+            const imageUrl = subItem.cover
+              ? `${STORAGE_URL}/${subItem.cover}`
+              : SYSTEM_ASSETS.placeholder;
+            return (
+              <li key={subItem.href} className={"h-full min-h-95"}>
+                <NavigationMenuLink asChild>
+                  <Link
+                    prefetch={false}
+                    href={subItem.href}
+                    className={cn(
+                      "relative flex h-full items-start rounded-xl border-2 border-transparent duration-300",
+                      "bg-card hover:border-brand transition-colors",
+                    )}
+                  >
+                    <div className="bg-brand-background-gradient relative h-full w-full overflow-hidden rounded-lg">
+                      <Image
+                        src={imageUrl}
+                        alt={subItem.label}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 66vw"
+                        className={cn(
+                          "object-cover",
+                          "transition-transform duration-500 group-hover:scale-102",
+                        )}
+                      />
+                    </div>
+                    <div className="absolute top-4 left-4 flex flex-col gap-0">
+                      <span className="font-medium">{subItem.label}</span>
+                    </div>
+                  </Link>
+                </NavigationMenuLink>
+              </li>
+            );
+          })}
         </ul>
       </NavigationMenuContent>
     </NavigationMenuItem>
