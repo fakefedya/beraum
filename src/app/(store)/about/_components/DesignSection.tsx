@@ -7,10 +7,9 @@ import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 
 export const DesignSection = () => {
-  const imageUrl =
-    `${STORAGE_URL}/system-assets/about_design_section_cover.webp`
-      ? `${STORAGE_URL}/system-assets/about_design_section_cover.webp`
-      : SYSTEM_ASSETS.placeholder;
+  const imageUrl = `${STORAGE_URL}/system-assets/about_design_section_cover.png`
+    ? `${STORAGE_URL}/system-assets/about_design_section_cover.png`
+    : SYSTEM_ASSETS.placeholder;
 
   return (
     <Section>
@@ -38,7 +37,7 @@ export const DesignSection = () => {
             <Button
               asChild
               className={cn(
-                "text-foreground bg-brand-secondary hidden h-12 items-center gap-2 rounded-[16px] px-2 text-base font-semibold",
+                "text-foreground bg-brand-secondary mt-8 hidden h-12 items-center gap-2 rounded-[16px] px-2 text-base font-semibold",
                 "w-fit lg:flex xl:gap-4 xl:px-4",
                 "hover:bg-brand/90 transition-colors duration-300",
               )}
