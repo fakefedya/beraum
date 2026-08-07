@@ -5,9 +5,9 @@ import { Section } from "@/src/components/shared/Section";
 import { Breadcrumbs } from "@/src/components/shared/Breadcrumbs";
 import { Icons } from "@/src/components/ui/icons";
 import { Button } from "@/src/components/ui/button";
-import { cn } from "@/src/lib/utils";
-import { HeroSection } from "./_components/Hero";
-import { Statistics } from "./_components/Statistics";
+import { HeroSection } from "./_components/HeroSection";
+import { StatisticsSection } from "./_components/StatisticsSection";
+import { DesignSection } from "./_components/DesignSection";
 
 export const metadata: Metadata = {
   title: "О бренде Beraum | Честная техника для современного интерьера",
@@ -33,43 +33,11 @@ export default function AboutPage() {
       </Section>
 
       <HeroSection />
-      <Statistics />
+      <StatisticsSection />
+      <DesignSection />
 
       <Section>
         <Container className="flex flex-col gap-24">
-          {/* 3. ДИЗАЙН КАК ЭКОСИСТЕМА (Интеграция факта о студии дизайна) */}
-          <div className="bg-card hover:border-brand mx-auto flex w-full max-w-5xl flex-col overflow-hidden rounded-[32px] border-2 border-transparent transition-colors duration-500 lg:flex-row">
-            <div className="flex flex-col justify-center gap-6 p-10 lg:w-1/2 lg:p-16">
-              <h2 className="text-3xl font-medium lg:text-4xl">
-                Техника, которая понимает интерьер
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">
-                Для нас варочная панель или вытяжка — это не просто утилитарный
-                прибор, а полноправный элемент архитектуры кухни. Наше внимание
-                к интеграции техники в пространство зашло так далеко, что мы
-                открыли собственную студию дизайна интерьеров. Мы на практике
-                знаем, как важны матовые фактуры, геометрия линий и правильные
-                зазоры.
-              </p>
-              <Button asChild className="mt-4 h-12 w-fit rounded-[16px] px-8">
-                {/* Использование внешней ссылки с защитой noopener noreferrer */}
-                <a
-                  href="https://design.beraum.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Перейти в студию дизайна
-                </a>
-              </Button>
-            </div>
-            <div className="bg-muted relative min-h-[300px] lg:min-h-full lg:w-1/2">
-              {/* TODO: Заменить на реальную фотографию красивого интерьера со встроенной техникой Beraum */}
-              <div className="text-muted-foreground bg-accent absolute inset-0 flex items-center justify-center">
-                [ Изображение премиального интерьера ]
-              </div>
-            </div>
-          </div>
-
           {/* 4. БЕНТО-ГРИД: Технологии доверия (Интеграция со слайдом маркетплейсов) */}
           <div className="mx-auto flex w-full max-w-5xl flex-col gap-12">
             <h2 className="text-center text-3xl font-medium tracking-tight lg:text-5xl">

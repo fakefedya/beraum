@@ -15,8 +15,8 @@ export const Container = ({
     <div
       className={cn(
         "mx-auto flex w-full flex-col px-4",
-        className,
         isWide ? "max-w-full" : "max-w-360",
+        className,
       )}
       {...props}
     >

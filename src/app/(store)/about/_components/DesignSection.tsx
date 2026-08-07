@@ -1,0 +1,71 @@
+import { Container } from "@/src/components/shared/Container";
+import { Section } from "@/src/components/shared/Section";
+import { Button } from "@/src/components/ui/button";
+import { SYSTEM_ASSETS, STORAGE_URL } from "@/src/lib/constants";
+import { cn } from "@/src/lib/utils";
+import { ExternalLink } from "lucide-react";
+import Image from "next/image";
+
+export const DesignSection = () => {
+  const imageUrl =
+    `${STORAGE_URL}/system-assets/about_design_section_cover.webp`
+      ? `${STORAGE_URL}/system-assets/about_design_section_cover.webp`
+      : SYSTEM_ASSETS.placeholder;
+
+  return (
+    <Section>
+      <Container className="max-w-5xl">
+        <div className="bg-card flex w-full overflow-hidden rounded-4xl">
+          <div
+            className={cn(
+              "flex flex-col justify-center gap-6 p-10",
+              "lg:w-1/2 lg:p-16",
+            )}
+          >
+            <h2 className="text-3xl font-medium lg:text-4xl">
+              Техника, которая понимает интерьер
+            </h2>
+            <p className="text-muted-foreground">
+              Для нас варочная панель или вытяжка — это не просто устройство, а
+              полноправный элемент интерьера кухни. Наше внимание к интеграции
+              техники в пространство зашло так далеко, что мы открыли
+              собственную студию дизайна интерьеров.
+            </p>
+            <p className="text-muted-foreground">
+              Мы на практике знаем, как важны матовые фактуры, геометрия линий и
+              правильные зазоры.
+            </p>
+            <Button
+              asChild
+              className={cn(
+                "text-foreground bg-brand-secondary hidden h-12 items-center gap-2 rounded-[16px] px-2 text-base font-semibold",
+                "w-fit lg:flex xl:gap-4 xl:px-4",
+                "hover:bg-brand/90 transition-colors duration-300",
+              )}
+            >
+              <a
+                href="https://design.beraum.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Перейти в студию дизайна
+                <ExternalLink />
+              </a>
+            </Button>
+          </div>
+          <div className={cn("relative min-h-75", "lg:min-h-full lg:w-1/2")}>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Image
+                src={imageUrl}
+                alt="Изображение интерьера"
+                fill
+                sizes="(max-width: 1024px) 100vw, 66vw"
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </Container>
+    </Section>
+  );
+};

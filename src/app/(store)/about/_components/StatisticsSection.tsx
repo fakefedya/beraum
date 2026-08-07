@@ -3,13 +3,13 @@ import { Section } from "@/src/components/shared/Section";
 import { ABOUT_STATS } from "@/src/app/(store)/about/_components/data";
 import { cn } from "@/src/lib/utils";
 
-export const Statistics = () => {
+export const StatisticsSection = () => {
   return (
     <Section>
-      <Container>
+      <Container className="max-w-5xl">
         <div
           className={cn(
-            "mx-auto grid w-full max-w-5xl grid-cols-1 gap-4",
+            "mx-auto grid w-full grid-cols-1 gap-4",
             "md:grid-cols-3",
           )}
         >
@@ -21,7 +21,7 @@ export const Statistics = () => {
               <el.icon
                 className="text-brand-secondary mb-2"
                 size={48}
-                strokeWidth={1.6}
+                strokeWidth={1.2}
               />
               <span className="text-3xl font-medium">{el.value}</span>
               <span className="text-muted-foreground">{el.label}</span>

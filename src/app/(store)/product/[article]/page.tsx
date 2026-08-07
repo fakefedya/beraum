@@ -236,10 +236,7 @@ export default async function ProductPage({ params }: PageProps) {
                       : DEFAULT_SWATCH_COLOR;
 
                     const hasStock =
-                      (variant.ozonStockFbo || 0) +
-                        (variant.fbsStock || 0) +
-                        (variant.manualStock || 0) >
-                      0;
+                      (variant.ozonStockFbo || 0) + (variant.fbsStock || 0) > 0;
 
                     return (
                       <Link

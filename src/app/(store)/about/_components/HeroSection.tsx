@@ -4,8 +4,8 @@ import { Section } from "@/src/components/shared/Section";
 export const HeroSection = () => {
   return (
     <Section>
-      <Container>
-        <div className="mx-auto flex max-w-4xl flex-col items-center justify-center gap-8 text-center">
+      <Container className="max-w-4xl">
+        <div className="mx-auto flex flex-col items-center justify-center gap-8 text-center">
           <h1 className="text-5xl font-medium lg:text-6xl">
             Мы не выдумываем легенды. <br className="hidden md:block" />
             Мы создаем продукт.
