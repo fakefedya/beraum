@@ -3,7 +3,7 @@ import { Section } from "@/src/components/shared/Section";
 import { ABOUT_STATS } from "@/src/app/(store)/about/_components/data";
 import { cn } from "@/src/lib/utils";
 
-export const StatisticsSection = () => {
+export const StatisticSection = () => {
   return (
     <Section>
       <Container className="max-w-5xl">

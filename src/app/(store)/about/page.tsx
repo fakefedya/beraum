@@ -6,8 +6,9 @@ import { Breadcrumbs } from "@/src/components/shared/Breadcrumbs";
 import { Icons } from "@/src/components/ui/icons";
 import { Button } from "@/src/components/ui/button";
 import { HeroSection } from "./_components/HeroSection";
-import { StatisticsSection } from "./_components/StatisticsSection";
+import { StatisticSection } from "./_components/StatisticSection";
 import { DesignSection } from "./_components/DesignSection";
+import { QualityControlSection } from "./_components/QualityControlSection";
 
 export const metadata: Metadata = {
   title: "О бренде Beraum | Честная техника для современного интерьера",
@@ -33,39 +34,16 @@ export default function AboutPage() {
       </Section>
 
       <HeroSection />
-      <StatisticsSection />
+      <StatisticSection />
       <DesignSection />
+      <QualityControlSection />
 
       <Section>
         <Container className="flex flex-col gap-24">
           {/* 4. БЕНТО-ГРИД: Технологии доверия (Интеграция со слайдом маркетплейсов) */}
           <div className="mx-auto flex w-full max-w-5xl flex-col gap-12">
-            <h2 className="text-center text-3xl font-medium tracking-tight lg:text-5xl">
-              Технологии доверия
-            </h2>
-
             <div className="grid auto-rows-[minmax(250px,auto)] grid-cols-1 gap-6 md:grid-cols-3">
               {/* Главный блок: Фабрика */}
-              <div className="group hover:border-black-muted relative flex min-h-[350px] items-end overflow-hidden rounded-3xl border-2 border-transparent p-6 transition-colors duration-500 md:col-span-3 lg:p-10">
-                {/* 
-                  TODO: Заменить div на <Image /> из next/image
-                  <Image src="укажи_путь_к_фото_фабрики" alt="Фабрика" fill className="object-cover -z-10 group-hover:scale-105 transition-transform duration-700" /> 
-                */}
-                <div className="bg-accent absolute inset-0 -z-20" />{" "}
-                {/* Заглушка фона */}
-                <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-                <div className="relative z-10 max-w-3xl text-white">
-                  <h3 className="mb-3 text-2xl font-medium lg:text-3xl">
-                    Глобальное производство
-                  </h3>
-                  <p className="text-base leading-relaxed text-white/80 lg:text-lg">
-                    Мы выпускаем продукцию на крупнейшей в мире фабрике бытовой
-                    кухонной техники. Использование единой компонентной базы с
-                    лидерами индустрии позволяет нам быть абсолютно уверенными в
-                    качестве каждого устройства.
-                  </p>
-                </div>
-              </div>
 
               {/* Малые блоки */}
               {[

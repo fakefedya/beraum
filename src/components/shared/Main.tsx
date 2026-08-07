@@ -6,7 +6,7 @@ type Props = {
 
 export const Main = ({ children }: Props) => {
   return (
-    <main className="flex h-full min-h-dvh w-full flex-1 flex-col gap-20">
+    <main className="flex h-full min-h-dvh w-full flex-1 flex-col gap-30">
       {children}
     </main>
   );
