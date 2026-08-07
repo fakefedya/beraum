@@ -1,6 +1,9 @@
+import { Factory, LucideProps, ShieldCheck, Users } from "lucide-react";
+
 type StatsProps = {
   value: string;
   label: string;
+  icon: React.FC<LucideProps>;
 };
 
 type DescProps = {
@@ -9,9 +12,17 @@ type DescProps = {
 };
 
 export const ABOUT_STATS: StatsProps[] = [
-  { value: "275 000+", label: "Довольных клиентов" },
-  { value: "OEM/ODM", label: "Сборка на топовых фабриках Китая" },
-  { value: "ЕАС", label: "Официальная сертификация" },
+  {
+    value: "275 000+",
+    label: "Довольных клиентов на маркетплейсах",
+    icon: Users,
+  },
+  {
+    value: "OEM/ODM",
+    label: "Сборка на передовых заводах Китая и Турции",
+    icon: Factory,
+  },
+  { value: "ЕАС", label: "Полная официальная сертификация", icon: ShieldCheck },
 ] as const;
 
 export const QUALITY_CONTROLS: DescProps[] = [

@@ -37,28 +37,6 @@ export default function AboutPage() {
 
       <Section>
         <Container className="flex flex-col gap-24">
-          {/* 2. STATS: Опора на цифры */}
-          <div className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-4 md:grid-cols-3">
-            {[
-              {
-                value: "250 000+",
-                label: "Довольных клиентов на маркетплейсах",
-              },
-              { value: "OEM/ODM", label: "Сборка на топовых фабриках Азии" },
-              { value: "ЕАС", label: "Полная официальная сертификация" },
-            ].map((stat, i) => (
-              <div
-                key={i}
-                className="bg-card flex flex-col items-center rounded-3xl p-8 text-center"
-              >
-                <span className="text-foreground mb-2 text-4xl font-medium">
-                  {stat.value}
-                </span>
-                <span className="text-muted-foreground">{stat.label}</span>
-              </div>
-            ))}
-          </div>
-
           {/* 3. ДИЗАЙН КАК ЭКОСИСТЕМА (Интеграция факта о студии дизайна) */}
           <div className="bg-card hover:border-brand mx-auto flex w-full max-w-5xl flex-col overflow-hidden rounded-[32px] border-2 border-transparent transition-colors duration-500 lg:flex-row">
             <div className="flex flex-col justify-center gap-6 p-10 lg:w-1/2 lg:p-16">

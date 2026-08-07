@@ -15,11 +15,16 @@ export const Statistics = () => {
         >
           {ABOUT_STATS.map((el, i) => (
             <div
-              className="bg-card flex flex-col gap-4 rounded-3xl p-8"
+              className="bg-card flex flex-col gap-2 rounded-4xl p-8"
               key={i}
             >
-              <span>{el.value}</span>
-              <span>{el.label}</span>
+              <el.icon
+                className="text-brand-secondary mb-2"
+                size={48}
+                strokeWidth={1.6}
+              />
+              <span className="text-3xl font-medium">{el.value}</span>
+              <span className="text-muted-foreground">{el.label}</span>
             </div>
           ))}
         </div>
