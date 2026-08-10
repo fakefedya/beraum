@@ -6,6 +6,8 @@ import { slides } from "@/src/server/db/schema";
 import { z } from "zod";
 import { serverEnv } from "@/src/lib/env/server";
 
+const IMAGE_PATH = "shared/components/banners";
+
 const tagSchema = z.object({
   xPercent: z.number().min(0).max(100),
   yPercent: z.number().min(0).max(100),
@@ -60,9 +62,9 @@ export async function getActiveSlides(
         validSlides.push({
           ...parsed.data,
           id: slide.id,
-          imageUrl: `${baseUrl}/${slide.fileKey}`,
+          imageUrl: `${baseUrl}/${IMAGE_PATH}/${slide.fileKey}`,
           mobileImageUrl: slide.mobileFileKey
-            ? `${baseUrl}/${slide.mobileFileKey}`
+            ? `${baseUrl}/${IMAGE_PATH}/${slide.mobileFileKey}`
             : undefined,
         });
       } else {

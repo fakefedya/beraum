@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import useSWR from "swr";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -23,6 +22,7 @@ import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import { EmptyState } from "@/src/components/ui/empty-state";
 import { cn } from "@/src/lib/utils";
+import { SafeImage } from "@/src/components/shared/SafeImage";
 
 interface HeroSliderProps {
   slides: ValidatedSlide[];
@@ -85,7 +85,7 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
             className="absolute inset-0 z-0 h-full w-full"
             data-swiper-parallax-scale="1.1"
           >
-            <Image
+            <SafeImage
               src={slide.imageUrl}
               alt="Hero Banner Desktop"
               fill
@@ -98,9 +98,8 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
               loading={index === 0 ? "eager" : "lazy"}
               sizes="100vw"
             />
-
             {slide.mobileImageUrl && (
-              <Image
+              <SafeImage
                 src={slide.mobileImageUrl}
                 alt="Hero Banner Mobile"
                 fill

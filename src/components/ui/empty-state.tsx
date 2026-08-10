@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cn } from "@/src/lib/utils";
 import Image from "next/image";
+import { SYSTEM_ASSETS } from "@/src/lib/constants";
 
 interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
@@ -8,14 +9,10 @@ interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   imageUrl?: string;
 }
 
-const STORAGE_URL =
-  process.env.NEXT_PUBLIC_STORAGE_URL || "http://localhost:9000";
-const DEFAULT_IMAGE = `${STORAGE_URL}/system-assets/empty_state_cover.png`;
-
 export const EmptyState = ({
   title = "Упс! Кажется, данные не загрузились",
   description = "Попробуйте обновить страницу или загляните позже. Мы уже работаем над этим.",
-  imageUrl = DEFAULT_IMAGE,
+  imageUrl = SYSTEM_ASSETS.emptyResult,
   className,
   ...props
 }: EmptyStateProps) => {
