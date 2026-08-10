@@ -7,7 +7,7 @@ import Link from "next/link";
 export const GuaranteeSection = () => {
   return (
     <Section className="mb-32">
-      <Container className="max-w-5xl gap-12">
+      <Container maxWidth="5xl" className="gap-12">
         <div
           className={cn(
             "bg-foreground text-background mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-12 p-10 duration-500 lg:flex-row lg:p-16",

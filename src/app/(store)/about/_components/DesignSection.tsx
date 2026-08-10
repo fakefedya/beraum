@@ -10,7 +10,7 @@ export const DesignSection = () => {
 
   return (
     <Section>
-      <Container className="max-w-5xl">
+      <Container maxWidth="5xl">
         <div className="bg-card flex w-full overflow-hidden rounded-4xl">
           <div
             className={cn(

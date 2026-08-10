@@ -89,7 +89,7 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
   };
 
   return (
-    <div className="item-center sticky top-20 z-10 flex w-full justify-center p-2 pr-2 pl-4">
+    <div className="item-center sticky top-20 z-10 flex w-full justify-center p-2">
       <div className="bg-background/80 shadow-nav flex w-fit flex-wrap gap-2 rounded-[20px] p-1.5 backdrop-blur-xl backdrop-saturate-150">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

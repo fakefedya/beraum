@@ -8,7 +8,7 @@ export const QualityControlSection = () => {
   const imageUrl = buildImageUrl("/pages/about/technology-banner.jpg");
   return (
     <Section>
-      <Container className="max-w-5xl gap-12">
+      <Container maxWidth="5xl" className="gap-12">
         <h2 className={cn("text-center text-3xl font-medium", "lg:text-5xl")}>
           Технологии доверия
         </h2>

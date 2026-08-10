@@ -6,7 +6,7 @@ import { cn } from "@/src/lib/utils";
 export const StatisticSection = () => {
   return (
     <Section>
-      <Container className="max-w-5xl">
+      <Container maxWidth="5xl">
         <div
           className={cn(
             "mx-auto grid w-full grid-cols-1 gap-4",
