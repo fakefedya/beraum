@@ -40,49 +40,6 @@ export default function AboutPage() {
 
       <Section>
         <Container className="flex flex-col gap-24">
-          {/* 4. БЕНТО-ГРИД: Технологии доверия (Интеграция со слайдом маркетплейсов) */}
-          <div className="mx-auto flex w-full max-w-5xl flex-col gap-12">
-            <div className="grid auto-rows-[minmax(250px,auto)] grid-cols-1 gap-6 md:grid-cols-3">
-              {/* Главный блок: Фабрика */}
-
-              {/* Малые блоки */}
-              {[
-                {
-                  title: "Автоматизированная сборка",
-                  desc: "Исключение человеческого фактора. Высокоточные роботизированные линии гарантируют идеальную подгонку деталей и отсутствие люфтов.",
-                },
-                {
-                  title: "Центр контроля качества",
-                  desc: "Строгий QC на каждом этапе. Проверка устойчивости к перепадам напряжения, ресурсные испытания электроники и стресс-тесты материалов.",
-                },
-                {
-                  title: "Отлаженная логистика",
-                  desc: "Собственные распределительные центры и прямые отгрузки на маркетплейсы обеспечивают сохранность техники и быструю доставку.",
-                },
-              ].map((item, idx) => (
-                <div
-                  key={idx}
-                  className="bg-background border-border hover:border-black-muted group relative flex flex-col gap-4 overflow-hidden rounded-3xl border p-8 transition-colors duration-300"
-                >
-                  {/* 
-                    TODO: Сюда можно добавить фоном те самые вертикальные фото со слайда с opacity-10 или разместить их сверху
-                  */}
-                  <div className="bg-brand/20 text-brand-muted flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-xl font-medium">
-                    {idx + 1}
-                  </div>
-                  <div className="relative z-10 flex flex-col gap-2">
-                    <h3 className="text-xl leading-tight font-medium">
-                      {item.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      {item.desc}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* 5. БЛОК ГАРАНТИИ: Снятие финальных рисков */}
           <div className="bg-foreground text-background mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-12 rounded-[32px] p-10 lg:flex-row lg:p-16">
             <div className="flex flex-col gap-6 text-center lg:w-2/3 lg:text-left">
