@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/src/lib/utils";
-import Image from "next/image";
 import { SYSTEM_ASSETS } from "@/src/lib/constants";
+import { SafeImage } from "../shared/SafeImage";
 
 interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
@@ -30,7 +30,7 @@ export const EmptyState = ({
       </div>
 
       <div className="z-0 h-full w-full shrink-0">
-        <Image
+        <SafeImage
           src={imageUrl}
           alt="Данные не найдены"
           fill

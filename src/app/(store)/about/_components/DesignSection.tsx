@@ -1,9 +1,9 @@
 import { Container } from "@/src/components/shared/Container";
+import { SafeImage } from "@/src/components/shared/SafeImage";
 import { Section } from "@/src/components/shared/Section";
 import { Button } from "@/src/components/ui/button";
 import { cn, buildImageUrl } from "@/src/lib/utils";
 import { ExternalLink } from "lucide-react";
-import Image from "next/image";
 
 export const DesignSection = () => {
   const imageUrl = buildImageUrl("pages/about/studio-design-banner.png");
@@ -34,7 +34,7 @@ export const DesignSection = () => {
             <Button
               asChild
               className={cn(
-                "text-foreground bg-brand-secondary mt-8 hidden h-12 items-center gap-2 rounded-[16px] px-2 text-base font-semibold",
+                "text-foreground bg-brand-secondary mt-8 hidden h-12 items-center gap-2 rounded-[16px] px-2 text-base font-medium",
                 "w-fit lg:flex xl:gap-4 xl:px-4",
                 "hover:bg-brand/90 transition-colors duration-300",
               )}
@@ -51,7 +51,7 @@ export const DesignSection = () => {
           </div>
           <div className={cn("relative min-h-75", "lg:min-h-full lg:w-1/2")}>
             <div className="absolute inset-0 flex items-center justify-center">
-              <Image
+              <SafeImage
                 src={imageUrl}
                 alt="Изображение интерьера"
                 fill

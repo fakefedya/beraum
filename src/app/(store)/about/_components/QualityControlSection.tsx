@@ -1,14 +1,11 @@
 import { Container } from "@/src/components/shared/Container";
 import { Section } from "@/src/components/shared/Section";
-import { cn } from "@/src/lib/utils";
-import Image from "next/image";
-import { SYSTEM_ASSETS, STORAGE_URL } from "@/src/lib/constants";
+import { buildImageUrl, cn } from "@/src/lib/utils";
 import { TRUST_TECHNOLOGIES } from "@/src/app/(store)/about/_components/data";
+import { SafeImage } from "@/src/components/shared/SafeImage";
 
 export const QualityControlSection = () => {
-  const imageUrl = `${STORAGE_URL}/system-assets/about_technology.jpg`
-    ? `${STORAGE_URL}/system-assets/about_technology.jpg`
-    : SYSTEM_ASSETS.placeholder;
+  const imageUrl = buildImageUrl("/pages/about/technology-banner.jpg");
   return (
     <Section>
       <Container className="max-w-5xl gap-12">
@@ -27,7 +24,7 @@ export const QualityControlSection = () => {
               "md:col-span-3 lg:p-16",
             )}
           >
-            <Image
+            <SafeImage
               src={imageUrl}
               alt="Фабрика"
               fill
@@ -48,20 +45,24 @@ export const QualityControlSection = () => {
           </div>
 
           {TRUST_TECHNOLOGIES.map((el, idx) => (
-            <div
-              key={idx}
-              className="bg-background border-border hover:border-black-muted group relative flex flex-col gap-4 overflow-hidden rounded-3xl border p-8 transition-colors duration-300"
-            >
-              <div className="bg-brand/20 text-brand-muted flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-xl font-medium">
-                {idx + 1}
-              </div>
-              <div className="relative z-10 flex flex-col gap-2">
-                <h3 className="text-xl leading-tight font-medium">
-                  {el.title}
-                </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  {el.desc}
-                </p>
+            <div key={idx} className="">
+              <div className="relative flex aspect-2/3 items-end overflow-hidden rounded-4xl">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <SafeImage
+                    src={buildImageUrl(el.image)}
+                    alt="Изображение интерьера"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 66vw"
+                    className="object-cover"
+                  />
+                </div>
+                <div className="relative z-10 flex flex-col gap-2 p-8">
+                  <h3 className="text-background text-xl font-medium">
+                    {el.title}
+                  </h3>
+                  <p className="text-background/80 text-sm">{el.desc}</p>
+                </div>
+                <div className="from-foreground/80 absolute inset-0 z-1 bg-linear-to-t via-black/60 to-transparent" />
               </div>
             </div>
           ))}

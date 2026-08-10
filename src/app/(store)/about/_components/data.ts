@@ -11,6 +11,10 @@ type DescProps = {
   desc: string;
 };
 
+type DescImageProps = DescProps & {
+  image: string;
+};
+
 export const ABOUT_STATS: StatsProps[] = [
   {
     value: "275 000+",
@@ -36,17 +40,20 @@ export const QUALITY_CONTROLS: DescProps[] = [
   },
 ] as const;
 
-export const TRUST_TECHNOLOGIES: DescProps[] = [
+export const TRUST_TECHNOLOGIES: DescImageProps[] = [
   {
-    title: "Автоматизированная сборка",
-    desc: "Исключение человеческого фактора. Роботизированные линии гарантируют идеальную подгонку деталей и отсутствие люфтов.",
+    title: "Автоматизация сборки",
+    desc: "Роботизированные линии, исключение человеческого фактора.",
+    image: "/system-assets/pages/about/qc-section-1.jpg",
   },
   {
     title: "Центр контроля качества",
-    desc: "Строгий QC на каждом этапе. Проверка устойчивости к перепадам напряжения и стресс-тесты материалов.",
+    desc: "Многоступенчатый контроль качества на всех этапах.",
+    image: "/system-assets/pages/about/qc-section-2.jpg",
   },
   {
     title: "Отлаженная логистика",
-    desc: "Прямые отгрузки на склады маркетплейсов обеспечивают сохранность техники и быструю доставку до вашей двери.",
+    desc: "Прямые отгрузки на склады маркетплейсов.",
+    image: "/system-assets/pages/about/qc-section-3.jpg",
   },
 ] as const;

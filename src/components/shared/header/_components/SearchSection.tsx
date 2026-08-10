@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Search, X, Loader2 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/src/components/ui/button";
@@ -16,7 +15,6 @@ import {
 
 import { buildImageUrl, cn } from "@/src/lib/utils";
 import { useDebounce } from "@/src/hooks/use-debounce";
-import { STORAGE_URL, SYSTEM_ASSETS } from "@/src/lib/constants";
 import {
   getProducts,
   type CatalogProduct,
