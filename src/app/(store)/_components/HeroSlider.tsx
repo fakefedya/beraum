@@ -94,8 +94,8 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
                   ? "hidden object-cover md:block"
                   : "object-cover"
               }
-              priority={index === 0}
-              loading={index === 0 ? "eager" : "lazy"}
+              preload={index === 0}
+              fetchPriority={index === 0 ? "high" : "auto"}
               sizes="100vw"
             />
             {slide.mobileImageUrl && (
@@ -104,8 +104,8 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
                 alt="Hero Banner Mobile"
                 fill
                 className="block object-cover md:hidden"
-                priority={index === 0}
-                loading={index === 0 ? "eager" : "lazy"}
+                preload={index === 0}
+                fetchPriority={index === 0 ? "high" : "auto"}
                 sizes="100vw"
               />
             )}
