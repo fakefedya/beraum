@@ -15,6 +15,7 @@ import { SYSTEM_ASSETS } from "@/src/lib/constants";
 
 import "swiper/css";
 import "swiper/css/pagination";
+import { SafeImage } from "@/src/components/shared/SafeImage";
 
 export type GalleryImage = {
   url: string;
@@ -89,7 +90,7 @@ export const ProductGallery = ({
   const displayImages: GalleryImage[] =
     images.length > 0
       ? images
-      : [{ url: SYSTEM_ASSETS.placeholder, fit: "contain" }];
+      : [{ url: SYSTEM_ASSETS.emptyProduct, fit: "contain" }];
 
   const openFullscreen = () => dialogRef.current?.showModal();
   const closeFullscreen = () => dialogRef.current?.close();
@@ -142,7 +143,7 @@ export const ProductGallery = ({
                   }
                 }}
               >
-                <Image
+                <SafeImage
                   src={image.url}
                   alt={`Фото товара ${i + 1}`}
                   fill
@@ -151,7 +152,8 @@ export const ProductGallery = ({
                     image.fit === "cover" ? "object-cover" : "object-contain",
                   )}
                   sizes="(max-width: 1024px) 100vw, 66vw"
-                  priority={i === 0}
+                  preload={i === 0}
+                  fetchPriority={i === 0 ? "high" : "auto"}
                 />
               </button>
             </SwiperSlide>
@@ -193,7 +195,7 @@ export const ProductGallery = ({
                 key={i}
                 className="relative flex h-full w-full items-center justify-center text-sm"
               >
-                <Image
+                <SafeImage
                   src={image.url}
                   alt={`Фото товара ${i + 1} крупно`}
                   fill
@@ -202,7 +204,8 @@ export const ProductGallery = ({
                     image.fit === "cover" ? "object-cover" : "object-contain",
                   )}
                   sizes="(max-width: 1024px) 100vw, 95vw"
-                  priority={i === activeIndex}
+                  preload={i === activeIndex}
+                  fetchPriority={i === 0 ? "high" : "auto"}
                 />
               </SwiperSlide>
             ))}

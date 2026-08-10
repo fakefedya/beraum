@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { type CatalogProduct } from "@/src/server/actions/products.queries";
 import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
 import { COLOR_SWATCH_MAP, DEFAULT_SWATCH_COLOR } from "@/src/lib/constants";
-import { cn } from "@/src/lib/utils";
-import { STORAGE_URL, SYSTEM_ASSETS } from "@/src/lib/constants";
+import { buildImageUrl, cn } from "@/src/lib/utils";
+import { SafeImage } from "./SafeImage";
 
 const VISIBLE_COLORS_LIMIT = 4;
 
@@ -21,10 +20,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   const visibleVariants = product.variants.slice(0, VISIBLE_COLORS_LIMIT);
   const hiddenCount = product.variants.length - VISIBLE_COLORS_LIMIT;
+  const imageUrl = buildImageUrl(activeVariant.image);
 
-  const imageUrl = activeVariant.image
-    ? `${STORAGE_URL}/${activeVariant.image.bucketName}/${activeVariant.image.fileKey}`
-    : SYSTEM_ASSETS.placeholder;
   return (
     <article
       className={cn(
@@ -34,7 +31,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     >
       <div className="relative flex flex-col gap-4">
         <div className="bg-accent relative flex aspect-4/5 items-center justify-center overflow-hidden rounded-xl">
-          <Image
+          <SafeImage
             src={imageUrl}
             alt={`${product.productType} ${product.siteArticle}`}
             fill
