@@ -3,6 +3,8 @@ import { Breadcrumbs } from "@/src/components/shared/Breadcrumbs";
 import { Container } from "@/src/components/shared/Container";
 import { Section } from "@/src/components/shared/Section";
 import { PartnershipForm } from "./_components/PartnershipForm";
+import { Button } from "@/src/components/ui/button";
+import { HeroSection } from "./_components/HeroSection";
 
 export const metadata: Metadata = {
   title: "Сотрудничество | Beraum",
@@ -41,7 +43,7 @@ export default function PartnershipPage() {
   return (
     <>
       <Section>
-        <Container className="pt-32 pb-12">
+        <Container className="pt-32">
           <Breadcrumbs
             items={breadcrumbItems}
             className="flex justify-center"
@@ -49,20 +51,10 @@ export default function PartnershipPage() {
         </Container>
       </Section>
 
+      <HeroSection />
+
       <Section>
         <Container>
-          {/* Hero */}
-          <div className="mx-auto mb-20 flex max-w-4xl flex-col items-center justify-center gap-6 text-center">
-            <h1 className="text-5xl font-medium tracking-tight lg:text-7xl">
-              Сотрудничество
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Мы открыты к долгосрочному партнерству. Beraum предлагает гибкие
-              B2B-решения, обеспечивая стабильные поставки, резерв товара и
-              прозрачный документооборот.
-            </p>
-          </div>
-
           {/* Предложения для аудиторий */}
           <div className="mx-auto mb-24 grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-2">
             {partners.map((partner, idx) => (
@@ -79,7 +71,7 @@ export default function PartnershipPage() {
           </div>
 
           {/* Блок формы обратной связи */}
-          <div className="mx-auto mb-32 w-full max-w-2xl">
+          <div id="link" className="mx-auto mb-32 w-full max-w-2xl">
             <div className="mb-10 text-center">
               <h2 className="mb-4 text-3xl font-medium">Стать партнером</h2>
               <p className="text-muted-foreground">
