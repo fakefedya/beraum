@@ -3,8 +3,8 @@ import { Breadcrumbs } from "@/src/components/shared/Breadcrumbs";
 import { Container } from "@/src/components/shared/Container";
 import { Section } from "@/src/components/shared/Section";
 import { PartnershipForm } from "./_components/PartnershipForm";
-import { Button } from "@/src/components/ui/button";
 import { HeroSection } from "./_components/HeroSection";
+import { PartnersSection } from "./_components/PartnersSection";
 
 export const metadata: Metadata = {
   title: "Сотрудничество | Beraum",
@@ -14,29 +14,6 @@ export const metadata: Metadata = {
 const breadcrumbItems = [
   { label: "Главная", href: "/" },
   { label: "Сотрудничество" },
-];
-
-const partners = [
-  {
-    title: "Девелоперам и рантье",
-    description:
-      "Комплексное оснащение объектов недвижимости. Подбор техники под бюджет проекта, оптовые цены и гарантийное обслуживание полного цикла.",
-  },
-  {
-    title: "Архитекторам и дизайнерам",
-    description:
-      "Агентская программа вознаграждений. Предоставление 3D-моделей техники для интеграции в ваши проекты и персональный менеджер.",
-  },
-  {
-    title: "Мебельным салонам",
-    description:
-      "Интеграция техники Beraum в выставочные образцы кухонь. Специальные условия на покупку экспозиции и дропшиппинг для ваших клиентов.",
-  },
-  {
-    title: "HoReCa",
-    description:
-      "Оснащение номерного фонда отелей и апартаментов надежной техникой с единым дизайн-кодом и повышенным ресурсом работы.",
-  },
 ];
 
 export default function PartnershipPage() {
@@ -52,12 +29,13 @@ export default function PartnershipPage() {
       </Section>
 
       <HeroSection />
+      <PartnersSection />
 
       <Section>
         <Container>
           {/* Предложения для аудиторий */}
           <div className="mx-auto mb-24 grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-2">
-            {partners.map((partner, idx) => (
+            {/* {partners.map((partner, idx) => (
               <div
                 key={idx}
                 className="bg-card hover:bg-hover-background flex flex-col gap-3 rounded-[24px] p-8 transition-colors"
@@ -67,7 +45,7 @@ export default function PartnershipPage() {
                   {partner.description}
                 </p>
               </div>
-            ))}
+            ))} */}
           </div>
 
           {/* Блок формы обратной связи */}
