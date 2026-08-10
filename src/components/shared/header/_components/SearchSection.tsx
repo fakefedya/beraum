@@ -14,13 +14,14 @@ import {
   DialogTrigger,
 } from "@/src/components/ui/dialog";
 
-import { cn } from "@/src/lib/utils";
+import { buildImageUrl, cn } from "@/src/lib/utils";
 import { useDebounce } from "@/src/hooks/use-debounce";
 import { STORAGE_URL, SYSTEM_ASSETS } from "@/src/lib/constants";
 import {
   getProducts,
   type CatalogProduct,
 } from "@/src/server/actions/products.queries";
+import { SafeImage } from "../../SafeImage";
 
 const LIMIT = 10;
 
@@ -188,9 +189,7 @@ export const SearchSection = () => {
                 <div className="flex max-h-[60vh] flex-col gap-2 overflow-y-auto pr-2">
                   {results.flatMap((product) =>
                     product.variants.map((variant) => {
-                      const imgUrl = variant.image
-                        ? `${STORAGE_URL}/${variant.image.bucketName}/${variant.image.fileKey}`
-                        : SYSTEM_ASSETS.placeholder;
+                      const imageUrl = buildImageUrl(variant.image);
 
                       return (
                         <Link
@@ -204,8 +203,8 @@ export const SearchSection = () => {
                           )}
                         >
                           <div className="bg-accent relative flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg">
-                            <Image
-                              src={imgUrl}
+                            <SafeImage
+                              src={imageUrl}
                               alt={variant.itemArticle}
                               fill
                               sizes="56px"
