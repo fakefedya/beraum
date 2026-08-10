@@ -43,7 +43,7 @@ export const QUALITY_CONTROLS: DescProps[] = [
 export const TRUST_TECHNOLOGIES: DescImageProps[] = [
   {
     title: "Автоматизация сборки",
-    desc: "Роботизированные линии, исключение человеческого фактора.",
+    desc: "Роботизированный процесс производства.",
     image: "/system-assets/pages/about/qc-section-1.jpg",
   },
   {

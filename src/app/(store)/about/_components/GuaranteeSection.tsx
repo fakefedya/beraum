@@ -25,8 +25,8 @@ export const GuaranteeSection = () => {
             <h2 className={cn("text-3xl font-medium", "lg:text-4xl")}>
               Поддержка без бюрократии
             </h2>
-            <div className="flex flex-col gap-2">
-              <p className="text-background/80 text-lg leading-relaxed">
+            <div className="text-background/80 flex flex-col gap-2 text-lg leading-relaxed">
+              <p>
                 Прямые продажи означают прямую ответственность. У нас нет
                 сложной цепи дистрибьюторов, перекидывающих вину друг на друга.
               </p>

@@ -60,7 +60,7 @@ export const QualityControlSection = () => {
                   <h3 className="text-background text-xl font-medium">
                     {el.title}
                   </h3>
-                  <p className="text-background/80 text-sm">{el.desc}</p>
+                  <p className="text-background/80 text-base">{el.desc}</p>
                 </div>
                 <div className="from-foreground/80 absolute inset-0 z-1 bg-linear-to-t via-black/60 to-transparent" />
               </div>
