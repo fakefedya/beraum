@@ -6,7 +6,7 @@ import { slides } from "@/src/server/db/schema";
 import { z } from "zod";
 import { serverEnv } from "@/src/lib/env/server";
 
-const IMAGE_PATH = "shared/components/banners";
+const IMAGE_PATH = "components/banners";
 
 const tagSchema = z.object({
   xPercent: z.number().min(0).max(100),

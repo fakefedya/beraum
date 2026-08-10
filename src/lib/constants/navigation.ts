@@ -59,14 +59,14 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
           description: "Дизайнерская овальная панель",
           href: "/product/HI-3C004MW",
           isNew: true,
-          cover: "system-assets/shared/components/navigation/promo-cover-2.jpg",
+          cover: "system-assets/components/navigation/promo-cover-2.jpg",
         },
         {
           label: "HI-2CR351MB",
           description: "Дизайнерская овальная панель",
           href: "/product/HI-2CR351MB",
           isNew: true,
-          cover: "system-assets/shared/components/navigation/promo-cover-1.jpg",
+          cover: "system-assets/components/navigation/promo-cover-1.jpg",
         },
       ],
     },
@@ -78,13 +78,12 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
         {
           label: "О бренде",
           href: "/about",
-          cover: "system-assets/shared/components/navigation/about-cover.png",
+          cover: "system-assets/components/navigation/about-cover.png",
         },
         {
           label: "Сотрудничество",
           href: "/partnership",
-          cover:
-            "system-assets/shared/components/navigation/partnership-cover.png",
+          cover: "system-assets/components/navigation/partnership-cover.png",
         },
       ],
     },
@@ -95,17 +94,17 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
         {
           label: "Поддержка",
           href: "/support",
-          cover: "system-assets/shared/components/navigation/support-cover.png",
+          cover: "system-assets/components/navigation/support-cover.png",
         },
         {
           label: "Гарантия",
           href: "/service",
-          cover: "system-assets/shared/components/navigation/service-cover.png",
+          cover: "system-assets/components/navigation/service-cover.png",
         },
         {
           label: "Частые вопросы",
           href: "/faq",
-          cover: "system-assets/shared/components/navigation/faq-cover.png",
+          cover: "system-assets/components/navigation/faq-cover.png",
         },
       ],
     },
