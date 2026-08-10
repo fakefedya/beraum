@@ -1,15 +1,12 @@
 import { Container } from "@/src/components/shared/Container";
 import { Section } from "@/src/components/shared/Section";
 import { Button } from "@/src/components/ui/button";
-import { SYSTEM_ASSETS, STORAGE_URL } from "@/src/lib/constants";
-import { cn } from "@/src/lib/utils";
+import { cn, buildImageUrl } from "@/src/lib/utils";
 import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 
 export const DesignSection = () => {
-  const imageUrl = `${STORAGE_URL}/system-assets/about_design_section_cover.png`
-    ? `${STORAGE_URL}/system-assets/about_design_section_cover.png`
-    : SYSTEM_ASSETS.placeholder;
+  const imageUrl = buildImageUrl("pages/about/studio-design-banner.png");
 
   return (
     <Section>
