@@ -10,16 +10,7 @@ export const PartnersSection = () => {
       <Container maxWidth="5xl">
         <div className={cn("grid grid-cols-1 gap-8", "md:grid-cols-2")}>
           {PARTNERS_OFFER.map((el, idx) => (
-            <div
-              key={idx}
-              className={cn(
-                "bg-card -z-1 rounded-4xl",
-                "[&>*:nth-child(1)]:rotate-[-2deg]",
-                "[&>*:nth-child(2)]:rotate-[2deg]",
-                "[&>*:nth-child(3)]:rotate-[-2deg]",
-                "[&>*:nth-child(4)]:rotate-[4deg]",
-              )}
-            >
+            <div key={idx} className={cn("bg-card -z-1 rounded-4xl")}>
               <div
                 className={cn(
                   "relative flex aspect-3/2 items-end overflow-hidden rounded-4xl",
