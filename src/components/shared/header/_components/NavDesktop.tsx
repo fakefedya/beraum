@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 import Image from "next/image";
-import { cn } from "@/src/lib/utils";
+import { buildImageUrl, cn } from "@/src/lib/utils";
 import {
   NavigationMenuContent,
   NavigationMenuItem,
@@ -21,6 +21,7 @@ import type {
 } from "@/src/lib/constants";
 import { Badge } from "@/src/components/ui/badge";
 import { STORAGE_URL, SYSTEM_ASSETS } from "@/src/lib/constants";
+import { SafeImage } from "../../SafeImage";
 
 interface NavDesktopProps {
   links: readonly NavItem[];
@@ -94,9 +95,7 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
 
           <ul className="grid h-auto w-full grid-cols-2 gap-3">
             {item.promoCards.map((card) => {
-              const imageUrl = card.cover
-                ? `${STORAGE_URL}/${card.cover}`
-                : SYSTEM_ASSETS.placeholder;
+              const imageUrl = buildImageUrl(card.cover);
 
               return (
                 <li key={card.href} className="min-h-full">
@@ -111,7 +110,7 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                       )}
                     >
                       <div className="bg-accent relative h-full w-full overflow-hidden rounded-lg">
-                        <Image
+                        <SafeImage
                           src={imageUrl}
                           alt={card.description}
                           fill
@@ -176,9 +175,7 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
       <NavigationMenuContent className="p-5">
         <ul className={cn("grid h-full min-w-fit gap-3", gridClass)}>
           {item.items.map((subItem) => {
-            const imageUrl = subItem.cover
-              ? `${STORAGE_URL}/${subItem.cover}`
-              : SYSTEM_ASSETS.placeholder;
+            const imageUrl = buildImageUrl(subItem.cover);
             return (
               <li key={subItem.href} className={"h-full min-h-95"}>
                 <NavigationMenuLink asChild>
@@ -191,7 +188,7 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
                     )}
                   >
                     <div className="bg-brand-background-gradient relative h-full w-full overflow-hidden rounded-lg">
-                      <Image
+                      <SafeImage
                         src={imageUrl}
                         alt={subItem.label}
                         fill

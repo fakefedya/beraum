@@ -59,14 +59,14 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
           description: "Дизайнерская овальная панель",
           href: "/product/HI-3C004MW",
           isNew: true,
-          cover: "system-assets/promo-covers/promo-cover-1.jpg",
+          cover: "system-assets/shared/components/navigation/promo-cover-2.jpg",
         },
         {
           label: "HI-2CR351MB",
           description: "Дизайнерская овальная панель",
           href: "/product/HI-2CR351MB",
           isNew: true,
-          cover: "system-assets/promo-covers/promo-cover-2.jpg",
+          cover: "system-assets/shared/components/navigation/promo-cover-1.jpg",
         },
       ],
     },
@@ -78,12 +78,13 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
         {
           label: "О бренде",
           href: "/about",
-          cover: "system-assets/navigation-covers/about_cover.png",
+          cover: "system-assets/shared/components/navigation/about-cover.png",
         },
         {
           label: "Сотрудничество",
           href: "/partnership",
-          cover: "system-assets/navigation-covers/partnership_cover.png",
+          cover:
+            "system-assets/shared/components/navigation/partnership-cover.png",
         },
       ],
     },
@@ -94,17 +95,17 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
         {
           label: "Поддержка",
           href: "/support",
-          cover: "system-assets/navigation-covers/support_cover.png",
+          cover: "system-assets/shared/components/navigation/support-cover.png",
         },
         {
           label: "Гарантия",
           href: "/service",
-          cover: "system-assets/navigation-covers/service_cover.png",
+          cover: "system-assets/shared/components/navigation/service-cover.png",
         },
         {
           label: "Частые вопросы",
           href: "/faq",
-          cover: "system-assets/navigation-covers/faq_cover.png",
+          cover: "system-assets/shared/components/navigation/faq-cover.png",
         },
       ],
     },
