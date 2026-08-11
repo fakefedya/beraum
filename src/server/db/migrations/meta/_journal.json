@@ -29,6 +29,13 @@
       "when": 1785417616807,
       "tag": "0003_thick_pretty_boy",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1786432569537,
+      "tag": "0004_exotic_maggott",
+      "breakpoints": true
     }
   ]
 }
