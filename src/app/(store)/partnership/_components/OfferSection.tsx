@@ -28,7 +28,7 @@ export const OfferSection = () => {
               </div>
 
               <div className="flex flex-col gap-3 p-8">
-                <h3 className="text-2xl font-medium tracking-tight">
+                <h3 className="text-xl font-medium tracking-tight">
                   {el.title}
                 </h3>
                 <p className="text-muted-foreground text-base leading-relaxed">
