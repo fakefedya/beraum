@@ -34,22 +34,10 @@ export default function PartnershipPage() {
       <Section>
         <Container>
           {/* Предложения для аудиторий */}
-          <div className="mx-auto mb-24 grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-2">
-            {/* {partners.map((partner, idx) => (
-              <div
-                key={idx}
-                className="bg-card hover:bg-hover-background flex flex-col gap-3 rounded-[24px] p-8 transition-colors"
-              >
-                <h3 className="text-2xl font-medium">{partner.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {partner.description}
-                </p>
-              </div>
-            ))} */}
-          </div>
+          <div className="mx-auto mb-24 grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-2"></div>
 
           {/* Блок формы обратной связи */}
-          <div id="link" className="mx-auto mb-32 w-full max-w-2xl">
+          <div id="partnership-form" className="mx-auto mb-32 w-full max-w-2xl">
             <div className="mb-10 text-center">
               <h2 className="mb-4 text-3xl font-medium">Стать партнером</h2>
               <p className="text-muted-foreground">

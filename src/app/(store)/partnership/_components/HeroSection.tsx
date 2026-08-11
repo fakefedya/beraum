@@ -1,9 +1,23 @@
+"use client";
+
 import { Container } from "@/src/components/shared/Container";
 import { Section } from "@/src/components/shared/Section";
 import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
 
 export const HeroSection = () => {
+  const handleScrollToForm = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const targetId = e.currentTarget.getAttribute("href")?.replace("#", "");
+
+    if (targetId) {
+      document.getElementById(targetId)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   return (
     <Section>
       <Container maxWidth="5xl">
@@ -17,11 +31,13 @@ export const HeroSection = () => {
           <Button
             asChild
             className={cn(
-              "bg-foreground text-background h-12 gap-4 rounded-[16px] px-4 text-base font-medium",
+              "bg-foreground text-background h-12 gap-4 rounded-[16px] px-8 text-base font-medium",
               "hover:bg-foreground/80 duration-300",
             )}
           >
-            <a href="#link">Стать партнером</a>
+            <a href="#partnership-form" onClick={handleScrollToForm}>
+              Получить индивидуальные условия
+            </a>
           </Button>
         </div>
       </Container>

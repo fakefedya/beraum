@@ -18,10 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="ru"
-      className={cn("scroll-smooth font-sans antialiased", golosText.variable)}
-    >
+    <html lang="ru" className={cn("font-sans antialiased", golosText.variable)}>
       <body>
         <div className="relative flex h-full min-h-screen flex-col">
           <Header />
