@@ -44,6 +44,7 @@ const GalleryNavigation = () => {
   }, [swiper]);
 
   return (
+    // z-10 и pointer-events-none для контейнера пропускают клики сквозь себя
     <div className="pointer-events-none absolute inset-y-0 right-0 left-0 z-10 flex w-full items-center justify-between px-6">
       <Button
         size="icon"
@@ -90,13 +91,14 @@ export const ProductGallery = ({
     images.length > 0
       ? images
       : [{ url: SYSTEM_ASSETS.emptyProduct, fit: "contain" }];
-  console.log(images.length);
+
   const openFullscreen = () => dialogRef.current?.showModal();
   const closeFullscreen = () => dialogRef.current?.close();
 
   return (
     <div className="relative flex h-full w-full flex-col gap-4">
       <div className="group bg-card relative h-full w-full items-center overflow-hidden rounded-[24px]">
+        {/* 🔥 Крошки на самом верхнем слое (z-30) */}
         {breadcrumbs && breadcrumbs.length > 0 && (
           <div
             className={cn(
@@ -126,13 +128,14 @@ export const ProductGallery = ({
               key={i}
               className="relative flex h-full w-full items-center justify-center"
             >
-              <button
+              {/* 🔥 Изображение как интерактивный элемент (z-0) */}
+              <div
                 className={cn(
-                  "absolute inset-0 z-0 cursor-zoom-in outline-none",
+                  "absolute inset-0 z-0 h-full w-full cursor-zoom-in outline-none",
                   "focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-inset",
                 )}
                 onClick={openFullscreen}
-                type="button"
+                role="button"
                 tabIndex={0}
                 aria-label="Открыть изображение на весь экран"
                 onKeyDown={(e) => {
@@ -154,7 +157,7 @@ export const ProductGallery = ({
                   preload={i === 0}
                   fetchPriority={i === 0 ? "high" : "auto"}
                 />
-              </button>
+              </div>
             </SwiperSlide>
           ))}
 
