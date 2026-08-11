@@ -10,7 +10,6 @@ import {
   Breadcrumbs,
   type BreadcrumbType,
 } from "@/src/components/shared/Breadcrumbs";
-import Image from "next/image";
 import { SYSTEM_ASSETS } from "@/src/lib/constants";
 
 import "swiper/css";
@@ -91,7 +90,7 @@ export const ProductGallery = ({
     images.length > 0
       ? images
       : [{ url: SYSTEM_ASSETS.emptyProduct, fit: "contain" }];
-
+  console.log(images.length);
   const openFullscreen = () => dialogRef.current?.showModal();
   const closeFullscreen = () => dialogRef.current?.close();
 
@@ -159,7 +158,7 @@ export const ProductGallery = ({
             </SwiperSlide>
           ))}
 
-          <GalleryNavigation />
+          {images.length > 1 ? <GalleryNavigation /> : null}
         </Swiper>
       </div>
 
@@ -210,7 +209,7 @@ export const ProductGallery = ({
               </SwiperSlide>
             ))}
 
-            <GalleryNavigation />
+            {images.length > 1 ? <GalleryNavigation /> : null}
           </Swiper>
         </div>
       </dialog>
