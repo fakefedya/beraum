@@ -4,7 +4,8 @@ import { Container } from "@/src/components/shared/Container";
 import { Section } from "@/src/components/shared/Section";
 import { PartnershipForm } from "./_components/PartnershipForm";
 import { HeroSection } from "./_components/HeroSection";
-import { PartnersSection } from "./_components/PartnersSection";
+import { OfferSection } from "./_components/OfferSection";
+import { PartnershipSection } from "./_components/PartnershipSection";
 
 export const metadata: Metadata = {
   title: "Сотрудничество | Beraum",
@@ -29,27 +30,8 @@ export default function PartnershipPage() {
       </Section>
 
       <HeroSection />
-      <PartnersSection />
-
-      <Section>
-        <Container>
-          {/* Предложения для аудиторий */}
-          <div className="mx-auto mb-24 grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-2"></div>
-
-          {/* Блок формы обратной связи */}
-          <div id="partnership-form" className="mx-auto mb-32 w-full max-w-2xl">
-            <div className="mb-10 text-center">
-              <h2 className="mb-4 text-3xl font-medium">Стать партнером</h2>
-              <p className="text-muted-foreground">
-                Оставьте заявку, и наш B2B-менеджер свяжется с вами в течение
-                рабочего дня для обсуждения индивидуальных условий.
-              </p>
-            </div>
-            {/* Изолированный клиентский компонент формы */}
-            <PartnershipForm />
-          </div>
-        </Container>
-      </Section>
+      <OfferSection />
+      <PartnershipSection />
     </>
   );
 }

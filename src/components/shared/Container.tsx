@@ -1,9 +1,10 @@
 import { cn } from "@/src/lib/utils";
 
 const maxWidthMap = {
+  "2xl": "max-w-2xl",
   "5xl": "max-w-5xl",
   "7xl": "max-w-7xl",
-  "360": "max-w-[90rem]",
+  "360": "max-w-360",
 } as const;
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
