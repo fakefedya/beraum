@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 
-import Image from "next/image";
 import { buildImageUrl, cn } from "@/src/lib/utils";
 import {
   NavigationMenuContent,
@@ -20,7 +19,6 @@ import type {
   NavLink,
 } from "@/src/lib/constants";
 import { Badge } from "@/src/components/ui/badge";
-import { STORAGE_URL, SYSTEM_ASSETS } from "@/src/lib/constants";
 import { SafeImage } from "../../SafeImage";
 
 interface NavDesktopProps {

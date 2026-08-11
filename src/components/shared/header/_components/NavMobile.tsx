@@ -25,7 +25,8 @@ import {
   FOOTER_LINKS,
 } from "@/src/lib/constants";
 import { Icons } from "@/src/components/ui/icons";
-import { cn } from "@/src/lib/utils";
+import { buildImageUrl, cn } from "@/src/lib/utils";
+import { SafeImage } from "../../SafeImage";
 
 interface NavMobileProps {
   links: readonly NavItem[];
@@ -145,29 +146,48 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                           </div>
 
                           <div className="border-border mt-2 flex flex-col gap-3 border-t pt-4 md:grid md:grid-cols-3">
-                            {link.promoCards.map((card) => (
-                              <Link
-                                key={card.href}
-                                href={card.href}
-                                onClick={() => setIsOpen(false)}
-                                className="hover:border-brand bg-card relative flex items-end rounded-xl border-2 border-transparent transition-colors duration-300"
-                              >
-                                <div className="absolute bottom-2 left-2 flex flex-col gap-0 p-2">
-                                  <span className="font-medium">
-                                    {card.label}
-                                  </span>
-                                  <span className="text-muted-foreground">
-                                    {card.description}
-                                  </span>
-                                </div>
-                                {card.isNew && (
-                                  <Badge className="bg-brand text-foreground absolute top-4 right-4 uppercase">
-                                    Новинка
-                                  </Badge>
-                                )}
-                                <div className="flex aspect-video w-full items-center justify-center rounded-lg md:aspect-2/3"></div>
-                              </Link>
-                            ))}
+                            {link.promoCards.map((card) => {
+                              const imageUrl = buildImageUrl(card.cover);
+                              return (
+                                <Link
+                                  key={card.href}
+                                  href={card.href}
+                                  onClick={() => setIsOpen(false)}
+                                  className={cn(
+                                    "group bg-card relative flex aspect-2/3 w-full overflow-hidden rounded-xl border-2 border-transparent",
+                                    "hover:border-brand transition-colors duration-300",
+                                    "outline-none focus-visible:ring-2 focus-visible:ring-black",
+                                  )}
+                                >
+                                  <div className="bg-accent relative h-full w-full overflow-hidden rounded-lg">
+                                    <SafeImage
+                                      src={imageUrl}
+                                      alt={card.description}
+                                      fill
+                                      sizes="(max-width: 1024px) 100vw, 66vw"
+                                      className={cn(
+                                        "object-cover",
+                                        "transition-transform duration-500 group-hover:scale-102",
+                                      )}
+                                    />
+                                  </div>
+                                  <div className="bg-background/80 shadow-nav absolute bottom-4 left-4 flex w-fit max-w-[calc(100%-32px)] flex-col gap-0 rounded-[12px] px-4 py-1.5 backdrop-blur-xl backdrop-saturate-150">
+                                    <span className="line-clamp-1 font-medium tracking-tight">
+                                      {card.label}
+                                    </span>
+                                    <span className="text-muted-foreground line-clamp-2 text-sm tracking-tight">
+                                      {card.description}
+                                    </span>
+                                  </div>
+
+                                  {card.isNew && (
+                                    <Badge className="bg-brand text-foreground absolute top-4 right-4 font-medium uppercase">
+                                      Новинка
+                                    </Badge>
+                                  )}
+                                </Link>
+                              );
+                            })}
                           </div>
                         </div>
                       ) : (
