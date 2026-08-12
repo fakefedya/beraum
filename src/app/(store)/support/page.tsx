@@ -1,10 +1,9 @@
-import { Metadata } from "next";
-import { Breadcrumbs } from "@/src/components/shared/Breadcrumbs";
 import { Container } from "@/src/components/shared/Container";
-import { Section } from "@/src/components/shared/Section";
 import { HeroSection } from "./_components/HeroSection";
-import { OfferSection } from "./_components/OfferSection";
-import { PartnershipSection } from "./_components/PartnershipSection";
+import { Section } from "@/src/components/shared/Section";
+import { Breadcrumbs } from "@/src/components/shared/Breadcrumbs";
+import { Metadata } from "next";
+import { SupportSection } from "./_components/SupportSection";
 
 export const metadata: Metadata = {
   title: "Сотрудничество | Beraum",
@@ -13,10 +12,10 @@ export const metadata: Metadata = {
 
 const breadcrumbItems = [
   { label: "Главная", href: "/" },
-  { label: "Сотрудничество" },
+  { label: "Поддержка" },
 ];
 
-export default function Partnership() {
+export default function Support() {
   return (
     <>
       <Section>
@@ -29,8 +28,7 @@ export default function Partnership() {
       </Section>
 
       <HeroSection />
-      <OfferSection />
-      <PartnershipSection />
+      {/* <SupportSection /> */}
     </>
   );
 }

@@ -14,10 +14,7 @@ interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function CategoryPage({
-  params,
-  searchParams,
-}: PageProps) {
+export default async function Category({ params, searchParams }: PageProps) {
   const { category } = await params;
   const resolvedSearchParams = await searchParams;
   const sort = resolvedSearchParams.sort as

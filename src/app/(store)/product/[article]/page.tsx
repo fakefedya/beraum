@@ -25,7 +25,7 @@ interface PageProps {
   params: Promise<{ article: string }>;
 }
 
-export default async function ProductPage({ params }: PageProps) {
+export default async function Product({ params }: PageProps) {
   const { article } = await params;
   const response = await getProductByArticle(article);
 

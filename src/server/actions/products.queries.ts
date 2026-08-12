@@ -350,3 +350,29 @@ export async function getSimilarProducts(
     return { success: false, data: [] };
   }
 }
+
+export async function getModelsByCategory(categoryId: string) {
+  try {
+    const parsedId = z.string().uuid().safeParse(categoryId);
+    if (!parsedId.success) return { success: false, data: [] };
+
+    const items = await db
+      .select({
+        itemArticle: products.itemArticle,
+        siteArticle: products.siteArticle,
+      })
+      .from(products)
+      .where(
+        and(
+          eq(products.categoryId, parsedId.data),
+          eq(products.status, "published"),
+        ),
+      )
+      .orderBy(asc(products.itemArticle));
+
+    return { success: true, data: items };
+  } catch (error) {
+    console.error("❌ Ошибка Server Action (getModelsByCategory):", error);
+    return { success: false, data: [] };
+  }
+}

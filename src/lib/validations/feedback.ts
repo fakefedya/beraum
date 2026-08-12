@@ -1,39 +1,87 @@
 import { z } from "zod";
 
-const sanitizeText = (val: string) => val.replace(/[<>]/g, "").trim();
+const sanitizeText = (val: string) => val.trim();
+
 const RU_PHONE_REGEX =
   /^(?:\+7|8|7)[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$/;
 
-export const partnershipSchema = z.object({
+const baseContactSchema = z.object({
   name: z
-    .string()
+    .string({ message: "Укажите ФИО" })
     .min(2, "Имя должно содержать минимум 2 символа")
     .max(100, "Слишком длинное имя")
     .transform(sanitizeText),
 
   phone: z
-    .string()
-    .regex(RU_PHONE_REGEX, "Введите корректный номер")
+    .string({ message: "Укажите телефон" })
+    .regex(RU_PHONE_REGEX, "Введите корректный номер РФ")
     .transform((val) => {
       const digits = val.replace(/\D/g, "");
       return digits.startsWith("8") ? `7${digits.slice(1)}` : digits;
     }),
 
   email: z
-    .string()
+    .string({ message: "Укажите почту" })
     .email("Некорректный формат почты")
     .max(150)
     .transform((val) => val.toLowerCase()),
+});
 
+// 2. Схема для формы "Сотрудничество"
+export const partnershipSchema = baseContactSchema.extend({
   company: z
     .string()
-    .min(2, "Введите название компании или ИНН")
     .max(150, "Слишком длинное название")
-    .transform(sanitizeText),
+    .optional()
+    .transform((val) => {
+      if (!val || val.trim() === "") return undefined;
+      return sanitizeText(val);
+    }),
 
   message: z
-    .string()
+    .string({ message: "Опишите ваши задачи" })
     .min(10, "Опишите ваши задачи подробнее (минимум 10 символов)")
     .max(500, "Сообщение не должно превышать 500 символов")
     .transform(sanitizeText),
 });
+
+// 3. Схема для формы "Поддержка"
+export const supportSchema = baseContactSchema.extend({
+  categoryId: z
+    .string({ message: "Выберите категорию устройства" })
+    .min(1, "Выберите категорию устройства"),
+
+  marketplace: z
+    .string({ message: "Укажите место покупки" })
+    .min(1, "Укажите место покупки"),
+
+  purchaseDate: z
+    .string({ message: "Укажите дату покупки" })
+    .min(1, "Укажите дату покупки"),
+
+  modelArticle: z
+    .string({ message: "Выберите модель" })
+    .min(1, "Выберите или введите модель устройства"),
+
+  address: z
+    .string({ message: "Введите адрес" })
+    .min(5, "Введите полный адрес")
+    .max(255)
+    .transform(sanitizeText),
+
+  message: z
+    .string({ message: "Опишите неисправность" })
+    .min(10, "Опишите неисправность подробнее (минимум 10 символов)")
+    .max(2000, "Описание не должно превышать 2000 символов")
+    .transform(sanitizeText),
+
+  mediaKeys: z.array(z.string()).max(5, "Максимум 5 файлов").optional(),
+});
+
+export const parseZodErrors = (zodError: z.ZodError) => {
+  const fieldErrors: Record<string, string> = {};
+  zodError.issues.forEach((issue) => {
+    if (issue.path[0]) fieldErrors[issue.path[0].toString()] = issue.message;
+  });
+  return fieldErrors;
+};

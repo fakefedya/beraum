@@ -19,7 +19,7 @@ const breadcrumbItems = [
   { label: "О бренде" },
 ];
 
-export default function AboutPage() {
+export default function About() {
   return (
     <>
       <Section>
