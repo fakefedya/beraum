@@ -17,8 +17,8 @@ export const MarketplaceDropdown = () => {
   const isDiscount = pathname.startsWith("/discount");
 
   const links = isDiscount
-    ? MARKETPLACE_LINKS.discount
-    : MARKETPLACE_LINKS.store;
+    ? MARKETPLACE_LINKS.discount.filter((link) => link.isEnabled)
+    : MARKETPLACE_LINKS.store.filter((link) => link.isEnabled);
 
   return (
     <DropdownMenu>
