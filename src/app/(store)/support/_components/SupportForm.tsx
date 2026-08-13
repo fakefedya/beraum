@@ -29,14 +29,7 @@ import {
 } from "@/src/components/ui/command";
 import { MediaUploader } from "./MediaUploader";
 import { toast } from "sonner";
-
-const MARKETPLACES = [
-  { id: "ozon", name: "Ozon" },
-  { id: "wb", name: "Wildberries" },
-  { id: "ymarket", name: "Яндекс Маркет" },
-  { id: "megamarket", name: "МегаМаркет" },
-  { id: "beraum", name: "Официальный сайт Beraum" },
-];
+import { MARKETPLACE_LINKS } from "@/src/lib/constants";
 
 interface SupportFormProps {
   categories: { id: string; name: string }[];
@@ -60,14 +53,12 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
     Boolean(initialCategoryId),
   );
 
-  // Состояние Combobox
   const [selectedModel, setSelectedModel] =
     useState<string>(initialModelArticle);
   const [isComboboxOpen, setIsComboboxOpen] = useState(false);
 
   const latestCategoryReq = useRef<string | null>(initialCategoryId);
 
-  // Восстановление моделей при ошибке валидации после ответа сервера (без setState в теле эффекта)
   useEffect(() => {
     let isCancelled = false;
     const payloadCatId = state.payload?.categoryId as string | undefined;
@@ -136,13 +127,13 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
       action={formAction}
       className="mx-auto flex w-full max-w-3xl flex-col gap-10 text-left"
       noValidate
-      // 2. ДОБАВЛЯЕМ ПЕРЕХВАТЧИК СОБЫТИЯ
+
       onSubmit={(e) => {
         const uploader = e.currentTarget.querySelector(
           '[data-uploading="true"]',
         );
         if (uploader) {
-          e.preventDefault(); // Блокируем отправку action
+          e.preventDefault();
           toast.warning("Файлы загружаются", {
             description:
               "Пожалуйста, дождитесь окончания загрузки всех медиафайлов перед отправкой формы.",
@@ -150,7 +141,6 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
         }
       }}
     >
-      {/* Глобальные системные ошибки (Rate Limit, 500) */}
       {state.error && (
         <div className="animate-in fade-in flex items-center gap-3 rounded-xl bg-red-50 p-4 text-red-600">
           <AlertCircle className="h-5 w-5 shrink-0" />
@@ -158,7 +148,6 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
         </div>
       )}
 
-      {/* ШАГ 1: Категория */}
       <div className="flex flex-col gap-4">
         <h3 className="text-2xl font-medium">
           С чем вам требуется помощь?
@@ -198,20 +187,19 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
         )}
       </div>
 
-      {/* ШАГ 2: Место покупки */}
       <div className="flex flex-col gap-4">
         <h3 className="text-2xl font-medium">
           Где вы приобрели устройство?
           <span className="ml-1 text-red-600/60">*</span>
         </h3>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-          {MARKETPLACES.map((mp) => (
-            <label key={mp.id} className="group cursor-pointer">
+          {MARKETPLACE_LINKS.store.map((el, idx) => (
+            <label key={idx} className="group cursor-pointer">
               <input
                 type="radio"
                 name="marketplace"
-                value={mp.id}
-                defaultChecked={state.payload?.marketplace === mp.id}
+                value={el.type}
+                defaultChecked={state.payload?.marketplace === el.type}
                 className="peer sr-only"
                 disabled={isPending}
               />
@@ -223,7 +211,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
                     "border-red-500/50 bg-[#fff2f4]",
                 )}
               >
-                <span className="text-sm font-medium">{mp.name}</span>
+                <span className="text-sm font-medium">{el.label}</span>
               </div>
             </label>
           ))}
