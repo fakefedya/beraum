@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import { getPresignedUploadUrl } from "@/src/server/actions/media.actions";
+import { toast } from "sonner";
 
 type UploadStatus = "uploading" | "success" | "error";
 
@@ -73,32 +74,47 @@ export const MediaUploader = ({
 
       updateFile(id, { status: "success", key: res.fileKey });
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Сбой загрузки";
+
       updateFile(id, {
         status: "error",
-        error: error instanceof Error ? error.message : "Сбой загрузки",
+        error: errorMessage,
+      });
+
+      toast.error("Ошибка загрузки", {
+        description: `Не удалось загрузить "${file.name}". ${errorMessage}`,
       });
     }
   };
 
   const handleFiles = useCallback(
     (newFiles: File[]) => {
+      // 1. Проверка лимита количества файлов
       if (files.length + newFiles.length > maxFiles) {
-        alert(`Максимум ${maxFiles} файлов.`);
+        toast.warning("Лимит файлов", {
+          description: `Вы можете загрузить максимум ${maxFiles} файлов.`,
+        });
         return;
       }
 
       const validFiles = newFiles.filter((file) => {
         if (!ALLOWED_TYPES.includes(file.type)) {
-          alert(`Файл ${file.name} имеет недопустимый формат.`);
+          toast.error("Недопустимый формат", {
+            description: `Файл "${file.name}" не поддерживается. Разрешены JPG, PNG, MP4, PDF.`,
+          });
           return false;
         }
         if (file.size > maxSizeMB * 1024 * 1024) {
-          alert(`Файл ${file.name} превышает ${maxSizeMB} МБ.`);
+          toast.error("Файл слишком большой", {
+            description: `Размер "${file.name}" превышает допустимые ${maxSizeMB} МБ.`,
+          });
           return false;
         }
         return true;
       });
 
+      // 3. Запуск пайплайна загрузки для прошедших валидацию
       validFiles.forEach((file) => {
         const id = crypto.randomUUID();
         const uploadItem: UploadedFile = { id, file, status: "uploading" };

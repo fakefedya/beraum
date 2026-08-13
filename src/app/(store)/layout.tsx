@@ -5,6 +5,7 @@ import { Footer } from "@/src/components/shared/Footer";
 import { Header } from "@/src/components/shared/header/Header";
 import { Main } from "@/src/components/shared/Main";
 import { cn } from "@/src/lib/utils";
+import { Toaster } from "@/src/components/ui/sonner";
 
 const golosText = Golos_Text({
   subsets: ["latin", "cyrillic"],
@@ -25,6 +26,7 @@ export default function RootLayout({
           <Main>{children}</Main>
           <Footer />
         </div>
+        <Toaster position="bottom-right" richColors />
       </body>
     </html>
   );
