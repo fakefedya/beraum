@@ -193,13 +193,13 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           <span className="ml-1 text-red-600/60">*</span>
         </h3>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-          {MARKETPLACE_LINKS.store.map((el, idx) => (
-            <label key={idx} className="group cursor-pointer">
+          {MARKETPLACE_LINKS.store.map((mp) => (
+            <label key={mp.id} className="group cursor-pointer">
               <input
                 type="radio"
                 name="marketplace"
-                value={el.type}
-                defaultChecked={state.payload?.marketplace === el.type}
+                value={mp.id} // ИСПОЛЬЗУЕМ СТРОГИЙ ID
+                defaultChecked={state.payload?.marketplace === mp.id}
                 className="peer sr-only"
                 disabled={isPending}
               />
@@ -211,7 +211,8 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
                     "border-red-500/50 bg-[#fff2f4]",
                 )}
               >
-                <span className="text-sm font-medium">{el.label}</span>
+                {/* Опционально: можно отрендерить mp.icon({ className: "h-6 w-6" }) если нужен визуальный акцент */}
+                <span className="text-sm font-medium">{mp.label}</span>
               </div>
             </label>
           ))}

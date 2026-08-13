@@ -1,12 +1,12 @@
 import { type SVGProps } from "react";
 
-interface Props {
+export interface IconsProps {
   props?: SVGProps<SVGSVGElement>;
   className?: string;
 }
 
 export const Icons = {
-  logo: ({ props, className }: Props) => (
+  logo: ({ props, className }: IconsProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="107"
@@ -29,7 +29,7 @@ export const Icons = {
       <path d="M13.9982 11.3524C14.7024 12.2741 15.0545 13.2861 15.0545 14.3886C15.0545 15.0934 14.901 15.7801 14.5941 16.4488C14.2871 17.1175 13.8538 17.7048 13.294 18.2108C12.7163 18.7349 12.0392 19.1416 11.2627 19.4307C10.4863 19.7018 9.66479 19.8374 8.7981 19.8374H2.14106C2.06316 19.8374 2 19.7741 2 19.6962V2.14119C2 2.06321 2.06316 2 2.14106 2H7.55223C9.23144 2 10.6218 2.49699 11.7232 3.49096C12.2287 3.96084 12.6169 4.50301 12.8878 5.11747C13.1767 5.73193 13.3211 6.37349 13.3211 7.04217C13.3211 7.96386 13.0593 8.81325 12.5357 9.59036C12.5077 9.64636 12.4749 9.69995 12.4373 9.75112C12.3828 9.82531 12.3959 9.93427 12.4737 9.98346C13.0739 10.363 13.5821 10.8193 13.9982 11.3524ZM5.0605 8.77146C5.0605 8.84944 5.12365 8.91265 5.20156 8.91265H7.47098C7.88627 8.91265 8.20225 8.89458 8.41892 8.85843C8.65365 8.82229 8.87935 8.75904 9.09602 8.66868C9.09602 8.66868 9.1863 8.62349 9.36686 8.53313C9.56548 8.4247 9.76409 8.23494 9.96271 7.96386C10.1613 7.6747 10.2606 7.36747 10.2606 7.04217C10.2606 6.53615 10.062 6.10241 9.66479 5.74096C9.19533 5.28916 8.49114 5.06325 7.55223 5.06325H5.20156C5.12365 5.06325 5.0605 5.12647 5.0605 5.20444V8.77146ZM11.2357 15.9608C11.7593 15.491 12.0211 14.9669 12.0211 14.3886C12.0211 13.9548 11.8766 13.5572 11.5878 13.1958C11.2989 12.8343 10.9558 12.5723 10.5586 12.4096C9.89049 12.1205 9.03283 11.9759 7.98558 11.9759H5.20156C5.12365 11.9759 5.0605 12.0391 5.0605 12.1171V16.66C5.0605 16.738 5.12365 16.8012 5.20156 16.8012H8.7981C9.80923 16.8012 10.6218 16.5211 11.2357 15.9608Z" />
     </svg>
   ),
-  ozon: ({ props, className }: Props) => (
+  ozon: ({ props, className }: IconsProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 200 200"
@@ -76,7 +76,7 @@ export const Icons = {
       </defs>
     </svg>
   ),
-  wb: ({ props, className }: Props) => (
+  wb: ({ props, className }: IconsProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 200 200"
@@ -125,7 +125,7 @@ export const Icons = {
       </defs>
     </svg>
   ),
-  ym: ({ props, className }: Props) => (
+  ym: ({ props, className }: IconsProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 200 200"
@@ -179,7 +179,7 @@ export const Icons = {
       </defs>
     </svg>
   ),
-  mvideo: ({ props, className }: Props) => (
+  mvideo: ({ props, className }: IconsProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="200"
@@ -205,7 +205,7 @@ export const Icons = {
       </defs>
     </svg>
   ),
-  megamarket: ({ props, className }: Props) => (
+  megamarket: ({ props, className }: IconsProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="200"
@@ -249,7 +249,7 @@ export const Icons = {
       </defs>
     </svg>
   ),
-  beraum: ({ props, className }: Props) => (
+  beraum: ({ props, className }: IconsProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="200"
@@ -275,7 +275,7 @@ export const Icons = {
       </defs>
     </svg>
   ),
-  available: ({ props, className }: Props) => (
+  available: ({ props, className }: IconsProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"

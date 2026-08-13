@@ -1,13 +1,27 @@
-import { Icons } from "@/src/components/ui/icons";
+import { Icons, type IconsProps } from "@/src/components/ui/icons";
 
-// type MarketProps = {
-//   isEnabled: boolean;
-//   icon
-// };
+export type MarketplaceProps = {
+  id: string;
+  isEnabled: boolean;
+  type: "Маркетплейс" | "Официальный сайт";
+  icon: React.FC<IconsProps>;
+  label: string;
+  description?: string;
+  href?: string;
+};
 
-export const MARKETPLACE_LINKS = {
+type StoreProps = MarketplaceProps[];
+type DiscountProps = StoreProps;
+
+type LinksProps = {
+  store: StoreProps;
+  discount: DiscountProps;
+};
+
+export const MARKETPLACE_LINKS: LinksProps = {
   store: [
     {
+      id: "ozon",
       isEnabled: true,
       type: "Маркетплейс",
       icon: Icons.ozon,
@@ -16,6 +30,7 @@ export const MARKETPLACE_LINKS = {
       href: "https://www.ozon.ru/seller/beraum-9382/products/?miniapp=seller_9382",
     },
     {
+      id: "wb",
       isEnabled: true,
       type: "Маркетплейс",
       icon: Icons.wb,
@@ -24,6 +39,7 @@ export const MARKETPLACE_LINKS = {
       href: "https://www.wildberries.ru/seller/35500",
     },
     {
+      id: "ymarket",
       isEnabled: true,
       type: "Маркетплейс",
       icon: Icons.ym,
@@ -32,6 +48,7 @@ export const MARKETPLACE_LINKS = {
       href: "https://market.yandex.ru/store--beraum-home?businessId=682983",
     },
     {
+      id: "mvideo",
       isEnabled: true,
       type: "Маркетплейс",
       icon: Icons.mvideo,
@@ -40,24 +57,23 @@ export const MARKETPLACE_LINKS = {
       href: "https://www.mvideo.ru/seller/K000059235",
     },
     {
-      isEnabled: false,
+      id: "megamarket",
+      isEnabled: false, // Выключен для витрины, но доступен для формы поддержки
       type: "Маркетплейс",
       icon: Icons.megamarket,
       label: "МегаМаркет",
-      description: "",
-      href: "",
     },
     {
+      id: "beraum",
       isEnabled: false,
       type: "Официальный сайт",
       icon: Icons.beraum,
-      label: "Beraum",
-      description: "",
-      href: "",
+      label: "Официальный сайт Beraum",
     },
   ],
   discount: [
     {
+      id: "ozon-discount",
       isEnabled: true,
       type: "Маркетплейс",
       icon: Icons.ozon,
