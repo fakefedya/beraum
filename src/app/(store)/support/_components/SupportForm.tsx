@@ -1,20 +1,34 @@
 "use client";
 
-import { useState, useTransition, useRef } from "react";
+import { useState, useEffect, useRef, useActionState } from "react";
 import {
   CheckCircle2,
   AlertCircle,
   Info,
   UploadCloud,
   Loader2,
+  Check,
+  ChevronsUpDown,
 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
 import { FloatingField } from "@/src/components/shared/FloatingField";
-import { supportSchema } from "@/src/lib/validations/feedback";
 import { submitSupportAction } from "@/src/server/actions/feedback.actions";
-import { getModelsByCategory } from "@/src/server/actions/products.queries";
-import { z } from "zod";
+import { getSupportModelsByCategory } from "@/src/server/actions/products.queries";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/src/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/src/components/ui/command";
+import { MediaUploader } from "./MediaUploader";
 
 const MARKETPLACES = [
   { id: "ozon", name: "Ozon" },
@@ -29,66 +43,72 @@ interface SupportFormProps {
 }
 
 export const SupportForm = ({ categories }: SupportFormProps) => {
-  const formRef = useRef<HTMLFormElement>(null);
-  const [isPending, startTransition] = useTransition();
-  const [success, setSuccess] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [state, formAction, isPending] = useActionState(submitSupportAction, {
+    success: false,
+  });
+
+  const initialCategoryId = (state.payload?.categoryId as string) || null;
+  const initialModelArticle = (state.payload?.modelArticle as string) || "";
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
-    null,
+    initialCategoryId,
   );
   const [models, setModels] = useState<
     { itemArticle: string; siteArticle: string }[]
   >([]);
-  const [isLoadingModels, setIsLoadingModels] = useState(false);
+  const [isLoadingModels, setIsLoadingModels] = useState<boolean>(
+    Boolean(initialCategoryId),
+  );
 
-  const latestCategoryReq = useRef<string | null>(null);
+  // Состояние Combobox
+  const [selectedModel, setSelectedModel] =
+    useState<string>(initialModelArticle);
+  const [isComboboxOpen, setIsComboboxOpen] = useState(false);
 
-  const extractErrors = (zodError: z.ZodError) => {
-    const fieldErrors: Record<string, string> = {};
-    zodError.issues.forEach((issue) => {
-      if (issue.path[0]) fieldErrors[issue.path[0].toString()] = issue.message;
-    });
-    return fieldErrors;
-  };
+  const latestCategoryReq = useRef<string | null>(initialCategoryId);
 
-  const triggerValidation = (formElement: HTMLFormElement) => {
-    if (!hasSubmitted) return;
-    const data = Object.fromEntries(new FormData(formElement));
-    const parsed = supportSchema.safeParse(data);
-    setErrors(parsed.success ? {} : extractErrors(parsed.error));
-  };
+  // Восстановление моделей при ошибке валидации после ответа сервера (без setState в теле эффекта)
+  useEffect(() => {
+    let isCancelled = false;
+    const payloadCatId = state.payload?.categoryId as string | undefined;
 
-  const processForm = (formData: FormData) => {
-    setHasSubmitted(true);
-    setErrors({});
-    setServerError(null);
-
-    const data = Object.fromEntries(formData.entries());
-    const parsed = supportSchema.safeParse(data);
-
-    if (!parsed.success) {
-      setErrors(extractErrors(parsed.error));
-      return;
+    if (payloadCatId) {
+      getSupportModelsByCategory(payloadCatId).then((res) => {
+        if (!isCancelled) {
+          if (res.success) {
+            setModels(res.data);
+          }
+          setIsLoadingModels(false);
+        }
+      });
     }
 
-    startTransition(async () => {
-      const result = await submitSupportAction(data);
-      if (result.success) {
-        setSuccess(true);
-        setHasSubmitted(false);
-        if (formRef.current) formRef.current.reset();
-        setSelectedCategoryId(null);
-        setModels([]);
-      } else {
-        setServerError(result.error || "Произошла критическая ошибка");
+    return () => {
+      isCancelled = true;
+    };
+  }, [state.payload?.categoryId]);
+
+  // Обработчик интерактивного выбора категории пользователем
+  const handleCategorySelect = async (categoryId: string) => {
+    setSelectedCategoryId(categoryId);
+    setSelectedModel(""); // Сброс выбранной модели при смене категории
+    setModels([]);
+    setIsLoadingModels(true);
+    latestCategoryReq.current = categoryId;
+
+    try {
+      const res = await getSupportModelsByCategory(categoryId);
+      if (latestCategoryReq.current === categoryId && res.success) {
+        setModels(res.data);
       }
-    });
+    } finally {
+      if (latestCategoryReq.current === categoryId) {
+        setIsLoadingModels(false);
+      }
+    }
   };
 
-  if (success) {
+  if (state.success) {
     return (
       <div className="bg-card/50 animate-in fade-in zoom-in-95 flex flex-col items-center justify-center rounded-[24px] p-12 text-center duration-500">
         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10">
@@ -100,24 +120,28 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
         <p className="text-muted-foreground max-w-sm text-lg">
           Специалист технической поддержки свяжется с вами.
         </p>
+        <Button
+          variant="outline"
+          className="mt-8 h-12 rounded-xl px-8"
+          onClick={() => window.location.reload()}
+        >
+          Создать новое обращение
+        </Button>
       </div>
     );
   }
 
   return (
     <form
-      ref={formRef}
-      onSubmit={(e) => {
-        e.preventDefault();
-        processForm(new FormData(e.currentTarget));
-      }}
+      action={formAction}
       className="mx-auto flex w-full max-w-3xl flex-col gap-10 text-left"
       noValidate
     >
-      {serverError && (
+      {/* Глобальные системные ошибки (Rate Limit, 500) */}
+      {state.error && (
         <div className="animate-in fade-in flex items-center gap-3 rounded-xl bg-red-50 p-4 text-red-600">
           <AlertCircle className="h-5 w-5 shrink-0" />
-          <p className="text-sm font-medium">{serverError}</p>
+          <p className="text-sm font-medium">{state.error}</p>
         </div>
       )}
 
@@ -134,29 +158,8 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
                 type="radio"
                 name="categoryId"
                 value={cat.id}
-                onChange={(e) => {
-                  const newCategoryId = e.target.value;
-                  setSelectedCategoryId(newCategoryId);
-                  setModels([]);
-                  setIsLoadingModels(true);
-                  if (e.target.form) triggerValidation(e.target.form);
-
-                  latestCategoryReq.current = newCategoryId;
-                  getModelsByCategory(newCategoryId)
-                    .then((res) => {
-                      if (
-                        latestCategoryReq.current === newCategoryId &&
-                        res.success
-                      ) {
-                        setModels(res.data);
-                      }
-                    })
-                    .finally(() => {
-                      if (latestCategoryReq.current === newCategoryId) {
-                        setIsLoadingModels(false);
-                      }
-                    });
-                }}
+                defaultChecked={initialCategoryId === cat.id}
+                onChange={(e) => handleCategorySelect(e.target.value)}
                 className="peer sr-only"
                 disabled={isPending}
               />
@@ -164,7 +167,8 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
                 className={cn(
                   "bg-card flex items-center gap-3 rounded-2xl border-2 border-transparent p-4 transition-all hover:border-black/10",
                   "peer-checked:border-brand-secondary peer-focus-visible:ring-brand-secondary peer-focus-visible:ring-2",
-                  errors.categoryId && "border-red-500/50 bg-[#fff2f4]",
+                  state.fieldErrors?.categoryId &&
+                    "border-red-500/50 bg-[#fff2f4]",
                 )}
               >
                 <div className="bg-accent h-10 w-10 shrink-0 rounded-full" />
@@ -173,10 +177,10 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
             </label>
           ))}
         </div>
-        {errors.categoryId && (
+        {state.fieldErrors?.categoryId && (
           <div className="flex items-center gap-1.5 px-1 text-sm font-medium text-red-500">
             <AlertCircle className="h-4 w-4 shrink-0" />
-            <span>{errors.categoryId}</span>
+            <span>{state.fieldErrors.categoryId}</span>
           </div>
         )}
       </div>
@@ -194,7 +198,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
                 type="radio"
                 name="marketplace"
                 value={mp.id}
-                onChange={(e) => triggerValidation(e.target.form!)}
+                defaultChecked={state.payload?.marketplace === mp.id}
                 className="peer sr-only"
                 disabled={isPending}
               />
@@ -202,7 +206,8 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
                 className={cn(
                   "bg-card flex items-center gap-3 rounded-2xl border-2 border-transparent p-4 transition-all hover:border-black/10",
                   "peer-checked:border-brand-secondary peer-focus-visible:ring-brand-secondary peer-focus-visible:ring-2",
-                  errors.marketplace && "border-red-500/50 bg-[#fff2f4]",
+                  state.fieldErrors?.marketplace &&
+                    "border-red-500/50 bg-[#fff2f4]",
                 )}
               >
                 <span className="text-sm font-medium">{mp.name}</span>
@@ -210,15 +215,15 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
             </label>
           ))}
         </div>
-        {errors.marketplace && (
+        {state.fieldErrors?.marketplace && (
           <div className="flex items-center gap-1.5 px-1 text-sm font-medium text-red-500">
             <AlertCircle className="h-4 w-4 shrink-0" />
-            <span>{errors.marketplace}</span>
+            <span>{state.fieldErrors.marketplace}</span>
           </div>
         )}
       </div>
 
-      {/* ШАГ 3: Дата и Модель */}
+      {/* ШАГ 3: Дата покупки и Выбор модели через Combobox */}
       <div className="flex flex-col gap-4">
         <h3 className="text-2xl font-medium">
           Когда вы приобрели устройство и какая модель?
@@ -226,37 +231,95 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <FloatingField
             name="purchaseDate"
-            label="Дата покупки (ДД.ММ.ГГГГ)"
-            type="text"
+            label="Дата покупки"
+            type="date"
             disabled={isPending}
-            error={errors.purchaseDate}
-            onChange={(e) => triggerValidation(e.target.form!)}
+            defaultValue={state.payload?.purchaseDate as string}
+            error={state.fieldErrors?.purchaseDate}
           />
-          <div className="relative">
-            <FloatingField
-              name="modelArticle"
-              list="models-list"
-              label={
-                selectedCategoryId
-                  ? isLoadingModels
-                    ? "Загрузка моделей..."
-                    : "Начните вводить артикул"
-                  : "Сначала выберите категорию"
-              }
-              disabled={isPending || !selectedCategoryId || isLoadingModels}
-              error={errors.modelArticle}
-              onChange={(e) => triggerValidation(e.target.form!)}
-            />
-            {isLoadingModels && (
-              <Loader2 className="text-muted-foreground absolute top-5 right-4 h-5 w-5 animate-spin" />
+
+          <div className="flex flex-col gap-1.5">
+            {/* Скрытый инпут гарантирует передачу selectedModel в FormData */}
+            <input type="hidden" name="modelArticle" value={selectedModel} />
+
+            <Popover open={isComboboxOpen} onOpenChange={setIsComboboxOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={isComboboxOpen}
+                  disabled={isPending || !selectedCategoryId || isLoadingModels}
+                  className={cn(
+                    "h-14 w-full justify-between rounded-xl px-4 text-base font-normal hover:bg-transparent",
+                    !selectedModel && "text-muted-foreground",
+                    state.fieldErrors?.modelArticle &&
+                      "border-red-500 bg-[#fff2f4]",
+                  )}
+                >
+                  {isLoadingModels ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" /> Загрузка
+                      моделей...
+                    </span>
+                  ) : selectedModel ? (
+                    models.find((m) => m.itemArticle === selectedModel)
+                      ?.siteArticle || selectedModel
+                  ) : selectedCategoryId ? (
+                    "Выберите модель..."
+                  ) : (
+                    "Сначала выберите категорию"
+                  )}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-full min-w-[var(--radix-popover-trigger-width)] p-0"
+                align="start"
+              >
+                <Command>
+                  <CommandInput placeholder="Поиск по артикулу..." />
+                  <CommandList>
+                    <CommandEmpty>
+                      {models.length === 0
+                        ? "В этой категории нет зарегистрированных моделей"
+                        : "Модель не найдена"}
+                    </CommandEmpty>
+                    <CommandGroup>
+                      {models.map((m) => (
+                        <CommandItem
+                          key={m.itemArticle}
+                          value={`${m.siteArticle} ${m.itemArticle}`}
+                          onSelect={() => {
+                            setSelectedModel(m.itemArticle);
+                            setIsComboboxOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              selectedModel === m.itemArticle
+                                ? "opacity-100"
+                                : "opacity-0",
+                            )}
+                          />
+                          <span>{m.siteArticle}</span>
+                          <span className="text-muted-foreground ml-auto text-xs">
+                            {m.itemArticle}
+                          </span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+
+            {state.fieldErrors?.modelArticle && (
+              <div className="flex items-center gap-1.5 px-1 text-xs font-medium text-red-500">
+                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                <span>{state.fieldErrors.modelArticle}</span>
+              </div>
             )}
-            <datalist id="models-list">
-              {models.map((m) => (
-                <option key={m.itemArticle} value={m.itemArticle}>
-                  {m.siteArticle}
-                </option>
-              ))}
-            </datalist>
           </div>
         </div>
       </div>
@@ -269,18 +332,11 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           label="Описание неисправности"
           isTextarea
           disabled={isPending}
-          error={errors.message}
-          onChange={(e) => triggerValidation(e.target.form!)}
+          defaultValue={state.payload?.message as string}
+          error={state.fieldErrors?.message}
         />
-        <div className="bg-card/50 hover:bg-card flex flex-col gap-2 rounded-2xl border border-dashed border-black/20 p-8 text-center transition-colors">
-          <UploadCloud className="text-muted-foreground mx-auto h-8 w-8" />
-          <p className="text-sm font-medium">
-            Загрузить фото или видео неисправности
-          </p>
-          <p className="text-muted-foreground text-xs">
-            До 5 файлов (JPG, PNG, MP4, PDF). Макс. 50 МБ на файл.
-          </p>
-        </div>
+
+        <MediaUploader />
       </div>
 
       {/* ШАГ 5: Персональная информация */}
@@ -298,31 +354,31 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
             name="name"
             label="ФИО"
             disabled={isPending}
-            error={errors.name}
-            onChange={(e) => triggerValidation(e.target.form!)}
+            defaultValue={state.payload?.name as string}
+            error={state.fieldErrors?.name}
           />
           <FloatingField
             name="address"
             label="Адрес"
             disabled={isPending}
-            error={errors.address}
-            onChange={(e) => triggerValidation(e.target.form!)}
+            defaultValue={state.payload?.address as string}
+            error={state.fieldErrors?.address}
           />
           <FloatingField
             name="phone"
             label="Номер телефона"
             type="tel"
             disabled={isPending}
-            error={errors.phone}
-            onChange={(e) => triggerValidation(e.target.form!)}
+            defaultValue={state.payload?.phone as string}
+            error={state.fieldErrors?.phone}
           />
           <FloatingField
             name="email"
             label="Почта"
             type="email"
             disabled={isPending}
-            error={errors.email}
-            onChange={(e) => triggerValidation(e.target.form!)}
+            defaultValue={state.payload?.email as string}
+            error={state.fieldErrors?.email}
           />
         </div>
       </div>

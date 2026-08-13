@@ -50,6 +50,7 @@ services:
       /usr/bin/mc anonymous set download myminio/products;
       /usr/bin/mc mb --ignore-existing myminio/system-assets;
       /usr/bin/mc anonymous set download myminio/system-assets;
+      /usr/bin/mc mb --ignore-existing myminio/support-media;
       exit 0;
       "
 

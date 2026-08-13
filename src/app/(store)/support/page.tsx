@@ -28,7 +28,7 @@ export default function Support() {
       </Section>
 
       <HeroSection />
-      {/* <SupportSection /> */}
+      <SupportSection />
     </>
   );
 }

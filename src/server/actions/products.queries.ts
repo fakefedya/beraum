@@ -351,28 +351,28 @@ export async function getSimilarProducts(
   }
 }
 
-export async function getModelsByCategory(categoryId: string) {
+export async function getSupportModelsByCategory(categoryId: string) {
   try {
     const parsedId = z.string().uuid().safeParse(categoryId);
     if (!parsedId.success) return { success: false, data: [] };
 
+    // Убрали фильтр eq(products.status, "published"),
+    // чтобы пользователь мог найти снятую с производства технику
     const items = await db
       .select({
         itemArticle: products.itemArticle,
         siteArticle: products.siteArticle,
       })
       .from(products)
-      .where(
-        and(
-          eq(products.categoryId, parsedId.data),
-          eq(products.status, "published"),
-        ),
-      )
+      .where(eq(products.categoryId, parsedId.data))
       .orderBy(asc(products.itemArticle));
 
     return { success: true, data: items };
   } catch (error) {
-    console.error("❌ Ошибка Server Action (getModelsByCategory):", error);
+    console.error(
+      "❌ Ошибка Server Action (getSupportModelsByCategory):",
+      error,
+    );
     return { success: false, data: [] };
   }
 }

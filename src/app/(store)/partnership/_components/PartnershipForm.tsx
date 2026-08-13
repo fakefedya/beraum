@@ -7,7 +7,6 @@ import { submitPartnershipAction } from "@/src/server/actions/feedback.actions";
 import { FloatingField } from "@/src/components/shared/FloatingField";
 
 export const PartnershipForm = () => {
-  // Используем React 19 useActionState
   const [state, formAction, isPending] = useActionState(
     submitPartnershipAction,
     {
