@@ -3,3 +3,4 @@ export * from "./marketplaces";
 export * from "./colors";
 export * from "./filters";
 export * from "./assets";
+export * from "./uploads";

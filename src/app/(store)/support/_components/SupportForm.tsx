@@ -5,7 +5,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Info,
-  UploadCloud,
   Loader2,
   Check,
   ChevronsUpDown,
@@ -29,6 +28,7 @@ import {
   CommandList,
 } from "@/src/components/ui/command";
 import { MediaUploader } from "./MediaUploader";
+import { toast } from "sonner";
 
 const MARKETPLACES = [
   { id: "ozon", name: "Ozon" },
@@ -136,6 +136,19 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
       action={formAction}
       className="mx-auto flex w-full max-w-3xl flex-col gap-10 text-left"
       noValidate
+      // 2. ДОБАВЛЯЕМ ПЕРЕХВАТЧИК СОБЫТИЯ
+      onSubmit={(e) => {
+        const uploader = e.currentTarget.querySelector(
+          '[data-uploading="true"]',
+        );
+        if (uploader) {
+          e.preventDefault(); // Блокируем отправку action
+          toast.warning("Файлы загружаются", {
+            description:
+              "Пожалуйста, дождитесь окончания загрузки всех медиафайлов перед отправкой формы.",
+          });
+        }
+      }}
     >
       {/* Глобальные системные ошибки (Rate Limit, 500) */}
       {state.error && (

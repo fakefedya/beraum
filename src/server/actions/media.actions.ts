@@ -6,13 +6,12 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3Client } from "../services/s3/client";
 import { z } from "zod";
+import { SUPPORT_MEDIA_CONFIG } from "@/src/lib/constants";
 
-// --- SECURITY: Изолированный Rate Limiter для генерации ссылок ---
 const mediaRateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_WINDOW_MS = 60000; // 1 минута
-const MAX_REQUESTS = 15; // Даем запас: до 5 файлов + потенциальные ретраи
+const RATE_LIMIT_WINDOW_MS = 60000;
+const MAX_REQUESTS = 15;
 
-// Очистка памяти для предотвращения OOM
 setInterval(() => {
   const now = Date.now();
   for (const [ip, record] of mediaRateLimitMap.entries()) {
@@ -22,28 +21,30 @@ setInterval(() => {
   }
 }, 300000);
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
-const ALLOWED_MIME_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "video/mp4",
-  "application/pdf",
-]);
+const MAX_FILE_SIZE = SUPPORT_MEDIA_CONFIG.MAX_SIZE_MB * 1024 * 1024;
+const ALLOWED_MIME_TYPES = new Set<string>(
+  SUPPORT_MEDIA_CONFIG.ALLOWED_MIME_TYPES,
+);
 
 const getPresignedUrlSchema = z.object({
   filename: z.string().min(1).max(255),
-  contentType: z.string().refine((val) => ALLOWED_MIME_TYPES.has(val), {
-    message: "Недопустимый тип файла",
-  }),
-  fileSize: z.number().max(MAX_FILE_SIZE, "Файл превышает лимит в 50 МБ"),
+  contentType: z
+    .string()
+    .refine((val) => val === "" || ALLOWED_MIME_TYPES.has(val.toLowerCase()), {
+      message: "Недопустимый тип файла",
+    }),
+  fileSize: z
+    .number()
+    .max(
+      MAX_FILE_SIZE,
+      `Файл превышает лимит в ${SUPPORT_MEDIA_CONFIG.MAX_SIZE_MB} МБ`,
+    ),
 });
 
 export async function getPresignedUploadUrl(rawData: unknown) {
   try {
     const parsed = getPresignedUrlSchema.safeParse(rawData);
     if (!parsed.success) {
-      // Исправлено: обращаемся к issues
       return { success: false, error: parsed.error.issues[0].message };
     }
 
@@ -53,8 +54,6 @@ export async function getPresignedUploadUrl(rawData: unknown) {
     const ip =
       realIp ||
       (forwardedFor ? forwardedFor.split(",")[0].trim() : "127.0.0.1");
-
-    // Исправлено: Node.js crypto теперь импортирован корректно
     const ipHash = crypto.createHash("sha256").update(ip).digest("hex");
 
     const now = Date.now();
@@ -77,7 +76,6 @@ export async function getPresignedUploadUrl(rawData: unknown) {
 
     const { filename, contentType } = parsed.data;
 
-    // Security: Генерируем UUID, чтобы не допустить перезаписи файлов (Path Traversal / Collision)
     const ext = filename.split(".").pop();
     const secureFilename = `${crypto.randomUUID()}.${ext}`;
     const fileKey = `requests/${new Date().toISOString().split("T")[0]}/${secureFilename}`;

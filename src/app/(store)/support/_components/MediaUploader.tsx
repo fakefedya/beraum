@@ -11,6 +11,7 @@ import {
 import { cn } from "@/src/lib/utils";
 import { getPresignedUploadUrl } from "@/src/server/actions/media.actions";
 import { toast } from "sonner";
+import { SUPPORT_MEDIA_CONFIG } from "@/src/lib/constants";
 
 type UploadStatus = "uploading" | "success" | "error";
 
@@ -22,26 +23,12 @@ interface UploadedFile {
   error?: string;
 }
 
-interface MediaUploaderProps {
-  maxFiles?: number;
-  maxSizeMB?: number;
-}
-
-const ALLOWED_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "video/mp4",
-  "application/pdf",
-];
-
-export const MediaUploader = ({
-  maxFiles = 5,
-  maxSizeMB = 50,
-}: MediaUploaderProps) => {
+export const MediaUploader = () => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
 
-  // Чистые функции обновления без сайд-эффектов
+  const { MAX_FILES, MAX_SIZE_MB, ALLOWED_MIME_TYPES, ALLOWED_EXTENSIONS } =
+    SUPPORT_MEDIA_CONFIG;
+
   const updateFile = (id: string, data: Partial<UploadedFile>) => {
     setFiles((prev) => prev.map((f) => (f.id === id ? { ...f, ...data } : f)));
   };
@@ -76,12 +63,10 @@ export const MediaUploader = ({
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Сбой загрузки";
-
       updateFile(id, {
         status: "error",
         error: errorMessage,
       });
-
       toast.error("Ошибка загрузки", {
         description: `Не удалось загрузить "${file.name}". ${errorMessage}`,
       });
@@ -90,31 +75,38 @@ export const MediaUploader = ({
 
   const handleFiles = useCallback(
     (newFiles: File[]) => {
-      // 1. Проверка лимита количества файлов
-      if (files.length + newFiles.length > maxFiles) {
+      if (files.length + newFiles.length > MAX_FILES) {
         toast.warning("Лимит файлов", {
-          description: `Вы можете загрузить максимум ${maxFiles} файлов.`,
+          description: `Вы можете загрузить максимум ${MAX_FILES} файлов.`,
         });
         return;
       }
 
       const validFiles = newFiles.filter((file) => {
-        if (!ALLOWED_TYPES.includes(file.type)) {
+        const extension = file.name
+          .substring(file.name.lastIndexOf("."))
+          .toLowerCase();
+
+        // ИСПРАВЛЕНИЕ: Расширяем тип до массива общих строк через as readonly string[]
+        const isValidType =
+          (ALLOWED_MIME_TYPES as readonly string[]).includes(file.type) ||
+          (ALLOWED_EXTENSIONS as readonly string[]).includes(extension);
+
+        if (!isValidType) {
           toast.error("Недопустимый формат", {
-            description: `Файл "${file.name}" не поддерживается. Разрешены JPG, PNG, MP4, PDF.`,
+            description: `Файл "${file.name}" не поддерживается. Разрешены форматы: ${ALLOWED_EXTENSIONS.join(", ")}`,
           });
           return false;
         }
-        if (file.size > maxSizeMB * 1024 * 1024) {
+        if (file.size > MAX_SIZE_MB * 1024 * 1024) {
           toast.error("Файл слишком большой", {
-            description: `Размер "${file.name}" превышает допустимые ${maxSizeMB} МБ.`,
+            description: `Размер "${file.name}" превышает допустимые ${MAX_SIZE_MB} МБ.`,
           });
           return false;
         }
         return true;
       });
 
-      // 3. Запуск пайплайна загрузки для прошедших валидацию
       validFiles.forEach((file) => {
         const id = crypto.randomUUID();
         const uploadItem: UploadedFile = { id, file, status: "uploading" };
@@ -122,12 +114,20 @@ export const MediaUploader = ({
         uploadFile(uploadItem);
       });
     },
-    [files.length, maxFiles, maxSizeMB],
+    // Убрали MAX_FILES и MAX_SIZE_MB из зависимостей, так как теперь это константы
+    [
+      files.length,
+      ALLOWED_MIME_TYPES,
+      ALLOWED_EXTENSIONS,
+      MAX_FILES,
+      MAX_SIZE_MB,
+    ],
   );
 
+  const isUploading = files.some((f) => f.status === "uploading");
+
   return (
-    <div className="flex flex-col gap-4">
-      {/* РЕНДЕР СКРЫТЫХ ИНПУТОВ ДЛЯ ФОРМЫ */}
+    <div className="flex flex-col gap-4" data-uploading={isUploading}>
       {files.map((f) => {
         if (f.status === "success" && f.key) {
           return (
@@ -141,15 +141,15 @@ export const MediaUploader = ({
         className={cn(
           "bg-card/50 hover:bg-card group relative flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-black/20 p-8 text-center transition-all",
           "focus-within:border-brand-secondary focus-within:ring-brand-secondary focus-within:ring-2",
-          files.length >= maxFiles && "pointer-events-none opacity-50",
+          files.length >= MAX_FILES && "pointer-events-none opacity-50",
         )}
       >
         <input
           type="file"
           multiple
-          accept={ALLOWED_TYPES.join(",")}
+          accept={ALLOWED_EXTENSIONS.join(",")}
           className="sr-only"
-          disabled={files.length >= maxFiles}
+          disabled={files.length >= MAX_FILES}
           onChange={(e) => {
             if (e.target.files) handleFiles(Array.from(e.target.files));
             e.target.value = "";
@@ -160,11 +160,10 @@ export const MediaUploader = ({
           Загрузить фото или видео неисправности
         </p>
         <p className="text-muted-foreground text-xs">
-          До {maxFiles} файлов (JPG, PNG, MP4, PDF). Макс. {maxSizeMB} МБ.
+          До {MAX_FILES} файлов. Макс. {MAX_SIZE_MB} МБ.
         </p>
       </label>
 
-      {/* Список файлов остается без изменений */}
       {files.length > 0 && (
         <div className="flex flex-col gap-2">
           {files.map((f) => (
