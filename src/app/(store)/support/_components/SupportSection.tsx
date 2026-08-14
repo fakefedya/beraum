@@ -9,17 +9,7 @@ export const SupportSection = async () => {
   return (
     <Section>
       <Container maxWidth="2xl" className="mb-32">
-        <div className="flex flex-col gap-16">
-          <div className="flex flex-col gap-4 text-center">
-            <h2 className="text-5xl font-medium">Служба поддержки</h2>
-            <p className="text-muted-foreground text-lg">
-              Опишите вашу проблему, и наши специалисты свяжутся с вами для ее
-              оперативного решения.
-            </p>
-          </div>
-
-          <SupportForm categories={categories || []} />
-        </div>
+        <SupportForm categories={categories || []} />
       </Container>
     </Section>
   );

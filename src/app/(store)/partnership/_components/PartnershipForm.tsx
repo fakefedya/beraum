@@ -39,6 +39,7 @@ export const PartnershipForm = () => {
 
   return (
     <form
+      id="partnership-form"
       action={formAction}
       className="mx-auto flex w-full max-w-2xl flex-col gap-4"
       noValidate
