@@ -102,7 +102,7 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
           cover: "system-assets/components/navigation/service-cover.png",
         },
         {
-          label: "Частые вопросы",
+          label: "Вопросы и ответы",
           href: "/faq",
           cover: "system-assets/components/navigation/faq-cover.png",
         },

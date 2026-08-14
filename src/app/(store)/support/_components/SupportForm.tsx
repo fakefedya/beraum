@@ -101,7 +101,12 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
 
   if (state.success) {
     return (
-      <div className="bg-card/50 animate-in fade-in zoom-in-95 flex flex-col items-center justify-center rounded-[24px] p-12 text-center duration-500">
+      <div
+        className={cn(
+          "bg-card/50 flex flex-col items-center justify-center rounded-[24px] p-12 text-center",
+          "animate-in fade-in zoom-in-95 duration-500",
+        )}
+      >
         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10">
           <CheckCircle2 className="h-8 w-8 text-green-600" />
         </div>
@@ -142,18 +147,29 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
       }}
     >
       {state.error && (
-        <div className="animate-in fade-in flex items-center gap-3 rounded-xl bg-red-50 p-4 text-red-600">
+        <div
+          className={cn(
+            "flex items-center gap-3 rounded-xl bg-red-50 p-4 text-red-600",
+            "animate-in fade-in",
+          )}
+        >
           <AlertCircle className="h-5 w-5 shrink-0" />
           <p className="text-sm font-medium">{state.error}</p>
         </div>
       )}
 
+      {/* С чем вам требуется помощь? */}
       <div className="flex flex-col gap-4">
-        <h3 className="text-2xl font-medium">
+        <h3 className="text-center text-2xl font-medium">
           С чем вам требуется помощь?
           <span className="ml-1 text-red-600/60">*</span>
         </h3>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+        <div
+          className={cn(
+            "grid grid-cols-1 gap-4",
+            "sm:grid-cols-2 md:grid-cols-3",
+          )}
+        >
           {categories.map((cat) => (
             <label key={cat.id} className="group cursor-pointer">
               <input
@@ -167,14 +183,15 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
               />
               <div
                 className={cn(
-                  "bg-card flex items-center gap-3 rounded-2xl border-2 border-transparent p-4 transition-all hover:border-black/10",
-                  "peer-checked:border-brand-secondary peer-focus-visible:ring-brand-secondary peer-focus-visible:ring-2",
+                  "border-ring/30 flex aspect-square flex-col justify-between rounded-2xl border p-4",
+                  "hover:border-muted-foreground transition-all duration-200",
+                  "peer-checked:border-brand-secondary peer-checked:hover:border-brand-secondary peer-focus-visible:ring-brand-secondary peer-checked:ring-brand-secondary peer-checked:bg-transparent peer-checked:ring-1 peer-focus-visible:ring-2",
                   state.fieldErrors?.categoryId &&
-                    "border-red-500/50 bg-[#fff2f4]",
+                    "bg-[#fff2f4]hover:border-red-300 border-red-500",
                 )}
               >
-                <div className="bg-accent h-10 w-10 shrink-0 rounded-full" />
-                <span className="text-sm font-medium">{cat.name}</span>
+                <span className="text-muted-foreground text-xs">Категория</span>
+                <span className="text-base font-medium">{cat.name}</span>
               </div>
             </label>
           ))}
@@ -187,61 +204,14 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
         )}
       </div>
 
+      {/* Какая модель устройства? */}
       <div className="flex flex-col gap-4">
-        <h3 className="text-2xl font-medium">
-          Где вы приобрели устройство?
+        <h3 className="text-center text-2xl font-medium">
+          Какая модель устройства?
           <span className="ml-1 text-red-600/60">*</span>
         </h3>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-          {MARKETPLACE_LINKS.store.map((mp) => (
-            <label key={mp.id} className="group cursor-pointer">
-              <input
-                type="radio"
-                name="marketplace"
-                value={mp.id} // ИСПОЛЬЗУЕМ СТРОГИЙ ID
-                defaultChecked={state.payload?.marketplace === mp.id}
-                className="peer sr-only"
-                disabled={isPending}
-              />
-              <div
-                className={cn(
-                  "bg-card flex items-center gap-3 rounded-2xl border-2 border-transparent p-4 transition-all hover:border-black/10",
-                  "peer-checked:border-brand-secondary peer-focus-visible:ring-brand-secondary peer-focus-visible:ring-2",
-                  state.fieldErrors?.marketplace &&
-                    "border-red-500/50 bg-[#fff2f4]",
-                )}
-              >
-                {/* Опционально: можно отрендерить mp.icon({ className: "h-6 w-6" }) если нужен визуальный акцент */}
-                <span className="text-sm font-medium">{mp.label}</span>
-              </div>
-            </label>
-          ))}
-        </div>
-        {state.fieldErrors?.marketplace && (
-          <div className="flex items-center gap-1.5 px-1 text-sm font-medium text-red-500">
-            <AlertCircle className="h-4 w-4 shrink-0" />
-            <span>{state.fieldErrors.marketplace}</span>
-          </div>
-        )}
-      </div>
-
-      {/* ШАГ 3: Дата покупки и Выбор модели через Combobox */}
-      <div className="flex flex-col gap-4">
-        <h3 className="text-2xl font-medium">
-          Когда вы приобрели устройство и какая модель?
-        </h3>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <FloatingField
-            name="purchaseDate"
-            label="Дата покупки"
-            type="date"
-            disabled={isPending}
-            defaultValue={state.payload?.purchaseDate as string}
-            error={state.fieldErrors?.purchaseDate}
-          />
-
-          <div className="flex flex-col gap-1.5">
-            {/* Скрытый инпут гарантирует передачу selectedModel в FormData */}
+        <div className="flex">
+          <div className="flex w-full flex-col">
             <input type="hidden" name="modelArticle" value={selectedModel} />
 
             <Popover open={isComboboxOpen} onOpenChange={setIsComboboxOpen}>
@@ -275,7 +245,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
                 </Button>
               </PopoverTrigger>
               <PopoverContent
-                className="w-full min-w-[var(--radix-popover-trigger-width)] p-0"
+                className="w-full min-w-(--radix-popover-trigger-width) p-0"
                 align="start"
               >
                 <Command>
@@ -304,9 +274,11 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
                                 : "opacity-0",
                             )}
                           />
-                          <span>{m.siteArticle}</span>
-                          <span className="text-muted-foreground ml-auto text-xs">
+                          <span className="text-foreground font-medium">
                             {m.itemArticle}
+                          </span>
+                          <span className="text-muted-foreground ml-auto text-xs">
+                            {m.siteArticle}
                           </span>
                         </CommandItem>
                       ))}
@@ -326,9 +298,81 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
         </div>
       </div>
 
-      {/* ШАГ 4: Описание неисправности */}
+      {/* Где вы приобрели устройство? */}
       <div className="flex flex-col gap-4">
-        <h3 className="text-2xl font-medium">Краткое описание неисправности</h3>
+        <h3 className="text-center text-2xl font-medium">
+          Где вы приобрели устройство?
+          <span className="ml-1 text-red-600/60">*</span>
+        </h3>
+        <div
+          className={cn(
+            "grid grid-cols-1 gap-3",
+            "sm:grid-cols-2 md:grid-cols-3",
+          )}
+        >
+          {MARKETPLACE_LINKS.store.map((mp) => {
+            const Icon = mp.icon;
+            return (
+              <label key={mp.id} className="group cursor-pointer">
+                <input
+                  type="radio"
+                  name="marketplace"
+                  value={mp.id}
+                  defaultChecked={state.payload?.marketplace === mp.id}
+                  className="peer sr-only"
+                  disabled={isPending}
+                />
+                <div
+                  className={cn(
+                    "border-ring/30 flex aspect-square flex-col justify-between rounded-2xl border p-4",
+                    "hover:border-muted-foreground transition-all duration-200",
+                    "peer-checked:border-brand-secondary peer-checked:hover:border-brand-secondary peer-focus-visible:ring-brand-secondary peer-checked:ring-brand-secondary peer-checked:bg-transparent peer-checked:ring-1 peer-focus-visible:ring-2",
+                    state.fieldErrors?.categoryId &&
+                      "bg-[#fff2f4]hover:border-red-300 border-red-500",
+                  )}
+                >
+                  <span className="text-muted-foreground text-xs">
+                    {mp.type}
+                  </span>
+                  <div className="flex flex-col gap-2">
+                    <Icon className="size-12" />
+                    <span className="text-base font-medium">{mp.label}</span>
+                  </div>
+                </div>
+              </label>
+            );
+          })}
+        </div>
+        {state.fieldErrors?.marketplace && (
+          <div className="flex items-center gap-1.5 px-1 text-sm font-medium text-red-500">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            <span>{state.fieldErrors.marketplace}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Когда вы приобрели устройство? */}
+      <div className="flex flex-col gap-4">
+        <h3 className="text-center text-2xl font-medium">
+          Когда вы приобрели устройство?
+        </h3>
+        <div className="flex w-full gap-4">
+          <FloatingField
+            name="purchaseDate"
+            label="Дата покупки"
+            type="date"
+            disabled={isPending}
+            defaultValue={state.payload?.purchaseDate as string}
+            error={state.fieldErrors?.purchaseDate}
+          />
+        </div>
+      </div>
+
+      {/* Краткое описание неисправности */}
+      <div className="flex flex-col gap-4">
+        <h3 className="text-center text-2xl font-medium">
+          Краткое описание неисправности
+        </h3>
         <FloatingField
           name="message"
           label="Описание неисправности"
@@ -341,12 +385,14 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
         <MediaUploader />
       </div>
 
-      {/* ШАГ 5: Персональная информация */}
+      {/* Персональная информация */}
       <div className="flex flex-col gap-4">
-        <h3 className="text-2xl font-medium">Персональная информация</h3>
-        <div className="flex items-start gap-3 rounded-2xl bg-blue-50 p-4 text-blue-800">
-          <Info className="mt-0.5 h-5 w-5 shrink-0" />
-          <p className="text-sm">
+        <h3 className="text-center text-2xl font-medium">
+          Персональная информация
+        </h3>
+        <div className="flex items-center gap-3 rounded-2xl bg-[#fa6d2014] p-4 text-[#e35502]">
+          <Info className="mt-0.5 h-6 w-6 shrink-0" />
+          <p className="">
             Пожалуйста, укажите корректные данные: свяжемся с вами по Telegram,
             привязанному к номеру телефона, либо напишем на почту.
           </p>
@@ -383,12 +429,15 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
             error={state.fieldErrors?.email}
           />
         </div>
+        <span className="text-muted-foreground/80 text-sm">
+          * – обязательные поля
+        </span>
       </div>
 
       <Button
         type="submit"
         disabled={isPending}
-        className="bg-brand-secondary text-foreground hover:bg-brand-secondary/90 mt-4 h-14 w-full rounded-xl text-lg font-medium transition-all disabled:cursor-not-allowed disabled:opacity-70"
+        className="bg-brand-secondary text-foreground hover:bg-brand-secondary/90 mt-2 h-14 w-full rounded-xl text-base font-medium transition-all disabled:cursor-not-allowed disabled:opacity-70"
       >
         {isPending ? "Создание обращения..." : "Создать обращение"}
       </Button>

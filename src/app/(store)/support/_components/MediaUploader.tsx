@@ -87,7 +87,6 @@ export const MediaUploader = () => {
           .substring(file.name.lastIndexOf("."))
           .toLowerCase();
 
-        // ИСПРАВЛЕНИЕ: Расширяем тип до массива общих строк через as readonly string[]
         const isValidType =
           (ALLOWED_MIME_TYPES as readonly string[]).includes(file.type) ||
           (ALLOWED_EXTENSIONS as readonly string[]).includes(extension);
@@ -114,7 +113,6 @@ export const MediaUploader = () => {
         uploadFile(uploadItem);
       });
     },
-    // Убрали MAX_FILES и MAX_SIZE_MB из зависимостей, так как теперь это константы
     [
       files.length,
       ALLOWED_MIME_TYPES,
@@ -139,7 +137,7 @@ export const MediaUploader = () => {
 
       <label
         className={cn(
-          "bg-card/50 hover:bg-card group relative flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-black/20 p-8 text-center transition-all",
+          "hover:bg-card group border-ring/30 relative flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed bg-transparent p-8 text-center transition-all duration-200",
           "focus-within:border-brand-secondary focus-within:ring-brand-secondary focus-within:ring-2",
           files.length >= MAX_FILES && "pointer-events-none opacity-50",
         )}
@@ -157,7 +155,7 @@ export const MediaUploader = () => {
         />
         <UploadCloud className="text-muted-foreground group-hover:text-foreground mx-auto h-8 w-8 transition-colors" />
         <p className="text-sm font-medium">
-          Загрузить фото или видео неисправности
+          Загрузить чек, фото или видео неисправности
         </p>
         <p className="text-muted-foreground text-xs">
           До {MAX_FILES} файлов. Макс. {MAX_SIZE_MB} МБ.

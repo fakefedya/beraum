@@ -21,13 +21,13 @@ export const HeroSection = () => {
               )}
               href="/faq"
             >
-              «Частые вопросы»
+              «Вопросы и ответы»
             </Link>
             , если вы хотите сообщить о неисправности, — свяжитесь с нами через
             обращение в службу поддержки.
           </p>
           {WORK_SCHEDULE_INFO.isEnabled && (
-            <div className="f rounded-2xl bg-[#fa6d2014] p-4 text-[#e35502]">
+            <div className="rounded-2xl bg-[#fa6d2014] p-4 text-[#e35502]">
               <div className="flex items-center justify-center gap-2">
                 <info.icon size={24} strokeWidth={1.4} />
                 <span>

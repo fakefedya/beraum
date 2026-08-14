@@ -215,7 +215,7 @@ export const Icons = {
       className={className}
       {...props}
     >
-      <g clip-path="url(#clip0_928_33)">
+      <g clipPath="url(#clip0_928_33)">
         <mask
           id="a"
           style={{ maskType: "luminance" }}

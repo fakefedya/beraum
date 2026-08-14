@@ -68,7 +68,7 @@ export const MARKETPLACE_LINKS: LinksProps = {
       isEnabled: false,
       type: "Официальный сайт",
       icon: Icons.beraum,
-      label: "Официальный сайт Beraum",
+      label: "Beraum",
     },
   ],
   discount: [
