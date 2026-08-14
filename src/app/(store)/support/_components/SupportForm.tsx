@@ -157,7 +157,6 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           <p className="text-sm font-medium">{state.error}</p>
         </div>
       )}
-
       {/* С чем вам требуется помощь? */}
       <div className="flex flex-col gap-4">
         <h3 className="text-center text-2xl font-medium">
@@ -187,7 +186,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
                   "hover:border-muted-foreground transition-all duration-200",
                   "peer-checked:border-brand-secondary peer-checked:hover:border-brand-secondary peer-focus-visible:ring-brand-secondary peer-checked:ring-brand-secondary peer-checked:bg-transparent peer-checked:ring-1 peer-focus-visible:ring-2",
                   state.fieldErrors?.categoryId &&
-                    "bg-[#fff2f4]hover:border-red-300 border-red-500",
+                    "border-red-500 bg-[#fff2f4] hover:border-red-300",
                 )}
               >
                 <span className="text-muted-foreground text-xs">Категория</span>
@@ -197,13 +196,12 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           ))}
         </div>
         {state.fieldErrors?.categoryId && (
-          <div className="flex items-center gap-1.5 px-1 text-sm font-medium text-red-500">
-            <AlertCircle className="h-4 w-4 shrink-0" />
+          <div className="flex items-center gap-1.5 px-1 text-xs font-medium text-red-500">
+            <AlertCircle className="h-3.5 w-3.5 shrink-0" />
             <span>{state.fieldErrors.categoryId}</span>
           </div>
         )}
       </div>
-
       {/* Какая модель устройства? */}
       <div className="flex flex-col gap-4">
         <h3 className="text-center text-2xl font-medium">
@@ -211,7 +209,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           <span className="ml-1 text-red-600/60">*</span>
         </h3>
         <div className="flex">
-          <div className="flex w-full flex-col">
+          <div className="flex w-full flex-col gap-4">
             <input type="hidden" name="modelArticle" value={selectedModel} />
 
             <Popover open={isComboboxOpen} onOpenChange={setIsComboboxOpen}>
@@ -297,7 +295,6 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           </div>
         </div>
       </div>
-
       {/* Где вы приобрели устройство? */}
       <div className="flex flex-col gap-4">
         <h3 className="text-center text-2xl font-medium">
@@ -327,8 +324,8 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
                     "border-ring/30 flex aspect-square flex-col justify-between rounded-2xl border p-4",
                     "hover:border-muted-foreground transition-all duration-200",
                     "peer-checked:border-brand-secondary peer-checked:hover:border-brand-secondary peer-focus-visible:ring-brand-secondary peer-checked:ring-brand-secondary peer-checked:bg-transparent peer-checked:ring-1 peer-focus-visible:ring-2",
-                    state.fieldErrors?.categoryId &&
-                      "bg-[#fff2f4]hover:border-red-300 border-red-500",
+                    state.fieldErrors?.marketplace &&
+                      "border-red-500 bg-[#fff2f4] hover:border-red-300",
                   )}
                 >
                   <span className="text-muted-foreground text-xs">
@@ -344,13 +341,12 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           })}
         </div>
         {state.fieldErrors?.marketplace && (
-          <div className="flex items-center gap-1.5 px-1 text-sm font-medium text-red-500">
-            <AlertCircle className="h-4 w-4 shrink-0" />
+          <div className="flex items-center gap-1.5 px-1 text-xs font-medium text-red-500">
+            <AlertCircle className="h-3.5 w-3.5 shrink-0" />
             <span>{state.fieldErrors.marketplace}</span>
           </div>
         )}
       </div>
-
       {/* Когда вы приобрели устройство? */}
       <div className="flex flex-col gap-4">
         <h3 className="text-center text-2xl font-medium">
@@ -367,7 +363,6 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           />
         </div>
       </div>
-
       {/* Краткое описание неисправности */}
       <div className="flex flex-col gap-4">
         <h3 className="text-center text-2xl font-medium">
@@ -384,15 +379,14 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
 
         <MediaUploader />
       </div>
-
       {/* Персональная информация */}
       <div className="flex flex-col gap-4">
         <h3 className="text-center text-2xl font-medium">
           Персональная информация
         </h3>
-        <div className="flex items-center gap-3 rounded-2xl bg-[#fa6d2014] p-4 text-[#e35502]">
-          <Info className="mt-0.5 h-6 w-6 shrink-0" />
-          <p className="">
+        <div className="bg-card text-foreground flex items-center gap-3 rounded-2xl p-4">
+          <Info className="mt-0.5 h-5 w-5 shrink-0" />
+          <p className="text-sm">
             Пожалуйста, укажите корректные данные: свяжемся с вами по Telegram,
             привязанному к номеру телефона, либо напишем на почту.
           </p>
@@ -433,14 +427,26 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           * – обязательные поля
         </span>
       </div>
-
-      <Button
-        type="submit"
-        disabled={isPending}
-        className="bg-brand-secondary text-foreground hover:bg-brand-secondary/90 mt-2 h-14 w-full rounded-xl text-base font-medium transition-all disabled:cursor-not-allowed disabled:opacity-70"
-      >
-        {isPending ? "Создание обращения..." : "Создать обращение"}
-      </Button>
+      <div className="flex flex-col items-center gap-4">
+        {" "}
+        <Button
+          type="submit"
+          disabled={isPending}
+          className="bg-brand-secondary text-foreground hover:bg-brand-secondary/90 mt-2 h-14 w-full rounded-xl text-base font-medium transition-all disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {isPending ? "Создание обращения..." : "Создать обращение"}
+        </Button>
+        <p className="text-muted-foreground/80 max-w-[75%] text-center text-xs">
+          Нажимая кнопку «Создать обращение», вы подтверждаете своё согласие на{" "}
+          <a
+            href="/policies/privacy"
+            className="text-foreground/80 underline underline-offset-4 hover:no-underline"
+          >
+            обработку персональных данных
+          </a>
+          .
+        </p>
+      </div>
     </form>
   );
 };

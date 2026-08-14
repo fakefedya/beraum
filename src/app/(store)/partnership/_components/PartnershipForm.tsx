@@ -101,24 +101,26 @@ export const PartnershipForm = () => {
         * – обязательные поля
       </span>
 
-      <Button
-        type="submit"
-        disabled={isPending}
-        className="bg-brand-secondary text-foreground hover:bg-brand-secondary/90 mt-2 h-14 w-full rounded-xl text-base font-medium transition-all disabled:cursor-not-allowed disabled:opacity-70"
-      >
-        {isPending ? "Отправка..." : "Оставить заявку"}
-      </Button>
-
-      <p className="text-muted-foreground mt-2 text-center text-sm">
-        Нажимая кнопку, вы соглашаетесь с{" "}
-        <a
-          href="/policies/privacy"
-          className="text-foreground underline underline-offset-4 hover:no-underline"
+      <div className="flex flex-col items-center gap-4">
+        {" "}
+        <Button
+          type="submit"
+          disabled={isPending}
+          className="bg-brand-secondary text-foreground hover:bg-brand-secondary/90 mt-2 h-14 w-full rounded-xl text-base font-medium transition-all disabled:cursor-not-allowed disabled:opacity-70"
         >
-          Политикой конфиденциальности
-        </a>
-        .
-      </p>
+          {isPending ? "Отправка..." : "Оставить заявку"}
+        </Button>
+        <p className="text-muted-foreground/80 max-w-[75%] text-center text-xs">
+          Нажимая кнопку «Оставить заявку», вы подтверждаете своё согласие на{" "}
+          <a
+            href="/policies/privacy"
+            className="text-foreground/80 underline underline-offset-4 hover:no-underline"
+          >
+            обработку персональных данных
+          </a>
+          .
+        </p>
+      </div>
     </form>
   );
 };

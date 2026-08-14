@@ -7,6 +7,7 @@ import {
   File as FileIcon,
   Loader2,
   AlertCircle,
+  Info,
 } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import { getPresignedUploadUrl } from "@/src/server/actions/media.actions";
@@ -134,6 +135,16 @@ export const MediaUploader = () => {
         }
         return null;
       })}
+
+      <h3 className="text-center text-2xl font-medium">Материалы</h3>
+
+      <div className="bg-card text-foreground flex items-center gap-3 rounded-2xl p-4">
+        <Info className="mt-0.5 h-5 w-5 shrink-0" />
+        <p className="text-sm">
+          Если на устройство действует гарантийный срок, пожалуйста, прикрепите
+          фото или скан чека о приобретении. Срок указан в гарантийном талоне.
+        </p>
+      </div>
 
       <label
         className={cn(

@@ -51,7 +51,7 @@ export const GuaranteeSection = () => {
                   "hover:text-foreground hover:bg-background transition-colors duration-300",
                 )}
               >
-                <Link href="/faq">Частые вопросы</Link>
+                <Link href="/faq">Вопросы и ответы</Link>
               </Button>
               <Button
                 asChild
