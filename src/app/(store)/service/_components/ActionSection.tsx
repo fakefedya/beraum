@@ -7,23 +7,30 @@ import Link from "next/link";
 import { SUPPORT_ACTION_STEPS } from "@/src/app/(store)/service/_components/data";
 
 export const ActionSection = () => {
-  const imageUrl = buildImageUrl("pages/service/support-action-bg.jpeg");
+  const imageUrl = buildImageUrl("pages/service/support-action-bg.webp");
 
   return (
     <Section>
       <Container maxWidth="5xl">
         <div
           className={cn(
-            // Добавлен items-stretch для гарантии растягивания колонок
-            "bg-foreground text-background mx-auto flex w-full flex-col items-stretch overflow-hidden md:flex-row",
-            "rounded-4xl rounded-tr-[128px] rounded-bl-[128px]",
+            "bg-foreground text-background mx-auto flex w-full flex-col items-stretch overflow-hidden rounded-4xl",
+            "md:flex-row",
           )}
         >
-          {/* Левая часть: Контент и шаги */}
-          {/* Изменен z-10 на z-20 для защиты от перекрытия градиентом */}
-          <div className="relative z-20 flex flex-col justify-center gap-8 p-10 md:w-1/2 lg:p-16">
-            <div className="flex flex-col gap-3">
-              <h2 className="text-3xl font-medium tracking-tight text-balance lg:text-4xl">
+          <div
+            className={cn(
+              "relative z-20 flex flex-col justify-center gap-6 p-10",
+              "md:w-1/2 lg:p-16",
+            )}
+          >
+            <div className="flex flex-col gap-6">
+              <h2
+                className={cn(
+                  "text-3xl font-medium tracking-tight text-balance",
+                  "lg:text-4xl",
+                )}
+              >
                 Случилась неисправность?
               </h2>
               <p className="text-background/80 text-lg leading-relaxed">
@@ -32,13 +39,13 @@ export const ActionSection = () => {
               </p>
             </div>
 
-            <ol className="flex flex-col gap-6">
+            <ol className="flex flex-col gap-4">
               {SUPPORT_ACTION_STEPS.map((step, idx) => (
                 <li key={idx} className="flex items-start gap-4">
-                  <div className="text-brand border-brand/30 bg-brand/10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm font-medium">
+                  <div className="text-brand border-brand/30 bg-brand/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-sm font-medium">
                     {idx + 1}
                   </div>
-                  <div className="mt-1 flex flex-col gap-0.5">
+                  <div className="mt-1 flex flex-col gap-2">
                     <span className="font-medium text-white">{step.title}</span>
                     <span className="text-background/70 text-sm leading-relaxed">
                       {step.desc}
@@ -50,20 +57,20 @@ export const ActionSection = () => {
 
             <Button
               asChild
-              className="bg-brand text-foreground hover:bg-brand-hover shadow-button mt-2 h-14 w-fit rounded-[16px] px-8 text-base font-medium"
+              className="bg-brand text-foreground hover:bg-brand-hover shadow-button mt-2 h-12 w-fit rounded-[16px] px-8 text-base font-medium"
             >
               <Link href="/support">Создать обращение</Link>
             </Button>
           </div>
 
-          <div className="relative min-h-[300px] w-full md:w-1/2">
-            <div className="from-foreground via-foreground/20 absolute inset-0 z-10 bg-gradient-to-t to-transparent md:bg-gradient-to-r" />
+          <div className="relative min-h-75 w-full md:w-1/2">
+            <div className="from-foreground via-foreground/20 absolute inset-0 z-10 bg-linear-to-t to-transparent md:bg-linear-to-r" />
             <SafeImage
               src={imageUrl}
               alt="Служба поддержки Beraum"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover object-center"
+              className="object-cover object-right"
             />
           </div>
         </div>
