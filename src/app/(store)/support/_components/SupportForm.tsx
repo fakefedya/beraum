@@ -130,7 +130,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
   return (
     <form
       action={formAction}
-      className="mx-auto flex w-full max-w-3xl flex-col gap-10 text-left"
+      className="mx-auto flex w-full max-w-3xl flex-col gap-16 text-left"
       noValidate
 
       onSubmit={(e) => {
@@ -189,7 +189,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
                     "border-red-500 bg-[#fff2f4] hover:border-red-300",
                 )}
               >
-                <span className="text-muted-foreground text-xs">Категория</span>
+                <span className="text-muted-foreground text-sm">Категория</span>
                 <span className="text-base font-medium">{cat.name}</span>
               </div>
             </label>
@@ -328,7 +328,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
                       "border-red-500 bg-[#fff2f4] hover:border-red-300",
                   )}
                 >
-                  <span className="text-muted-foreground text-xs">
+                  <span className="text-muted-foreground text-sm">
                     {mp.type}
                   </span>
                   <div className="flex flex-col gap-2">

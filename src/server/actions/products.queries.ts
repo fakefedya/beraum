@@ -199,6 +199,7 @@ export async function getProductByArticle(rawArticle: string) {
         specifications: products.specifications,
         price: computedPriceSql.as("price"),
         ozonLink: products.ozonLink,
+        manualStock: products.manualStock,
         ozonStockFbo: products.ozonStockFbo,
         wbLink: products.wbLink,
         ymarketLink: products.ymarketLink,

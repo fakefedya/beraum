@@ -2,6 +2,7 @@ import { cn } from "@/src/lib/utils";
 
 const maxWidthMap = {
   "2xl": "max-w-2xl",
+  "3xl": "max-w-3xl",
   "5xl": "max-w-5xl",
   "7xl": "max-w-7xl",
   "360": "max-w-360",
