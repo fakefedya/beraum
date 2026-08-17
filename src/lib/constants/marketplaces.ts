@@ -7,6 +7,7 @@ export type MarketplaceProps = {
   icon: React.FC<IconsProps>;
   label: string;
   description?: string;
+  promoText?: string;
   href?: string;
 };
 
@@ -27,6 +28,7 @@ export const MARKETPLACE_LINKS: LinksProps = {
       icon: Icons.ozon,
       label: "OZON",
       description: "Более 125 000 довольных клиентов",
+      promoText: "Скидки по Ozon Карте и быстрая доставка",
       href: "https://www.ozon.ru/seller/beraum-9382/products/?miniapp=seller_9382",
     },
     {
@@ -36,6 +38,7 @@ export const MARKETPLACE_LINKS: LinksProps = {
       icon: Icons.wb,
       label: "Wildberries",
       description: "Скидки постоянным клиентам",
+      promoText: "Бесплатная доставка и скидка постоянного покупателя",
       href: "https://www.wildberries.ru/seller/35500",
     },
     {
@@ -45,6 +48,7 @@ export const MARKETPLACE_LINKS: LinksProps = {
       icon: Icons.ym,
       label: "Яндекс Маркет",
       description: "Вернем кэшбэк баллами",
+      promoText: "Кэшбэк баллами Плюса и оплата Сплитом",
       href: "https://market.yandex.ru/store--beraum-home?businessId=682983",
     },
     {
@@ -54,6 +58,7 @@ export const MARKETPLACE_LINKS: LinksProps = {
       icon: Icons.mvideo,
       label: "М.Видео",
       description: "Начислим кэшбэк и баллы",
+      promoText: "Рассрочка и бонусы на карту М.Клуб",
       href: "https://www.mvideo.ru/seller/K000059235",
     },
     {

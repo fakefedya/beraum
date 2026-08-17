@@ -76,7 +76,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
   );
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-16">
       <div className="flex flex-col gap-6">
         {product.isLatest && (
           <Badge className="bg-brand text-foreground text-xs leading-normal font-medium uppercase">
@@ -91,47 +91,49 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
           <h1 className="text-foreground text-3xl font-semibold tracking-tight uppercase lg:text-4xl">
             {product.siteArticle}
           </h1>
-          <span className="text-muted-foreground mt-1 text-sm">
+          <span className="text-muted-foreground text-sm">
             Арт. {product.itemArticle}
           </span>
         </div>
-      </div>
 
-      <div className="flex flex-col gap-5 pb-8">
-        <div className="flex flex-col gap-3">
-          {product.price > 0 ? (
-            <div className="text-foreground text-3xl font-medium">
-              {product.price.toLocaleString("ru-RU")} ₽
-            </div>
-          ) : (
-            <div className="text-muted-foreground text-2xl font-medium">
-              По запросу
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3">
+            {product.price > 0 ? (
+              <div className="text-foreground text-3xl font-medium">
+                {product.price.toLocaleString("ru-RU")} ₽
+              </div>
+            ) : (
+              <div className="text-muted-foreground text-2xl font-medium">
+                По запросу
+              </div>
+            )}
+
+            {StockStatusUI}
+          </div>
+
+          {product.price > 0 && (
+            <div className="bg-card flex items-start gap-3 rounded-xl p-4">
+              <Info
+                className="text-muted-foreground mt-0.5 size-5 shrink-0"
+                strokeWidth={2}
+              />
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Размер предоставляемой скидки, условия оплаты частями и
+                финальная стоимость формируются на стороне выбранного
+                маркетплейса при оформлении заказа.
+              </p>
             </div>
           )}
-
-          {StockStatusUI}
         </div>
-
-        {product.price > 0 && (
-          <div className="bg-card mt-2 flex items-start gap-3 rounded-2xl p-4">
-            <Info
-              className="text-muted-foreground mt-0.5 size-5 shrink-0"
-              strokeWidth={2}
-            />
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Размер предоставляемой скидки, условия оплаты частями и финальная
-              стоимость формируются на стороне выбранного маркетплейса при
-              оформлении заказа
-            </p>
-          </div>
-        )}
       </div>
 
       {product.variants.length > 0 && (
         <div className="flex flex-col gap-6">
           <h2 className="text-xl font-medium text-balance">
             <span className="text-foreground">Цвет.</span>{" "}
-            <span className="text-muted-foreground">Выберите подходящий.</span>
+            <span className="text-muted-foreground/60">
+              Выберите подходящий.
+            </span>
           </h2>
 
           <div className="flex flex-wrap gap-3">
@@ -154,10 +156,9 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
                   className={cn(
                     "relative flex h-6.5 w-6.5 items-center justify-center rounded-full shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)]",
                     "transition-all duration-300",
-                    product.variants.length > 1 && "hover:scale-106",
-                    isActive
-                      ? "ring-brand-secondary ring-offset-background scale-106 ring-2 ring-offset-2"
-                      : "opacity-80 hover:opacity-100",
+                    isActive && product.variants.length > 1
+                      ? "ring-brand-secondary scale-106 ring-2 ring-offset-2"
+                      : "border-black/10 hover:border-black/30",
                   )}
                   style={{ backgroundColor: hexColor }}
                   aria-current={isActive ? "page" : undefined}
@@ -178,17 +179,14 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
         </div>
       )}
 
-      {/* --- 4. ГДЕ КУПИТЬ --- */}
       {activeMarketplaces.length > 0 && (
-        <div className="flex flex-col gap-4 pt-6">
+        <div className="flex flex-col gap-6">
           <h2 className="text-xl font-medium text-balance">
-            <span className="text-foreground font-semibold">Заказ.</span>{" "}
-            <span className="text-muted-foreground font-medium">
-              Где вам удобнее?
-            </span>
+            <span className="text-foreground">Заказ.</span>{" "}
+            <span className="text-muted-foreground/60">Где вам удобнее?</span>
           </h2>
 
-          <div className="mt-1 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3">
             {activeMarketplaces.map((mp) => {
               const redirectUrl = `/api/go?marketplace=${mp.id}&article=${product.itemArticle}&url=${encodeURIComponent(mp.link as string)}`;
               const Icon = mp.icon;
@@ -199,19 +197,28 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(
-                    "group flex items-center gap-4 rounded-2xl border border-black/10 bg-transparent p-4 dark:border-white/10",
-                    "cursor-pointer transition-all duration-300 hover:border-black/30 hover:shadow-sm dark:hover:border-white/30",
+                    "group flex items-center justify-between gap-4 rounded-xl p-5",
+                    "border-ring/60 border bg-transparent",
+                    "hover:border-muted-foreground cursor-pointer transition-all duration-300",
                   )}
                 >
-                  <Icon className="size-8 shrink-0" />
-                  <div className="flex flex-col">
-                    <span className="text-foreground group-hover:text-brand-secondary-muted text-sm font-semibold tracking-tight transition-colors">
-                      {mp.label}
-                    </span>
-                    <span className="text-muted-foreground mt-0.5 text-xs">
-                      {mp.stock < 10
-                        ? `Осталось мало (${mp.stock})`
-                        : "В наличии"}
+                  <div className="flex flex-col items-start gap-4 overflow-hidden">
+                    <Icon className="size-10 shrink-0" />
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-foreground text-base font-semibold tracking-tight transition-colors">
+                        {mp.label}
+                      </span>
+                      {mp.promoText && (
+                        <span className="text-muted-foreground flex flex-wrap text-sm">
+                          {mp.promoText}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex shrink-0 flex-col text-right">
+                    <span className="text-foreground text-sm font-medium">
+                      {mp.stock < 10 ? `Мало (${mp.stock})` : "В наличии"}
                     </span>
                   </div>
                 </a>
@@ -221,12 +228,12 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
         </div>
       )}
 
-      {/* --- 5. ХАРАКТЕРИСТИКИ --- */}
       {validSpecs.length > 0 && (
-        <div className="mt-2 flex flex-col gap-4 border-t border-black/5 pt-8 dark:border-white/10">
-          <h3 className="text-foreground text-base font-medium">
-            Характеристики
-          </h3>
+        <div className="mt-2 flex flex-col gap-6">
+          <h2 className="text-xl font-medium text-balance">
+            <span className="text-foreground">Характеристики.</span>{" "}
+            <span className="text-muted-foreground/60">Самое важное.</span>
+          </h2>
           <dl className="flex flex-col text-sm">
             {validSpecs.map(([key, value]) => (
               <div
