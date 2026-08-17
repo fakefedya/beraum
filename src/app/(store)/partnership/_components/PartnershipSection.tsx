@@ -5,7 +5,7 @@ import { PartnershipForm } from "./PartnershipForm";
 export const PartnershipSection = () => {
   return (
     <Section>
-      <Container maxWidth="2xl" className="mb-32">
+      <Container maxWidth="2xl">
         <div className="flex flex-col gap-16">
           <div className="flex flex-col gap-4 text-center">
             <h2 className="text-5xl font-medium">Давайте работать вместе</h2>

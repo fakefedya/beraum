@@ -10,7 +10,13 @@ export const HeroSection = () => {
     <Section>
       <Container maxWidth="5xl">
         <div className="mx-auto flex flex-col items-center justify-center gap-8 text-center">
-          <h1 className="text-5xl font-medium lg:text-6xl">Поддержка</h1>
+          <h1 className="flex gap-0.5 text-5xl font-medium lg:text-6xl">
+            Поддержка
+            <span className="relative flex h-4 w-4">
+              <span className="bg-brand-secondary absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
+              <span className="bg-brand-secondary relative inline-flex h-4 w-4 rounded-full"></span>
+            </span>
+          </h1>
           <p className="text-muted-foreground text-lg leading-relaxed lg:text-lg">
             Если у вас возникли вопросы по эксплуатации, обратите внимание на
             раздел{" "}

@@ -46,7 +46,7 @@ export default async function Category({ params, searchParams }: PageProps) {
   }
 
   return (
-    <Section className="mb-32">
+    <Section>
       <Container className="gap-5 pt-32">
         <Breadcrumbs items={breadcrumbItems} className="flex justify-center" />
         <div className="flex flex-col gap-6">

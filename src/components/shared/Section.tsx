@@ -7,7 +7,7 @@ type Props = {
 
 export const Section = ({ children, className }: Props) => {
   return (
-    <section className={cn(className, "flex w-full flex-col")}>
+    <section className={cn(className, "flex w-full flex-col", "last:mb-32")}>
       {children}
     </section>
   );

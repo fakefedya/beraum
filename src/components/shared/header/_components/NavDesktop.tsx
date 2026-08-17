@@ -198,7 +198,17 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
                       />
                     </div>
                     <div className="absolute top-4 left-4 flex flex-col gap-0">
-                      <span className="font-medium">{subItem.label}</span>
+                      {subItem.href === "/support" ? (
+                        <span className="flex gap-1 font-medium">
+                          {subItem.label}
+                          <div className="relative flex h-2 w-2">
+                            <span className="bg-brand-secondary absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
+                            <span className="bg-brand-secondary relative inline-flex h-2 w-2 rounded-full"></span>
+                          </div>
+                        </span>
+                      ) : (
+                        <span className="font-medium">{subItem.label}</span>
+                      )}
                     </div>
                   </Link>
                 </NavigationMenuLink>

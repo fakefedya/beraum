@@ -8,7 +8,7 @@ export const SupportSection = async () => {
 
   return (
     <Section>
-      <Container maxWidth="2xl" className="mb-32">
+      <Container maxWidth="2xl">
         <SupportForm categories={categories || []} />
       </Container>
     </Section>

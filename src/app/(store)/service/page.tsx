@@ -22,7 +22,7 @@ export default function ServicePage() {
   return (
     <>
       <Section>
-        <Container className="pt-32 pb-12">
+        <Container className="pt-32">
           <Breadcrumbs
             items={breadcrumbItems}
             className="flex justify-center"
