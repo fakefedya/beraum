@@ -37,8 +37,8 @@ export const NavMobile = ({ links }: NavMobileProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const isDiscount = pathname.startsWith("/discount");
   const marketLinks = isDiscount
-    ? MARKETPLACE_LINKS.discount
-    : MARKETPLACE_LINKS.store;
+    ? MARKETPLACE_LINKS.discount.filter((link) => link.isEnabled)
+    : MARKETPLACE_LINKS.store.filter((link) => link.isEnabled);
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -61,23 +61,29 @@ export const NavMobile = ({ links }: NavMobileProps) => {
       <SheetContent
         side="left"
         className={cn(
-          "bg-background flex w-full flex-col gap-0 border-none px-7 pt-21 pb-8",
+          "bg-background flex w-full flex-col gap-0 border-none px-6 pt-21 pb-8",
           "sm:max-w-full",
-          "md:w-fit md:rounded-tr-4xl md:rounded-br-4xl",
+          "md:w-fit md:min-w-lg md:rounded-tr-4xl md:rounded-br-4xl",
         )}
       >
         <SheetTitle className="sr-only">Навигация по сайту</SheetTitle>
 
         <div
           className={cn(
-            "bg-brand-gradient absolute top-4 left-4 h-11 rounded-[12px] px-2",
+            "bg-brand-gradient absolute top-4 left-4 h-11 rounded-lg px-3",
+            "md:h-12 md:rounded-[16px]",
           )}
         >
           <div className="flex h-full items-center justify-center">
             {isDiscount ? (
               <span className="font-semibold">Дисконт</span>
             ) : (
-              <Icons.logo className="h-4 w-fit stroke-current stroke-[0.25] [shape-rendering:crispEdges]" />
+              <Icons.logo
+                className={cn(
+                  "h-4 w-fit fill-current stroke-current stroke-[0.25] [shape-rendering:crispEdges]",
+                  "md:h-5",
+                )}
+              />
             )}
           </div>
         </div>
@@ -89,10 +95,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                 if (link.type === "link" || link.type === "external") {
                   const isExt = link.type === "external";
                   return (
-                    <div
-                      key={`mobile-nav-${idx}`}
-                      className="border-border border-b py-4 last:border-0"
-                    >
+                    <div key={`mobile-nav-${idx}`} className="py-4">
                       <Link
                         href={link.href}
                         target={isExt ? link.target : "_self"}
@@ -116,7 +119,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                   <AccordionItem
                     value={`item-${idx}`}
                     key={`mobile-nav-${idx}`}
-                    className="border-border"
+                    className="border-none"
                   >
                     <AccordionTrigger
                       className={cn(
@@ -146,7 +149,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                             ))}
                           </div>
 
-                          <div className="border-border mt-2 flex flex-col gap-3 border-t pt-4 md:grid md:grid-cols-3">
+                          <div className="mt-2 flex flex-col gap-3 pt-4">
                             {link.promoCards.map((card) => {
                               const imageUrl = buildImageUrl(card.cover);
                               return (
@@ -214,7 +217,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                 );
               })}
 
-              <AccordionItem value="legal-links" className="border-border">
+              <AccordionItem value="legal-links">
                 <AccordionTrigger
                   className={cn(
                     "py-4 text-lg font-medium",
@@ -245,9 +248,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
           </div>
 
           <div className="bg-background mt-auto pt-6 pb-12">
-            <span className="border-border mb-6 block border-b pb-4 text-lg font-medium">
-              Где купить
-            </span>
+            <span className="block pb-4 text-lg font-medium">Где купить</span>
             <div className="grid grid-cols-2 gap-3">
               {marketLinks.map((market) => {
                 const Icon = market.icon;

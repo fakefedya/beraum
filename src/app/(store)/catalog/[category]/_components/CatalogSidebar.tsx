@@ -89,14 +89,20 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
   };
 
   return (
-    <div className="item-center sticky top-20 z-10 flex w-full justify-center p-2">
-      <div className="bg-background/80 shadow-nav flex w-fit flex-wrap gap-2 rounded-[20px] p-1.5 backdrop-blur-xl backdrop-saturate-150">
+    <div className="item-center sticky top-24 z-10 flex w-full justify-center">
+      <div
+        className={cn(
+          "bg-background/80 shadow-nav flex w-fit flex-wrap gap-2 rounded-xl p-1 backdrop-blur-xl backdrop-saturate-150",
+          "md:rounded-[16px] md:p-1.5",
+        )}
+      >
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               className={cn(
-                "bg-card text-foreground h-12 gap-4 rounded-[16px] px-4 text-base font-medium",
+                "bg-card text-foreground h-12 gap-4 rounded-lg px-3 text-base font-medium",
                 "duration-300 hover:bg-gray-200",
+                "md:rounded-[16px] md:px-4",
               )}
             >
               <ArrowDownUp className="size-4" />
@@ -116,7 +122,10 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
           <DropdownMenuContent
             align="end"
             sideOffset={8}
-            className="shadow-card w-48 rounded-[16px] border-none p-1.5"
+            className={cn(
+              "shadow-card w-48 rounded-lg border-none p-1.5",
+              "md:rounded-[16px]",
+            )}
           >
             {SORT_OPTIONS.map((option) => (
               <DropdownMenuItem
@@ -139,8 +148,9 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
           <SheetTrigger asChild>
             <Button
               className={cn(
-                "bg-card text-foreground h-12 gap-4 rounded-[16px] px-4 text-base font-medium",
+                "bg-card text-foreground h-12 gap-4 rounded-lg px-3 text-base font-medium",
                 "duration-300 hover:bg-gray-200",
+                "md:rounded-[16px] md:px-4",
               )}
             >
               <SlidersHorizontal className="size-4" />
@@ -157,8 +167,9 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
           <SheetContent
             side="left"
             className={cn(
-              "inset-y-4 left-4 flex h-auto w-full flex-col gap-0 rounded-4xl border-none p-0",
+              "flex h-auto w-full flex-col gap-0 border-none p-0",
               "sm:max-w-md",
+              "md:inset-y-4 md:left-4 md:rounded-4xl",
             )}
           >
             <SheetHeader className="px-5 pt-6 text-left">
@@ -177,7 +188,7 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
                     value={filter.key}
                     className="border-b-0"
                   >
-                    <AccordionTrigger className="text-muted-foreground text-base font-medium hover:no-underline">
+                    <AccordionTrigger className="text-muted-foreground text-base hover:no-underline">
                       {filter.label}
                     </AccordionTrigger>
                     <AccordionContent className="flex flex-wrap gap-2 pt-2 pb-6">

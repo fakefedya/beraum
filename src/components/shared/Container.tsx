@@ -25,7 +25,8 @@ export const Container = ({
     <div
       className={cn(
         "mx-auto flex w-full flex-col px-4",
-        "md:px-6",
+        "first:pt-24",
+        "md:px-6 md:first:pt-32",
         isWide ? "max-w-full" : maxWidthMap[maxWidth],
         className,
       )}
