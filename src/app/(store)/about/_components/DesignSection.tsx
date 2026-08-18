@@ -11,14 +11,26 @@ export const DesignSection = () => {
   return (
     <Section>
       <Container maxWidth="5xl">
-        <div className="bg-card flex w-full overflow-hidden rounded-4xl">
+        <div
+          className={cn(
+            "bg-card flex w-full flex-col-reverse overflow-hidden rounded-4xl",
+            "md:flex-row",
+          )}
+        >
           <div
             className={cn(
-              "flex flex-col justify-center gap-6 p-10",
-              "lg:w-1/2 lg:p-16",
+              "flex flex-col justify-center gap-6 p-6",
+              "md:w-1/2 md:p-10",
+              "lg:p-16",
             )}
           >
-            <h2 className="text-3xl font-medium lg:text-4xl">
+            <h2
+              className={cn(
+                "text-2xl font-medium",
+                "md:text-3xl",
+                "lg:text-4xl",
+              )}
+            >
               Техника, которая понимает интерьер
             </h2>
             <p className="text-muted-foreground">
@@ -49,7 +61,9 @@ export const DesignSection = () => {
               </a>
             </Button>
           </div>
-          <div className={cn("relative min-h-75", "lg:min-h-full lg:w-1/2")}>
+          <div
+            className={cn("relative min-h-75 w-full", "md:w-1/2 lg:min-h-full")}
+          >
             <div className="absolute inset-0 flex items-center justify-center">
               <SafeImage
                 src={imageUrl}

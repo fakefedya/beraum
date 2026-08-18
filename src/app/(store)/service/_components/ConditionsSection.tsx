@@ -11,9 +11,10 @@ export const ConditionsSection = () => {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-4">
           <div
             className={cn(
-              "bg-background flex flex-col items-center gap-6 rounded-4xl border border-black/5 p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
-              "lg:p-16",
+              "bg-background flex flex-col items-center gap-6 rounded-4xl border border-black/5 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
               "transition-shadow duration-500 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]",
+              "md:p-10",
+              "lg:p-16",
             )}
           >
             <CheckCircle2
@@ -27,7 +28,12 @@ export const ConditionsSection = () => {
               {COVERAGE_CONDITIONS.covered.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-4 text-left">
                   <div className="bg-brand-secondary mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full" />
-                  <span className="text-muted-foreground text-lg leading-relaxed">
+                  <span
+                    className={cn(
+                      "text-muted-foreground leading-relaxed",
+                      "md:text-lg",
+                    )}
+                  >
                     {item}
                   </span>
                 </li>
@@ -58,7 +64,12 @@ export const ConditionsSection = () => {
               {COVERAGE_CONDITIONS.notCovered.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-4 text-left">
                   <div className="bg-muted-foreground/30 mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full" />
-                  <span className="text-muted-foreground text-lg leading-relaxed">
+                  <span
+                    className={cn(
+                      "text-muted-foreground leading-relaxed",
+                      "md:text-lg",
+                    )}
+                  >
                     {item}
                   </span>
                 </li>

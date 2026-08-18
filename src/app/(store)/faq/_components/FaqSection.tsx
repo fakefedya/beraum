@@ -15,15 +15,26 @@ export const FaqSection = () => {
       <Container maxWidth="5xl">
         <div
           className={cn(
-            "bg-card flex flex-col gap-10 rounded-4xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
+            "bg-card flex flex-col gap-10 rounded-4xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
+            "md:p-10",
             "lg:gap-16 lg:p-16",
           )}
         >
           <div className="mx-auto flex max-w-3xl flex-col gap-8 text-center">
-            <h1 className={cn("text-5xl font-medium", "lg:text-6xl")}>
+            <h1
+              className={cn(
+                "text-foreground text-4xl font-semibold tracking-tight text-balance",
+                "md:text-5xl lg:text-6xl",
+              )}
+            >
               Вопросы и ответы
             </h1>
-            <p className="text-muted-foreground text-lg leading-relaxed">
+            <p
+              className={cn(
+                "text-muted-foreground text-base leading-relaxed text-pretty",
+                "md:text-lg",
+              )}
+            >
               Собрали для вас ответы на самые популярные вопросы о нашей
               технике, доставке и сервисном обслуживании.
             </p>

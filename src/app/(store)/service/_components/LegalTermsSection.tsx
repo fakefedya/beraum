@@ -7,7 +7,13 @@ export const LegalTermsSection = () => {
   return (
     <Section>
       <Container maxWidth="5xl" className="gap-12">
-        <h2 className={cn("text-center text-3xl font-medium", "lg:text-5xl")}>
+        <h2
+          className={cn(
+            "text-center text-3xl font-medium",
+            "md:text-4xl",
+            "lg:text-5xl",
+          )}
+        >
           Юридическая прозрачность
         </h2>
 
@@ -16,11 +22,18 @@ export const LegalTermsSection = () => {
             <article
               key={idx}
               className={cn(
-                "bg-card flex flex-col gap-8 rounded-[40px] border-2 border-transparent p-10",
+                "bg-card flex flex-col gap-8 rounded-[40px] border-2 border-transparent p-6",
                 "transition-colors duration-500 hover:border-black/5",
+                "md:p-10",
+                "lg:p-16",
               )}
             >
-              <h3 className="text-center text-2xl font-medium">
+              <h3
+                className={cn(
+                  "text-center text-2xl font-medium",
+                  "lg:text-3xl",
+                )}
+              >
                 {section.title}
               </h3>
               <ul className="flex flex-col gap-6">

@@ -7,6 +7,7 @@ import { StatisticSection } from "./_components/StatisticSection";
 import { DesignSection } from "./_components/DesignSection";
 import { QualityControlSection } from "./_components/QualityControlSection";
 import { GuaranteeSection } from "./_components/GuaranteeSection";
+import { cn } from "@/src/lib/utils";
 
 export const metadata: Metadata = {
   title: "О бренде Beraum | Честная техника для современного интерьера",
@@ -23,7 +24,7 @@ export default function About() {
   return (
     <>
       <Section>
-        <Container className="pt-32">
+        <Container className={cn("pt-24", "md:pt-32")}>
           <Breadcrumbs
             items={breadcrumbItems}
             className="flex justify-center"

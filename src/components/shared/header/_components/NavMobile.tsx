@@ -70,7 +70,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
 
         <div
           className={cn(
-            "bg-brand-gradient absolute top-4 left-4 h-11 rounded-lg px-3",
+            "bg-brand-gradient absolute top-4 left-4 h-11 rounded-lg px-4",
             "md:h-12 md:rounded-[16px]",
           )}
         >
@@ -102,7 +102,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                         rel={isExt ? "noopener noreferrer" : undefined}
                         onClick={() => setIsOpen(false)}
                         className={cn(
-                          "flex items-center justify-between text-lg font-medium outline-none",
+                          "flex items-center justify-between text-xl font-medium outline-none",
                           "focus-visible:ring-2 focus-visible:ring-black/20",
                         )}
                       >
@@ -123,7 +123,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                   >
                     <AccordionTrigger
                       className={cn(
-                        "py-4 text-lg font-medium",
+                        "py-4 text-xl font-medium",
                         "hover:no-underline",
                       )}
                     >
@@ -132,7 +132,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                     <AccordionContent className="flex flex-col pt-1 pb-4">
                       {link.type === "mega" ? (
                         <div className="flex flex-col gap-4">
-                          <div className="flex flex-col gap-4">
+                          <div className="flex flex-col gap-6">
                             {link.sidebarLinks.map((subItem) => (
                               <Link
                                 key={subItem.href}
@@ -195,7 +195,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                           </div>
                         </div>
                       ) : (
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-6">
                           {link.items.map((subItem) => (
                             <Link
                               key={subItem.href}
@@ -207,7 +207,17 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                                 "hover:text-black",
                               )}
                             >
-                              {subItem.label}
+                              {subItem.href === "/support" ? (
+                                <span className="flex gap-1">
+                                  {subItem.label}
+                                  <div className="relative flex h-2 w-2">
+                                    <span className="bg-brand-secondary absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
+                                    <span className="bg-brand-secondary relative inline-flex h-2 w-2 rounded-full"></span>
+                                  </div>
+                                </span>
+                              ) : (
+                                subItem.label
+                              )}
                             </Link>
                           ))}
                         </div>
@@ -220,13 +230,13 @@ export const NavMobile = ({ links }: NavMobileProps) => {
               <AccordionItem value="legal-links">
                 <AccordionTrigger
                   className={cn(
-                    "py-4 text-lg font-medium",
+                    "py-4 text-xl font-medium",
                     "hover:no-underline",
                   )}
                 >
                   T&C
                 </AccordionTrigger>
-                <AccordionContent className="flex flex-col gap-4 pt-1 pb-4">
+                <AccordionContent className="flex flex-col gap-6 pt-1 pb-4">
                   {FOOTER_LINKS.map((link) => (
                     <Link
                       key={link.href}
@@ -248,8 +258,8 @@ export const NavMobile = ({ links }: NavMobileProps) => {
           </div>
 
           <div className="bg-background mt-auto pt-6 pb-12">
-            <span className="block pb-4 text-lg font-medium">Где купить</span>
-            <div className="grid grid-cols-2 gap-3">
+            <span className="block pb-4 text-xl font-medium">Где купить</span>
+            <div className="flex flex-col gap-3">
               {marketLinks.map((market) => {
                 const Icon = market.icon;
                 return (
@@ -259,13 +269,22 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={cn(
-                      "bg-card flex items-center gap-3 rounded-xl p-1 outline-none",
+                      "bg-card flex items-center gap-3 rounded-xl p-6 outline-none",
                       "focus-visible:ring-2 focus-visible:ring-black/20",
                       "transition-colors hover:bg-gray-100",
                     )}
                   >
-                    <Icon className="size-12 shrink-0" />
-                    <span className="text-sm font-medium">{market.label}</span>
+                    <div className="flex shrink-0 items-center justify-center">
+                      <Icon className="size-12" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-base leading-none font-medium">
+                        {market.label}
+                      </span>
+                      <span className="text-foreground/80 text-sm font-normal">
+                        {market.description}
+                      </span>
+                    </div>
                   </a>
                 );
               })}

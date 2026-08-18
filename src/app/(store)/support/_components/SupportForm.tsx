@@ -180,9 +180,10 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
               />
               <div
                 className={cn(
-                  "border-ring/30 flex aspect-square flex-col justify-between rounded-2xl border p-4",
+                  "border-ring/30 flex aspect-video flex-col justify-between rounded-2xl border p-4",
                   "hover:border-muted-foreground transition-all duration-200",
                   "peer-checked:border-brand-secondary peer-checked:hover:border-brand-secondary peer-focus-visible:ring-brand-secondary peer-checked:ring-brand-secondary peer-checked:bg-transparent peer-checked:ring-1 peer-focus-visible:ring-2",
+                  "md:aspect-square",
                   state.fieldErrors?.categoryId &&
                     "border-red-500 bg-[#fff2f4] hover:border-red-300",
                 )}
@@ -319,9 +320,10 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
                 />
                 <div
                   className={cn(
-                    "border-ring/30 flex aspect-square flex-col justify-between rounded-2xl border p-4",
+                    "border-ring/30 flex aspect-video flex-col justify-between rounded-2xl border p-4",
                     "hover:border-muted-foreground transition-all duration-200",
                     "peer-checked:border-brand-secondary peer-checked:hover:border-brand-secondary peer-focus-visible:ring-brand-secondary peer-checked:ring-brand-secondary peer-checked:bg-transparent peer-checked:ring-1 peer-focus-visible:ring-2",
+                    "md:aspect-square",
                     state.fieldErrors?.marketplace &&
                       "border-red-500 bg-[#fff2f4] hover:border-red-300",
                   )}
@@ -434,7 +436,12 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
         >
           {isPending ? "Создание обращения..." : "Создать обращение"}
         </Button>
-        <p className="text-muted-foreground/80 max-w-[75%] text-center text-xs">
+        <p
+          className={cn(
+            "text-muted-foreground/80 max-w-full text-center text-xs",
+            "md:max-w-[75%]",
+          )}
+        >
           Нажимая кнопку «Создать обращение», вы подтверждаете своё согласие на{" "}
           <a
             href="/policies/privacy"

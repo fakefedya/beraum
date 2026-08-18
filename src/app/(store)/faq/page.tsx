@@ -4,6 +4,7 @@ import { Container } from "@/src/components/shared/Container";
 import { Section } from "@/src/components/shared/Section";
 import { FaqSection } from "./_components/FaqSection";
 import { SupportActionBlock } from "@/src/components/shared/blocks/SupportActionBlock";
+import { cn } from "@/src/lib/utils";
 
 export const metadata: Metadata = {
   title: "Вопросы и ответы | Beraum",
@@ -20,7 +21,7 @@ export default function FAQPage() {
   return (
     <>
       <Section>
-        <Container className="pt-32">
+        <Container className={cn("pt-24", "md:pt-32")}>
           <Breadcrumbs
             items={breadcrumbItems}
             className="flex justify-center"

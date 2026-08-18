@@ -215,7 +215,7 @@ const DefaultMenuNode = ({
                       "bg-card hover:border-brand transition-colors",
                     )}
                   >
-                    <div className="bg-brand-background-gradient relative h-full w-full overflow-hidden rounded-lg">
+                    <div className="bg-card relative h-full w-full overflow-hidden rounded-lg">
                       <SafeImage
                         src={imageUrl}
                         alt={subItem.label}

@@ -22,8 +22,20 @@ export const HeroSection = () => {
     <Section>
       <Container maxWidth="5xl">
         <div className="mx-auto flex flex-col items-center justify-center gap-8 text-center">
-          <h1 className="text-5xl font-medium lg:text-6xl">Сотрудничество</h1>
-          <p className="text-muted-foreground text-lg leading-relaxed lg:text-lg">
+          <h1
+            className={cn(
+              "text-foreground text-4xl font-semibold tracking-tight text-balance",
+              "md:text-5xl lg:text-6xl",
+            )}
+          >
+            Сотрудничество
+          </h1>
+          <p
+            className={cn(
+              "text-muted-foreground text-base leading-relaxed text-pretty",
+              "md:text-lg",
+            )}
+          >
             Мы открыты к долгосрочному партнерству и предлагаем гибкие
             B2B-решения, обеспечивая стабильные поставки, резерв товара и
             прозрачный документооборот.

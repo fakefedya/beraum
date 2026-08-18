@@ -38,7 +38,7 @@ export const ModeSection = () => {
     >
       <div
         className={cn(
-          "bg-card relative flex h-11 items-center rounded-xl",
+          "bg-card relative flex h-11 items-center rounded-[10px]",
           "transition-colors duration-500 ease-out",
           "md:h-12 md:rounded-[16px]",
         )}
@@ -64,10 +64,10 @@ export const ModeSection = () => {
           aria-label="Главная страница"
           aria-current={!isDiscount ? "page" : undefined}
           className={cn(
-            "relative z-10 flex h-full items-center justify-center rounded-lg px-3",
+            "relative z-10 flex h-full items-center justify-center rounded-lg px-4",
             "focus-visible:ring-foreground focus-visible:outline-none",
             "transition-colors duration-300",
-            "md:rounded-[16px] md:px-4",
+            "md:rounded-[16px]",
             !isDiscount
               ? "text-foreground"
               : "text-muted-foreground hover:text-foreground hover:bg-background/25",
@@ -85,10 +85,10 @@ export const ModeSection = () => {
           ref={isDiscount ? activeRef : null}
           aria-current={isDiscount ? "page" : undefined}
           className={cn(
-            "relative z-10 flex h-full items-center justify-center rounded-lg px-3 text-base font-semibold",
+            "relative z-10 flex h-full items-center justify-center rounded-lg px-4 text-base font-semibold",
             "focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none",
             "transition-colors duration-300",
-            "md:rounded-[16px] md:px-4 md:text-lg",
+            "md:rounded-[16px] md:text-lg",
             isDiscount
               ? "text-foreground hover:bg-background/25"
               : "hover:text-foreground text-muted-foreground",

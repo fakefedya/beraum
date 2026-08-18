@@ -168,7 +168,8 @@ export const ProductGallery = ({
       <dialog
         ref={dialogRef}
         className={cn(
-          "m-auto h-[95dvh] w-[95dvw] max-w-7xl rounded-2xl bg-white p-0 shadow-2xl backdrop:bg-[#202028]/80 backdrop:backdrop-blur-sm",
+          "m-auto bg-white p-0 shadow-2xl backdrop:bg-[#202028]/90 backdrop:backdrop-blur-sm",
+          "h-dvh w-dvw max-w-7xl rounded-none sm:h-[95dvh] sm:w-[95dvw] sm:rounded-2xl",
           "open:animate-in open:fade-in-0",
         )}
         onCancel={closeFullscreen}

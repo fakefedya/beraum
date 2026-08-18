@@ -18,7 +18,7 @@ export const NavSection = () => {
   return (
     <div
       className={cn(
-        "flex w-full flex-row-reverse items-center justify-start gap-3",
+        "flex w-full flex-row-reverse items-center justify-start gap-4",
         "lg:flex-row lg:gap-1.5",
       )}
     >

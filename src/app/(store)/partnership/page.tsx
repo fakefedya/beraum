@@ -5,6 +5,7 @@ import { Section } from "@/src/components/shared/Section";
 import { HeroSection } from "./_components/HeroSection";
 import { OfferSection } from "./_components/OfferSection";
 import { PartnershipSection } from "./_components/PartnershipSection";
+import { cn } from "@/src/lib/utils";
 
 export const metadata: Metadata = {
   title: "Сотрудничество | Beraum",
@@ -20,7 +21,7 @@ export default function Partnership() {
   return (
     <>
       <Section>
-        <Container className="pt-32">
+        <Container className={cn("pt-24", "md:pt-32")}>
           <Breadcrumbs
             items={breadcrumbItems}
             className="flex justify-center"

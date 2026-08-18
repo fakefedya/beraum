@@ -6,6 +6,7 @@ import { HeroSection } from "./_components/HeroSection";
 import { ConditionsSection } from "./_components/ConditionsSection";
 import { LegalTermsSection } from "./_components/LegalTermsSection";
 import { SupportActionBlock } from "@/src/components/shared/blocks/SupportActionBlock";
+import { cn } from "@/src/lib/utils";
 
 export const metadata: Metadata = {
   title: "Гарантия | Beraum",
@@ -22,7 +23,7 @@ export default function ServicePage() {
   return (
     <>
       <Section>
-        <Container className="pt-32">
+        <Container className={cn("pt-24", "md:pt-32")}>
           <Breadcrumbs
             items={breadcrumbItems}
             className="flex justify-center"

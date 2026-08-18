@@ -10,7 +10,7 @@ import {
   productDocuments,
 } from "@/src/server/db/schema";
 import { CATEGORY_FILTERS } from "@/src/lib/constants";
-import { serverEnv } from "@/src/lib/env/server";
+import { buildImageUrl } from "@/src/lib/utils";
 
 const filterValueSchema = z.union([z.string(), z.array(z.string())]);
 
@@ -262,15 +262,13 @@ export async function getProductByArticle(rawArticle: string) {
       documentsPromise,
     ]);
 
-    const baseUrl = `http://${serverEnv.MINIO_ENDPOINT}:${serverEnv.MINIO_PORT}`;
-
     const formattedDocs = rawDocs.map((doc) => ({
       type: doc.type,
-      url: `${baseUrl}/${doc.bucketName}/${doc.fileKey}`,
+      url: buildImageUrl({ bucketName: doc.bucketName, fileKey: doc.fileKey }),
     }));
 
     const images = rawImages.map((img) => ({
-      url: `${baseUrl}/${img.bucketName}/${img.fileKey}`,
+      url: buildImageUrl({ bucketName: img.bucketName, fileKey: img.fileKey }),
       fit: (img.imageFit || "contain") as "contain" | "cover",
     }));
 
@@ -357,8 +355,6 @@ export async function getSupportModelsByCategory(categoryId: string) {
     const parsedId = z.string().uuid().safeParse(categoryId);
     if (!parsedId.success) return { success: false, data: [] };
 
-    // Убрали фильтр eq(products.status, "published"),
-    // чтобы пользователь мог найти снятую с производства технику
     const items = await db
       .select({
         itemArticle: products.itemArticle,

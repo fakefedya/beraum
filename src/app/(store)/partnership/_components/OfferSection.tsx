@@ -13,11 +13,10 @@ export const OfferSection = () => {
             <div
               key={idx}
               className={cn(
-                "bg-card group flex flex-col overflow-hidden rounded-[32px]",
-                "hover:border-black-muted border-2 border-transparent transition-colors duration-500",
+                "bg-card group flex flex-col overflow-hidden rounded-4xl",
               )}
             >
-              <div className="bg-accent relative aspect-video w-full overflow-hidden border-b border-black/5">
+              <div className="bg-accent relative aspect-video w-full overflow-hidden border-black/5">
                 <SafeImage
                   src={buildImageUrl(el.image)}
                   alt={el.title}
@@ -27,7 +26,7 @@ export const OfferSection = () => {
                 />
               </div>
 
-              <div className="flex flex-col gap-3 p-8">
+              <div className={cn("flex flex-col gap-3 p-6", "md:p-8")}>
                 <h3 className="text-xl font-medium">{el.title}</h3>
                 <p className="text-muted-foreground text-base leading-relaxed">
                   {el.description}

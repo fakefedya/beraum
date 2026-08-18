@@ -4,7 +4,7 @@ import { desc, sql } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
 import { slides } from "@/src/server/db/schema";
 import { z } from "zod";
-import { serverEnv } from "@/src/lib/env/server";
+import { buildImageUrl } from "@/src/lib/utils";
 
 const IMAGE_PATH = "components/banners";
 
@@ -58,13 +58,18 @@ export async function getActiveSlides(
       });
 
       if (parsed.success) {
-        const baseUrl = `http://${serverEnv.MINIO_ENDPOINT}:${serverEnv.MINIO_PORT}/${slide.bucketName}`;
         validSlides.push({
           ...parsed.data,
           id: slide.id,
-          imageUrl: `${baseUrl}/${IMAGE_PATH}/${slide.fileKey}`,
+          imageUrl: buildImageUrl({
+            bucketName: slide.bucketName,
+            fileKey: `${IMAGE_PATH}/${slide.fileKey}`,
+          }),
           mobileImageUrl: slide.mobileFileKey
-            ? `${baseUrl}/${IMAGE_PATH}/${slide.mobileFileKey}`
+            ? buildImageUrl({
+                bucketName: slide.bucketName,
+                fileKey: `${IMAGE_PATH}/${slide.mobileFileKey}`,
+              })
             : undefined,
         });
       } else {

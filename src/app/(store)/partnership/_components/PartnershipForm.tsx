@@ -5,6 +5,7 @@ import { CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { submitPartnershipAction } from "@/src/server/actions/feedback.actions";
 import { FloatingField } from "@/src/components/shared/FloatingField";
+import { cn } from "@/src/lib/utils";
 
 export const PartnershipForm = () => {
   const [state, formAction, isPending] = useActionState(
@@ -108,7 +109,12 @@ export const PartnershipForm = () => {
         >
           {isPending ? "Отправка..." : "Оставить заявку"}
         </Button>
-        <p className="text-muted-foreground/80 max-w-[75%] text-center text-xs">
+        <p
+          className={cn(
+            "text-muted-foreground/80 max-w-full text-center text-xs",
+            "md:max-w-[75%]",
+          )}
+        >
           Нажимая кнопку «Оставить заявку», вы подтверждаете своё согласие на{" "}
           <a
             href="/policies/privacy"

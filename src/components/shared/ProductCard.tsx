@@ -63,9 +63,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                 aria-checked={isActive}
                 title={variant.colorName || "Стандарт"}
                 className={cn(
-                  "flex h-4 w-4 cursor-pointer items-center justify-center rounded-full p-0 shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)]",
+                  "flex h-6 w-6 cursor-pointer items-center justify-center rounded-full p-0 shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)]",
+                  "md:h-4 md:w-4",
                   isActive && product.variants.length > 1
-                    ? "border-brand-secondary ring-2 ring-offset-2"
+                    ? "ring-brand-secondary ring-2 ring-offset-2"
                     : "border-black/10 hover:border-black/30",
                 )}
                 style={{ backgroundColor: hexColor }}

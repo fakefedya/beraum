@@ -76,7 +76,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
   );
 
   return (
-    <div className="flex flex-col gap-16">
+    <div className={cn("flex flex-col gap-10", "md:gap-16")}>
       <div className="flex flex-col gap-6">
         {product.isLatest && (
           <Badge className="bg-brand text-foreground text-xs leading-normal font-medium uppercase">
@@ -154,8 +154,9 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
                   href={`/product/${variant.itemArticle.toLowerCase()}`}
                   title={variant.colorName || "Стандарт"}
                   className={cn(
-                    "relative flex h-6.5 w-6.5 items-center justify-center rounded-full shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)]",
+                    "relative flex h-8 w-8 items-center justify-center rounded-full shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)]",
                     "transition-all duration-300",
+                    "md:h-6.5 md:w-6.5",
                     isActive && product.variants.length > 1
                       ? "ring-brand-secondary scale-106 ring-2 ring-offset-2"
                       : "border-black/10 hover:border-black/30",

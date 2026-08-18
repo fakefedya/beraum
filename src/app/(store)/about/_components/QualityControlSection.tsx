@@ -9,7 +9,13 @@ export const QualityControlSection = () => {
   return (
     <Section>
       <Container maxWidth="5xl" className="gap-12">
-        <h2 className={cn("text-center text-3xl font-medium", "lg:text-5xl")}>
+        <h2
+          className={cn(
+            "text-center text-3xl font-medium",
+            "md:text-4xl",
+            "lg:text-5xl",
+          )}
+        >
           Технологии доверия
         </h2>
         <div
@@ -20,8 +26,9 @@ export const QualityControlSection = () => {
         >
           <div
             className={cn(
-              "relative flex aspect-3/2 items-end overflow-hidden rounded-4xl p-6",
-              "md:col-span-3 lg:p-16",
+              "relative flex aspect-2/3 items-end overflow-hidden rounded-4xl p-6",
+              "md:col-span-3 md:aspect-3/2 md:p-10",
+              "lg:p-16",
             )}
           >
             <SafeImage
@@ -56,7 +63,12 @@ export const QualityControlSection = () => {
                     className="object-cover"
                   />
                 </div>
-                <div className="relative z-10 flex flex-col gap-2 p-8">
+                <div
+                  className={cn(
+                    "relative z-10 flex flex-col gap-2 p-6",
+                    "lg:p-8",
+                  )}
+                >
                   <h3 className="text-background text-xl font-medium">
                     {el.title}
                   </h3>

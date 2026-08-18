@@ -3,6 +3,7 @@ import { cn } from "@/src/lib/utils";
 const maxWidthMap = {
   "2xl": "max-w-2xl",
   "3xl": "max-w-3xl",
+  "4xl": "max-w-4xl",
   "5xl": "max-w-5xl",
   "7xl": "max-w-7xl",
   "360": "max-w-360",
@@ -25,8 +26,7 @@ export const Container = ({
     <div
       className={cn(
         "mx-auto flex w-full flex-col px-4",
-        "first:pt-24",
-        "md:px-6 md:first:pt-32",
+        "md:px-6",
         isWide ? "max-w-full" : maxWidthMap[maxWidth],
         className,
       )}

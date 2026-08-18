@@ -28,26 +28,33 @@ export const SupportActionBlock = () => {
       <Container maxWidth="5xl">
         <div
           className={cn(
-            "bg-foreground text-background mx-auto flex w-full flex-col items-stretch overflow-hidden rounded-4xl",
+            "bg-foreground text-background mx-auto flex w-full flex-col-reverse items-stretch overflow-hidden rounded-4xl",
             "md:flex-row",
           )}
         >
           <div
             className={cn(
-              "relative z-20 flex flex-col justify-center gap-6 p-10",
-              "md:w-1/2 lg:p-16",
+              "relative z-20 flex flex-col justify-center gap-6 p-6",
+              "md:w-1/2 md:p-10",
+              "lg:p-16",
             )}
           >
             <div className="flex flex-col gap-6">
               <h2
                 className={cn(
-                  "text-3xl font-medium text-balance",
+                  "text-2xl font-medium text-balance",
+                  "md:text-3xl",
                   "lg:text-4xl",
                 )}
               >
                 Случилась неисправность?
               </h2>
-              <p className="text-background/80 text-lg leading-relaxed">
+              <p
+                className={cn(
+                  "text-background/80 leading-relaxed",
+                  "md:text-lg",
+                )}
+              >
                 Не переживайте. Мы построили процесс так, чтобы решить вашу
                 проблему максимально быстро и прозрачно:
               </p>
@@ -71,7 +78,10 @@ export const SupportActionBlock = () => {
 
             <Button
               asChild
-              className="bg-brand text-foreground hover:bg-brand-hover shadow-button mt-2 h-12 w-fit rounded-[16px] px-8 text-base font-medium"
+              className={cn(
+                "bg-brand text-foreground hover:bg-brand-hover shadow-button mt-2 h-12 w-full rounded-[16px] px-8 text-base font-medium",
+                "md:w-fit",
+              )}
             >
               <Link href="/support">Создать обращение</Link>
             </Button>

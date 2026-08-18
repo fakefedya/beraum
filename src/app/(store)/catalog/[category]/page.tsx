@@ -46,26 +46,35 @@ export default async function Category({ params, searchParams }: PageProps) {
   }
 
   return (
-    <Section>
-      <Container className="gap-5">
-        <Breadcrumbs items={breadcrumbItems} className="flex justify-center" />
-        <div className="flex flex-col gap-6">
-          <CatalogSidebar categorySlug={category} />
-          <div className="w-full">
-            {!response.success || response.data.length === 0 ? (
-              <EmptyState
-                title="Товары не найдены"
-                description="Попробуйте изменить параметры фильтрации."
-              />
-            ) : (
-              <CatalogGrid
-                initialData={response.data}
-                categorySlug={category}
-              />
-            )}
+    <>
+      <Section>
+        <Container className="pt-32">
+          <Breadcrumbs
+            items={breadcrumbItems}
+            className="flex justify-center"
+          />
+        </Container>
+      </Section>
+      <Section>
+        <Container className="gap-5">
+          <div className="flex flex-col gap-6">
+            <CatalogSidebar categorySlug={category} />
+            <div className="w-full">
+              {!response.success || response.data.length === 0 ? (
+                <EmptyState
+                  title="Товары не найдены"
+                  description="Попробуйте изменить параметры фильтрации."
+                />
+              ) : (
+                <CatalogGrid
+                  initialData={response.data}
+                  categorySlug={category}
+                />
+              )}
+            </div>
           </div>
-        </div>
-      </Container>
-    </Section>
+        </Container>
+      </Section>
+    </>
   );
 }
