@@ -71,10 +71,8 @@ export const GuaranteeSection = () => {
           <div className="flex justify-center lg:w-1/3">
             <div className="border-brand/20 relative flex h-64 w-64 flex-col items-center justify-center rounded-full border-4 p-6 text-center">
               <div className="border-brand animation-duration-[10s] absolute inset-0 animate-spin rounded-full border-4 border-t-transparent" />
-              <span className="text-brand text-5xl font-medium tracking-tighter">
-                1+
-              </span>
-              <span className="mt-1 text-sm font-medium tracking-widest uppercase">
+              <span className="text-brand text-5xl font-medium">1+</span>
+              <span className="mt-1 text-sm font-medium uppercase">
                 Года
                 <br />
                 Гарантии

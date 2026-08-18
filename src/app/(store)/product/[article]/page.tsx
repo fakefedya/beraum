@@ -74,9 +74,7 @@ export default async function ProductPage({ params }: PageProps) {
 
         {product.documents && product.documents.length > 0 && (
           <div className="mt-32 flex flex-col items-center justify-center gap-10">
-            <h2 className="text-3xl font-medium tracking-tight">
-              Документация
-            </h2>
+            <h2 className="text-3xl font-medium">Документация</h2>
             <div className="flex flex-wrap justify-center gap-4">
               {product.documents.map((doc, idx) => {
                 const meta = DOC_META[doc.type];
@@ -107,9 +105,7 @@ export default async function ProductPage({ params }: PageProps) {
 
         {similarProducts && similarProducts.length > 0 && (
           <div className="mt-32 mb-24 flex flex-col items-center gap-10">
-            <h2 className="text-3xl font-medium tracking-tight">
-              Вам может понравиться
-            </h2>
+            <h2 className="text-3xl font-medium">Вам может понравиться</h2>
             <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {similarProducts.map((p) => (
                 <ProductCard key={p.siteArticle} product={p} />

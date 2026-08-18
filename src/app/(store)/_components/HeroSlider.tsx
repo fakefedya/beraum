@@ -71,7 +71,8 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
       edgeSwipeThreshold={20}
       mousewheel={{ enabled: true, sensitivity: 1, releaseOnEdges: true }}
       keyboard={{ enabled: true }}
-      autoplay={{ delay: 6000, disableOnInteraction: false }}
+      // autoplay={{ delay: 6000, disableOnInteraction: false }}
+      autoplay={{ enabled: false }}
       loop={slides.length > 1}
       pagination={{ enabled: true, clickable: true }}
       className="h-full w-full [&_.swiper-pagination]:right-4! [&_.swiper-pagination-bullet-active]:bg-white!"

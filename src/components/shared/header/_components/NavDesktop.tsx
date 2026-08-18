@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { buildImageUrl, cn } from "@/src/lib/utils";
 import {
@@ -25,14 +26,20 @@ interface NavDesktopProps {
   links: readonly NavItem[];
 }
 
+const checkActive = (href: string, currentPath: string) => {
+  if (href === "/") return currentPath === "/";
+  return currentPath === href || currentPath.startsWith(`${href}/`);
+};
+
 export const NavDesktop = ({ links }: NavDesktopProps) => {
+  const pathname = usePathname();
   if (!links || links.length === 0) return null;
   const internalLinks = links.filter((link) => link.type !== "external");
 
   return (
     <NavigationMenuList
       className={cn(
-        "bg-brand-gradient-muted hidden h-12 w-fit items-center gap-0 rounded-[16px] p-1",
+        "bg-card hidden h-12 w-fit items-center gap-0 rounded-[16px] p-1",
         "lg:flex",
       )}
     >
@@ -41,11 +48,13 @@ export const NavDesktop = ({ links }: NavDesktopProps) => {
 
         switch (link.type) {
           case "mega":
-            return <MegaMenuNode key={key} item={link} />;
+            return <MegaMenuNode key={key} item={link} pathname={pathname} />;
           case "default":
-            return <DefaultMenuNode key={key} item={link} />;
+            return (
+              <DefaultMenuNode key={key} item={link} pathname={pathname} />
+            );
           case "link":
-            return <LinkNode key={key} item={link} />;
+            return <LinkNode key={key} item={link} pathname={pathname} />;
           default: {
             const _exhaustiveCheck: never = link;
             return _exhaustiveCheck;
@@ -56,15 +65,26 @@ export const NavDesktop = ({ links }: NavDesktopProps) => {
   );
 };
 
-const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
+const MegaMenuNode = ({
+  item,
+  pathname,
+}: {
+  item: NavMenuMega;
+  pathname: string;
+}) => {
+  const isActive =
+    item.sidebarLinks.some((link) => checkActive(link.href, pathname)) ||
+    item.promoCards.some((card) => checkActive(card.href, pathname));
+
   return (
     <NavigationMenuItem className="flex h-full items-center">
       <NavigationMenuTrigger
         className={cn(
-          "text-foreground h-full rounded-[12px] bg-transparent px-2 font-medium tracking-tight transition-colors duration-300",
+          "text-foreground h-full rounded-[12px] bg-transparent px-2 text-[15px] font-medium transition-colors duration-300",
           "hover:bg-background/80",
           "data-[state=open]:bg-background",
           "xl:px-4",
+          isActive ? "bg-background" : "bg-transparent",
         )}
       >
         {item.label}
@@ -121,10 +141,10 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
                       </div>
 
                       <div className="bg-background/80 shadow-nav absolute bottom-4 left-4 flex w-fit max-w-[calc(100%-32px)] flex-col gap-0 rounded-[12px] px-4 py-1.5 backdrop-blur-xl backdrop-saturate-150">
-                        <span className="line-clamp-1 font-medium tracking-tight">
+                        <span className="line-clamp-1 font-medium">
                           {card.label}
                         </span>
-                        <span className="text-muted-foreground line-clamp-2 text-sm tracking-tight">
+                        <span className="text-muted-foreground line-clamp-2 text-sm">
                           {card.description}
                         </span>
                       </div>
@@ -146,7 +166,16 @@ const MegaMenuNode = ({ item }: { item: NavMenuMega }) => {
   );
 };
 
-const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
+const DefaultMenuNode = ({
+  item,
+  pathname,
+}: {
+  item: NavMenuDefault;
+  pathname: string;
+}) => {
+  const isActive = item.items.some((subItem) =>
+    checkActive(subItem.href, pathname),
+  );
   const gridColumnCount = item.items.length;
   const columnsMap: Record<number, string> = {
     1: "grid-cols-1",
@@ -162,10 +191,11 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
     <NavigationMenuItem className="flex h-full items-center">
       <NavigationMenuTrigger
         className={cn(
-          "text-foreground h-full rounded-[12px] bg-transparent px-2 font-medium",
+          "text-foreground h-full rounded-[12px] bg-transparent px-2 text-[15px] font-medium",
           "hover:bg-background/80",
           "data-[state=open]:bg-background",
           "xl:px-4",
+          isActive ? "bg-background" : "bg-transparent",
         )}
       >
         {item.label}
@@ -221,7 +251,15 @@ const DefaultMenuNode = ({ item }: { item: NavMenuDefault }) => {
   );
 };
 
-const LinkNode = ({ item }: { item: NavLink | NavExternal }) => {
+const LinkNode = ({
+  item,
+  pathname,
+}: {
+  item: NavLink | NavExternal;
+  pathname: string;
+}) => {
+  const isActive = checkActive(item.href, pathname);
+
   return (
     <NavigationMenuItem className="flex h-full items-center">
       <NavigationMenuLink asChild>
@@ -230,8 +268,9 @@ const LinkNode = ({ item }: { item: NavLink | NavExternal }) => {
           href={item.href}
           className={cn(
             navigationMenuTriggerStyle(),
-            "text-foreground h-full rounded-[12px] bg-transparent px-2 font-medium",
+            "text-foreground h-full rounded-[12px] bg-transparent px-2 text-[15px] font-medium",
             "hover:bg-background/80",
+            isActive ? "bg-background/" : "bg-transparent",
             "xl:px-4",
           )}
         >

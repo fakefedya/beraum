@@ -20,7 +20,7 @@ export const LegalTermsSection = () => {
                 "transition-colors duration-500 hover:border-black/5",
               )}
             >
-              <h3 className="text-center text-2xl font-medium tracking-tight">
+              <h3 className="text-center text-2xl font-medium">
                 {section.title}
               </h3>
               <ul className="flex flex-col gap-6">

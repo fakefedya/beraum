@@ -38,14 +38,15 @@ export const ModeSection = () => {
     >
       <div
         className={cn(
-          "bg-card relative flex h-11 items-center rounded-[16px]",
+          "bg-card relative flex h-11 items-center rounded-xl",
           "transition-colors duration-500 ease-out",
-          "lg:h-12",
+          "md:h-12 md:rounded-[16px]",
         )}
       >
         <div
           className={cn(
-            "bg-brand-gradient absolute top-0 bottom-0 left-0 rounded-[14px]",
+            "bg-brand-gradient absolute top-0 bottom-0 left-0 rounded-lg",
+            "md:rounded-[16px]",
             isMounted
               ? "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
               : "transition-none",
@@ -63,10 +64,10 @@ export const ModeSection = () => {
           aria-label="Главная страница"
           aria-current={!isDiscount ? "page" : undefined}
           className={cn(
-            "relative z-10 flex h-full items-center justify-center rounded-[12px] px-2",
+            "relative z-10 flex h-full items-center justify-center rounded-lg px-3",
             "focus-visible:ring-foreground focus-visible:outline-none",
             "transition-colors duration-300",
-            "xl:px-4",
+            "md:rounded-[16px] md:px-4",
             !isDiscount
               ? "text-foreground"
               : "text-muted-foreground hover:text-foreground hover:bg-background/25",
@@ -75,7 +76,7 @@ export const ModeSection = () => {
           <Icons.logo
             className={cn(
               "h-4 w-fit fill-current stroke-current stroke-[0.25] [shape-rendering:crispEdges]",
-              "xl:h-5",
+              "md:h-5",
             )}
           />
         </Link>
@@ -84,10 +85,10 @@ export const ModeSection = () => {
           ref={isDiscount ? activeRef : null}
           aria-current={isDiscount ? "page" : undefined}
           className={cn(
-            "relative z-10 flex h-full items-center justify-center rounded-[12px] px-2 text-base font-semibold tracking-wide",
+            "relative z-10 flex h-full items-center justify-center rounded-lg px-3 text-base font-semibold",
             "focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none",
             "transition-colors duration-300",
-            "lg:text-lg xl:px-4",
+            "md:rounded-[16px] md:px-4 md:text-lg",
             isDiscount
               ? "text-foreground hover:bg-background/25"
               : "hover:text-foreground text-muted-foreground",

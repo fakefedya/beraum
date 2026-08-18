@@ -41,7 +41,7 @@ export const SupportActionBlock = () => {
             <div className="flex flex-col gap-6">
               <h2
                 className={cn(
-                  "text-3xl font-medium tracking-tight text-balance",
+                  "text-3xl font-medium text-balance",
                   "lg:text-4xl",
                 )}
               >

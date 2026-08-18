@@ -36,7 +36,7 @@ export const Footer = () => {
           <DropdownMenu>
             <DropdownMenuTrigger
               className={cn(
-                "flex items-center gap-1 rounded-sm text-xs font-medium tracking-wider outline-none",
+                "flex items-center gap-1 rounded-sm text-xs font-medium outline-none",
                 "transition-colors duration-300",
                 "focus-visible:ring-2 focus-visible:ring-black",
                 "[&[data-state=open]>svg]:rotate-180",
@@ -64,7 +64,7 @@ export const Footer = () => {
                   <Link
                     href={link.href}
                     prefetch={false}
-                    className="w-full text-sm font-medium tracking-tight"
+                    className="w-full text-sm font-medium"
                   >
                     {link.label}
                   </Link>

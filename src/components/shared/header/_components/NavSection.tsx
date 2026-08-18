@@ -23,7 +23,7 @@ export const NavSection = () => {
       )}
     >
       <NavigationMenu
-        className={cn("hidden gap-1.5", "lg:static lg:mx-auto lg:flex")}
+        className={cn("hidden gap-1.5", "md:flex lg:static lg:mx-auto")}
       >
         <NavDesktop links={links} />
         <NavExternalSection links={links} />

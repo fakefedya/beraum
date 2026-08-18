@@ -110,9 +110,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10">
           <CheckCircle2 className="h-8 w-8 text-green-600" />
         </div>
-        <h3 className="mb-3 text-3xl font-medium tracking-tight">
-          Обращение создано
-        </h3>
+        <h3 className="mb-3 text-3xl font-medium">Обращение создано</h3>
         <p className="text-muted-foreground max-w-sm text-lg">
           Специалист технической поддержки свяжется с вами.
         </p>

@@ -126,8 +126,9 @@ export const SearchSection = () => {
       <DialogContent
         className={cn(
           "translate-x-0 translate-y-0",
-          "fixed top-2 left-0 z-50 w-full border-none bg-transparent px-4 shadow-none data-[state=closed]:duration-300 sm:max-w-none",
-          "p-0 lg:top-4",
+          "fixed top-4 left-0 z-50 w-full max-w-none min-w-full border-none bg-transparent p-0 px-4 shadow-none",
+          "data-[state=closed]:duration-300",
+          "md:left-0 md:max-w-none md:px-6",
         )}
         showCloseButton={false}
       >
@@ -135,11 +136,17 @@ export const SearchSection = () => {
 
         <div
           className={cn(
-            "bg-background/80 shadow-nav relative mx-auto flex w-full max-w-full flex-col gap-4 rounded-[20px] p-1.5 backdrop-blur-xl backdrop-saturate-150",
+            "bg-background/80 shadow-nav relative mx-auto flex w-full max-w-full flex-col gap-4 overflow-hidden rounded-xl p-1 backdrop-blur-xl backdrop-saturate-150",
+            "md:rounded-[20px] md:p-1.5",
             "lg:w-fit lg:min-w-3xl",
           )}
         >
-          <div className="bg-background flex h-12 shrink-0 items-center gap-5 rounded-[16px] px-8 py-4 lg:h-14">
+          <div
+            className={cn(
+              "bg-background flex h-12 shrink-0 items-center gap-5 rounded-lg px-8 py-4",
+              "md:rounded-[14px]",
+            )}
+          >
             <Search className="text-foreground size-4.5 stroke-[2.5]" />
             <input
               type="text"
@@ -220,18 +227,33 @@ export const SearchSection = () => {
                             <span className="text-foreground truncate font-medium">
                               {variant.itemArticle}
                             </span>
-                            <span className="text-muted-foreground truncate">
+                            <span
+                              className={cn(
+                                "text-muted-foreground truncate text-sm",
+                                "md:text-base",
+                              )}
+                            >
                               {product.productType}
                             </span>
                           </div>
 
                           <div className="flex shrink-0 flex-col items-end justify-center pl-2">
                             {variant.price > 0 ? (
-                              <span className="text-foreground whitespace-nowrap">
+                              <span
+                                className={cn(
+                                  "text-foreground text-sm whitespace-nowrap",
+                                  "md:text-base",
+                                )}
+                              >
                                 от {variant.price.toLocaleString("ru-RU")} ₽
                               </span>
                             ) : (
-                              <span className="text-muted-foreground whitespace-nowrap">
+                              <span
+                                className={cn(
+                                  "text-muted-foreground text-sm whitespace-nowrap",
+                                  "md:text-base",
+                                )}
+                              >
                                 По запросу
                               </span>
                             )}

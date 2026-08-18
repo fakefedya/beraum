@@ -20,9 +20,7 @@ export const PartnershipForm = () => {
         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10">
           <CheckCircle2 className="h-8 w-8 text-green-600" />
         </div>
-        <h3 className="mb-3 text-3xl font-medium tracking-tight">
-          Заявка отправлена
-        </h3>
+        <h3 className="mb-3 text-3xl font-medium">Заявка отправлена</h3>
         <p className="text-muted-foreground max-w-sm text-lg">
           Наш менеджер свяжется с вами в ближайшее время.
         </p>

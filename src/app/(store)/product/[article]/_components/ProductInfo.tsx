@@ -88,7 +88,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
           <span className="text-muted-foreground text-lg text-balance">
             {product.productType}
           </span>
-          <h1 className="text-foreground text-3xl font-semibold tracking-tight uppercase lg:text-4xl">
+          <h1 className="text-foreground text-3xl font-semibold uppercase lg:text-4xl">
             {product.siteArticle}
           </h1>
           <span className="text-muted-foreground text-sm">
@@ -205,7 +205,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
                   <div className="flex flex-col items-start gap-4 overflow-hidden">
                     <Icon className="size-10 shrink-0" />
                     <div className="flex flex-col gap-0.5">
-                      <span className="text-foreground text-base font-semibold tracking-tight transition-colors">
+                      <span className="text-foreground text-base font-semibold transition-colors">
                         {mp.label}
                       </span>
                       {mp.promoText && (

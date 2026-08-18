@@ -63,6 +63,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
         className={cn(
           "bg-background flex w-full flex-col gap-0 border-none px-7 pt-21 pb-8",
           "sm:max-w-full",
+          "md:w-fit md:rounded-tr-4xl md:rounded-br-4xl",
         )}
       >
         <SheetTitle className="sr-only">Навигация по сайту</SheetTitle>
@@ -172,10 +173,10 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                                     />
                                   </div>
                                   <div className="bg-background/80 shadow-nav absolute bottom-4 left-4 flex w-fit max-w-[calc(100%-32px)] flex-col gap-0 rounded-[12px] px-4 py-1.5 backdrop-blur-xl backdrop-saturate-150">
-                                    <span className="line-clamp-1 font-medium tracking-tight">
+                                    <span className="line-clamp-1 font-medium">
                                       {card.label}
                                     </span>
-                                    <span className="text-muted-foreground line-clamp-2 text-sm tracking-tight">
+                                    <span className="text-muted-foreground line-clamp-2 text-sm">
                                       {card.description}
                                     </span>
                                   </div>
