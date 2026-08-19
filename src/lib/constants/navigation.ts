@@ -166,8 +166,24 @@ export type FooterLink = {
 };
 
 export const FOOTER_LINKS: FooterLink[] = [
-  { label: "Политика конфиденциальности", href: "/policies/privacy" },
-  { label: "Пользовательское соглашение", href: "/policies/terms" },
-  { label: "Комплектация и возврат", href: "/policies/returns" },
-  { label: "Реквизиты", href: "/policies/returns1" },
+  {
+    label: "Политика конфиденциальности",
+    href: "/policies/privacy",
+  },
+  {
+    label: "Согласие на обработку данных",
+    href: "/policies/consent",
+  },
+  {
+    label: "Пользовательское соглашение",
+    href: "/policies/terms",
+  },
+  {
+    label: "Гарантия и возврат",
+    href: "/policies/returns",
+  },
+  {
+    label: "Реквизиты",
+    href: "/policies/requisites",
+  },
 ] as const;

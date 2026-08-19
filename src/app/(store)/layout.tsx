@@ -1,11 +1,13 @@
 import "@/src/app/globals.css";
 import { Golos_Text } from "next/font/google";
+import { cookies } from "next/headers";
 
 import { Footer } from "@/src/components/shared/Footer";
 import { Header } from "@/src/components/shared/header/Header";
 import { Main } from "@/src/components/shared/Main";
 import { cn } from "@/src/lib/utils";
 import { Toaster } from "@/src/components/ui/sonner";
+import { CookieBanner } from "@/src/components/shared/CookieBanner";
 
 const golosText = Golos_Text({
   subsets: ["latin", "cyrillic"],
@@ -13,11 +15,14 @@ const golosText = Golos_Text({
   variable: "--font-golos-text",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const hasConsent = cookieStore.has("beraum_cookie_consent");
+
   return (
     <html
       lang="ru"
@@ -32,6 +37,9 @@ export default function RootLayout({
           <Main>{children}</Main>
           <Footer />
         </div>
+
+        {!hasConsent && <CookieBanner />}
+
         <Toaster position="bottom-right" />
       </body>
     </html>
