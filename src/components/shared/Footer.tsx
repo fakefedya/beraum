@@ -53,6 +53,7 @@ export const Footer = () => {
               side="top"
               align="end"
               sideOffset={16}
+              onCloseAutoFocus={(e) => e.preventDefault()}
               className="shadow-card bg-background min-w-60 rounded-[16px] border-none p-1.5"
             >
               {FOOTER_LINKS.map((link) => (
