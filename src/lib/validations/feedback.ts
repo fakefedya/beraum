@@ -82,6 +82,15 @@ export const supportSchema = baseContactSchema.extend({
   mediaKeys: z.array(z.string()).max(5, "Максимум 5 файлов").optional(),
 });
 
+// 4. Схема для формы "Консультация"
+export const consultSchema = baseContactSchema.extend({
+  message: z
+    .string({ message: "Опишите вопрос" })
+    .min(10, "Опишите ваши задачи подробнее (минимум 10 символов)")
+    .max(500, "Сообщение не должно превышать 500 символов")
+    .transform(sanitizeText),
+});
+
 export const parseZodErrors = (zodError: z.ZodError) => {
   const fieldErrors: Record<string, string> = {};
   zodError.issues.forEach((issue) => {
