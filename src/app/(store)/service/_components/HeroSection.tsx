@@ -90,7 +90,7 @@ export const HeroSection = () => {
                 <div
                   key={i}
                   className={cn(
-                    "bg-background/80 flex flex-col gap-4 rounded-4xl p-6 shadow-sm backdrop-blur-xl backdrop-saturate-150 transition-all duration-300",
+                    "bg-background/80 flex flex-col gap-4 rounded-4xl p-6 backdrop-blur-xl backdrop-saturate-150 transition-all duration-300",
                     "hover:bg-background hover:shadow-md",
                     "lg:p-8",
                   )}
