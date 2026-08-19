@@ -6,6 +6,7 @@ import { Button } from "@/src/components/ui/button";
 import { submitPartnershipAction } from "@/src/server/actions/feedback.actions";
 import { FloatingField } from "@/src/components/shared/FloatingField";
 import { cn } from "@/src/lib/utils";
+import { Checkbox } from "@/src/components/ui/checkbox";
 
 export const PartnershipForm = () => {
   const [state, formAction, isPending] = useActionState(
@@ -100,30 +101,55 @@ export const PartnershipForm = () => {
         * – обязательные поля
       </span>
 
-      <div className="flex flex-col items-center gap-4">
-        {" "}
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-start gap-3">
+            <Checkbox
+              id="consent"
+              name="consent"
+              value="on"
+              disabled={isPending}
+              defaultChecked={state.payload?.consent === "on"}
+              className="mt-1 shrink-0"
+            />
+            <label
+              htmlFor="consent"
+              className="text-foreground/80 cursor-pointer text-sm leading-relaxed"
+            >
+              Я даю согласие на{" "}
+              <a
+                href="/policies/consent"
+                target="_blank"
+                className="text-foreground/80 hover:text-brand-secondary underline underline-offset-4 transition-colors"
+              >
+                обработку персональных данных
+              </a>{" "}
+              и соглашаюсь с{" "}
+              <a
+                href="/policies/privacy"
+                target="_blank"
+                className="text-muted-foreground/80 hover:text-brand-secondary underline underline-offset-4 transition-colors"
+              >
+                политикой конфиденциальности
+              </a>
+              .
+            </label>
+          </div>
+          {state.fieldErrors?.consent && (
+            <div className="flex items-center gap-1.5 px-1 text-xs font-medium text-red-500">
+              <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+              <span>{state.fieldErrors.consent}</span>
+            </div>
+          )}
+        </div>
+
         <Button
           type="submit"
           disabled={isPending}
-          className="bg-brand-secondary text-foreground hover:bg-brand-secondary/90 mt-2 h-14 w-full rounded-xl text-base font-medium transition-all disabled:cursor-not-allowed disabled:opacity-70"
+          className="bg-brand-secondary text-foreground hover:bg-brand-secondary/90 h-14 w-full rounded-xl text-base font-medium transition-all disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isPending ? "Отправка..." : "Оставить заявку"}
         </Button>
-        <p
-          className={cn(
-            "text-muted-foreground/80 max-w-full text-center text-xs",
-            "md:max-w-[75%]",
-          )}
-        >
-          Нажимая кнопку «Оставить заявку», вы подтверждаете своё согласие на{" "}
-          <a
-            href="/policies/privacy"
-            className="text-foreground/80 underline underline-offset-4 hover:no-underline"
-          >
-            обработку персональных данных
-          </a>
-          .
-        </p>
       </div>
     </form>
   );

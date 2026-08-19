@@ -55,11 +55,19 @@ export async function submitPartnershipAction(
     const { name, phone, email, company, message } = parsed.data;
 
     const headersList = await headers();
-    const forwardedFor = headersList.get("x-forwarded-for");
+
     const realIp = headersList.get("x-real-ip");
-    const ip =
-      realIp ||
-      (forwardedFor ? forwardedFor.split(",")[0].trim() : "127.0.0.1");
+    const forwardedFor = headersList.get("x-forwarded-for");
+
+    let ip = "127.0.0.1";
+    if (realIp) {
+      ip = realIp;
+    } else if (forwardedFor) {
+      // Берем самый правый IP из цепочки (ближайший к нашему серверу)
+      const ips = forwardedFor.split(",");
+      ip = ips[ips.length - 1].trim();
+    }
+
     const ipHash = crypto.createHash("sha256").update(ip).digest("hex");
 
     const now = Date.now();

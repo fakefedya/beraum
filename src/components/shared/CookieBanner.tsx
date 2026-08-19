@@ -54,7 +54,7 @@ export const CookieBanner = () => {
         <Button
           onClick={acceptCookies}
           className={cn(
-            "bg-brand text-foreground h-12 w-full shrink-0 rounded-xl px-6 font-semibold shadow-sm",
+            "bg-brand text-foreground h-12 w-full shrink-0 rounded-xl px-6 font-semibold",
             "hover:bg-brand/80 transition-all duration-300",
             "md:w-fit md:rounded-[16px]",
           )}

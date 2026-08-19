@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const sanitizeText = (val: string) => val.trim();
+const sanitizeText = (val: string) => val.replace(/<[^>]*>?/gm, "").trim();
 
 const RU_PHONE_REGEX =
   /^(?:\+7|8|7)[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$/;
@@ -25,6 +25,10 @@ const baseContactSchema = z.object({
     .email("Некорректный формат почты")
     .max(150)
     .transform((val) => val.toLowerCase()),
+
+  consent: z.unknown().refine((val) => val === "on", {
+    message: "Необходимо согласие на обработку персональных данных",
+  }),
 });
 
 // 2. Схема для формы "Сотрудничество"
