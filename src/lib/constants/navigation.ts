@@ -20,7 +20,7 @@ export type NavMenuMega = {
 export type NavMenuDefault = {
   label: string;
   type: "default";
-  items: { label: string; href: string; cover: string }[];
+  items: { label: string; href: string; cover: string; description: string }[];
 };
 export type NavItem = NavLink | NavExternal | NavMenuDefault | NavMenuMega;
 
@@ -79,11 +79,13 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
           label: "О бренде",
           href: "/about",
           cover: "system-assets/components/navigation/about-cover.png",
+          description: "Узнайте о нашей миссии и подходе к производству",
         },
         {
           label: "Сотрудничество",
           href: "/partnership",
           cover: "system-assets/components/navigation/partnership-cover.png",
+          description: "Индивидуальные условия для B2B и дизайнеров",
         },
       ],
     },
@@ -95,16 +97,19 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
           label: "Поддержка",
           href: "/support",
           cover: "system-assets/components/navigation/support-cover.png",
+          description: "Прямая связь с техническими инженерами",
         },
         {
           label: "Гарантия",
           href: "/service",
           cover: "system-assets/components/navigation/service-cover.png",
+          description: "Полная защита и честные условия обслуживания",
         },
         {
           label: "Вопросы и ответы",
           href: "/faq",
           cover: "system-assets/components/navigation/faq-cover.png",
+          description: "Ответы на самые частые вопросы клиентов",
         },
       ],
     },
@@ -120,11 +125,17 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
       label: "О дисконте",
       type: "default",
       items: [
-        { label: "О дисконте", href: "/discount/about", cover: "" },
+        {
+          label: "О дисконте",
+          href: "/discount/about",
+          cover: "",
+          description: "Ответы на самые частые вопросы клиентов",
+        },
         {
           label: "Сделать оптовое предложение",
           href: "/discount/partnership",
           cover: "",
+          description: "Ответы на самые частые вопросы клиентов",
         },
       ],
     },
@@ -132,8 +143,18 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
       label: "Сервис",
       type: "default",
       items: [
-        { label: "Поддержка", href: "/support", cover: "" },
-        { label: "Частые вопросы", href: "/faq", cover: "" },
+        {
+          label: "Поддержка",
+          href: "/support",
+          cover: "",
+          description: "Ответы на самые частые вопросы клиентов",
+        },
+        {
+          label: "Частые вопросы",
+          href: "/faq",
+          cover: "",
+          description: "Ответы на самые частые вопросы клиентов",
+        },
       ],
     },
   ],

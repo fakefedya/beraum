@@ -16,7 +16,7 @@ export const HeroSection = () => {
   return (
     <Section>
       <Container maxWidth="7xl" className={cn("pt-24", "md:pt-32")}>
-        <div className="bg-brand-gradient-alter relative flex flex-col gap-8 overflow-hidden rounded-4xl">
+        <div className="bg-brand-gradient relative flex flex-col gap-8 overflow-hidden rounded-4xl">
           <div
             className={cn(
               "absolute top-6 left-1/2 z-30 -translate-x-1/2",

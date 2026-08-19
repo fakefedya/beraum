@@ -216,29 +216,35 @@ const DefaultMenuNode = ({
                     )}
                   >
                     <div className="bg-card relative h-full w-full overflow-hidden rounded-lg">
-                      <SafeImage
-                        src={imageUrl}
-                        alt={subItem.label}
-                        fill
-                        sizes="(max-width: 1024px) 100vw, 66vw"
-                        className={cn(
-                          "object-cover",
-                          "transition-transform duration-500 group-hover:scale-102",
+                      <div className="flex flex-col gap-4 p-4">
+                        {subItem.href === "/support" ? (
+                          <span className="flex gap-1 font-medium">
+                            {subItem.label}
+                            <div className="relative flex h-2 w-2">
+                              <span className="bg-brand-secondary absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
+                              <span className="bg-brand-secondary relative inline-flex h-2 w-2 rounded-full"></span>
+                            </div>
+                          </span>
+                        ) : (
+                          <span className="font-medium">{subItem.label}</span>
                         )}
-                      />
-                    </div>
-                    <div className="absolute top-4 left-4 flex flex-col gap-0">
-                      {subItem.href === "/support" ? (
-                        <span className="flex gap-1 font-medium">
-                          {subItem.label}
-                          <div className="relative flex h-2 w-2">
-                            <span className="bg-brand-secondary absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
-                            <span className="bg-brand-secondary relative inline-flex h-2 w-2 rounded-full"></span>
-                          </div>
+                        <span className="text-muted-foreground leading-relaxed text-pretty">
+                          {subItem.description}
                         </span>
-                      ) : (
-                        <span className="font-medium">{subItem.label}</span>
-                      )}
+                      </div>
+
+                      <div className="absolute -right-1/3 -bottom-1/3 h-full w-full">
+                        <SafeImage
+                          src={imageUrl}
+                          alt={subItem.label}
+                          fill
+                          sizes="(max-width: 1024px) 100vw, 66vw"
+                          className={cn(
+                            "object-contain",
+                            "transition-transform duration-500 group-hover:scale-102",
+                          )}
+                        />
+                      </div>
                     </div>
                   </Link>
                 </NavigationMenuLink>
