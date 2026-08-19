@@ -13,23 +13,26 @@ export const StatisticSection = () => {
             "md:grid-cols-3",
           )}
         >
-          {ABOUT_STATS.map((el, i) => (
-            <div
-              className={cn(
-                "bg-card flex flex-col gap-2 rounded-4xl p-6",
-                "md:p-8",
-              )}
-              key={i}
-            >
-              <el.icon
-                className="text-brand-secondary mb-2"
-                size={48}
-                strokeWidth={1.2}
-              />
-              <span className="text-3xl font-medium">{el.value}</span>
-              <span className="text-muted-foreground">{el.label}</span>
-            </div>
-          ))}
+          {ABOUT_STATS.map((el, i) => {
+            const Icon = el.icon;
+            return (
+              <div
+                className={cn(
+                  "bg-card flex flex-col gap-2 rounded-4xl p-6",
+                  "md:p-8",
+                )}
+                key={i}
+              >
+                <Icon
+                  className="text-brand-secondary mb-2"
+                  size={48}
+                  strokeWidth={1.2}
+                />
+                <span className="text-3xl font-medium">{el.value}</span>
+                <span className="text-muted-foreground">{el.label}</span>
+              </div>
+            );
+          })}
         </div>
       </Container>
     </Section>

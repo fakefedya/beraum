@@ -39,7 +39,7 @@ export const NavDesktop = ({ links }: NavDesktopProps) => {
   return (
     <NavigationMenuList
       className={cn(
-        "bg-card hidden h-12 w-fit items-center gap-0 rounded-[16px] p-1",
+        "bg-card hidden h-12 w-fit items-center gap-1 rounded-[16px] p-1",
         "lg:flex",
       )}
     >
