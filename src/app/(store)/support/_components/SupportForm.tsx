@@ -387,8 +387,8 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
         <div className="bg-card text-foreground flex items-center gap-3 rounded-2xl p-4">
           <Info className="mt-0.5 h-5 w-5 shrink-0" />
           <p className="text-sm">
-            Пожалуйста, укажите корректные данные: свяжемся с вами по Telegram,
-            привязанному к номеру телефона, либо напишем на почту.
+            Пожалуйста, укажите корректные данные: свяжемся с вами по Telegram
+            или MAX, привязанным к номеру телефона, либо напишем на почту.
           </p>
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

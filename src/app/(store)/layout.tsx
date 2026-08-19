@@ -19,7 +19,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={cn("font-sans antialiased", golosText.variable)}>
+    <html
+      lang="ru"
+      className={cn(
+        "scrollbar-track-background scrollbar-thumb-muted-foreground/20 font-sans antialiased",
+        golosText.variable,
+      )}
+    >
       <body>
         <div className="relative flex h-full min-h-screen flex-col">
           <Header />

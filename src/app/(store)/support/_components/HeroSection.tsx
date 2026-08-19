@@ -3,6 +3,7 @@ import { Section } from "@/src/components/shared/Section";
 import { cn } from "@/src/lib/utils";
 import Link from "next/link";
 import { WORK_SCHEDULE_INFO } from "@/src/app/(store)/support/_components/data";
+import { SupportDot } from "@/src/components/shared/SupportDot";
 
 export const HeroSection = () => {
   const info = WORK_SCHEDULE_INFO.information;
@@ -12,20 +13,14 @@ export const HeroSection = () => {
         <div className="mx-auto flex flex-col items-center justify-center gap-8 text-center">
           <h1
             className={cn(
-              "text-foreground flex gap-0.5 text-4xl font-semibold tracking-tight text-balance",
+              "text-foreground flex gap-1 text-4xl font-semibold tracking-tight text-balance",
               "md:text-5xl lg:text-6xl",
             )}
           >
             Поддержка
-            <span className={cn("relative flex h-2 w-2", "md:h-4 md:w-4")}>
-              <span className="bg-brand-secondary absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
-              <span
-                className={cn(
-                  "bg-brand-secondary relative inline-flex h-2 w-2 rounded-full",
-                  "md:h-4 md:w-4",
-                )}
-              ></span>
-            </span>
+            <SupportDot
+              className={cn("mt-1.5 h-2 w-2", "md:mt-2.5 md:h-4 md:w-4")}
+            />
           </h1>
           <p
             className={cn(

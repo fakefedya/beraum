@@ -27,6 +27,7 @@ import {
 import { Icons } from "@/src/components/ui/icons";
 import { buildImageUrl, cn } from "@/src/lib/utils";
 import { SafeImage } from "../../SafeImage";
+import { SupportDot } from "../../SupportDot";
 
 interface NavMobileProps {
   links: readonly NavItem[];
@@ -210,10 +211,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
                               {subItem.href === "/support" ? (
                                 <span className="flex gap-1">
                                   {subItem.label}
-                                  <div className="relative flex h-2 w-2">
-                                    <span className="bg-brand-secondary absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
-                                    <span className="bg-brand-secondary relative inline-flex h-2 w-2 rounded-full"></span>
-                                  </div>
+                                  <SupportDot className="mt-0.5 h-2 w-2" />
                                 </span>
                               ) : (
                                 subItem.label

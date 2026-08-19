@@ -21,6 +21,7 @@ import type {
 } from "@/src/lib/constants";
 import { Badge } from "@/src/components/ui/badge";
 import { SafeImage } from "../../SafeImage";
+import { SupportDot } from "../../SupportDot";
 
 interface NavDesktopProps {
   links: readonly NavItem[];
@@ -220,10 +221,7 @@ const DefaultMenuNode = ({
                         {subItem.href === "/support" ? (
                           <span className="flex gap-1 font-medium">
                             {subItem.label}
-                            <div className="relative flex h-2 w-2">
-                              <span className="bg-brand-secondary absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
-                              <span className="bg-brand-secondary relative inline-flex h-2 w-2 rounded-full"></span>
-                            </div>
+                            <SupportDot className="mt-0.5 h-2 w-2" />
                           </span>
                         ) : (
                           <span className="font-medium">{subItem.label}</span>
