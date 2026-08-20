@@ -90,7 +90,11 @@ export const consultSchema = baseContactSchema.extend({
     .max(1000, "Вопрос не должен превышать 1000 символов")
     .transform(sanitizeText),
 
-  sourcePage: z.string().max(255).optional(),
+  sourcePage: z
+    .string()
+    .startsWith("/", "Некорректный путь")
+    .max(255)
+    .optional(),
 });
 
 export const parseZodErrors = (zodError: z.ZodError) => {

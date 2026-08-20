@@ -2,12 +2,19 @@
 
 import { useState, useActionState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { MessageSquare, X, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  MessageSquare,
+  X,
+  CheckCircle2,
+  AlertCircle,
+  Info,
+} from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { FloatingField } from "@/src/components/shared/FloatingField";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import { submitConsultAction } from "@/src/server/actions/feedback.actions";
 import { cn } from "@/src/lib/utils";
+import Link from "next/link";
 
 const ConsultFormContent = ({ onClose }: { onClose: () => void }) => {
   const pathname = usePathname();
@@ -40,7 +47,6 @@ const ConsultFormContent = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <form action={formAction} className="flex h-full flex-col gap-4" noValidate>
-      {/* Скрытый инпут для трекинга URL */}
       <input type="hidden" name="sourcePage" value={pathname} />
 
       {state.error && (
@@ -49,6 +55,21 @@ const ConsultFormContent = ({ onClose }: { onClose: () => void }) => {
           <p className="text-sm font-medium">{state.error}</p>
         </div>
       )}
+
+      <div className="bg-card text-foreground flex items-start gap-3 rounded-2xl p-4">
+        <Info className="text-muted-foreground mt-0.5 h-5 w-5 shrink-0" />
+        <p className="text-sm">
+          Если вы хотите сообщить о неисправности —{" "}
+          <Link
+            href="/support"
+            onClick={onClose}
+            className="text-brand-secondary-muted hover:text-brand-secondary font-medium transition-colors"
+          >
+            создайте обращение
+          </Link>{" "}
+          в поддержку.
+        </p>
+      </div>
 
       <FloatingField
         name="name"
@@ -91,7 +112,7 @@ const ConsultFormContent = ({ onClose }: { onClose: () => void }) => {
               value="on"
               disabled={isPending}
               defaultChecked={state.payload?.consent === "on"}
-              className="mt-1 shrink-0"
+              className="shrink-0"
             />
             <label
               htmlFor="consult-consent"

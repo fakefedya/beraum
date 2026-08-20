@@ -112,7 +112,7 @@ export const PartnershipForm = () => {
               value="on"
               disabled={isPending}
               defaultChecked={state.payload?.consent === "on"}
-              className="mt-1 shrink-0"
+              className="shrink-0"
             />
             <label
               htmlFor="consent"
