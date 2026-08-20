@@ -5,6 +5,7 @@ import crypto from "crypto";
 import { db } from "@/src/server/db/client";
 import { feedbackRequests } from "@/src/server/db/schema/feedback.schema";
 import {
+  consultSchema,
   partnershipSchema,
   supportSchema,
 } from "@/src/lib/validations/feedback";
@@ -196,6 +197,81 @@ export async function submitSupportAction(
     return {
       success: false,
       error: "Внутренняя ошибка сервера.",
+      payload: data,
+    };
+  }
+}
+
+export async function submitConsultAction(
+  prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const data = Object.fromEntries(formData.entries());
+
+  try {
+    const parsed = consultSchema.safeParse(data);
+
+    if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      parsed.error.issues.forEach((issue) => {
+        if (issue.path[0])
+          fieldErrors[issue.path[0].toString()] = issue.message;
+      });
+
+      return { success: false, fieldErrors, payload: data };
+    }
+
+    const { name, phone, email, message, sourcePage } = parsed.data;
+
+    const headersList = await headers();
+    const realIp = headersList.get("x-real-ip");
+    const forwardedFor = headersList.get("x-forwarded-for");
+
+    let ip = "127.0.0.1";
+    if (realIp) {
+      ip = realIp;
+    } else if (forwardedFor) {
+      const ips = forwardedFor.split(",");
+      ip = ips[ips.length - 1].trim();
+    }
+
+    const ipHash = crypto.createHash("sha256").update(ip).digest("hex");
+    const now = Date.now();
+    const record = rateLimitMap.get(ipHash);
+
+    if (record && now < record.resetAt) {
+      if (record.count >= MAX_REQUESTS) {
+        return {
+          success: false,
+          error: "Слишком много запросов. Подождите минуту.",
+          payload: data,
+        };
+      }
+      record.count += 1;
+    } else {
+      rateLimitMap.set(ipHash, {
+        count: 1,
+        resetAt: now + RATE_LIMIT_WINDOW_MS,
+      });
+    }
+
+    // Запись в БД
+    await db.insert(feedbackRequests).values({
+      type: "consultation",
+      name,
+      phone,
+      email,
+      message,
+      payload: { sourcePage: sourcePage || "/" },
+      ipHash,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("❌ Ошибка сохранения вопроса:", error);
+    return {
+      success: false,
+      error: "Внутренняя ошибка сервера. Повторите позже.",
       payload: data,
     };
   }

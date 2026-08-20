@@ -27,8 +27,10 @@ export const PartnershipForm = () => {
           Наш менеджер свяжется с вами в ближайшее время.
         </p>
         <Button
-          variant="outline"
-          className="mt-8 h-12 rounded-xl px-8"
+          className={cn(
+            "bg-foreground text-background mt-8 h-12 w-fit rounded-xl px-8",
+            "hover:bg-foreground/80 transition-colors duration-300",
+          )}
           onClick={() => window.location.reload()}
         >
           Отправить еще

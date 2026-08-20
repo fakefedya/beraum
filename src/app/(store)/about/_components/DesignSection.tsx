@@ -48,7 +48,7 @@ export const DesignSection = () => {
               className={cn(
                 "text-foreground bg-brand-secondary mt-8 hidden h-12 items-center gap-2 rounded-[16px] px-2 text-base font-medium",
                 "w-fit lg:flex xl:gap-4 xl:px-4",
-                "hover:bg-brand/90 transition-colors duration-300",
+                "hover:bg-brand-secondary/80 transition-colors duration-300",
               )}
             >
               <a

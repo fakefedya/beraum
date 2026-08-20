@@ -32,7 +32,10 @@ export const MarketplaceDropdown = () => {
           )}
         >
           Где купить
-          <ChevronDown className="transition-transform duration-300" />
+          <ChevronDown
+            size={18}
+            className="transition-transform duration-300"
+          />
         </Button>
       </DropdownMenuTrigger>
 

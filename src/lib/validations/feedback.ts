@@ -85,10 +85,12 @@ export const supportSchema = baseContactSchema.extend({
 // 4. Схема для формы "Консультация"
 export const consultSchema = baseContactSchema.extend({
   message: z
-    .string({ message: "Опишите вопрос" })
-    .min(10, "Опишите ваши задачи подробнее (минимум 10 символов)")
-    .max(500, "Сообщение не должно превышать 500 символов")
+    .string({ message: "Напишите ваш вопрос" })
+    .min(10, "Вопрос слишком короткий (минимум 10 символов)")
+    .max(1000, "Вопрос не должен превышать 1000 символов")
     .transform(sanitizeText),
+
+  sourcePage: z.string().max(255).optional(),
 });
 
 export const parseZodErrors = (zodError: z.ZodError) => {

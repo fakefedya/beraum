@@ -41,12 +41,12 @@ const ExternalLinkNode = ({ item }: { item: NavExternal }) => {
           className={cn(
             navigationMenuTriggerStyle(),
             "text-foreground h-12 rounded-[14px] px-2 text-[15px] font-medium",
-            "hover:bg-card gap-2 [&_svg]:size-4.5",
+            "hover:bg-card gap-2",
             "xl:px-4",
           )}
         >
           {item.label}
-          <ExternalLink />
+          <ExternalLink size={18} strokeWidth={2} />
         </a>
       </NavigationMenuLink>
     </NavigationMenuItem>

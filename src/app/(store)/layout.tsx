@@ -8,6 +8,7 @@ import { Main } from "@/src/components/shared/Main";
 import { cn } from "@/src/lib/utils";
 import { Toaster } from "@/src/components/ui/sonner";
 import { CookieBanner } from "@/src/components/shared/CookieBanner";
+import { ConsultWidget } from "@/src/components/shared/ConsultWidget";
 
 const golosText = Golos_Text({
   subsets: ["latin", "cyrillic"],
@@ -40,6 +41,7 @@ export default async function RootLayout({
 
         {!hasConsent && <CookieBanner />}
 
+        <ConsultWidget />
         <Toaster position="bottom-right" />
       </body>
     </html>
