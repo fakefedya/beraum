@@ -2,15 +2,15 @@
 
 import { cn } from "@/src/lib/utils";
 import { useSupportStatus } from "@/src/hooks/use-support-status";
+import { Badge } from "../ui/badge";
 
 interface SupportDotProps {
-  className?: string; // Позволит управлять размером из родительских компонентов
+  className?: string;
 }
 
-export const SupportDot = ({ className }: SupportDotProps) => {
+export const SupportStatus = ({ className }: SupportDotProps) => {
   const { isOpen, isMounted } = useSupportStatus();
 
-  // Защита от Hydration Mismatch: до монтирования на клиенте отдаем серую заглушку
   if (!isMounted) {
     return (
       <span className={cn("relative flex shrink-0", className)}>
@@ -32,7 +32,11 @@ export const SupportDot = ({ className }: SupportDotProps) => {
   // Нерабочее время (Красный цвет, без анимации)
   return (
     <span className={cn("relative flex shrink-0", className)}>
-      <span className="bg-destructive relative inline-flex h-full w-full rounded-full shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+      <span className="absolute inline-flex">
+        <Badge className="bg-red-100 font-medium tracking-normal text-red-700 uppercase">
+          Офлайн
+        </Badge>
+      </span>
     </span>
   );
 };

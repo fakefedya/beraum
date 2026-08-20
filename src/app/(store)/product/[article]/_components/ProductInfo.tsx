@@ -100,6 +100,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
           <div className="flex flex-col gap-3">
             {product.price > 0 ? (
               <div className="text-foreground text-3xl font-medium">
+                <span className="text-muted-foreground text-sm">от</span>{" "}
                 {product.price.toLocaleString("ru-RU")} ₽
               </div>
             ) : (

@@ -7,15 +7,27 @@ export const LegalTermsSection = () => {
   return (
     <Section>
       <Container maxWidth="5xl" className="gap-12">
-        <h2
-          className={cn(
-            "text-center text-3xl font-medium",
-            "md:text-4xl",
-            "lg:text-5xl",
-          )}
-        >
-          Юридическая прозрачность
-        </h2>
+        <div className="flex flex-col gap-4 text-center">
+          <h2
+            className={cn(
+              "text-center text-3xl font-medium",
+              "md:text-4xl",
+              "lg:text-5xl",
+            )}
+          >
+            Юридическая прозрачность
+          </h2>
+          <p
+            className={cn(
+              "text-muted-foreground text-base leading-relaxed text-pretty",
+              "md:text-lg",
+            )}
+          >
+            Гарантия покрывает производственные дефекты и неисправности изделия,
+            возникшие при правильной установке, подключении и эксплуатации в
+            соответствии с инструкцией.
+          </p>
+        </div>
 
         <div className={cn("grid w-full grid-cols-1 gap-4", "md:grid-cols-2")}>
           {LEGAL_TERMS.map((section, idx) => (

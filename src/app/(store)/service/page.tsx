@@ -14,7 +14,7 @@ export default function ServicePage() {
   return (
     <>
       <HeroSection />
-      <ConditionsSection />
+      {/* <ConditionsSection /> */}
       <LegalTermsSection />
       <SupportActionBlock />
     </>

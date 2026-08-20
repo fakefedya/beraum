@@ -51,7 +51,7 @@ const checkIsOpen = (
 
 export function useSupportStatus(
   workDays = ["Mon", "Tue", "Wed", "Thu", "Fri"],
-  startHour = 10,
+  startHour = 11,
   endHour = 19,
 ) {
   const getSnapshot = () => checkIsOpen(workDays, startHour, endHour);

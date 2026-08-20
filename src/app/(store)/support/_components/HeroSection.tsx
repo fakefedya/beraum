@@ -3,7 +3,7 @@ import { Section } from "@/src/components/shared/Section";
 import { cn } from "@/src/lib/utils";
 import Link from "next/link";
 import { WORK_SCHEDULE_INFO } from "@/src/app/(store)/support/_components/data";
-import { SupportDot } from "@/src/components/shared/SupportDot";
+import { SupportStatus } from "@/src/components/shared/SupportStatus";
 
 export const HeroSection = () => {
   const info = WORK_SCHEDULE_INFO.information;
@@ -18,7 +18,7 @@ export const HeroSection = () => {
             )}
           >
             Поддержка
-            <SupportDot
+            <SupportStatus
               className={cn("mt-1.5 h-2 w-2", "md:mt-2.5 md:h-4 md:w-4")}
             />
           </h1>
@@ -43,7 +43,7 @@ export const HeroSection = () => {
             службу поддержки.
           </p>
           {WORK_SCHEDULE_INFO.isEnabled && (
-            <div className="rounded-2xl bg-[#fa6d2014] p-4 text-[#e35502]">
+            <div className="rounded-2xl bg-orange-50 p-4 text-orange-700">
               <div
                 className={cn(
                   "flex items-center justify-center gap-4",
