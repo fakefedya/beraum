@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import { HeroSection } from "./_components/HeroSection";
-import { ConditionsSection } from "./_components/ConditionsSection";
 import { LegalTermsSection } from "./_components/LegalTermsSection";
 import { SupportActionBlock } from "@/src/components/shared/blocks/SupportActionBlock";
 
@@ -14,7 +13,6 @@ export default function ServicePage() {
   return (
     <>
       <HeroSection />
-      {/* <ConditionsSection /> */}
       <LegalTermsSection />
       <SupportActionBlock />
     </>
