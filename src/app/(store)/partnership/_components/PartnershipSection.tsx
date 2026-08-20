@@ -6,7 +6,7 @@ import { cn } from "@/src/lib/utils";
 export const PartnershipSection = () => {
   return (
     <Section>
-      <Container maxWidth="2xl">
+      <Container maxWidth="3xl">
         <div className="flex flex-col gap-16">
           <div className="flex flex-col gap-4 text-center">
             <h2

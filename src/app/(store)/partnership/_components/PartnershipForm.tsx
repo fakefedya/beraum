@@ -41,7 +41,7 @@ export const PartnershipForm = () => {
     <form
       id="partnership-form"
       action={formAction}
-      className="mx-auto flex w-full max-w-2xl flex-col gap-4"
+      className="flex w-full max-w-3xl flex-col gap-4"
       noValidate
     >
       {state.error && (
@@ -103,7 +103,7 @@ export const PartnershipForm = () => {
 
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <div className="flex items-start gap-3">
+          <div className={cn("flex items-start gap-3", "md:items-center")}>
             <Checkbox
               id="consent"
               name="consent"
@@ -114,13 +114,13 @@ export const PartnershipForm = () => {
             />
             <label
               htmlFor="consent"
-              className="text-foreground/80 cursor-pointer text-sm leading-relaxed"
+              className="text-foreground/80 cursor-pointer text-sm"
             >
               Я даю согласие на{" "}
               <a
                 href="/policies/consent"
                 target="_blank"
-                className="text-foreground/80 hover:text-brand-secondary underline underline-offset-4 transition-colors"
+                className="text-brand-secondary-muted hover:text-brand-secondary transition-colors"
               >
                 обработку персональных данных
               </a>{" "}
@@ -128,7 +128,7 @@ export const PartnershipForm = () => {
               <a
                 href="/policies/privacy"
                 target="_blank"
-                className="text-muted-foreground/80 hover:text-brand-secondary underline underline-offset-4 transition-colors"
+                className="text-brand-secondary-muted hover:text-brand-secondary transition-colors"
               >
                 политикой конфиденциальности
               </a>
@@ -146,7 +146,7 @@ export const PartnershipForm = () => {
         <Button
           type="submit"
           disabled={isPending}
-          className="bg-brand-secondary text-foreground hover:bg-brand-secondary/90 h-14 w-full rounded-xl text-base font-medium transition-all disabled:cursor-not-allowed disabled:opacity-70"
+          className="bg-brand-secondary text-foreground hover:bg-brand-secondary/80 h-12 w-full rounded-xl text-base font-medium transition-all disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isPending ? "Отправка..." : "Оставить заявку"}
         </Button>

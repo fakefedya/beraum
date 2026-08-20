@@ -431,7 +431,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
 
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <div className="flex items-start gap-3">
+          <div className={cn("flex items-start gap-3", "md:items-center")}>
             <Checkbox
               id="consent"
               name="consent"
@@ -442,13 +442,13 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
             />
             <label
               htmlFor="consent"
-              className="text-muted-foreground cursor-pointer text-sm leading-relaxed"
+              className="text-foreground/80 cursor-pointer text-sm"
             >
               Я даю согласие на{" "}
               <a
                 href="/policies/consent"
                 target="_blank"
-                className="text-foreground hover:text-brand-secondary underline underline-offset-4 transition-colors"
+                className="text-brand-secondary-muted hover:text-brand-secondary transition-colors"
               >
                 обработку персональных данных
               </a>{" "}
@@ -456,7 +456,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
               <a
                 href="/policies/privacy"
                 target="_blank"
-                className="text-foreground hover:text-brand-secondary underline underline-offset-4 transition-colors"
+                className="text-brand-secondary-muted hover:text-brand-secondary transition-colors"
               >
                 политикой конфиденциальности
               </a>
@@ -474,7 +474,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
         <Button
           type="submit"
           disabled={isPending}
-          className="bg-brand-secondary text-foreground hover:bg-brand-secondary/90 h-14 w-full rounded-xl text-lg font-medium transition-all disabled:cursor-not-allowed disabled:opacity-70"
+          className="bg-brand-secondary text-foreground hover:bg-brand-secondary/80 h-12 w-full rounded-xl text-base font-medium transition-all disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isPending ? "Создание обращения..." : "Создать обращение"}
         </Button>
