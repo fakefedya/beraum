@@ -244,7 +244,6 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
                                 </TooltipTrigger>
                                 <TooltipContent
                                   side="bottom"
-                                  // sideOffset={}
                                   className="rounded-lg border-none bg-black px-3 py-1.5 text-white shadow-xl"
                                 >
                                   <span className="text-sm font-medium whitespace-nowrap">

@@ -5,6 +5,12 @@ import Link from "next/link";
 import { type CatalogProduct } from "@/src/server/actions/products.queries";
 import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/src/components/ui/tooltip";
 import { COLOR_SWATCH_MAP, DEFAULT_SWATCH_COLOR } from "@/src/lib/constants";
 import { buildImageUrl, cn } from "@/src/lib/utils";
 import { SafeImage } from "./SafeImage";
@@ -55,22 +61,36 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             const hexColor = variant.colorName
               ? COLOR_SWATCH_MAP[variant.colorName] || DEFAULT_SWATCH_COLOR
               : DEFAULT_SWATCH_COLOR;
+            const colorLabel = variant.colorName || "Стандарт";
 
             return (
-              <Button
-                key={variant.id}
-                onClick={() => setActiveVariant(variant)}
-                aria-checked={isActive}
-                title={variant.colorName || "Стандарт"}
-                className={cn(
-                  "flex h-6 w-6 cursor-pointer items-center justify-center rounded-full p-0 shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)]",
-                  "md:h-4 md:w-4",
-                  isActive && product.variants.length > 1
-                    ? "ring-brand-secondary ring-2 ring-offset-2"
-                    : "border-black/10 hover:border-black/30",
-                )}
-                style={{ backgroundColor: hexColor }}
-              />
+              <TooltipProvider key={variant.id} delayDuration={100}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={() => setActiveVariant(variant)}
+                      aria-checked={isActive}
+                      className={cn(
+                        "flex h-6 w-6 cursor-pointer items-center justify-center rounded-full p-0 shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)]",
+                        "md:h-4 md:w-4",
+                        isActive && product.variants.length > 1
+                          ? "ring-brand-secondary ring-2 ring-offset-2"
+                          : "border-black/10 hover:border-black/30",
+                      )}
+                      style={{ backgroundColor: hexColor }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="bottom"
+                    sideOffset={8}
+                    className="rounded-lg border-none bg-black px-3 py-1.5 text-white shadow-xl"
+                  >
+                    <span className="text-xs font-medium whitespace-nowrap">
+                      {colorLabel}
+                    </span>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             );
           })}
           {hiddenCount > 0 && (
