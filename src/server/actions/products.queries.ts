@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { eq, desc, asc, and, sql, or, ilike, ne } from "drizzle-orm";
+import { eq, desc, asc, and, sql, or, ilike, ne, inArray } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
 import {
   products,
@@ -108,24 +108,27 @@ export async function getProducts(params: GetProductsParams = {}) {
 
     if (filters && categorySlug && CATEGORY_FILTERS[categorySlug]) {
       const allowedFilters = CATEGORY_FILTERS[categorySlug];
-
       for (const [key, value] of Object.entries(filters)) {
         const filterConfig = allowedFilters.find((f) => f.key === key);
         if (!filterConfig) continue;
 
         const valuesArray = Array.isArray(value) ? value : [value];
-        if (valuesArray.length > 0) {
-          const orConditions = valuesArray.map((val) => {
-            const jsonVal = JSON.stringify(val);
-            return sql`${products.filters}->${key} @> ${jsonVal}::jsonb`;
-          });
+        if (valuesArray.length === 0) continue;
 
-          const orClause = or(...orConditions);
-          if (orClause) conditions.push(orClause);
+        if (key === "color") {
+          conditions.push(inArray(products.colorName, valuesArray));
+          continue;
         }
+
+        const orConditions = valuesArray.map((val) => {
+          const jsonVal = JSON.stringify(val);
+          return sql`${products.filters}->${key} @> ${jsonVal}::jsonb`;
+        });
+
+        const orClause = or(...orConditions);
+        if (orClause) conditions.push(orClause);
       }
     }
-
     const items = await db
       .select({
         siteArticle: products.siteArticle,

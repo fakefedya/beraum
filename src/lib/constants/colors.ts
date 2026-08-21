@@ -1,6 +1,6 @@
 export const COLOR_SWATCH_MAP: Record<string, string> = {
   Черный: "#000000",
-  "Матовый черный": "#1A1A1B",
+  "Черный матовый": "#1A1A1B",
   Белый: "#FFFFFF",
   "Матовый белый": "#F3F4F6",
   Бежевый: "#E5D3B3",
