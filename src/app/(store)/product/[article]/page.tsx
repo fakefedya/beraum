@@ -50,7 +50,7 @@ export default async function ProductPage({ params }: PageProps) {
   breadcrumbItems.push({ label: product.siteArticle || "Артикул" });
 
   return (
-    <>
+    <div className={cn("flex flex-col gap-20", "md:gap-30")}>
       <Section>
         <Container className="pt-32" maxWidth="7xl">
           <div className="mb-4 block lg:hidden">
@@ -134,6 +134,6 @@ export default async function ProductPage({ params }: PageProps) {
           )}
         </Container>
       </Section>
-    </>
+    </div>
   );
 }

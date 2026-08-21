@@ -46,7 +46,7 @@ export default async function Category({ params, searchParams }: PageProps) {
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-10">
       <Section>
         <Container className="pt-32">
           <Breadcrumbs
@@ -75,6 +75,6 @@ export default async function Category({ params, searchParams }: PageProps) {
           </div>
         </Container>
       </Section>
-    </>
+    </div>
   );
 }

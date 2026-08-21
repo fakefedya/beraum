@@ -19,7 +19,7 @@ const breadcrumbItems = [
 
 export default function Partnership() {
   return (
-    <>
+    <div className={cn("flex flex-col gap-20", "md:gap-30")}>
       <Section>
         <Container className={cn("pt-24", "md:pt-32")}>
           <Breadcrumbs
@@ -32,6 +32,6 @@ export default function Partnership() {
       <HeroSection />
       <OfferSection />
       <PartnershipSection />
-    </>
+    </div>
   );
 }

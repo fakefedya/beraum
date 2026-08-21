@@ -10,10 +10,8 @@ export const metadata: Metadata = {
 export default async function Home() {
   const { data: slides } = await getActiveSlides();
   return (
-    <div className="flex w-full flex-col">
-      <section className="relative h-dvh w-full">
-        <HeroSlider slides={slides} />
-      </section>
-    </div>
+    <section className="relative h-dvh w-full">
+      <HeroSlider slides={slides} />
+    </section>
   );
 }
