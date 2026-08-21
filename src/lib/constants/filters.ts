@@ -19,12 +19,12 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
     {
       key: "width",
       label: "Ширина панели, см",
-      options: ["35", "45", "53", "59"],
+      options: ["28.8", "31", "32", "35", "45", "52", "53", "59", "60"],
     },
     {
       key: "controlType",
       label: "Тип управления",
-      options: ["Механическое", "Сенсорное", "Электронное"],
+      options: ["Механическое", "Сенсорное"],
     },
     {
       key: "surfaceMaterial",
@@ -40,9 +40,12 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
       key: "protection",
       label: "Системы защиты",
       options: [
+        "Автоотключение",
         "Защита от пролива",
         "Защита от перегрева",
         "Блокировка от детей",
+        "Блокировка кнопки включения",
+        "Газконтроль",
       ],
     },
     {
@@ -55,6 +58,10 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
         "Слайдер",
         "Индикатор остаточного тепла",
         "Таймер",
+        "Модульная Domino",
+        "Расширение зоны нагрева",
+        "Комплект для подключения газового баллона",
+        "Автоматический электроподжиг",
       ],
     },
   ],
