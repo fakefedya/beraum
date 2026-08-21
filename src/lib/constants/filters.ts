@@ -18,8 +18,8 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
     },
     {
       key: "width",
-      label: "Ширина, см",
-      options: ["35", "53", "59"],
+      label: "Ширина панели, см",
+      options: ["35", "45", "53", "59"],
     },
     {
       key: "controlType",
