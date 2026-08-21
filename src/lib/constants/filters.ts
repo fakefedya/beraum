@@ -17,13 +17,13 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
       type: "round",
       key: "burnerCount",
       label: "Количество конфорок",
-      options: ["2", "3", "4", "5"],
+      options: ["2", "3", "4"],
     },
     {
       type: "round",
       key: "width",
       label: "Ширина, см",
-      options: ["30", "45", "60", "90"],
+      options: ["35"],
     },
     {
       type: "oval",
@@ -35,12 +35,7 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
       type: "oval",
       key: "surfaceMaterial",
       label: "Материал поверхности",
-      options: [
-        "Стеклокерамика",
-        "Закаленное стекло",
-        "Нержавеющая сталь",
-        "Эмалированная сталь",
-      ],
+      options: ["Стеклокерамика", "Закаленное стекло", "Нержавеющая сталь"],
     },
     {
       type: "oval",
@@ -53,17 +48,21 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
       key: "protection",
       label: "Системы защиты",
       options: [
-        "Газконтроль",
-        "Автоотключение",
-        "Блокировка от детей",
+        "Защита от пролива",
         "Защита от перегрева",
+        "Блокировка от детей",
       ],
     },
     {
       type: "oval",
       key: "feature",
       label: "Особенности",
-      options: ["Встроенная вытяжка", "Домино", "Flex Zone"],
+      options: [
+        "Датчик обнаружения посуды",
+        "Быстрый нагрев",
+        "Непрерывный инверторный нагрев",
+        "Индикатор остаточного тепла",
+      ],
     },
   ],
   hood: [
