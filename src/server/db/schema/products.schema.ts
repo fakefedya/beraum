@@ -12,7 +12,10 @@ import { sql } from "drizzle-orm";
 import { productStatusEnum } from "./enums.schema";
 import { categories } from "./categories.schema";
 
-export type ProductFilters = Record<string, string | number | boolean | null>;
+export type ProductFilters = Record<
+  string,
+  string | number | boolean | string[] | null
+>;
 export type ProductSpecifications = Record<string, string | number | null>;
 
 export const products = pgTable(

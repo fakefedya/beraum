@@ -108,14 +108,18 @@ export async function getProducts(params: GetProductsParams = {}) {
 
     if (filters && categorySlug && CATEGORY_FILTERS[categorySlug]) {
       const allowedFilters = CATEGORY_FILTERS[categorySlug];
+
       for (const [key, value] of Object.entries(filters)) {
         const filterConfig = allowedFilters.find((f) => f.key === key);
         if (!filterConfig) continue;
+
         const valuesArray = Array.isArray(value) ? value : [value];
         if (valuesArray.length > 0) {
-          const orConditions = valuesArray.map(
-            (val) => sql`${products.filters}->>${key} = ${val}`,
-          );
+          const orConditions = valuesArray.map((val) => {
+            const jsonVal = JSON.stringify(val);
+            return sql`${products.filters}->${key} @> ${jsonVal}::jsonb`;
+          });
+
           const orClause = or(...orConditions);
           if (orClause) conditions.push(orClause);
         }
