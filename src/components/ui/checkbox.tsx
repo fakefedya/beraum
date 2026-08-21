@@ -9,9 +9,11 @@ import { cn } from "@/src/lib/utils";
 
 const checkboxVariants = cva(
   [
-    "peer size-5 shrink-0 rounded-md border border-black/15 bg-white  transition-all duration-200 outline-none",
+    "peer size-5 shrink-0 rounded-md border border-black/15 bg-white transition-all duration-200 outline-none",
+    "cursor-pointer",
     "focus-visible:ring-[3px] focus-visible:ring-[#007AFF]/30 focus-visible:border-[#007AFF]",
     "disabled:cursor-not-allowed disabled:opacity-50",
+    "data-[state=unchecked]:hover:bg-accent data-[state=unchecked]:group-hover:bg-accent",
     "data-[state=checked]:border-brand-secondary data-[state=checked]:bg-brand data-[state=checked]:text-foreground",
     "dark:border-white/20 dark:bg-black/50 dark:data-[state=checked]:bg-[#0A84FF] dark:data-[state=checked]:border-[#0A84FF]",
   ].join(" "),

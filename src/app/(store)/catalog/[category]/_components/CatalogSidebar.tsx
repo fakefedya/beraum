@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { CATEGORY_FILTERS } from "@/src/lib/constants";
+import {
+  CATEGORY_FILTERS,
+  COLOR_SWATCH_MAP,
+  DEFAULT_SWATCH_COLOR,
+} from "@/src/lib/constants";
 import {
   Accordion,
   AccordionItem,
@@ -11,6 +15,7 @@ import {
 } from "@/src/components/ui/accordion";
 import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
+import { Checkbox } from "@/src/components/ui/checkbox";
 import {
   Sheet,
   SheetContent,
@@ -24,6 +29,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/src/components/ui/tooltip";
 import { cn } from "@/src/lib/utils";
 import { SlidersHorizontal, ArrowDownUp, ChevronDown, X } from "lucide-react";
 
@@ -48,6 +59,7 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
 
   if (!filters || filters.length === 0) return null;
 
+  // Подсчет количества активных фильтров для бэйджа
   const activeFiltersCount = filters.reduce((acc, filter) => {
     return acc + searchParams.getAll(filter.key).length;
   }, 0);
@@ -117,8 +129,7 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
               <span className="md:hidden">Сортировка</span>
               <ChevronDown
                 className={cn(
-                  "size-4 opacity-50",
-                  "transition-transform duration-300",
+                  "size-4 opacity-50 transition-transform duration-300",
                   "group-data-[state=open]:rotate-180",
                 )}
               />
@@ -137,9 +148,8 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
                 key={option.value}
                 onClick={() => handleSort(option.value)}
                 className={cn(
-                  "cursor-pointer rounded-xl p-3 text-base",
-                  "hover:bg-hover-background/80 transition-colors",
-                  "focus:hover-background/80",
+                  "cursor-pointer rounded-xl p-3 text-base transition-colors",
+                  "hover:bg-hover-background/80 focus:hover-background/80",
                   currentSort === option.value && "bg-accent font-medium",
                 )}
               >
@@ -177,11 +187,11 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
               "md:inset-y-4 md:left-4 md:rounded-4xl",
             )}
           >
-            <SheetHeader className="px-5 pt-6 text-left">
+            <SheetHeader className="px-6 pt-6 text-left">
               <SheetTitle className="text-xl">Фильтры</SheetTitle>
             </SheetHeader>
 
-            <div className="flex-1 overflow-y-auto p-5">
+            <div className="flex-1 overflow-y-auto p-6">
               <Accordion
                 type="multiple"
                 className="w-full"
@@ -193,35 +203,74 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
                     value={filter.key}
                     className="border-b-0"
                   >
-                    <AccordionTrigger className="text-muted-foreground text-base hover:no-underline">
+                    <AccordionTrigger className="text-foreground text-base hover:no-underline">
                       {filter.label}
                     </AccordionTrigger>
-                    <AccordionContent className="flex flex-wrap gap-2 pt-2 pb-6">
+                    <AccordionContent
+                      className={cn(
+                        "pt-2 pb-6",
+                        filter.key === "color"
+                          ? "flex flex-wrap gap-2"
+                          : "flex flex-col gap-2",
+                      )}
+                    >
                       {filter.options.map((opt) => {
                         const isChecked = searchParams
                           .getAll(filter.key)
                           .includes(opt);
 
+                        if (filter.key === "color") {
+                          const hexColor =
+                            COLOR_SWATCH_MAP[opt] || DEFAULT_SWATCH_COLOR;
+                          return (
+                            <TooltipProvider key={opt} delayDuration={100}>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleCheck(filter.key, opt, !isChecked)
+                                    }
+                                    aria-pressed={isChecked}
+                                    className={cn(
+                                      "mx-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl p-0 shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.20),0_0_0_1px_rgba(0,0,0,0.05)] transition-all duration-200 outline-none",
+                                      "focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2",
+                                      isChecked
+                                        ? "ring-brand-secondary ring-2 ring-offset-2"
+                                        : "border-black/10 hover:border-black/30",
+                                    )}
+                                    style={{ backgroundColor: hexColor }}
+                                  />
+                                </TooltipTrigger>
+                                <TooltipContent
+                                  side="bottom"
+                                  // sideOffset={}
+                                  className="rounded-lg border-none bg-black px-3 py-1.5 text-white shadow-xl"
+                                >
+                                  <span className="text-sm font-medium whitespace-nowrap">
+                                    {opt}
+                                  </span>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          );
+                        }
+
                         return (
-                          <button
+                          <label
                             key={opt}
-                            type="button"
-                            onClick={() =>
-                              handleCheck(filter.key, opt, !isChecked)
-                            }
-                            aria-pressed={isChecked}
-                            data-state={isChecked ? "checked" : "unchecked"}
-                            className={cn(
-                              "border-chart-1 text-muted-foreground transition-[border, font, outline] flex h-12 cursor-pointer items-center justify-center rounded-full border text-base duration-200 outline-none",
-                              "hover:border-black-muted border-ring/50 hover:border-muted-foreground",
-                              filter.type === "oval" && "w-fit px-4",
-                              filter.type === "round" && "w-12",
-                              "focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:ring-offset-1",
-                              "data-[state=checked]:border-foreground data-[state=checked]:ring-foreground data-[state=checked]:text-foreground data-[state=checked]:font-medium data-[state=checked]:ring-1 data-[state=checked]:ring-inset",
-                            )}
+                            className="group flex w-fit cursor-pointer items-center gap-3"
                           >
-                            {opt}
-                          </button>
+                            <Checkbox
+                              checked={isChecked}
+                              onCheckedChange={(checked) =>
+                                handleCheck(filter.key, opt, checked === true)
+                              }
+                            />
+                            <span className="text-muted-foreground group-hover:text-foreground text-base transition-colors select-none">
+                              {opt}
+                            </span>
+                          </label>
                         );
                       })}
                     </AccordionContent>
@@ -229,16 +278,17 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
                 ))}
               </Accordion>
             </div>
-            <div className="bg-background mt-auto rounded-4xl p-5">
+
+            <div className="bg-background mt-auto rounded-4xl p-6">
               <Button
-                disabled={activeFiltersCount === 0 && currentSort === "newest"}
+                disabled={activeFiltersCount === 0}
                 className={cn(
                   "bg-card text-foreground h-12 w-full gap-4 rounded-[16px] px-4 text-base font-medium",
                   "duration-300 hover:bg-gray-200",
                 )}
                 onClick={handleReset}
               >
-                Сбросить все
+                Сбросить фильтры
               </Button>
             </div>
           </SheetContent>
@@ -248,12 +298,13 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
           <Button
             onClick={handleReset}
             className={cn(
-              "bg-card text-foreground h-12 gap-4 rounded-[16px] px-4 text-base font-medium",
+              "bg-card text-foreground h-12 gap-4 rounded-lg px-3 text-base font-medium",
               "duration-300 hover:bg-gray-200",
+              "md:rounded-[16px] md:px-4",
             )}
           >
             <X className="size-4" />
-            Сбросить
+            <span className="hidden md:inline">Сбросить</span>
           </Button>
         )}
       </div>

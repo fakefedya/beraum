@@ -186,8 +186,9 @@ export const ConsultWidget = () => {
 
       <div
         className={cn(
-          "fixed z-70 flex flex-col items-end gap-4",
+          "pointer-events-none fixed z-70 flex flex-col items-end gap-4",
           "right-4 bottom-4",
+          isOpen && "pointer-events-after",
         )}
       >
         <div
@@ -220,7 +221,7 @@ export const ConsultWidget = () => {
         <Button
           onClick={handleToggle}
           className={cn(
-            "h-14 w-14 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300",
+            "pointer-events-auto h-14 w-14 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300",
             "bg-foreground text-background backdrop-blur-xl backdrop-saturate-150",
             "hover:bg-foreground/80",
             isOpen &&
