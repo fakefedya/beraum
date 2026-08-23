@@ -47,7 +47,7 @@ export default async function PolicyPage({ params }: PageProps) {
   ];
 
   return (
-    <>
+    <div className={cn("flex flex-col gap-20", "md:gap-30")}>
       <Section>
         <Container className={cn("pt-24", "md:pt-32")}>
           <Breadcrumbs
@@ -99,6 +99,6 @@ export default async function PolicyPage({ params }: PageProps) {
           </div>
         </Container>
       </Section>
-    </>
+    </div>
   );
 }
