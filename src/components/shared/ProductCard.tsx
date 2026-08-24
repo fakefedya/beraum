@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { type CatalogProduct } from "@/src/server/actions/products.queries";
 import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
@@ -22,7 +23,29 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  const [activeVariant, setActiveVariant] = useState(product.variants[0]);
+  const searchParams = useSearchParams();
+
+  const matchedVariant = useMemo(() => {
+    const selectedColors = searchParams.getAll("color");
+    if (selectedColors.length > 0) {
+      const match = product.variants.find(
+        (v) => v.colorName && selectedColors.includes(v.colorName),
+      );
+      if (match) return match;
+    }
+    return product.variants[0];
+  }, [product.variants, searchParams]);
+
+  const [selectedVariantId, setSelectedVariantId] = useState(matchedVariant.id);
+  const [prevMatchedId, setPrevMatchedId] = useState(matchedVariant.id);
+
+  if (matchedVariant.id !== prevMatchedId) {
+    setPrevMatchedId(matchedVariant.id);
+    setSelectedVariantId(matchedVariant.id);
+  }
+
+  const activeVariant =
+    product.variants.find((v) => v.id === selectedVariantId) || matchedVariant;
 
   const visibleVariants = product.variants.slice(0, VISIBLE_COLORS_LIMIT);
   const hiddenCount = product.variants.length - VISIBLE_COLORS_LIMIT;
@@ -68,7 +91,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      onClick={() => setActiveVariant(variant)}
+                      onClick={() => setSelectedVariantId(variant.id)}
                       aria-checked={isActive}
                       className={cn(
                         "flex h-6 w-6 cursor-pointer items-center justify-center rounded-full p-0 shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)]",
