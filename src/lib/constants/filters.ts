@@ -206,34 +206,49 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
   ],
   refrigerator: [
     {
-      key: "installation",
-      label: "Тип установки",
-      options: ["Отдельностоящая", "Встраиваемая"],
+      key: "type",
+      label: "Тип",
+      options: ["Отдельностоящий", "Встраиваемый"],
     },
     {
-      key: "type",
+      key: "fillingType",
       label: "Вид холодильника",
       options: ["С морозильной камерой", "Без морозильной камеры"],
     },
     {
       key: "defrost",
       label: "Размораживание",
-      options: ["No frost", "Капельное"],
+      options: ["No frost", "Капельная система"],
     },
     {
       key: "color",
       label: "Цвет",
-      options: ["Черный", "Белый", "Серебристый", "Бежевый"],
+      options: ["Черный", "Белый"],
+    },
+    {
+      key: "volume",
+      label: "Общий объем, л",
+      options: ["266", "271", "304"],
     },
     {
       key: "compressor",
       label: "Вид компрессора",
-      options: ["Инверторный", "Поршневой"],
+      options: ["Инверторный", "Поршневой", "Классический"],
+    },
+    {
+      key: "functions",
+      label: "Функционал",
+      options: [
+        "Суперзаморозка",
+        "Суперохлаждение",
+        "Авторазморозка",
+        "Система контроля влажности",
+      ],
     },
     {
       key: "feature",
-      label: "Функционал",
-      options: ["Суперзаморозка", "Суперохлаждение", "Авторазморозка"],
+      label: "Особенности",
+      options: ["Full No Frost", "Зона свежести"],
     },
   ],
   freezer: [
