@@ -253,29 +253,47 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
   ],
   freezer: [
     {
-      key: "installation",
-      label: "Тип установки",
-      options: ["Отдельностоящая", "Встраиваемая"],
+      key: "type",
+      label: "Тип",
+      options: ["Встраиваемый"],
     },
     {
       key: "defrost",
       label: "Размораживание",
-      options: ["No frost", "Капельное"],
+      options: ["No frost"],
     },
     {
       key: "color",
       label: "Цвет",
-      options: ["Черный", "Белый", "Серебристый"],
+      options: ["Белый"],
+    },
+    {
+      key: "volume",
+      label: "Общий объем, л",
+      options: ["212"],
     },
     {
       key: "compressor",
       label: "Вид компрессора",
-      options: ["Инверторный", "Поршневой"],
+      options: ["Инверторный"],
+    },
+    {
+      key: "protection",
+      label: "Системы защиты",
+      options: [
+        "Защита от перегрузки (автоматический предохранитель)",
+        "Сигнал открытой двери",
+      ],
+    },
+    {
+      key: "functions",
+      label: "Функционал",
+      options: ["Суперзаморозка", "Суперохлаждение"],
     },
     {
       key: "feature",
-      label: "Функционал",
-      options: ["Суперзаморозка", "Суперохлаждение", "Авторазморозка"],
+      label: "Особенности",
+      options: ["Full No Frost"],
     },
   ],
   dishwasher: [
