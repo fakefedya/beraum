@@ -112,11 +112,20 @@ export async function getProducts(params: GetProductsParams = {}) {
         const filterConfig = allowedFilters.find((f) => f.key === key);
         if (!filterConfig) continue;
 
-        const valuesArray = Array.isArray(value) ? value : [value];
+        // SECURITY FIX: Строгая валидация по белому списку из констант (Zero Trust)
+        const rawValuesArray = Array.isArray(value) ? value : [value];
+        const valuesArray = rawValuesArray.filter((val) =>
+          filterConfig.options.includes(val),
+        );
+
         if (valuesArray.length === 0) continue;
 
         if (key === "color") {
-          conditions.push(inArray(products.colorName, valuesArray));
+          const colorConditions = valuesArray.map((val) =>
+            ilike(products.colorName, `%${val}%`),
+          );
+          const colorClause = or(...colorConditions);
+          if (colorClause) conditions.push(colorClause);
           continue;
         }
 
@@ -129,6 +138,7 @@ export async function getProducts(params: GetProductsParams = {}) {
         if (orClause) conditions.push(orClause);
       }
     }
+
     const items = await db
       .select({
         siteArticle: products.siteArticle,

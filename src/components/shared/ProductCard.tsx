@@ -12,7 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/src/components/ui/tooltip";
-import { COLOR_SWATCH_MAP, DEFAULT_SWATCH_COLOR } from "@/src/lib/constants";
+import { getSwatchStyle } from "@/src/lib/constants";
 import { buildImageUrl, cn } from "@/src/lib/utils";
 import { SafeImage } from "./SafeImage";
 
@@ -26,13 +26,26 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const searchParams = useSearchParams();
 
   const matchedVariant = useMemo(() => {
-    const selectedColors = searchParams.getAll("color");
+    const selectedColors = searchParams
+      .getAll("color")
+      .map((c) => c.toLowerCase().trim());
+
     if (selectedColors.length > 0) {
-      const match = product.variants.find(
-        (v) => v.colorName && selectedColors.includes(v.colorName),
+      const exactMatch = product.variants.find(
+        (v) =>
+          v.colorName &&
+          selectedColors.includes(v.colorName.toLowerCase().trim()),
       );
-      if (match) return match;
+      if (exactMatch) return exactMatch;
+
+      const partialMatch = product.variants.find(
+        (v) =>
+          v.colorName &&
+          selectedColors.some((sc) => v.colorName!.toLowerCase().includes(sc)),
+      );
+      if (partialMatch) return partialMatch;
     }
+
     return product.variants[0];
   }, [product.variants, searchParams]);
 
@@ -81,27 +94,30 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         >
           {visibleVariants.map((variant) => {
             const isActive = activeVariant.id === variant.id;
-            const hexColor = variant.colorName
-              ? COLOR_SWATCH_MAP[variant.colorName] || DEFAULT_SWATCH_COLOR
-              : DEFAULT_SWATCH_COLOR;
             const colorLabel = variant.colorName || "Стандарт";
 
             return (
               <TooltipProvider key={variant.id} delayDuration={100}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button
+                    <button
+                      type="button"
+                      role="radio"
                       onClick={() => setSelectedVariantId(variant.id)}
                       aria-checked={isActive}
                       className={cn(
-                        "flex h-6 w-6 cursor-pointer items-center justify-center rounded-full p-0 shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)]",
+                        "flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full p-0 transition-all duration-200 outline-none",
                         "md:h-4 md:w-4",
                         isActive && product.variants.length > 1
                           ? "ring-brand-secondary ring-2 ring-offset-2"
-                          : "border-black/10 hover:border-black/30",
+                          : "hover:ring-2 hover:ring-black/20 hover:ring-offset-1",
                       )}
-                      style={{ backgroundColor: hexColor }}
-                    />
+                    >
+                      <span
+                        className="block h-full w-full rounded-full"
+                        style={getSwatchStyle(variant.colorName)}
+                      />
+                    </button>
                   </TooltipTrigger>
                   <TooltipContent
                     side="bottom"

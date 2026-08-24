@@ -4,6 +4,7 @@ import { Badge } from "@/src/components/ui/badge";
 import {
   COLOR_SWATCH_MAP,
   DEFAULT_SWATCH_COLOR,
+  getSwatchStyle,
   MARKETPLACE_LINKS,
 } from "@/src/lib/constants";
 import { cn } from "@/src/lib/utils";
@@ -140,9 +141,6 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
           <div className="flex flex-wrap gap-3">
             {product.variants.map((variant) => {
               const isActive = variant.itemArticle === product.itemArticle;
-              const hexColor = variant.colorName
-                ? COLOR_SWATCH_MAP[variant.colorName] || DEFAULT_SWATCH_COLOR
-                : DEFAULT_SWATCH_COLOR;
               const hasVariantStock =
                 (variant.ozonStockFbo ?? 0) +
                   (variant.fbsStock ?? 0) +
@@ -155,18 +153,20 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
                   href={`/product/${variant.itemArticle.toLowerCase()}`}
                   title={variant.colorName || "Стандарт"}
                   className={cn(
-                    "relative flex h-8 w-8 items-center justify-center rounded-full shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.30),0_0_0_1px_rgba(0,0,0,0.05)]",
-                    "transition-all duration-300",
+                    "relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all duration-200 outline-none",
                     "md:h-6.5 md:w-6.5",
                     isActive && product.variants.length > 1
-                      ? "ring-brand-secondary scale-106 ring-2 ring-offset-2"
-                      : "border-black/10 hover:border-black/30",
+                      ? "ring-brand-secondary ring-2 ring-offset-2"
+                      : "hover:ring-2 hover:ring-black/20 hover:ring-offset-1",
                   )}
-                  style={{ backgroundColor: hexColor }}
                   aria-current={isActive ? "page" : undefined}
                 >
+                  <span
+                    className="block h-full w-full rounded-full"
+                    style={getSwatchStyle(variant.colorName)}
+                  />
                   {!hasVariantStock && (
-                    <span className="absolute block h-9 w-px -rotate-45 bg-red-500/80" />
+                    <span className="absolute z-10 block h-9 w-px -rotate-45 bg-red-500/80" />
                   )}
                 </Link>
               );

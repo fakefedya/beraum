@@ -6,6 +6,7 @@ import {
   CATEGORY_FILTERS,
   COLOR_SWATCH_MAP,
   DEFAULT_SWATCH_COLOR,
+  getSwatchStyle,
 } from "@/src/lib/constants";
 import {
   Accordion,
@@ -220,8 +221,6 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
                           .includes(opt);
 
                         if (filter.key === "color") {
-                          const hexColor =
-                            COLOR_SWATCH_MAP[opt] || DEFAULT_SWATCH_COLOR;
                           return (
                             <TooltipProvider key={opt} delayDuration={100}>
                               <Tooltip>
@@ -233,14 +232,18 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
                                     }
                                     aria-pressed={isChecked}
                                     className={cn(
-                                      "mx-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl p-0 shadow-[inset_0_1.5px_2px_rgba(0,0,0,0.20),0_0_0_1px_rgba(0,0,0,0.05)] transition-all duration-200 outline-none",
+                                      "mx-1 flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full p-0 transition-all duration-200 outline-none",
                                       "focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2",
                                       isChecked
                                         ? "ring-brand-secondary ring-2 ring-offset-2"
-                                        : "border-black/10 hover:border-black/30",
+                                        : "hover:ring-2 hover:ring-black/20 hover:ring-offset-1",
                                     )}
-                                    style={{ backgroundColor: hexColor }}
-                                  />
+                                  >
+                                    <span
+                                      className="block h-full w-full rounded-full"
+                                      style={getSwatchStyle(opt)}
+                                    />
+                                  </button>
                                 </TooltipTrigger>
                                 <TooltipContent
                                   side="bottom"
