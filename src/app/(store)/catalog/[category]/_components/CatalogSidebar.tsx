@@ -120,14 +120,14 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
               className={cn(
                 "bg-card text-foreground h-12 gap-4 rounded-lg px-3 text-base font-medium",
                 "duration-300 hover:bg-gray-200",
-                "md:rounded-[16px] md:px-4",
+                "md:gap-4 md:rounded-[16px]",
               )}
             >
               <ArrowDownUp className="size-4" />
               <span className="hidden md:inline">
                 {SORT_OPTIONS.find((o) => o.value === currentSort)?.label}
               </span>
-              <span className="md:hidden">Сортировка</span>
+              <span className={cn("hidden", "md_block")}>Сортировка</span>
               <ChevronDown
                 className={cn(
                   "size-4 opacity-50 transition-transform duration-300",
@@ -166,7 +166,7 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
               className={cn(
                 "bg-card text-foreground h-12 gap-4 rounded-lg px-3 text-base font-medium",
                 "duration-300 hover:bg-gray-200",
-                "md:rounded-[16px] md:px-4",
+                "md:gap-4 md:rounded-[16px]",
               )}
             >
               <SlidersHorizontal className="size-4" />

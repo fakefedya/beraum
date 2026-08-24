@@ -67,7 +67,7 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
   ],
   hood: [
     {
-      key: "formFactor",
+      key: "type",
       label: "Форм-фактор вытяжки",
       options: ["Встраиваемая", "Наклонная", "Купольная", "Цилиндрическая"],
     },
@@ -115,6 +115,11 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
   ],
   oven: [
     {
+      key: "type",
+      label: "Тип духового шкафа",
+      options: ["Электрический"],
+    },
+    {
       key: "functionality",
       label: "Функционал духовки",
       options: ["Гриль", "Конвекция", "СВЧ"],
@@ -137,7 +142,7 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
     {
       key: "volume",
       label: "Объем, л",
-      options: ["50", "53", "60", "67"],
+      options: ["50", "53", "67"],
     },
     {
       key: "color",
