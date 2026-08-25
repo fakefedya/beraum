@@ -48,6 +48,35 @@ async function keepExistingKeys(keys: string[]): Promise<string[]> {
   return checks.filter((k): k is string => k !== null);
 }
 
+async function getClientIp() {
+  const headersList = await headers();
+  const realIp = headersList.get("x-real-ip");
+  const forwardedFor = headersList.get("x-forwarded-for");
+
+  if (realIp) return realIp;
+  if (forwardedFor) {
+    const ips = forwardedFor.split(",");
+    return ips[ips.length - 1].trim();
+  }
+  return "127.0.0.1";
+}
+
+function checkRateLimit(ipHash: string) {
+  const now = Date.now();
+  const record = rateLimitMap.get(ipHash);
+
+  if (record && now < record.resetAt) {
+    if (record.count >= MAX_REQUESTS) return false;
+    record.count += 1;
+  } else {
+    rateLimitMap.set(ipHash, {
+      count: 1,
+      resetAt: now + RATE_LIMIT_WINDOW_MS,
+    });
+  }
+  return true;
+}
+
 export async function submitPartnershipAction(
   prevState: ActionState,
   formData: FormData,
@@ -63,49 +92,21 @@ export async function submitPartnershipAction(
         if (issue.path[0])
           fieldErrors[issue.path[0].toString()] = issue.message;
       });
-
-      return {
-        success: false,
-        fieldErrors,
-        payload: data,
-      };
+      return { success: false, fieldErrors, payload: data };
     }
 
-    const { name, phone, email, company, message } = parsed.data;
+    const { name, phone, email, message, consent, ...payloadData } =
+      parsed.data;
 
-    const headersList = await headers();
-
-    const realIp = headersList.get("x-real-ip");
-    const forwardedFor = headersList.get("x-forwarded-for");
-
-    let ip = "127.0.0.1";
-    if (realIp) {
-      ip = realIp;
-    } else if (forwardedFor) {
-      // Берем самый правый IP из цепочки (ближайший к нашему серверу)
-      const ips = forwardedFor.split(",");
-      ip = ips[ips.length - 1].trim();
-    }
-
+    const ip = await getClientIp();
     const ipHash = crypto.createHash("sha256").update(ip).digest("hex");
 
-    const now = Date.now();
-    const record = rateLimitMap.get(ipHash);
-
-    if (record && now < record.resetAt) {
-      if (record.count >= MAX_REQUESTS) {
-        return {
-          success: false,
-          error: "Слишком много запросов. Подождите минуту.",
-          payload: data,
-        };
-      }
-      record.count += 1;
-    } else {
-      rateLimitMap.set(ipHash, {
-        count: 1,
-        resetAt: now + RATE_LIMIT_WINDOW_MS,
-      });
+    if (!checkRateLimit(ipHash)) {
+      return {
+        success: false,
+        error: "Слишком много запросов. Подождите минуту.",
+        payload: data,
+      };
     }
 
     await db.insert(feedbackRequests).values({
@@ -114,7 +115,7 @@ export async function submitPartnershipAction(
       phone,
       email,
       message,
-      payload: company ? { companyOrInn: company } : {},
+      payload: payloadData,
       ipHash,
     });
 
@@ -158,38 +159,20 @@ export async function submitSupportAction(
       phone,
       email,
       message,
-      categoryId,
-      marketplace,
-      purchaseDate,
-      modelArticle,
+      consent,
       mediaKeys: validatedMediaKeys,
+      ...restPayload
     } = parsed.data;
 
-    const headersList = await headers();
-    const forwardedFor = headersList.get("x-forwarded-for");
-    const realIp = headersList.get("x-real-ip");
-    const ip =
-      realIp ||
-      (forwardedFor ? forwardedFor.split(",")[0].trim() : "127.0.0.1");
+    const ip = await getClientIp();
     const ipHash = crypto.createHash("sha256").update(ip).digest("hex");
 
-    const now = Date.now();
-    const record = rateLimitMap.get(ipHash);
-
-    if (record && now < record.resetAt) {
-      if (record.count >= MAX_REQUESTS) {
-        return {
-          success: false,
-          error: "Слишком много запросов. Подождите минуту.",
-          payload: data,
-        };
-      }
-      record.count += 1;
-    } else {
-      rateLimitMap.set(ipHash, {
-        count: 1,
-        resetAt: now + RATE_LIMIT_WINDOW_MS,
-      });
+    if (!checkRateLimit(ipHash)) {
+      return {
+        success: false,
+        error: "Слишком много запросов. Подождите минуту.",
+        payload: data,
+      };
     }
 
     const confirmedMediaKeys =
@@ -203,12 +186,8 @@ export async function submitSupportAction(
       phone,
       email,
       message,
-
       payload: {
-        categoryId,
-        marketplace,
-        purchaseDate,
-        modelArticle,
+        ...restPayload,
         mediaKeys: confirmedMediaKeys,
       },
       ipHash,
@@ -240,52 +219,30 @@ export async function submitConsultAction(
         if (issue.path[0])
           fieldErrors[issue.path[0].toString()] = issue.message;
       });
-
       return { success: false, fieldErrors, payload: data };
     }
 
-    const { name, phone, email, message, sourcePage } = parsed.data;
+    const { name, phone, email, message, consent, ...payloadData } =
+      parsed.data;
 
-    const headersList = await headers();
-    const realIp = headersList.get("x-real-ip");
-    const forwardedFor = headersList.get("x-forwarded-for");
-
-    let ip = "127.0.0.1";
-    if (realIp) {
-      ip = realIp;
-    } else if (forwardedFor) {
-      const ips = forwardedFor.split(",");
-      ip = ips[ips.length - 1].trim();
-    }
-
+    const ip = await getClientIp();
     const ipHash = crypto.createHash("sha256").update(ip).digest("hex");
-    const now = Date.now();
-    const record = rateLimitMap.get(ipHash);
 
-    if (record && now < record.resetAt) {
-      if (record.count >= MAX_REQUESTS) {
-        return {
-          success: false,
-          error: "Слишком много запросов. Подождите минуту.",
-          payload: data,
-        };
-      }
-      record.count += 1;
-    } else {
-      rateLimitMap.set(ipHash, {
-        count: 1,
-        resetAt: now + RATE_LIMIT_WINDOW_MS,
-      });
+    if (!checkRateLimit(ipHash)) {
+      return {
+        success: false,
+        error: "Слишком много запросов. Подождите минуту.",
+        payload: data,
+      };
     }
 
-    // Запись в БД
     await db.insert(feedbackRequests).values({
       type: "consultation",
       name,
       phone,
       email,
       message,
-      payload: { sourcePage: sourcePage || "/" },
+      payload: { sourcePage: "/", ...payloadData },
       ipHash,
     });
 

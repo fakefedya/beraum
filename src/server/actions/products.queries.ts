@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { eq, desc, asc, and, sql, or, ilike, ne, inArray } from "drizzle-orm";
+import { eq, desc, asc, and, sql, or, ilike, ne } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
 import {
   products,
