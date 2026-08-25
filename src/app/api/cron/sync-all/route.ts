@@ -1,3 +1,4 @@
+// src/app/api/cron/sync-all/route.ts
 import { NextResponse } from "next/server";
 import { serverEnv } from "@/src/lib/env/server";
 import { syncOzonStocks } from "@/src/server/services/ozon/client";
@@ -42,16 +43,41 @@ export async function GET(request: Request) {
   };
 
   try {
-    if (debug) console.log("⏳ [1/3] Запуск синхронизации остатков Ozon...");
-    results.ozonStocks = await syncOzonStocks({ debug, dryRun });
+    if (!serverEnv.OZON_CLIENT_ID || !serverEnv.OZON_API_KEY) {
+      if (debug)
+        console.warn("⚠️ [OZON] Пропуск синхронизации: ключи API не заданы");
+      results.ozonStocks = {
+        success: false,
+        synced: 0,
+        error: "Missing Ozon API keys",
+      };
+    } else {
+      if (debug) console.log("⏳ [1/3] Запуск синхронизации остатков Ozon...");
+      results.ozonStocks = await syncOzonStocks({ debug, dryRun });
+    }
 
-    if (debug)
-      console.log("\n⏳ [2/3] Запуск синхронизации остатков Wildberries...");
-    results.wbStocks = await syncWbStocks({ debug, dryRun });
+    if (!serverEnv.WB_API_KEY) {
+      if (debug)
+        console.warn("⚠️ [WB] Пропуск синхронизации: ключ API не задан");
+      results.wbStocks = {
+        success: false,
+        synced: 0,
+        error: "Missing WB API key",
+      };
+      results.wbPrices = {
+        success: false,
+        synced: 0,
+        error: "Missing WB API key",
+      };
+    } else {
+      if (debug)
+        console.log("\n⏳ [2/3] Запуск синхронизации остатков Wildberries...");
+      results.wbStocks = await syncWbStocks({ debug, dryRun });
 
-    if (debug)
-      console.log("\n⏳ [3/3] Запуск синхронизации цен Wildberries...");
-    results.wbPrices = await syncWbPrices({ debug, dryRun });
+      if (debug)
+        console.log("\n⏳ [3/3] Запуск синхронизации цен Wildberries...");
+      results.wbPrices = await syncWbPrices({ debug, dryRun });
+    }
 
     const endTime = performance.now();
     const executionTimeMs = Math.round(endTime - startTime);

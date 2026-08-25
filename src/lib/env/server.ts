@@ -19,9 +19,9 @@ const serverSchema = z.object({
   MINIO_SECRET_KEY: z.string().min(1, { error: "Секретный ключ обязателен" }),
 
   // Маркетплейсы
-  OZON_CLIENT_ID: z.string().min(1, { error: "Ozon Client ID обязателен" }),
-  OZON_API_KEY: z.string().min(1, { error: "Ozon API Key обязателен" }),
-  WB_API_KEY: z.string().min(1, { error: "WB API Key обязателен" }),
+  OZON_CLIENT_ID: z.string().optional(),
+  OZON_API_KEY: z.string().optional(),
+  WB_API_KEY: z.string().optional(),
 
   // Крон-задачи
   CRON_SECRET: z

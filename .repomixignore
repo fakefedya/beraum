@@ -4,3 +4,8 @@
 # tmp/
 dataExample.json
 src/server/db/migrations/
+backup/
+.next/
+.vscode/
+node_modules/
+
