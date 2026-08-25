@@ -339,7 +339,7 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
       ],
     },
     {
-      key: "programs",
+      key: "program",
       label: "Программы мойки",
       options: [
         "Автоматическая",
@@ -355,7 +355,7 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
       ],
     },
     {
-      key: "functions",
+      key: "function",
       label: "Функционал",
       options: [
         "Возможность добавления посуды после запуска",
@@ -385,34 +385,61 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
   ],
   microwave: [
     {
-      key: "installation",
+      key: "type",
       label: "Тип установки",
-      options: ["Отдельностоящая", "Встраиваемая"],
+      options: ["Встраиваемая"],
     },
     {
       key: "controlType",
       label: "Управление",
-      options: ["Сенсорное", "Электронное", "Механическое"],
+      options: ["Электронное"],
     },
     {
       key: "color",
       label: "Цвет",
-      options: ["Черный", "Белый", "Серебристый"],
+      options: ["Черный"],
     },
     {
       key: "volume",
       label: "Объем, л",
-      options: ["20", "23", "25"],
+      options: ["20"],
     },
     {
-      key: "mode",
+      key: "protection",
+      label: "Системы защиты",
+      options: [
+        "Защита от перегрева",
+        "Автоотключение",
+        "Защита от перегрузки (автоматический предохранитель)",
+        "Блокировка от детей",
+      ],
+    },
+    {
+      key: "program",
       label: "Режим работы",
-      options: ["С грилем", "С грилем и конвекцией", "Соло"],
+      options: [
+        "Разморозка",
+        "Гриль",
+        "Пицца",
+        "Экспресс",
+        "Паста",
+        "Поддержание тепла",
+        "Разогрев",
+        "Суп",
+      ],
     },
     {
       key: "feature",
       label: "Особенности",
-      options: ["Таймер", "Поворотный стол", "Угольные фильтры"],
+      options: [
+        "Быстрый старт",
+        "Таймер",
+        "Часы",
+        "Поворотный стол",
+        "Внутреннее освещение",
+        "Дисплей",
+        "Регулировка времени приготовления",
+      ],
     },
   ],
 };
