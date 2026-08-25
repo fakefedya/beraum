@@ -1,110 +1,124 @@
-// src/app/api/cron/sync-all/route.ts
-import { NextResponse } from "next/server";
-import { serverEnv } from "@/src/lib/env/server";
-import { syncOzonStocks } from "@/src/server/services/ozon/client";
-import { syncWbStocks, syncWbPrices } from "@/src/server/services/wb/client";
+import { NextRequest, NextResponse } from "next/server";
+import { after } from "next/server";
+import { cookies } from "next/headers";
+import { z } from "zod";
+import crypto from "crypto";
+import { db } from "@/src/server/db/client";
+import { marketplaceClicks } from "@/src/server/db/schema";
+import { checkRateLimit } from "@/src/server/utils/rate-limit";
 
-type SyncTaskResult = {
-  success: boolean;
-  synced?: number;
-  error?: string;
-  data?: unknown[];
+// --- SECURITY: Строгий Whitelist доменов (Защита от Open Redirect) ---
+const ALLOWED_DOMAINS = [
+  "ozon.ru",
+  "wildberries.ru",
+  "market.yandex.ru",
+  "mvideo.ru",
+];
+
+const redirectSchema = z.object({
+  url: z
+    .string()
+    .url()
+    .refine((val) => {
+      try {
+        const hostname = new URL(val).hostname;
+        return ALLOWED_DOMAINS.some(
+          (domain) => hostname === domain || hostname.endsWith(`.${domain}`),
+        );
+      } catch {
+        return false;
+      }
+    }, "Недопустимый домен"),
+  marketplace: z.enum(["ozon", "wb", "ymarket", "mvideo"]),
+  article: z.string().min(1).max(50),
+});
+
+// --- ЭВРИСТИКА: Простая защита от парсеров ---
+const isBot = (userAgent: string) => {
+  return /bot|crawler|spider|crawling|google|yandex|bing|slurp|duckduckgo|baiduspider/i.test(
+    userAgent,
+  );
 };
 
-type SyncTasks = "ozonStocks" | "wbStocks" | "wbPrices";
-
-export const dynamic = "force-dynamic";
-export const maxDuration = 300;
-
-export async function GET(request: Request) {
-  const authHeader = request.headers.get("authorization");
-  if (!authHeader || authHeader !== `Bearer ${serverEnv.CRON_SECRET}`) {
-    return NextResponse.json(
-      { success: false, error: "Unauthorized" },
-      { status: 401 },
-    );
-  }
-
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const debug = searchParams.get("debug") === "true";
-  const dryRun = searchParams.get("dryRun") === "true";
+  const cookieStore = await cookies();
 
-  if (debug) {
-    console.log(`\n=========================================`);
-    console.log(`🤖 СТАРТ ОРКЕСТРАТОРА (DryRun: ${dryRun})`);
-    console.log(`=========================================\n`);
+  // 1. Валидация входных параметров
+  const parsed = redirectSchema.safeParse({
+    url: searchParams.get("url"),
+    marketplace: searchParams.get("marketplace"),
+    article: searchParams.get("article"),
+  });
+
+  if (!parsed.success) {
+    console.warn(
+      "⚠️ [SECURITY] Попытка эксплуатации Open Redirect или невалидные параметры:",
+      searchParams.toString(),
+    );
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
-  const startTime = performance.now();
-  const results: Record<SyncTasks, SyncTaskResult> = {
-    ozonStocks: { success: false, synced: 0 },
-    wbStocks: { success: false, synced: 0 },
-    wbPrices: { success: false, synced: 0 },
-  };
+  const { url, marketplace, article } = parsed.data;
+  const userAgent = request.headers.get("user-agent") || "";
 
-  try {
-    if (!serverEnv.OZON_CLIENT_ID || !serverEnv.OZON_API_KEY) {
-      if (debug)
-        console.warn("⚠️ [OZON] Пропуск синхронизации: ключи API не заданы");
-      results.ozonStocks = {
-        success: false,
-        synced: 0,
-        error: "Missing Ozon API keys",
-      };
-    } else {
-      if (debug) console.log("⏳ [1/3] Запуск синхронизации остатков Ozon...");
-      results.ozonStocks = await syncOzonStocks({ debug, dryRun });
-    }
+  // 2. Лимитирование (Игнорируем ботов)
+  let canTrack = false;
+  let ipHashForDb = "";
 
-    if (!serverEnv.WB_API_KEY) {
-      if (debug)
-        console.warn("⚠️ [WB] Пропуск синхронизации: ключ API не задан");
-      results.wbStocks = {
-        success: false,
-        synced: 0,
-        error: "Missing WB API key",
-      };
-      results.wbPrices = {
-        success: false,
-        synced: 0,
-        error: "Missing WB API key",
-      };
-    } else {
-      if (debug)
-        console.log("\n⏳ [2/3] Запуск синхронизации остатков Wildberries...");
-      results.wbStocks = await syncWbStocks({ debug, dryRun });
-
-      if (debug)
-        console.log("\n⏳ [3/3] Запуск синхронизации цен Wildberries...");
-      results.wbPrices = await syncWbPrices({ debug, dryRun });
-    }
-
-    const endTime = performance.now();
-    const executionTimeMs = Math.round(endTime - startTime);
-
-    if (debug) {
-      console.log(`\n=========================================`);
-      console.log(`✅ ОРКЕСТРАТОР УСПЕШНО ЗАВЕРШИЛ РАБОТУ`);
-      console.log(`⏱ Время выполнения: ${executionTimeMs} мс`);
-      console.log(`=========================================\n`);
-    }
-
-    const hasErrors = Object.values(results).some((r) => !r.success);
-    const statusCode = hasErrors ? 207 : 200;
-
-    return NextResponse.json(
-      {
-        success: !hasErrors,
-        executionTimeMs,
-        tasks: results,
-      },
-      { status: statusCode },
-    );
-  } catch (error) {
-    console.error("❌ Критическая ошибка оркестратора:", error);
-    return NextResponse.json(
-      { success: false, error: "Orchestrator failed to complete" },
-      { status: 500 },
-    );
+  if (!isBot(userAgent)) {
+    // Разрешаем максимум 20 редиректов в минуту на 1 IP
+    const limitRes = await checkRateLimit("go_redirect", 20, 60000);
+    canTrack = limitRes.success;
+    ipHashForDb = limitRes.ipHash;
   }
+
+  // 3. Идентификация устройства (HttpOnly Cookie)
+  let deviceId = cookieStore.get("beraum_device_id")?.value;
+  let isNewDevice = false;
+
+  if (!deviceId || !z.string().uuid().safeParse(deviceId).success) {
+    deviceId = crypto.randomUUID();
+    isNewDevice = true;
+  }
+
+  // 4. Запись в аналитику через next/server `after`
+  if (canTrack) {
+    after(async () => {
+      try {
+        await db.insert(marketplaceClicks).values({
+          article,
+          marketplace,
+          deviceId: deviceId!, // Гарантированно UUID
+          userAgent: userAgent.substring(0, 255), // Защита от переполнения поля в БД
+          ipHash: ipHashForDb,
+        });
+      } catch (error) {
+        console.error("❌ [DB] Ошибка фоновой записи клика:", error);
+      }
+    });
+  }
+
+  // 5. Модификация URL и Редирект
+  const targetUrl = new URL(url);
+
+  if (!targetUrl.searchParams.has("utm_source")) {
+    targetUrl.searchParams.set("utm_source", "beraum_showcase");
+    targetUrl.searchParams.set("utm_medium", "referral");
+  }
+
+  // Используем 302 (Found) вместо 301, чтобы браузер не кэшировал переход
+  const response = NextResponse.redirect(targetUrl, 302);
+
+  // 6. Установка защищенной куки для новых пользователей
+  if (isNewDevice) {
+    response.cookies.set("beraum_device_id", deviceId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Только HTTPS в проде
+      sameSite: "strict", // Защита от CSRF
+      maxAge: 60 * 60 * 24 * 365, // 1 год
+    });
+  }
+
+  return response;
 }

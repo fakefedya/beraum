@@ -1,25 +1,12 @@
 "use server";
 
-import { headers } from "next/headers";
 import crypto from "crypto";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { s3Public } from "../services/s3/client";
 import { z } from "zod";
 import { SUPPORT_MEDIA_CONFIG } from "@/src/lib/constants";
 import { MIME_TO_EXT } from "@/src/lib/constants/uploads";
-
-const mediaRateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_WINDOW_MS = 60000;
-const MAX_REQUESTS = 5;
-
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, record] of mediaRateLimitMap.entries()) {
-    if (now > record.resetAt) {
-      mediaRateLimitMap.delete(ip);
-    }
-  }
-}, 300000);
+import { checkRateLimit } from "../utils/rate-limit";
 
 const MAX_FILE_SIZE = SUPPORT_MEDIA_CONFIG.MAX_SIZE_MB * 1024 * 1024;
 const ALLOWED_MIME_TYPES = new Set<string>(
@@ -49,30 +36,13 @@ export async function getPresignedUploadUrl(rawData: unknown) {
       return { success: false, error: parsed.error.issues[0].message };
     }
 
-    const headersList = await headers();
-    const forwardedFor = headersList.get("x-forwarded-for");
-    const realIp = headersList.get("x-real-ip");
-    const ip =
-      realIp ||
-      (forwardedFor ? forwardedFor.split(",")[0].trim() : "127.0.0.1");
-    const ipHash = crypto.createHash("sha256").update(ip).digest("hex");
-
-    const now = Date.now();
-    const record = mediaRateLimitMap.get(ipHash);
-
-    if (record && now < record.resetAt) {
-      if (record.count >= MAX_REQUESTS) {
-        return {
-          success: false,
-          error: "Слишком много запросов. Подождите минуту.",
-        };
-      }
-      record.count += 1;
-    } else {
-      mediaRateLimitMap.set(ipHash, {
-        count: 1,
-        resetAt: now + RATE_LIMIT_WINDOW_MS,
-      });
+    // 🛡️ SECURITY FIX: Лимит 5 загрузок в минуту на IP
+    const rateLimit = await checkRateLimit("media_upload", 5, 60000);
+    if (!rateLimit.success) {
+      return {
+        success: false,
+        error: "Превышен лимит запросов на загрузку. Подождите минуту.",
+      };
     }
 
     const { contentType } = parsed.data;

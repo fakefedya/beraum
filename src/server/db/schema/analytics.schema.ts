@@ -1,4 +1,11 @@
-import { pgTable, uuid, text, timestamp, index } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  text,
+  integer,
+  timestamp,
+  index,
+} from "drizzle-orm/pg-core";
 
 export const marketplaceClicks = pgTable(
   "marketplace_clicks",
@@ -21,3 +28,12 @@ export const marketplaceClicks = pgTable(
     };
   },
 );
+
+export const rateLimits = pgTable("rate_limits", {
+  key: text("key").primaryKey(),
+  count: integer("count").notNull(),
+  resetAt: timestamp("reset_at", {
+    withTimezone: true,
+    mode: "date",
+  }).notNull(),
+});
