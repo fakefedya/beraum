@@ -1,0 +1,1 @@
+CREATE INDEX "idx_products_item_article_lower" ON "products" USING btree (lower("item_article"));

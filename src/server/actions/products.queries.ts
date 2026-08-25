@@ -228,7 +228,7 @@ export async function getProductByArticle(rawArticle: string) {
       .where(
         and(
           eq(products.status, "published"),
-          ilike(products.itemArticle, article),
+          eq(sql`lower(${products.itemArticle})`, article.toLowerCase()),
         ),
       )
       .limit(1);

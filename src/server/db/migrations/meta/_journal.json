@@ -36,6 +36,13 @@
       "when": 1786432569537,
       "tag": "0004_exotic_maggott",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1787654981484,
+      "tag": "0005_workable_pestilence",
+      "breakpoints": true
     }
   ]
 }

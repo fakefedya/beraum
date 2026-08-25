@@ -71,6 +71,9 @@ export const products = pgTable(
         "gin",
         sql`${table.itemArticle} gin_trgm_ops`,
       ),
+      articleLowerIdx: index("idx_products_item_article_lower").on(
+        sql`lower(${table.itemArticle})`,
+      ),
     };
   },
 );
