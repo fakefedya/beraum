@@ -2,15 +2,15 @@
 
 import { headers } from "next/headers";
 import crypto from "crypto";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { s3Public } from "../services/s3/client";
 import { z } from "zod";
 import { SUPPORT_MEDIA_CONFIG } from "@/src/lib/constants";
+import { MIME_TO_EXT } from "@/src/lib/constants/uploads";
 
 const mediaRateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT_WINDOW_MS = 60000;
-const MAX_REQUESTS = 15;
+const MAX_REQUESTS = 5;
 
 setInterval(() => {
   const now = Date.now();
@@ -30,7 +30,8 @@ const getPresignedUrlSchema = z.object({
   filename: z.string().min(1).max(255),
   contentType: z
     .string()
-    .refine((val) => val === "" || ALLOWED_MIME_TYPES.has(val.toLowerCase()), {
+    .transform((v) => v.toLowerCase())
+    .refine((v) => ALLOWED_MIME_TYPES.has(v), {
       message: "Недопустимый тип файла",
     }),
   fileSize: z
@@ -74,29 +75,40 @@ export async function getPresignedUploadUrl(rawData: unknown) {
       });
     }
 
-    const { filename, contentType } = parsed.data;
+    const { contentType } = parsed.data;
 
-    const ext = filename.split(".").pop();
+    const ext = MIME_TO_EXT[contentType];
+    if (!ext) {
+      return {
+        success: false,
+        error: "Не удалось определить безопасное расширение файла",
+      };
+    }
+
     const secureFilename = `${crypto.randomUUID()}.${ext}`;
     const fileKey = `requests/${new Date().toISOString().split("T")[0]}/${secureFilename}`;
 
-    const command = new PutObjectCommand({
+    const { url, fields } = await createPresignedPost(s3Public, {
       Bucket: "support-media",
       Key: fileKey,
-      ContentType: contentType,
-    });
-
-    const publicSignedUrl = await getSignedUrl(s3Public, command, {
-      expiresIn: 300,
+      Conditions: [
+        ["content-length-range", 1, MAX_FILE_SIZE],
+        ["eq", "$Content-Type", contentType],
+      ],
+      Fields: {
+        "Content-Type": contentType,
+      },
+      Expires: 300,
     });
 
     return {
       success: true,
-      url: publicSignedUrl,
+      url,
+      fields,
       fileKey,
     };
   } catch (error) {
-    console.error("❌ Ошибка генерации Presigned URL:", error);
+    console.error("❌ Ошибка генерации Presigned POST URL:", error);
     return { success: false, error: "Ошибка инициализации загрузки" };
   }
 }

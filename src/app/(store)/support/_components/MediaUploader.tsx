@@ -48,17 +48,26 @@ export const MediaUploader = () => {
         fileSize: file.size,
       });
 
-      if (!res.success || !res.url || !res.fileKey) {
+      if (!res.success || !res.url || !res.fields || !res.fileKey) {
         throw new Error(res.error || "Ошибка получения ссылки");
       }
 
+      const formData = new FormData();
+      Object.entries(res.fields).forEach(([k, v]) => {
+        formData.append(k, v as string);
+      });
+      formData.append("file", file);
+
       const uploadRes = await fetch(res.url, {
-        method: "PUT",
-        body: file,
-        headers: { "Content-Type": file.type },
+        method: "POST",
+        body: formData,
       });
 
-      if (!uploadRes.ok) throw new Error("Ошибка при загрузке файла");
+      if (!uploadRes.ok) {
+        const errorText = await uploadRes.text();
+        console.error("S3 Upload Error:", errorText);
+        throw new Error("Ошибка при загрузке файла");
+      }
 
       updateFile(id, { status: "success", key: res.fileKey });
     } catch (error) {
@@ -89,8 +98,9 @@ export const MediaUploader = () => {
           .toLowerCase();
 
         const isValidType =
-          (ALLOWED_MIME_TYPES as readonly string[]).includes(file.type) ||
-          (ALLOWED_EXTENSIONS as readonly string[]).includes(extension);
+          file.type !== ""
+            ? (ALLOWED_MIME_TYPES as readonly string[]).includes(file.type)
+            : (ALLOWED_EXTENSIONS as readonly string[]).includes(extension);
 
         if (!isValidType) {
           toast.error("Недопустимый формат", {
