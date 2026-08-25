@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import {
   getProductByArticle,
   getSimilarProducts,
+  getPublishedArticles,
 } from "@/src/server/queries/products";
 import { Container } from "@/src/components/shared/Container";
 import { Section } from "@/src/components/shared/Section";
@@ -22,6 +23,13 @@ const DOC_META: Record<string, { label: string }> = {
 
 interface PageProps {
   params: Promise<{ article: string }>;
+}
+
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const articles = await getPublishedArticles();
+  return articles.map((article) => ({ article: article.toLowerCase() }));
 }
 
 export default async function ProductPage({ params }: PageProps) {

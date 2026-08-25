@@ -39,7 +39,7 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
     {
       fallbackData: initialSlides,
       refreshInterval: 30000,
-      revalidateOnFocus: true,
+      revalidateOnFocus: false,
     },
   );
 

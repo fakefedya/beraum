@@ -58,7 +58,7 @@ export const CatalogGrid = ({
     useSWRInfinite(getKey, fetcher, {
       fallbackData: initialData.length > 0 ? [initialData] : [],
       revalidateFirstPage: false,
-      revalidateOnFocus: true,
+      revalidateOnFocus: false,
     });
 
   useEffect(() => {

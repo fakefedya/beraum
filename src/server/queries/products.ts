@@ -11,6 +11,7 @@ import {
 } from "@/src/server/db/schema";
 import { CATEGORY_FILTERS } from "@/src/lib/constants";
 import { buildImageUrl } from "@/src/lib/utils";
+import { unstable_cache } from "next/cache";
 
 const filterValueSchema = z.union([z.string(), z.array(z.string())]);
 
@@ -65,7 +66,7 @@ const productTypeScalarSql = sql<string>`
 
 const productTypeAggSql = sql<string>`MAX(${productTypeScalarSql})`;
 
-export async function getProducts(params: GetProductsParams = {}) {
+async function getProductsDb(params: GetProductsParams = {}) {
   try {
     const { limit, offset, categorySlug, filters, sort, q } =
       getProductsSchema.parse(params);
@@ -195,8 +196,12 @@ export async function getProducts(params: GetProductsParams = {}) {
     return { success: false, error: "Ошибка при загрузке каталога", data: [] };
   }
 }
+export const getProducts = unstable_cache(getProductsDb, ["products_list"], {
+  tags: ["products"],
+  revalidate: 3600,
+});
 
-export async function getProductByArticle(rawArticle: string) {
+export async function getProductByArticleDb(rawArticle: string) {
   try {
     const { article } = getProductByArticleSchema.parse({
       article: rawArticle,
@@ -298,8 +303,13 @@ export async function getProductByArticle(rawArticle: string) {
     return { success: false, error: "Недопустимый запрос" };
   }
 }
+export const getProductByArticle = unstable_cache(
+  getProductByArticleDb,
+  ["product_article"],
+  { tags: ["products"], revalidate: 3600 },
+);
 
-export async function getSimilarProducts(
+async function getSimilarProductsDb(
   categoryId: string,
   excludeSiteArticle: string,
   limitNum = 3,
@@ -366,8 +376,13 @@ export async function getSimilarProducts(
     return { success: false, data: [] };
   }
 }
+export const getSimilarProducts = unstable_cache(
+  getSimilarProductsDb,
+  ["products_similar"],
+  { tags: ["products"], revalidate: 3600 },
+);
 
-export async function getSupportModelsByCategory(categoryId: string) {
+async function getSupportModelsByCategoryDb(categoryId: string) {
   try {
     const parsedId = z.string().uuid().safeParse(categoryId);
     if (!parsedId.success) return { success: false, data: [] };
@@ -390,3 +405,21 @@ export async function getSupportModelsByCategory(categoryId: string) {
     return { success: false, data: [] };
   }
 }
+export const getSupportModelsByCategory = unstable_cache(
+  getSupportModelsByCategoryDb,
+  ["products_support"],
+  { tags: ["products"], revalidate: 3600 },
+);
+
+async function getPublishedArticlesDb() {
+  const data = await db
+    .select({ article: products.itemArticle })
+    .from(products)
+    .where(eq(products.status, "published"));
+  return data.map((d) => d.article);
+}
+export const getPublishedArticles = unstable_cache(
+  getPublishedArticlesDb,
+  ["published_articles"],
+  { tags: ["products"], revalidate: 3600 },
+);

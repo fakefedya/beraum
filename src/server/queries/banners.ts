@@ -5,6 +5,7 @@ import { db } from "@/src/server/db/client";
 import { slides } from "@/src/server/db/schema";
 import { z } from "zod";
 import { buildImageUrl } from "@/src/lib/utils";
+import { unstable_cache } from "next/cache";
 
 const IMAGE_PATH = "components/banners";
 
@@ -36,7 +37,7 @@ export type ValidatedSlide = z.infer<typeof slidePayloadSchema> & {
   mobileImageUrl?: string;
 };
 
-export async function getActiveSlides(
+async function getActiveSlidesDb(
   placement: "home_hero" | "catalog_hero" = "home_hero",
 ) {
   try {
@@ -86,3 +87,8 @@ export async function getActiveSlides(
     return { success: false, data: [] };
   }
 }
+
+export const getActiveSlides = unstable_cache(getActiveSlidesDb, ["slides"], {
+  tags: ["slides"],
+  revalidate: 3600,
+});
