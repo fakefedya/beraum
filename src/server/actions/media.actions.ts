@@ -4,11 +4,9 @@ import { headers } from "next/headers";
 import crypto from "crypto";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { s3Client } from "../services/s3/client";
+import { s3Public } from "../services/s3/client";
 import { z } from "zod";
 import { SUPPORT_MEDIA_CONFIG } from "@/src/lib/constants";
-import { serverEnv } from "@/src/lib/env/server";
-import { STORAGE_URL } from "@/src/lib/constants/assets";
 
 const mediaRateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT_WINDOW_MS = 60000;
@@ -88,11 +86,9 @@ export async function getPresignedUploadUrl(rawData: unknown) {
       ContentType: contentType,
     });
 
-    const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 });
-
-    // ЗАМЕНА ВНУТРЕННЕГО HOST НА ПУБЛИЧНЫЙ
-    const internalEndpoint = `http://${serverEnv.MINIO_ENDPOINT}:${serverEnv.MINIO_PORT}`;
-    const publicSignedUrl = signedUrl.replace(internalEndpoint, STORAGE_URL);
+    const publicSignedUrl = await getSignedUrl(s3Public, command, {
+      expiresIn: 300,
+    });
 
     return {
       success: true,

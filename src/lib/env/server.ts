@@ -1,31 +1,32 @@
-import "server-only"; // 🔒 Блокируем попадание на клиент
+import "server-only";
 import { z } from "zod";
 
 const serverSchema = z.object({
   // База данных
-  DATABASE_URL: z.string().url("DATABASE_URL должна быть валидным URL-адресом"),
+  DATABASE_URL: z.url({
+    error: "DATABASE_URL должна быть валидным URL-адресом",
+  }),
 
   // Auth.js
-  AUTH_SECRET: z
-    .string()
-    .min(15, "AUTH_SECRET слишком короткий для обеспечения безопасности"),
+  AUTH_SECRET: z.string().min(15, {
+    error: "AUTH_SECRET слишком короткий для обеспечения безопасности",
+  }),
 
   // MinIO
-  MINIO_ENDPOINT: z.string().default("localhost"),
-  MINIO_PORT: z.string().transform((val) => parseInt(val, 10)),
-  MINIO_ACCESS_KEY: z.string().min(1),
-  MINIO_SECRET_KEY: z.string().min(1),
+  S3_INTERNAL_URL: z.url({ error: "S3_INTERNAL_URL должен быть валидным URL" }),
+  S3_PUBLIC_URL: z.url({ error: "S3_PUBLIC_URL должен быть валидным URL" }),
+  MINIO_ACCESS_KEY: z.string().min(1, { error: "Ключ доступа обязателен" }),
+  MINIO_SECRET_KEY: z.string().min(1, { error: "Секретный ключ обязателен" }),
 
   // Маркетплейсы
-  OZON_CLIENT_ID: z.string().min(1),
-  OZON_API_KEY: z.string().min(1),
+  OZON_CLIENT_ID: z.string().min(1, { error: "Ozon Client ID обязателен" }),
+  OZON_API_KEY: z.string().min(1, { error: "Ozon API Key обязателен" }),
+  WB_API_KEY: z.string().min(1, { error: "WB API Key обязателен" }),
 
-  WB_API_KEY: z.string().min(1),
-
-  // Крон-задачи (добавляем сразу)
+  // Крон-задачи
   CRON_SECRET: z
     .string()
-    .min(16, "Секрет для cron должен быть надежным")
+    .min(16, { error: "Секрет для cron должен быть надежным" })
     .optional(),
 });
 
