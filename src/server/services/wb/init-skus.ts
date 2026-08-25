@@ -27,6 +27,15 @@ type WbApiResponse = {
 };
 
 export async function syncWbSkusAutoMapper(debug = true) {
+  const apiKey = serverEnv.WB_API_KEY;
+  if (!apiKey) {
+    if (debug)
+      console.warn(
+        "⚠️ [WB MAPPER] WB_API_KEY не задан. Авто-маппинг пропущен.",
+      );
+    return { success: false, error: "Missing API Key" };
+  }
+
   try {
     if (debug)
       console.log(
@@ -51,7 +60,7 @@ export async function syncWbSkusAutoMapper(debug = true) {
       const res = await fetch(`${WB_API_URL}/content/v2/get/cards/list`, {
         method: "POST",
         headers: {
-          Authorization: serverEnv.WB_API_KEY,
+          Authorization: apiKey, // 🛡️ Заменили serverEnv.WB_API_KEY на локальную переменную
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -130,14 +139,12 @@ export async function syncWbSkusAutoMapper(debug = true) {
 
       await db.transaction(async (tx) => {
         for (const chunk of chunks) {
-          await Promise.all(
-            chunk.map((item) =>
-              tx
-                .update(products)
-                .set({ wbChrtId: item.wbChrtId })
-                .where(eq(products.id, item.id)),
-            ),
-          );
+          for (const item of chunk) {
+            await tx
+              .update(products)
+              .set({ wbChrtId: item.wbChrtId })
+              .where(eq(products.id, item.id));
+          }
         }
       });
     }

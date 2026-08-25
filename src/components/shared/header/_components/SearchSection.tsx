@@ -15,10 +15,7 @@ import {
 
 import { buildImageUrl, cn } from "@/src/lib/utils";
 import { useDebounce } from "@/src/hooks/use-debounce";
-import {
-  getProducts,
-  type CatalogProduct,
-} from "@/src/server/queries/products";
+import type { CatalogProduct } from "@/src/server/queries/products";
 import { SafeImage } from "../../SafeImage";
 
 const LIMIT = 10;

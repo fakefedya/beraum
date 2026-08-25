@@ -6,11 +6,18 @@ import { updateStocksInDb, type NormalizedStock } from "../sync/stocks";
 const OZON_API_URL = "https://api-seller.ozon.ru";
 
 async function fetchOzonApi(endpoint: string, body: Record<string, unknown>) {
+  const clientId = serverEnv.OZON_CLIENT_ID;
+  const apiKey = serverEnv.OZON_API_KEY;
+
+  if (!clientId || !apiKey) {
+    throw new Error("Учетные данные Ozon (CLIENT_ID или API_KEY) не заданы");
+  }
+
   const res = await fetch(`${OZON_API_URL}${endpoint}`, {
     method: "POST",
     headers: {
-      "Client-Id": serverEnv.OZON_CLIENT_ID,
-      "Api-Key": serverEnv.OZON_API_KEY,
+      "Client-Id": clientId,
+      "Api-Key": apiKey,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),

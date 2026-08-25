@@ -11,11 +11,9 @@ export async function GET(request: Request) {
   }
 
   try {
-    const [ozonStocks, wbStocks, wbPrices] = await Promise.all([
-      syncOzonStocks(),
-      syncWbStocks(),
-      syncWbPrices(),
-    ]);
+    const ozonStocks = await syncOzonStocks();
+    const wbStocks = await syncWbStocks();
+    const wbPrices = await syncWbPrices();
 
     // Считаем общее количество измененных товаров
     const changed =
@@ -23,9 +21,9 @@ export async function GET(request: Request) {
       (wbStocks.synced ?? 0) +
       (wbPrices.synced ?? 0);
 
-    // 🚀 CACHE PURGE: Сбрасываем кэш каталога, только если были изменения
+    // 🚀 CACHE PURGE: Гарантированный немедленный сброс кэша
     if (changed > 0) {
-      revalidateTag("products", "max");
+      revalidateTag("products", { expire: 0 });
     }
 
     return NextResponse.json({

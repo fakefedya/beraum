@@ -12,10 +12,15 @@ const WB_API_URL = "https://marketplace-api.wildberries.ru";
 const WB_WAREHOUSES = [1418630, 1397109]; // МГТ и СГТ
 
 async function fetchWbApi(endpoint: string, body: Record<string, unknown>) {
+  const apiKey = serverEnv.WB_API_KEY;
+  if (!apiKey) {
+    throw new Error("WB_API_KEY не задан в переменных окружения");
+  }
+
   const res = await fetch(`${WB_API_URL}${endpoint}`, {
     method: "POST",
     headers: {
-      Authorization: serverEnv.WB_API_KEY,
+      Authorization: apiKey,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
@@ -133,10 +138,15 @@ export async function syncWbStocks(
 const WB_PRICES_API_URL = "https://discounts-prices-api.wildberries.ru";
 
 async function fetchWbPricesApi(endpoint: string) {
+  const apiKey = serverEnv.WB_API_KEY;
+  if (!apiKey) {
+    throw new Error("WB_API_KEY не задан в переменных окружения");
+  }
+
   const res = await fetch(`${WB_PRICES_API_URL}${endpoint}`, {
     method: "GET",
     headers: {
-      Authorization: serverEnv.WB_API_KEY,
+      Authorization: apiKey,
     },
     cache: "no-store",
   });
@@ -246,14 +256,12 @@ export async function syncWbPrices(
     const chunks = chunkArray(allPrices, 100);
     await db.transaction(async (tx) => {
       for (const chunk of chunks) {
-        await Promise.all(
-          chunk.map((item) =>
-            tx
-              .update(products)
-              .set({ wbDiscountedPrice: item.price })
-              .where(eq(products.itemArticle, item.article)),
-          ),
-        );
+        for (const item of chunk) {
+          await tx
+            .update(products)
+            .set({ wbDiscountedPrice: item.price })
+            .where(eq(products.itemArticle, item.article));
+        }
       }
     });
 

@@ -24,19 +24,17 @@ export async function updateStocksInDb(
 
     await db.transaction(async (tx) => {
       for (const chunk of chunks) {
-        await Promise.all(
-          chunk.map((item) => {
-            const updateField =
-              item.marketplace === "ozon"
-                ? { ozonStockFbo: item.stock }
-                : { fbsStock: item.stock };
+        for (const item of chunk) {
+          const updateField =
+            item.marketplace === "ozon"
+              ? { ozonStockFbo: item.stock }
+              : { fbsStock: item.stock };
 
-            return tx
-              .update(products)
-              .set(updateField)
-              .where(eq(products.itemArticle, item.article));
-          }),
-        );
+          await tx
+            .update(products)
+            .set(updateField)
+            .where(eq(products.itemArticle, item.article));
+        }
       }
     });
 

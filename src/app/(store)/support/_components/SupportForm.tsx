@@ -13,7 +13,6 @@ import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
 import { FloatingField } from "@/src/components/shared/FloatingField";
 import { submitSupportAction } from "@/src/server/actions/feedback";
-import { getSupportModelsByCategory } from "@/src/server/queries/products";
 import {
   Popover,
   PopoverContent,
@@ -35,6 +34,17 @@ import { Checkbox } from "@/src/components/ui/checkbox";
 interface SupportFormProps {
   categories: { id: string; name: string }[];
 }
+
+const fetchModels = async (categoryId: string) => {
+  try {
+    const res = await fetch(`/api/products/models?categoryId=${categoryId}`);
+    if (!res.ok) return { success: false, data: [] };
+    return await res.json();
+  } catch (error) {
+    console.error("Ошибка загрузки моделей:", error);
+    return { success: false, data: [] };
+  }
+};
 
 export const SupportForm = ({ categories }: SupportFormProps) => {
   const [state, formAction, isPending] = useActionState(submitSupportAction, {
@@ -65,7 +75,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
     const payloadCatId = state.payload?.categoryId as string | undefined;
 
     if (payloadCatId) {
-      getSupportModelsByCategory(payloadCatId).then((res) => {
+      fetchModels(payloadCatId).then((res) => {
         if (!isCancelled) {
           if (res.success) {
             setModels(res.data);
@@ -89,7 +99,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
     latestCategoryReq.current = categoryId;
 
     try {
-      const res = await getSupportModelsByCategory(categoryId);
+      const res = await fetchModels(categoryId);
       if (latestCategoryReq.current === categoryId && res.success) {
         setModels(res.data);
       }
