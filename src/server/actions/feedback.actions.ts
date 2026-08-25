@@ -9,6 +9,8 @@ import {
   partnershipSchema,
   supportSchema,
 } from "@/src/lib/validations/feedback";
+import { HeadObjectCommand } from "@aws-sdk/client-s3";
+import { s3Internal } from "../services/s3/client";
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT_WINDOW_MS = 60000;
@@ -29,6 +31,22 @@ export type ActionState = {
   fieldErrors?: Record<string, string>;
   payload?: Record<string, FormDataEntryValue | FormDataEntryValue[]>;
 };
+
+async function keepExistingKeys(keys: string[]): Promise<string[]> {
+  const checks = await Promise.all(
+    keys.map(async (Key) => {
+      try {
+        await s3Internal.send(
+          new HeadObjectCommand({ Bucket: "support-media", Key }),
+        );
+        return Key;
+      } catch {
+        return null;
+      }
+    }),
+  );
+  return checks.filter((k): k is string => k !== null);
+}
 
 export async function submitPartnershipAction(
   prevState: ActionState,
@@ -174,19 +192,24 @@ export async function submitSupportAction(
       });
     }
 
+    const confirmedMediaKeys =
+      validatedMediaKeys && validatedMediaKeys.length > 0
+        ? await keepExistingKeys(validatedMediaKeys)
+        : [];
+
     await db.insert(feedbackRequests).values({
       type: "support",
       name,
       phone,
       email,
       message,
-      // ИЗМЕНЕНИЕ 2: Передаем массив в JSONB
+
       payload: {
         categoryId,
         marketplace,
         purchaseDate,
         modelArticle,
-        mediaKeys: validatedMediaKeys || [],
+        mediaKeys: confirmedMediaKeys,
       },
       ipHash,
     });

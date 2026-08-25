@@ -5,6 +5,9 @@ const sanitizeText = (val: string) => val.replace(/<[^>]*>?/gm, "").trim();
 const RU_PHONE_REGEX =
   /^(?:\+7|8|7)[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$/;
 
+const MEDIA_KEY_REGEX =
+  /^requests\/\d{4}-\d{2}-\d{2}\/[0-9a-f-]{36}\.(jpg|jpeg|png|webp|heic|heif|mp4|pdf)$/;
+
 const baseContactSchema = z.object({
   name: z
     .string({ message: "Укажите ФИО" })
@@ -79,7 +82,10 @@ export const supportSchema = baseContactSchema.extend({
     .max(2000, "Описание не должно превышать 2000 символов")
     .transform(sanitizeText),
 
-  mediaKeys: z.array(z.string()).max(5, "Максимум 5 файлов").optional(),
+  mediaKeys: z
+    .array(z.string().regex(MEDIA_KEY_REGEX, "Некорректный ключ файла"))
+    .max(5, "Максимум 5 файлов")
+    .optional(),
 });
 
 // 4. Схема для формы "Консультация"
