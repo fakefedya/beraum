@@ -10,7 +10,7 @@ import {
   Info,
 } from "lucide-react";
 import { cn } from "@/src/lib/utils";
-import { getPresignedUploadUrl } from "@/src/server/actions/media.actions";
+import { getPresignedUploadUrl } from "@/src/server/actions/media";
 import { toast } from "sonner";
 import { SUPPORT_MEDIA_CONFIG } from "@/src/lib/constants";
 

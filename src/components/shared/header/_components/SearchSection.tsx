@@ -18,7 +18,7 @@ import { useDebounce } from "@/src/hooks/use-debounce";
 import {
   getProducts,
   type CatalogProduct,
-} from "@/src/server/actions/products.queries";
+} from "@/src/server/queries/products";
 import { SafeImage } from "../../SafeImage";
 
 const LIMIT = 10;
@@ -58,15 +58,18 @@ export const SearchSection = () => {
     const fetchInitial = async () => {
       setIsLoading(true);
       try {
-        const res = await getProducts({
-          q: queryTrimmed,
-          limit: LIMIT,
-          offset: 0,
-        });
-        if (isMounted && res.success && res.data) {
-          setResults(res.data);
+        const url = new URL("/api/products", window.location.origin);
+        url.searchParams.set("q", queryTrimmed);
+        url.searchParams.set("limit", LIMIT.toString());
+        url.searchParams.set("offset", "0");
+
+        const res = await fetch(url.toString());
+        const json = await res.json();
+
+        if (isMounted && json.success && json.data) {
+          setResults(json.data);
           setOffset(LIMIT);
-          setHasMore(res.data.length === LIMIT);
+          setHasMore(json.data.length === LIMIT);
         }
       } catch (error) {
         console.error("Ошибка поиска:", error);
@@ -87,15 +90,18 @@ export const SearchSection = () => {
 
     setIsLoadingMore(true);
     try {
-      const res = await getProducts({
-        q: debouncedQuery.trim(),
-        limit: LIMIT,
-        offset,
-      });
-      if (res.success && res.data) {
-        setResults((prev) => [...prev, ...res.data]);
+      const url = new URL("/api/products", window.location.origin);
+      url.searchParams.set("q", debouncedQuery.trim());
+      url.searchParams.set("limit", LIMIT.toString());
+      url.searchParams.set("offset", offset.toString());
+
+      const res = await fetch(url.toString());
+      const json = await res.json();
+
+      if (json.success && json.data) {
+        setResults((prev) => [...prev, ...json.data]);
         setOffset((prev) => prev + LIMIT);
-        setHasMore(res.data.length === LIMIT);
+        setHasMore(json.data.length === LIMIT);
       }
     } catch (error) {
       console.error("Ошибка загрузки:", error);

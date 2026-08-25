@@ -8,7 +8,7 @@ import {
   MARKETPLACE_LINKS,
 } from "@/src/lib/constants";
 import { cn } from "@/src/lib/utils";
-import { getProductByArticle } from "@/src/server/actions/products.queries";
+import { getProductByArticle } from "@/src/server/queries/products";
 
 type ProductDetails = NonNullable<
   Awaited<ReturnType<typeof getProductByArticle>>["data"]

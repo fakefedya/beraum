@@ -12,7 +12,7 @@ import {
 import { Button } from "@/src/components/ui/button";
 import { FloatingField } from "@/src/components/shared/FloatingField";
 import { Checkbox } from "@/src/components/ui/checkbox";
-import { submitConsultAction } from "@/src/server/actions/feedback.actions";
+import { submitConsultAction } from "@/src/server/actions/feedback";
 import { cn } from "@/src/lib/utils";
 import Link from "next/link";
 

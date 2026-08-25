@@ -12,10 +12,7 @@ import {
   Parallax,
 } from "swiper/modules";
 
-import {
-  getActiveSlides,
-  type ValidatedSlide,
-} from "@/src/server/actions/banners.queries";
+import type { ValidatedSlide } from "@/src/server/queries/banners";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -27,18 +24,22 @@ import { SafeImage } from "@/src/components/shared/SafeImage";
 interface HeroSliderProps {
   slides: ValidatedSlide[];
 }
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Network error");
+  const json = await res.json();
+  if (!json.success) throw new Error("Failed to fetch slides");
+  return json.data as ValidatedSlide[];
+};
 
 export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
-  const { data: slides } = useSWR(
-    "hero-slides",
-    async () => {
-      const response = await getActiveSlides("home_hero");
-      return response.success && response.data ? response.data : [];
-    },
+  const { data: slides } = useSWR<ValidatedSlide[]>(
+    "/api/banners?placement=home_hero",
+    fetcher,
     {
-      fallbackData: initialSlides, // КРИТИЧНО: Отдаем SWR серверные данные для мгновенного первого рендера
-      refreshInterval: 30000, // Фоновое обновление каждые 30 секунд (30000 мс)
-      revalidateOnFocus: true, // Обновлять данные, если пользователь свернул браузер и вернулся
+      fallbackData: initialSlides,
+      refreshInterval: 30000,
+      revalidateOnFocus: true,
     },
   );
 
@@ -71,7 +72,6 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
       edgeSwipeThreshold={20}
       mousewheel={{ enabled: true, sensitivity: 1, releaseOnEdges: true }}
       keyboard={{ enabled: true }}
-      // autoplay={{ delay: 6000, disableOnInteraction: false }}
       autoplay={{ enabled: false }}
       loop={slides.length > 1}
       pagination={{ enabled: true, clickable: true }}
@@ -139,12 +139,11 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
             </div>
           )}
 
-          {/* === РЕНДЕР ПРОМО-КАРТОЧКИ === */}
           {slide.type === "promo_information" && (
             <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
               <div
                 className="flex max-w-md flex-col gap-4 rounded-2xl bg-white/20 p-8 shadow-2xl backdrop-blur-xl"
-                data-swiper-parallax="-500" // Эффект выезда карточки
+                data-swiper-parallax="-500"
                 data-swiper-parallax-opacity="0"
               >
                 <h2 className="text-3xl font-bold text-white">{slide.title}</h2>

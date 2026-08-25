@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { type CatalogProduct } from "@/src/server/actions/products.queries";
+import { type CatalogProduct } from "@/src/server/queries/products";
 import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
 import {

@@ -1,4 +1,4 @@
-"use server";
+import "server-only";
 
 import { asc } from "drizzle-orm";
 import { db } from "@/src/server/db/client";

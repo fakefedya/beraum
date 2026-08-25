@@ -1,4 +1,4 @@
-import { getActiveSlides } from "@/src/server/actions/banners.queries";
+import { getActiveSlides } from "@/src/server/queries/banners";
 import { Metadata } from "next";
 import { HeroSlider } from "./_components/HeroSlider";
 

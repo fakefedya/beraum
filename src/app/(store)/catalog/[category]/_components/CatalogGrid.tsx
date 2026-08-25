@@ -3,13 +3,10 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import useSWRInfinite from "swr/infinite";
-import {
-  getProducts,
-  type CatalogProduct,
-} from "@/src/server/actions/products.queries";
+import { type CatalogProduct } from "@/src/server/queries/products"; // Изменен импорт!
 import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
-import { ProductCard } from "@/src/components/shared/ProductCard"; // Импортируем общую карточку
+import { ProductCard } from "@/src/components/shared/ProductCard";
 
 const LIMIT = 12;
 
@@ -30,34 +27,31 @@ export const CatalogGrid = ({
   ) => {
     if (previousPageData && previousPageData.length < LIMIT) return null;
 
-    const filters: Record<string, string | string[]> = {};
+    const url = new URL(
+      "/api/products",
+      typeof window !== "undefined"
+        ? window.location.origin
+        : "http://localhost:3000",
+    );
+
+    url.searchParams.set("categorySlug", categorySlug);
+    url.searchParams.set("limit", LIMIT.toString());
+    url.searchParams.set("offset", (pageIndex * LIMIT).toString());
+    url.searchParams.set("sort", searchParams.get("sort") || "newest");
+
     searchParams.forEach((value, key) => {
-      if (key === "sort") return;
-      const existing = filters[key];
-      if (existing) {
-        filters[key] = Array.isArray(existing)
-          ? [...existing, value]
-          : [existing, value];
-      } else {
-        filters[key] = value;
-      }
+      if (key !== "sort") url.searchParams.append(key, value);
     });
 
-    const sort = searchParams.get("sort") || "newest";
-    return JSON.stringify({
-      categorySlug,
-      limit: LIMIT,
-      offset: pageIndex * LIMIT,
-      filters,
-      sort,
-    });
+    return url.toString();
   };
 
-  const fetcher = async (key: string) => {
-    const params = JSON.parse(key);
-    const response = await getProducts(params);
-    if (!response.success) throw new Error(response.error);
-    return response.data;
+  const fetcher = async (url: string) => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Network response was not ok");
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error);
+    return json.data;
   };
 
   const { data, error, size, setSize, isValidating, isLoading } =

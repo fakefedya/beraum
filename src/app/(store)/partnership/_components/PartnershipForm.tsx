@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
-import { submitPartnershipAction } from "@/src/server/actions/feedback.actions";
+import { submitPartnershipAction } from "@/src/server/actions/feedback";
 import { FloatingField } from "@/src/components/shared/FloatingField";
 import { cn } from "@/src/lib/utils";
 import { Checkbox } from "@/src/components/ui/checkbox";

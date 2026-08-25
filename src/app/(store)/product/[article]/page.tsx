@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import {
   getProductByArticle,
   getSimilarProducts,
-} from "@/src/server/actions/products.queries";
+} from "@/src/server/queries/products";
 import { Container } from "@/src/components/shared/Container";
 import { Section } from "@/src/components/shared/Section";
 import { ProductGallery } from "./_components/ProductGallery";

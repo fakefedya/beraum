@@ -12,8 +12,8 @@ import {
 import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
 import { FloatingField } from "@/src/components/shared/FloatingField";
-import { submitSupportAction } from "@/src/server/actions/feedback.actions";
-import { getSupportModelsByCategory } from "@/src/server/actions/products.queries";
+import { submitSupportAction } from "@/src/server/actions/feedback";
+import { getSupportModelsByCategory } from "@/src/server/queries/products";
 import {
   Popover,
   PopoverContent,
