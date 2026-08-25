@@ -1,15 +1,17 @@
 "use server";
 
 import { db } from "@/src/server/db/client";
-import { feedbackRequests } from "@/src/server/db/schema/feedback.schema";
+import {
+  feedbackRequests,
+  mediaUploads,
+} from "@/src/server/db/schema/feedback.schema";
 import {
   consultSchema,
   partnershipSchema,
   supportSchema,
 } from "@/src/lib/validations/feedback";
-import { HeadObjectCommand } from "@aws-sdk/client-s3";
-import { s3Internal } from "../services/s3/client";
 import { checkRateLimit } from "../utils/rate-limit";
+import { inArray, and, eq, isNull } from "drizzle-orm";
 
 export type ActionState = {
   success: boolean;
@@ -18,21 +20,24 @@ export type ActionState = {
   payload?: Record<string, FormDataEntryValue | FormDataEntryValue[]>;
 };
 
-// 🛡️ SECURITY: Верификация наличия файлов в бакете перед сохранением ключей
-async function keepExistingKeys(keys: string[]): Promise<string[]> {
-  const checks = await Promise.all(
-    keys.map(async (Key) => {
-      try {
-        await s3Internal.send(
-          new HeadObjectCommand({ Bucket: "support-media", Key }),
-        );
-        return Key;
-      } catch {
-        return null;
-      }
-    }),
-  );
-  return checks.filter((k): k is string => k !== null);
+async function keepExistingKeys(
+  keys: string[],
+  ipHash: string,
+): Promise<string[]> {
+  if (!keys.length) return [];
+
+  const validRecords = await db
+    .select({ fileKey: mediaUploads.fileKey })
+    .from(mediaUploads)
+    .where(
+      and(
+        inArray(mediaUploads.fileKey, keys),
+        eq(mediaUploads.ipHash, ipHash),
+        isNull(mediaUploads.claimedBy), // Файл еще не привязан к другой заявке
+      ),
+    );
+
+  return validRecords.map((r) => r.fileKey);
 }
 
 export async function submitPartnershipAction(
@@ -131,21 +136,31 @@ export async function submitSupportAction(
 
     const confirmedMediaKeys =
       validatedMediaKeys && validatedMediaKeys.length > 0
-        ? await keepExistingKeys(validatedMediaKeys)
+        ? await keepExistingKeys(validatedMediaKeys, rateLimit.ipHash)
         : [];
 
-    await db.insert(feedbackRequests).values({
-      type: "support",
-      name,
-      phone,
-      email,
-      message,
-      payload: {
-        ...restPayload,
-        mediaKeys: confirmedMediaKeys,
-      },
-      ipHash: rateLimit.ipHash,
-    });
+    const [newRequest] = await db
+      .insert(feedbackRequests)
+      .values({
+        type: "support",
+        name,
+        phone,
+        email,
+        message,
+        payload: {
+          ...restPayload,
+          mediaKeys: confirmedMediaKeys,
+        },
+        ipHash: rateLimit.ipHash,
+      })
+      .returning({ id: feedbackRequests.id });
+
+    if (confirmedMediaKeys.length > 0) {
+      await db
+        .update(mediaUploads)
+        .set({ claimedBy: newRequest.id })
+        .where(inArray(mediaUploads.fileKey, confirmedMediaKeys));
+    }
 
     return { success: true };
   } catch (error) {

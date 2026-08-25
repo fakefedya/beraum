@@ -54,3 +54,16 @@ export const feedbackRequests = pgTable(
     };
   },
 );
+
+export const mediaUploads = pgTable("media_uploads", {
+  fileKey: text("file_key").primaryKey(),
+  bucket: text("bucket").notNull(),
+  contentType: text("content_type").notNull(),
+  ipHash: text("ip_hash").notNull(),
+  claimedBy: uuid("claimed_by").references(() => feedbackRequests.id, {
+    onDelete: "set null",
+  }),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+    .defaultNow()
+    .notNull(),
+});
