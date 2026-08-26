@@ -26,14 +26,6 @@ export const partnershipSchema = baseFeedbackSchema.extend({
 });
 
 export const supportSchema = baseFeedbackSchema.extend({
-  categoryId: z
-    .string({ message: "Выберите категорию устройства" })
-    .uuid("Неверный формат категории"),
-
-  marketplace: z.enum(VALID_MARKETPLACES, {
-    message: "Укажите место покупки",
-  }),
-
   modelArticle: z
     .string({ message: "Укажите артикул" })
     .min(1, "Укажите артикул")
@@ -47,12 +39,12 @@ export const supportSchema = baseFeedbackSchema.extend({
     .max(255)
     .optional(),
 
+  categoryId: z.string().uuid("Выберите категорию устройства"),
+  marketplace: z.enum(VALID_MARKETPLACES, "Укажите место покупки"),
   purchaseDate: z.coerce
-    .date({
-      message: "Укажите корректную дату покупки",
-    })
+    .date()
     .max(new Date(), "Дата покупки не может быть в будущем")
-    .min(new Date("2015-01-01"), "Проверьте год покупки"),
+    .min(new Date("2015-01-01"), "Проверьте дату"),
 
   mediaKeys: z.array(z.string()).optional(),
 });

@@ -127,7 +127,6 @@ export async function submitSupportAction(
       ...restPayload
     } = parsed.data;
 
-    // 🚀 ПАТЧ: Защита целостности данных JSONB
     const [categoryExists] = await db
       .select({ id: categories.id })
       .from(categories)
