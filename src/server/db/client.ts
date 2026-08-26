@@ -1,3 +1,4 @@
+// src/server/db/client.ts
 import "server-only";
 
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -10,7 +11,13 @@ const globalForDb = globalThis as unknown as {
 };
 
 const conn =
-  globalForDb.conn ?? postgres(serverEnv.DATABASE_URL, { prepare: false });
+  globalForDb.conn ??
+  postgres(serverEnv.DATABASE_URL, {
+    max: Number(process.env.DB_POOL_MAX ?? 10), // Максимум соединений в пуле
+    idle_timeout: 20, // Закрывать простаивающие соединения через 20 секунд
+    connect_timeout: 10, // Таймаут подключения (сек) — быстрый отказ при падении БД
+    prepare: !serverEnv.DATABASE_URL.includes("pgbouncer"),
+  });
 
 if (process.env.NODE_ENV !== "production") {
   globalForDb.conn = conn;
