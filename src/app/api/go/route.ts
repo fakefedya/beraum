@@ -5,6 +5,7 @@ import { z } from "zod";
 import crypto from "crypto";
 import { db } from "@/src/server/db/client";
 import { marketplaceClicks } from "@/src/server/db/schema";
+import { getClientIp, hashIp } from "@/src/server/utils/ip";
 
 // --- SECURITY: Строгий Whitelist доменов (Защита от Open Redirect) ---
 const ALLOWED_DOMAINS = [
@@ -85,14 +86,9 @@ export async function GET(request: NextRequest) {
   const { url, marketplace, article } = parsed.data;
   const userAgent = request.headers.get("user-agent") || "";
 
-  // 2. Безопасное извлечение IP (с учетом прокси/Docker)
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  const realIp = request.headers.get("x-real-ip");
   // Если есть цепочка прокси, берем первый IP (клиентский)
-  const ip = forwardedFor
-    ? forwardedFor.split(",")[0].trim()
-    : realIp || "127.0.0.1";
-  const ipHash = crypto.createHash("sha256").update(ip).digest("hex");
+  const ip = await getClientIp(request);
+  const ipHash = hashIp(ip);
 
   // 3. Идентификация устройства (HttpOnly Cookie)
   let deviceId = cookieStore.get("beraum_device_id")?.value;

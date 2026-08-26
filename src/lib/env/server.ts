@@ -12,6 +12,12 @@ const serverSchema = z.object({
     error: "AUTH_SECRET слишком короткий для обеспечения безопасности",
   }),
 
+  // 🛡️ SECURITY: Ключ для HMAC хеширования IP-адресов
+  IP_HASH_SALT: z.string().min(32, {
+    error:
+      "IP_HASH_SALT должен быть не менее 32 символов (используй openssl rand -hex 32)",
+  }),
+
   // MinIO
   S3_INTERNAL_URL: z.url({ error: "S3_INTERNAL_URL должен быть валидным URL" }),
   S3_PUBLIC_URL: z.url({ error: "S3_PUBLIC_URL должен быть валидным URL" }),

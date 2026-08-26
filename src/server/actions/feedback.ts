@@ -78,6 +78,7 @@ export async function submitPartnershipAction(
       message,
       payload: payloadData,
       ipHash: rateLimit.ipHash,
+      consentAt: new Date(),
     });
 
     return { success: true };
@@ -152,6 +153,7 @@ export async function submitSupportAction(
           mediaKeys: confirmedMediaKeys,
         },
         ipHash: rateLimit.ipHash,
+        consentAt: new Date(),
       })
       .returning({ id: feedbackRequests.id });
 
@@ -211,6 +213,7 @@ export async function submitConsultAction(
       message,
       payload: { sourcePage: "/", ...payloadData },
       ipHash: rateLimit.ipHash,
+      consentAt: new Date(),
     });
 
     return { success: true };

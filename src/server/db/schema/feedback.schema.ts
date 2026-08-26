@@ -36,6 +36,10 @@ export const feedbackRequests = pgTable(
     // Специфичные данные (ИНН, артикулы, маркетплейс)
     payload: jsonb("payload").default({}).notNull(),
 
+    consentAt: timestamp("consent_at", { withTimezone: true, mode: "date" })
+      .defaultNow()
+      .notNull(),
+
     // Security & Analytics
     ipHash: text("ip_hash").notNull(),
 
@@ -61,7 +65,7 @@ export const mediaUploads = pgTable("media_uploads", {
   contentType: text("content_type").notNull(),
   ipHash: text("ip_hash").notNull(),
   claimedBy: uuid("claimed_by").references(() => feedbackRequests.id, {
-    onDelete: "set null",
+    onDelete: "cascade",
   }),
   createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
     .defaultNow()

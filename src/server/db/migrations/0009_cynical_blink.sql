@@ -1,0 +1,1 @@
+ALTER TABLE "feedback_requests" ADD COLUMN "consent_at" timestamp with time zone DEFAULT now() NOT NULL;
