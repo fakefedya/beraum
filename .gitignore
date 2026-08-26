@@ -27,7 +27,7 @@
 AGENTS.md
 repomix-output.xml
 *.tar.gz
-.vscode/
+./vscode
 
 
 # DB
