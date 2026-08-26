@@ -7,9 +7,14 @@ import { SupportActionBlock } from "@/src/components/shared/blocks/SupportAction
 import { cn } from "@/src/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Вопросы и ответы | Beraum",
+  title: {
+    absolute: "Вопросы и ответы — База знаний Beraum",
+  },
   description:
-    "Ответы на часто задаваемые вопросы о бытовой технике Beraum, установке, гарантии и возврате.",
+    "Ответы на частые вопросы клиентов по установке, подключению, гарантийному обслуживанию и возврату бытовой техники Beraum.",
+  alternates: {
+    canonical: "/faq",
+  },
 };
 
 const breadcrumbItems = [

@@ -3,8 +3,15 @@ import { Metadata } from "next";
 import { HeroSlider } from "./_components/HeroSlider";
 
 export const metadata: Metadata = {
-  title: "Beraum",
-  description: "Какое-то описание",
+  title: "Бытовая техника с ярким дизайном по доступной цене — Beraum",
+  description:
+    "Официальный магазин Beraum. Проектируем технику с фокусом на интерьерную эстетику. Официальная гарантия, доставка по всей России.",
+  openGraph: {
+    type: "website",
+    locale: "ru_RU",
+    url: "/",
+    siteName: "Beraum",
+  },
 };
 
 export default async function Home() {

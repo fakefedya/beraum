@@ -8,8 +8,14 @@ import { PartnershipSection } from "./_components/PartnershipSection";
 import { cn } from "@/src/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Сотрудничество | Beraum",
-  description: "Специальные условия для бизнеса, дизайнеров и девелоперов.",
+  title: {
+    absolute: "Сотрудничество — Beraum для бизнеса и дизайнеров",
+  },
+  description:
+    "Специальные условия для девелоперов, архитекторов, мебельных салонов и HoReCa. Оптовые цены, 3D-модели техники и персональный менеджер.",
+  alternates: {
+    canonical: "/partnership",
+  },
 };
 
 const breadcrumbItems = [

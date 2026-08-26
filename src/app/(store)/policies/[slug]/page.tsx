@@ -27,7 +27,7 @@ export async function generateMetadata({
   if (!policy) return {};
 
   return {
-    title: `${policy.title} | Beraum`,
+    title: `${policy.title}`,
     description: `Официальная информация: ${policy.title.toLowerCase()}`,
   };
 }

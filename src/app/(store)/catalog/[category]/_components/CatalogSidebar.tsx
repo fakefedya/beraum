@@ -60,7 +60,6 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
 
   if (!filters || filters.length === 0) return null;
 
-  // Подсчет количества активных фильтров для бэйджа
   const activeFiltersCount = filters.reduce((acc, filter) => {
     return acc + searchParams.getAll(filter.key).length;
   }, 0);
@@ -72,6 +71,7 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
     } else {
       current.set("sort", value);
     }
+    current.delete("page");
     router.push(`${pathname}?${current.toString()}`, { scroll: false });
   };
 
@@ -79,6 +79,7 @@ export const CatalogSidebar = ({ categorySlug }: CatalogSidebarProps) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
     const existingValues = current.getAll(key);
     current.delete(key);
+    current.delete("page");
 
     if (checked) {
       existingValues.forEach((v) => current.append(key, v));

@@ -1,4 +1,3 @@
-import { Metadata } from "next";
 import { Container } from "@/src/components/shared/Container";
 import { Section } from "@/src/components/shared/Section";
 import { Breadcrumbs } from "@/src/components/shared/Breadcrumbs";
@@ -8,17 +7,23 @@ import { DesignSection } from "./_components/DesignSection";
 import { QualityControlSection } from "./_components/QualityControlSection";
 import { GuaranteeSection } from "./_components/GuaranteeSection";
 import { cn } from "@/src/lib/utils";
-
-export const metadata: Metadata = {
-  title: "О бренде Beraum | Честная техника для современного интерьера",
-  description:
-    "Узнайте правду о производстве Beraum. Честный российский бренд, передовые заводы Китая и фокус на интеграции техники в интерьер.",
-};
+import { Metadata } from "next";
 
 const breadcrumbItems = [
   { label: "Главная", href: "/" },
   { label: "О бренде" },
 ];
+
+export const metadata: Metadata = {
+  title: {
+    absolute: "О бренде — Beraum",
+  },
+  description:
+    "Производство надежной кухонной техники без переплат за бренд. Честные процессы, контроль качества на заводах-лидерах индустрии и фокус на интерьерный дизайн.",
+  alternates: {
+    canonical: "/about",
+  },
+};
 
 export default function About() {
   return (

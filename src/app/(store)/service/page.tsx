@@ -5,9 +5,14 @@ import { SupportActionBlock } from "@/src/components/shared/blocks/SupportAction
 import { cn } from "@/src/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Гарантия | Beraum",
+  title: {
+    absolute: "Гарантия и сервисное обслуживание — Beraum",
+  },
   description:
-    "Официальная гарантия на всю бытовую технику Beraum. Условия обслуживания и поддержка клиентов.",
+    "Официальная гарантия на бытовую технику Beraum. Прозрачные условия, собственный склад запчастей в РФ и прямое общение с инженерами без бюрократии.",
+  alternates: {
+    canonical: "/service",
+  },
 };
 
 export default function ServicePage() {

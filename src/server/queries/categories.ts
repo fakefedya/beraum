@@ -9,6 +9,7 @@ export async function getCategoriesList() {
     const data = await db
       .select({
         id: categories.id,
+        slug: categories.slug,
         name: categories.titleRu,
       })
       .from(categories)

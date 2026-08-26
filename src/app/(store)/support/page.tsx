@@ -7,8 +7,14 @@ import { SupportSection } from "./_components/SupportSection";
 import { cn } from "@/src/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Сотрудничество | Beraum",
-  description: "Специальные условия для бизнеса, дизайнеров и девелоперов.",
+  title: {
+    absolute: "Служба технической поддержки — Beraum",
+  },
+  description:
+    "Прямая связь с инженерами Beraum. Помощь с эксплуатацией, оформление гарантийных обращений и профессиональные консультации по бытовой технике.",
+  alternates: {
+    canonical: "/support",
+  },
 };
 
 const breadcrumbItems = [
