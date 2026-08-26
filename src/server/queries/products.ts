@@ -1,7 +1,7 @@
 import "server-only";
 
 import { z } from "zod";
-import { eq, desc, asc, and, sql, or, ilike, ne } from "drizzle-orm";
+import { eq, desc, asc, and, sql, or, ilike, ne, inArray } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
 import {
   products,
@@ -309,17 +309,36 @@ export const getProductByArticle = unstable_cache(
   { tags: ["products"], revalidate: 3600 },
 );
 
-async function getSimilarProductsDb(
+export async function getSimilarProducts(
   categoryId: string,
   excludeSiteArticle: string,
   limitNum = 3,
 ) {
   try {
-    const conditions = [
-      eq(products.status, "published"),
-      eq(products.categoryId, categoryId),
-      ne(products.siteArticle, excludeSiteArticle),
-    ];
+    const availableIds = await db
+      .select({ siteArticle: products.siteArticle })
+      .from(products)
+      .where(
+        and(
+          eq(products.status, "published"),
+          eq(products.categoryId, categoryId),
+          ne(products.siteArticle, excludeSiteArticle),
+        ),
+      )
+      .groupBy(products.siteArticle);
+
+    if (availableIds.length === 0) {
+      return { success: true, data: [] };
+    }
+
+    const shuffled = availableIds.sort(() => 0.5 - Math.random());
+    const pickedArticles = shuffled
+      .slice(0, limitNum)
+      .map((p) => p.siteArticle);
+
+    if (pickedArticles.length === 0) {
+      return { success: true, data: [] };
+    }
 
     const items = await db
       .select({
@@ -365,10 +384,13 @@ async function getSimilarProductsDb(
       })
       .from(products)
       .leftJoin(categories, eq(products.categoryId, categories.id))
-      .where(and(...conditions))
-      .groupBy(products.siteArticle, categories.slug, categories.titleRu)
-      .orderBy(sql`RANDOM()`)
-      .limit(limitNum);
+      .where(
+        and(
+          eq(products.status, "published"),
+          inArray(products.siteArticle, pickedArticles),
+        ),
+      )
+      .groupBy(products.siteArticle, categories.slug, categories.titleRu);
 
     return { success: true, data: items };
   } catch (error) {
@@ -376,11 +398,6 @@ async function getSimilarProductsDb(
     return { success: false, data: [] };
   }
 }
-export const getSimilarProducts = unstable_cache(
-  getSimilarProductsDb,
-  ["products_similar"],
-  { tags: ["products"], revalidate: 3600 },
-);
 
 async function getSupportModelsByCategoryDb(categoryId: string) {
   try {
