@@ -5,6 +5,7 @@ import {
   feedbackRequests,
   mediaUploads,
 } from "@/src/server/db/schema/feedback.schema";
+import { categories } from "@/src/server/db/schema";
 import {
   consultSchema,
   partnershipSchema,
@@ -33,7 +34,7 @@ async function keepExistingKeys(
       and(
         inArray(mediaUploads.fileKey, keys),
         eq(mediaUploads.ipHash, ipHash),
-        isNull(mediaUploads.claimedBy), // Файл еще не привязан к другой заявке
+        isNull(mediaUploads.claimedBy),
       ),
     );
 
@@ -125,6 +126,21 @@ export async function submitSupportAction(
       mediaKeys: validatedMediaKeys,
       ...restPayload
     } = parsed.data;
+
+    // 🚀 ПАТЧ: Защита целостности данных JSONB
+    const [categoryExists] = await db
+      .select({ id: categories.id })
+      .from(categories)
+      .where(eq(categories.id, restPayload.categoryId))
+      .limit(1);
+
+    if (!categoryExists) {
+      return {
+        success: false,
+        fieldErrors: { categoryId: "Выбранная категория не найдена в базе" },
+        payload: data,
+      };
+    }
 
     const rateLimit = await checkRateLimit("support", 3, 60000);
     if (!rateLimit.success) {

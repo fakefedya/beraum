@@ -88,3 +88,13 @@ export const MARKETPLACE_LINKS: LinksProps = {
     },
   ],
 } as const;
+
+export const VALID_MARKETPLACES = [
+  "ozon",
+  "wb",
+  "ymarket",
+  "mvideo",
+  "megamarket",
+  "beraum",
+  "offline",
+] as const;
