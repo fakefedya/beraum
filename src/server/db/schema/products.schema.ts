@@ -74,6 +74,11 @@ export const products = pgTable(
       articleLowerIdx: index("idx_products_item_article_lower").on(
         sql`lower(${table.itemArticle})`,
       ),
+      statusCategoryIdx: index("idx_products_status_category").on(
+        table.status,
+        table.categoryId,
+      ),
+      siteArticleIdx: index("idx_products_site_article").on(table.siteArticle),
     };
   },
 );

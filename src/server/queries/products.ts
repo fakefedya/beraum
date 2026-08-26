@@ -131,8 +131,8 @@ async function getProductsDb(params: GetProductsParams = {}) {
         }
 
         const orConditions = valuesArray.map((val) => {
-          const jsonVal = JSON.stringify(val);
-          return sql`${products.filters}->${key} @> ${jsonVal}::jsonb`;
+          const jsonVal = JSON.stringify({ [key]: val });
+          return sql`${products.filters} @> ${jsonVal}::jsonb`;
         });
 
         const orClause = or(...orConditions);
