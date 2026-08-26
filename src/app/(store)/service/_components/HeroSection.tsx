@@ -45,7 +45,7 @@ export const HeroSection = () => {
             >
               <h1
                 className={cn(
-                  "text-foreground text-center text-4xl leading-tight font-semibold tracking-tight text-balance",
+                  "text-foreground text-center text-4xl leading-tight font-semibold text-balance",
                   "md:text-left md:text-5xl lg:text-6xl",
                 )}
               >
@@ -102,7 +102,7 @@ export const HeroSection = () => {
                   />
 
                   <div className="flex flex-col gap-2">
-                    <h3 className="text-foreground text-xl font-semibold tracking-tight">
+                    <h3 className="text-foreground text-xl font-semibold">
                       {el.title}
                     </h3>
                     <p className="text-muted-foreground leading-relaxed">

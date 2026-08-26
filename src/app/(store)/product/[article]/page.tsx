@@ -1,20 +1,23 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import {
   getProductByArticle,
-  getSimilarProducts,
   getPublishedArticles,
 } from "@/src/server/queries/products";
 import { Container } from "@/src/components/shared/Container";
 import { Section } from "@/src/components/shared/Section";
 import { ProductGallery } from "./_components/ProductGallery";
 import { ProductInfo } from "./_components/ProductInfo";
-import { ProductCard } from "@/src/components/shared/ProductCard";
 import {
   Breadcrumbs,
   BreadcrumbType,
 } from "@/src/components/shared/Breadcrumbs";
 import { cn } from "@/src/lib/utils";
 import { Metadata } from "next";
+import {
+  SimilarProducts,
+  SimilarProductsSkeleton,
+} from "./_components/SimilarProducts";
 
 const DOC_META: Record<string, { label: string }> = {
   user_instruction: { label: "Руководство пользователя" },
@@ -71,11 +74,6 @@ export default async function ProductPage({ params }: PageProps) {
   }
 
   const product = response.data;
-  const similarProducts = product.categoryId
-    ? (await getSimilarProducts(product.categoryId, product.siteArticle, 3))
-        .data
-    : [];
-
   const breadcrumbItems: BreadcrumbType[] = [{ label: "Главная", href: "/" }];
 
   if (product.categoryTitle && product.categorySlug) {
@@ -152,6 +150,7 @@ export default async function ProductPage({ params }: PageProps) {
             </div>
           </Container>
         </Section>
+
         {product.documents && product.documents.length > 0 && (
           <Section>
             <Container>
@@ -188,20 +187,15 @@ export default async function ProductPage({ params }: PageProps) {
             </Container>
           </Section>
         )}
-        <Section>
-          <Container>
-            {similarProducts && similarProducts.length > 0 && (
-              <div className="flex flex-col items-center gap-10">
-                <h2 className="text-3xl font-medium">Вам может понравиться</h2>
-                <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                  {similarProducts.map((p) => (
-                    <ProductCard key={p.siteArticle} product={p} />
-                  ))}
-                </div>
-              </div>
-            )}
-          </Container>
-        </Section>
+
+        {product.categoryId && (
+          <Suspense fallback={<SimilarProductsSkeleton />}>
+            <SimilarProducts
+              categoryId={product.categoryId}
+              excludeSiteArticle={product.siteArticle}
+            />
+          </Suspense>
+        )}
       </div>
     </>
   );

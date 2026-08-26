@@ -23,7 +23,7 @@ export const FaqSection = () => {
           <div className="mx-auto flex max-w-3xl flex-col gap-8 text-center">
             <h1
               className={cn(
-                "text-foreground text-4xl font-semibold tracking-tight text-balance",
+                "text-foreground text-4xl font-semibold text-balance",
                 "md:text-5xl lg:text-6xl",
               )}
             >

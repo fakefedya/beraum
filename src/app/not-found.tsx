@@ -5,9 +5,7 @@ import { cn } from "@/src/lib/utils";
 export default function NotFound() {
   return (
     <div className="bg-background flex min-h-[80vh] flex-col items-center justify-center p-4 text-center">
-      {/* Иллюстрация "Отключено от сети" */}
       <div className="relative mb-8 flex h-40 w-64 items-center justify-center md:h-48 md:w-80">
-        {/* Розетка (Статичная) */}
         <svg
           viewBox="0 0 100 100"
           className="text-border absolute left-4 h-24 w-24 md:h-32 md:w-32"
@@ -24,7 +22,6 @@ export default function NotFound() {
           <circle cx="64" cy="50" r="4" fill="currentColor" stroke="none" />
         </svg>
 
-        {/* Вилка с кабелем (Парящая) */}
         <svg
           viewBox="0 0 120 100"
           className={cn(
@@ -38,16 +35,13 @@ export default function NotFound() {
           strokeLinejoin="round"
           aria-hidden="true"
         >
-          {/* Кабель */}
           <path d="M80 50 Q 100 50, 110 90" />
-          {/* Корпус вилки */}
           <rect x="30" y="25" width="50" height="50" rx="12" />
-          {/* Штыри */}
           <path d="M30 38H10M30 62H10" />
         </svg>
       </div>
 
-      <h1 className="text-foreground text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+      <h1 className="text-foreground text-4xl font-bold md:text-5xl lg:text-6xl">
         404
       </h1>
       <h2 className="text-foreground mt-4 text-xl font-medium md:text-2xl">
@@ -58,7 +52,6 @@ export default function NotFound() {
         или никогда не существовала.
       </p>
 
-      {/* UX: Сразу переводим трафик в воронку продаж */}
       <Button
         asChild
         className="mt-10 h-12 rounded-[16px] px-8 text-base font-medium shadow-sm transition-all hover:scale-105"

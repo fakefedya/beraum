@@ -13,7 +13,7 @@ export const HeroSection = () => {
         <div className="mx-auto flex flex-col items-center justify-center gap-8 text-center">
           <h1
             className={cn(
-              "text-foreground flex gap-1 text-4xl font-semibold tracking-tight text-balance",
+              "text-foreground flex gap-1 text-4xl font-semibold text-balance",
               "md:text-5xl lg:text-6xl",
             )}
           >

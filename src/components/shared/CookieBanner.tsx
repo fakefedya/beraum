@@ -40,7 +40,7 @@ export const CookieBanner = () => {
             "md:min-h-12 md:px-4 md:py-0",
           )}
         >
-          <p className="text-foreground text-sm font-medium tracking-tight">
+          <p className="text-foreground text-sm font-medium">
             Сайт использует файлы cookie.{" "}
             <Link
               href="/policies/privacy"

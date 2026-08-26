@@ -61,7 +61,7 @@ export default async function PolicyPage({ params }: PageProps) {
         <Container maxWidth="3xl">
           <div className="flex flex-col gap-10">
             <div className="flex flex-col gap-4 text-center">
-              <h1 className="text-foreground text-3xl font-semibold tracking-tight md:text-4xl">
+              <h1 className="text-foreground text-3xl font-semibold md:text-4xl">
                 {policy.title}
               </h1>
               <p className="text-muted-foreground text-sm">
