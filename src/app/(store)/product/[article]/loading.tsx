@@ -6,14 +6,26 @@ export default function ProductLoading() {
   return (
     <Section className={cn("pt-24", "md:pt-32")}>
       <Container maxWidth="7xl">
-        <div className="grid w-full grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
+        <div
+          className={cn(
+            "grid grid-cols-1 gap-12 lg:grid-cols-12",
+            "lg:items-start lg:gap-16",
+          )}
+        >
           {/* Левая колонка: ProductGallery (1:1) */}
-          <div className="relative flex h-full w-full flex-col gap-4">
+          <div
+            className={cn(
+              "relative z-10 aspect-2/3 w-full rounded-4xl",
+              "lg:aspect-auto",
+              "lg:sticky lg:top-32 lg:h-[calc(100vh-140px)] lg:min-h-125",
+              "lg:col-span-8",
+            )}
+          >
             <div className="bg-card relative aspect-4/5 w-full animate-pulse overflow-hidden rounded-[24px]" />
           </div>
 
           {/* Правая колонка: ProductInfo (1:1) */}
-          <div className={cn("flex flex-col gap-10", "md:gap-16")}>
+          <div className={cn("ml-auto w-full max-w-full", "lg:col-span-4")}>
             {/* Блок 1: Заголовок и Бэйджи */}
             <div className="flex flex-col gap-6">
               <div className="bg-muted h-6 w-20 animate-pulse rounded-full" />
