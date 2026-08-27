@@ -7,6 +7,13 @@ import { Button } from "@/src/components/ui/button";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import { cn } from "@/src/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/src/components/ui/select";
 
 export const WholesaleForm = () => {
   const [state, formAction, isPending] = useActionState(submitWholesaleAction, {
@@ -95,31 +102,56 @@ export const WholesaleForm = () => {
         />
       </div>
 
-      <div className="relative flex flex-col gap-2">
-        <select
-          name="techType"
+      <div className="relative flex w-full flex-col gap-1.5">
+        <div className="relative w-full">
+          <Select
+            name="techType"
+            defaultValue={(state.payload?.techType as string) || "both"}
+            disabled={isPending}
+          >
+            <SelectTrigger
+              className={cn(
+                "text-foreground h-14 w-full rounded-xl border bg-transparent px-4 pt-6 pb-2 text-base transition-all duration-200 outline-none",
+                "border-ring/30 focus:border-brand-secondary focus:ring-brand-secondary focus:ring-1",
+                state.fieldErrors?.techType &&
+                  "border-red-500 bg-[#fff2f4] focus:border-red-500 focus:ring-red-500",
+              )}
+            >
+              <SelectValue placeholder="Выберите категорию" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              <SelectItem value="both" className="cursor-pointer rounded-lg">
+                Обе категории
+              </SelectItem>
+              <SelectItem value="working" className="cursor-pointer rounded-lg">
+                Исправная уценка (Спб)
+              </SelectItem>
+              <SelectItem value="broken" className="cursor-pointer rounded-lg">
+                Неисправная техника (Мск / Спб)
+              </SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Статичный Floating Label (эмитируем активное состояние) */}
+          <label className="text-muted-foreground pointer-events-none absolute top-4 left-4 z-10 flex origin-[0] -translate-y-2.5 scale-[0.8] gap-0.5 transition-all duration-200">
+            Интересующая категория <span className="text-red-600/60">*</span>
+          </label>
+        </div>
+
+        {/* Вывод ошибки в едином стиле */}
+        <div
           className={cn(
-            "peer text-foreground h-14 w-full appearance-none rounded-xl border bg-transparent px-4 pt-4 pb-1 text-base transition-all duration-200 outline-none",
-            "border-ring/30 focus:border-brand-secondary focus:ring-brand-secondary focus:ring-1",
-            state.fieldErrors?.techType &&
-              "border-red-500 focus:border-red-500 focus:ring-red-500",
+            "flex items-start gap-1.5 px-1 text-xs font-medium text-red-500 opacity-0 transition-opacity duration-300",
+            state.fieldErrors?.techType && "opacity-100",
           )}
-          disabled={isPending}
-          defaultValue={(state.payload?.techType as string) || "both"}
         >
-          <option value="both">Обе категории</option>
-          <option value="working">Исправная уценка (Спб)</option>
-          <option value="broken">Неисправная техника (Мск / Спб)</option>
-        </select>
-        <label className="text-muted-foreground pointer-events-none absolute top-2 left-4 z-10 origin-left scale-[0.8] transition-all">
-          Интересующая категория *
-        </label>
-        {state.fieldErrors?.techType && (
-          <span className="flex items-center gap-1.5 px-1 text-xs font-medium text-red-500">
-            <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-            {state.fieldErrors.techType}
-          </span>
-        )}
+          {state.fieldErrors?.techType && (
+            <>
+              <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              <span>{state.fieldErrors.techType}</span>
+            </>
+          )}
+        </div>
       </div>
 
       <FloatingField

@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { VALID_MARKETPLACES } from "@/src/lib/constants/marketplaces";
 
+const VALID_CONDITIONS = ["new", "discount"] as const;
+
 const baseFeedbackSchema = z.object({
   name: z.string().min(2, "Имя должно содержать минимум 2 символа").max(100),
   phone: z
@@ -33,18 +35,30 @@ export const supportSchema = baseFeedbackSchema.extend({
 
   serialNumber: z.string().max(100).optional(),
 
+  deviceCondition: z.enum(
+    VALID_CONDITIONS,
+    "Укажите тип приобретенной техники",
+  ),
+
   address: z
     .string()
     .min(5, "Укажите точный адрес для выезда мастера")
     .max(255)
     .optional(),
 
-  categoryId: z.string().uuid("Выберите категорию устройства"),
+  categoryId: z
+    .string({
+      error: "Выберите категорию устройства",
+    })
+    .uuid("Выберите категорию устройства"),
+
   marketplace: z.enum(VALID_MARKETPLACES, "Укажите место покупки"),
   purchaseDate: z.coerce
-    .date()
+    .date({
+      error: "Неверный формат даты",
+    })
     .max(new Date(), "Дата покупки не может быть в будущем")
-    .min(new Date("2015-01-01"), "Проверьте дату"),
+    .min(new Date("2015-01-01"), "Проверьте дату покупки"),
 
   mediaKeys: z.array(z.string()).optional(),
 });

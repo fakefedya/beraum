@@ -19,7 +19,7 @@ export const DiscountToggle = ({ currentMode }: DiscountToggleProps) => {
     <div
       className={cn(
         "bg-background/80 shadow-nav flex w-fit flex-wrap gap-2 p-1",
-        "border border-black/5 backdrop-blur-xl backdrop-saturate-150",
+        "backdrop-blur-xl backdrop-saturate-150",
         "rounded-2xl md:rounded-[20px]",
       )}
     >

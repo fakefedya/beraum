@@ -30,6 +30,13 @@ import { MediaUploader } from "./MediaUploader";
 import { toast } from "sonner";
 import { MARKETPLACE_LINKS } from "@/src/lib/constants";
 import { Checkbox } from "@/src/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/src/components/ui/select";
 
 interface SupportFormProps {
   categories: { id: string; name: string }[];
@@ -168,10 +175,68 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           <p className="text-sm font-medium">{state.error}</p>
         </div>
       )}
+
       {/* С чем вам требуется помощь? */}
-      <div className="flex flex-col gap-4">
+      <div className="relative flex w-full flex-col gap-4">
         <h3 className="text-center text-2xl font-medium">
           С чем вам требуется помощь?
+          <span className="ml-1 text-red-600/60">*</span>
+        </h3>
+        <div className="relative w-full">
+          <Select
+            name="deviceCondition"
+            defaultValue={(state.payload?.deviceCondition as string) || "new"}
+            disabled={isPending}
+          >
+            <SelectTrigger
+              className={cn(
+                "text-foreground h-14 w-full rounded-xl border bg-transparent px-4 pt-6 pb-2 text-base shadow-none transition-all duration-200 outline-none",
+                "border-ring/30 focus:border-brand-secondary focus:ring-brand-secondary focus:ring-1",
+                state.fieldErrors?.deviceCondition &&
+                  "border-red-500 bg-[#fff2f4] focus:border-red-500 focus:ring-red-500",
+              )}
+            >
+              <SelectValue placeholder="Выберите состояние" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              <SelectItem value="new" className="cursor-pointer rounded-lg">
+                Новая техника
+              </SelectItem>
+              <SelectItem
+                value="discount"
+                className="cursor-pointer rounded-lg"
+              >
+                Уцененная техника (Дисконт)
+              </SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Статичный Floating Label (эмитируем активное состояние) */}
+          <label className="text-muted-foreground pointer-events-none absolute top-4 left-4 z-10 flex origin-left -translate-y-2.5 scale-[0.8] gap-0.5 transition-all duration-200">
+            Состояние техники при покупке{" "}
+            <span className="text-red-600/60">*</span>
+          </label>
+        </div>
+
+        {/* Вывод ошибки */}
+        <div
+          className={cn(
+            "flex items-start gap-1.5 px-1 text-xs font-medium text-red-500 opacity-0 transition-opacity duration-300",
+            state.fieldErrors?.deviceCondition && "opacity-100",
+          )}
+        >
+          {state.fieldErrors?.deviceCondition && (
+            <>
+              <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              <span>{state.fieldErrors.deviceCondition}</span>
+            </>
+          )}
+        </div>
+      </div>
+      {/* Выберите категорию устройства */}
+      <div className="flex flex-col gap-4">
+        <h3 className="text-center text-2xl font-medium">
+          Выберите категорию устройства
           <span className="ml-1 text-red-600/60">*</span>
         </h3>
         <div
