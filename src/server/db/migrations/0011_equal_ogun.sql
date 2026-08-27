@@ -1,0 +1,1 @@
+ALTER TYPE "public"."request_type" ADD VALUE 'wholesale';

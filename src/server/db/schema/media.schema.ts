@@ -30,15 +30,12 @@ export const productImages = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => ({
-    productSortIdx: index("idx_product_images_sort").on(
-      table.productId,
-      table.sortOrder,
-    ),
-    uniqueCoverIdx: uniqueIndex("idx_product_unique_cover")
+  (table) => [
+    index("idx_product_images_sort").on(table.productId, table.sortOrder),
+    uniqueIndex("idx_product_unique_cover")
       .on(table.productId)
       .where(sql`${table.isCover} = true`),
-  }),
+  ],
 );
 
 export const productDocuments = pgTable(
@@ -56,7 +53,5 @@ export const productDocuments = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => ({
-    productDocIdx: index("idx_product_docs").on(table.productId, table.type),
-  }),
+  (table) => [index("idx_product_docs").on(table.productId, table.type)],
 );

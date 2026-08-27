@@ -48,3 +48,8 @@ export const supportSchema = baseFeedbackSchema.extend({
 
   mediaKeys: z.array(z.string()).optional(),
 });
+
+export const wholesaleSchema = baseFeedbackSchema.extend({
+  city: z.string().min(2, "Укажите город").max(100),
+  techType: z.enum(["working", "broken", "both"], "Выберите тип техники"),
+});

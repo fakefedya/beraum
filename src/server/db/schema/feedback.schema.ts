@@ -12,6 +12,7 @@ export const requestTypeEnum = pgEnum("request_type", [
   "consultation",
   "partnership",
   "support",
+  "wholesale",
 ]);
 
 export const requestStatusEnum = pgEnum("request_status", [
@@ -50,13 +51,11 @@ export const feedbackRequests = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => {
-    return {
-      typeIdx: index("idx_feedback_type").on(table.type),
-      statusIdx: index("idx_feedback_status").on(table.status),
-      createdAtIdx: index("idx_feedback_created_at").on(table.createdAt),
-    };
-  },
+  (table) => [
+    index("idx_feedback_type").on(table.type),
+    index("idx_feedback_status").on(table.status),
+    index("idx_feedback_created_at").on(table.createdAt),
+  ],
 );
 
 export const mediaUploads = pgTable("media_uploads", {

@@ -64,21 +64,16 @@ export const products = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => {
-    return {
-      filtersIdx: index("idx_products_filters").using("gin", table.filters),
-      articleTrgmIdx: index("idx_products_article_trgm").using(
-        "gin",
-        sql`${table.itemArticle} gin_trgm_ops`,
-      ),
-      articleLowerIdx: index("idx_products_item_article_lower").on(
-        sql`lower(${table.itemArticle})`,
-      ),
-      statusCategoryIdx: index("idx_products_status_category").on(
-        table.status,
-        table.categoryId,
-      ),
-      siteArticleIdx: index("idx_products_site_article").on(table.siteArticle),
-    };
-  },
+  (table) => [
+    index("idx_products_filters").using("gin", table.filters),
+    index("idx_products_article_trgm").using(
+      "gin",
+      sql`${table.itemArticle} gin_trgm_ops`,
+    ),
+    index("idx_products_item_article_lower").on(
+      sql`lower(${table.itemArticle})`,
+    ),
+    index("idx_products_status_category").on(table.status, table.categoryId),
+    index("idx_products_site_article").on(table.siteArticle),
+  ],
 );

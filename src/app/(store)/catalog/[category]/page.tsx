@@ -79,7 +79,7 @@ export default async function Category({ params, searchParams }: PageProps) {
     { label: categoryTitle },
   ];
 
-  if (!response.success && response.error === "Категория не найдена") {
+  if (!response.success && response.code === "CATEGORY_NOT_FOUND") {
     notFound();
   }
 

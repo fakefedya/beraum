@@ -14,13 +14,10 @@ export const categories = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => {
-    return {
-      // 🛡 Индекс для быстрого ILIKE поиска по названию категории
-      titleTrgmIdx: index("idx_categories_title_trgm").using(
-        "gin",
-        sql`${table.titleRu} gin_trgm_ops`,
-      ),
-    };
-  },
+  (table) => [
+    index("idx_categories_title_trgm").using(
+      "gin",
+      sql`${table.titleRu} gin_trgm_ops`,
+    ),
+  ],
 );

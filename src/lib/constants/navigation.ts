@@ -121,42 +121,8 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
     },
   ],
   discount: [
-    {
-      label: "О дисконте",
-      type: "default",
-      items: [
-        {
-          label: "О дисконте",
-          href: "/discount/about",
-          cover: "",
-          description: "Ответы на самые частые вопросы клиентов",
-        },
-        {
-          label: "Сделать оптовое предложение",
-          href: "/discount/partnership",
-          cover: "",
-          description: "Ответы на самые частые вопросы клиентов",
-        },
-      ],
-    },
-    {
-      label: "Сервис",
-      type: "default",
-      items: [
-        {
-          label: "Поддержка",
-          href: "/support",
-          cover: "",
-          description: "Ответы на самые частые вопросы клиентов",
-        },
-        {
-          label: "Частые вопросы",
-          href: "/faq",
-          cover: "",
-          description: "Ответы на самые частые вопросы клиентов",
-        },
-      ],
-    },
+    { label: "О бренде", type: "link", href: "/about" },
+    { label: "Поддержка", type: "link", href: "/support" },
   ],
 } as const;
 

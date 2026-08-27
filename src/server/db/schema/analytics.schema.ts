@@ -20,13 +20,11 @@ export const marketplaceClicks = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => {
-    return {
-      articleIdx: index("idx_clicks_article").on(table.article),
-      marketplaceIdx: index("idx_clicks_marketplace").on(table.marketplace),
-      deviceIdIdx: index("idx_clicks_device_id").on(table.deviceId),
-    };
-  },
+  (table) => [
+    index("idx_clicks_article").on(table.article),
+    index("idx_clicks_marketplace").on(table.marketplace),
+    index("idx_clicks_device_id").on(table.deviceId),
+  ],
 );
 
 export const rateLimits = pgTable("rate_limits", {

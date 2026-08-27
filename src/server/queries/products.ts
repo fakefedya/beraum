@@ -13,6 +13,12 @@ import { CATEGORY_FILTERS } from "@/src/lib/constants";
 import { buildImageUrl } from "@/src/lib/utils";
 import { unstable_cache } from "next/cache";
 
+export type QueryErrorCode =
+  | "CATEGORY_NOT_FOUND"
+  | "PRODUCT_NOT_FOUND"
+  | "INTERNAL_ERROR"
+  | "INVALID_REQUEST";
+
 const filterValueSchema = z.union([z.string(), z.array(z.string())]);
 
 const getProductsSchema = z.object({
@@ -102,8 +108,15 @@ async function getProductsDb(params: GetProductsParams = {}) {
         .from(categories)
         .where(eq(categories.slug, categorySlug))
         .limit(1);
-      if (!category)
-        return { success: false, error: "Категория не найдена", data: [] };
+      if (!category) {
+        return {
+          success: false,
+          code: "CATEGORY_NOT_FOUND" as const,
+          error: "Категория не найдена",
+          data: [],
+        };
+      }
+
       conditions.push(eq(products.categoryId, category.id));
     }
 
@@ -113,7 +126,6 @@ async function getProductsDb(params: GetProductsParams = {}) {
         const filterConfig = allowedFilters.find((f) => f.key === key);
         if (!filterConfig) continue;
 
-        // SECURITY FIX: Строгая валидация по белому списку из констант (Zero Trust)
         const rawValuesArray = Array.isArray(value) ? value : [value];
         const valuesArray = rawValuesArray.filter((val) =>
           filterConfig.options.includes(val),
@@ -193,9 +205,15 @@ async function getProductsDb(params: GetProductsParams = {}) {
     return { success: true, data: items };
   } catch (error) {
     console.error("❌ Ошибка Server Action (getProducts):", error);
-    return { success: false, error: "Ошибка при загрузке каталога", data: [] };
+    return {
+      success: false,
+      code: "INTERNAL_ERROR" as const,
+      error: "Ошибка при загрузке каталога",
+      data: [],
+    };
   }
 }
+
 export const getProducts = unstable_cache(getProductsDb, ["products_list"], {
   tags: ["products"],
   revalidate: 3600,
@@ -238,7 +256,13 @@ export async function getProductByArticleDb(rawArticle: string) {
       )
       .limit(1);
 
-    if (!product) return { success: false, error: "Товар не найден" };
+    if (!product) {
+      return {
+        success: false,
+        code: "PRODUCT_NOT_FOUND" as const,
+        error: "Товар не найден",
+      };
+    }
 
     const variantsPromise = db
       .select({
@@ -300,9 +324,14 @@ export async function getProductByArticleDb(rawArticle: string) {
     };
   } catch (error) {
     console.error("❌ Ошибка Server Action (getProductByArticle):", error);
-    return { success: false, error: "Недопустимый запрос" };
+    return {
+      success: false,
+      code: "INVALID_REQUEST" as const,
+      error: "Недопустимый запрос",
+    };
   }
 }
+
 export const getProductByArticle = unstable_cache(
   getProductByArticleDb,
   ["product_article"],
@@ -422,6 +451,7 @@ async function getSupportModelsByCategoryDb(categoryId: string) {
     return { success: false, data: [] };
   }
 }
+
 export const getSupportModelsByCategory = unstable_cache(
   getSupportModelsByCategoryDb,
   ["products_support"],
@@ -435,6 +465,7 @@ async function getPublishedArticlesDb() {
     .where(eq(products.status, "published"));
   return data.map((d) => d.article);
 }
+
 export const getPublishedArticles = unstable_cache(
   getPublishedArticlesDb,
   ["published_articles"],

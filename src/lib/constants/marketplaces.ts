@@ -84,7 +84,7 @@ export const MARKETPLACE_LINKS: LinksProps = {
       icon: Icons.ozon,
       label: "OZON",
       description: "Наш магазин с дисконт техникой",
-      href: "https://ozon.ru/t/wEfsAwP",
+      href: "https://ozon.ru/s/beraum-589444",
     },
   ],
 } as const;
