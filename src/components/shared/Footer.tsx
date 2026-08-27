@@ -18,7 +18,7 @@ export const Footer = () => {
   return (
     <footer
       className={cn(
-        "absolute bottom-2 left-0 z-10 hidden w-full px-4",
+        "absolute bottom-2 left-0 z-30 hidden w-full px-4",
         "lg:bottom-4 lg:block",
       )}
     >
