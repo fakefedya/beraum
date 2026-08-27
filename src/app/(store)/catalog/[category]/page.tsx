@@ -43,7 +43,6 @@ export default async function Category({ params, searchParams }: PageProps) {
   const { category } = await params;
   const resolvedSearchParams = await searchParams;
 
-  // 🛡️ SECURITY & LOGIC: Парсим и валидируем страницу
   const pageStr = resolvedSearchParams.page;
   const pageNum = typeof pageStr === "string" ? parseInt(pageStr, 10) : 1;
   const currentPage = isNaN(pageNum) || pageNum < 1 ? 1 : pageNum;
@@ -54,15 +53,13 @@ export default async function Category({ params, searchParams }: PageProps) {
 
   const filters = Object.fromEntries(
     Object.entries(resolvedSearchParams).filter(
-      // Исключаем системные параметры из фильтров
       ([k, v]) => v !== undefined && k !== "sort" && k !== "page",
     ),
   ) as Record<string, string | string[]>;
 
-  // 🚀 ARCHITECTURE FIX: Паттерн Limit + 1
   const response = await getProducts({
     categorySlug: category,
-    limit: LIMIT + 1, // Просим 13, чтобы узнать, есть ли дальше товары
+    limit: LIMIT + 1,
     offset,
     sort,
     filters,
@@ -70,7 +67,7 @@ export default async function Category({ params, searchParams }: PageProps) {
 
   const rawData = response.data || [];
   const hasMore = rawData.length > LIMIT;
-  const products = rawData.slice(0, LIMIT); // Отдаем UI только 12 штук
+  const products = rawData.slice(0, LIMIT);
 
   const categoryTitle = products[0]?.categoryTitle || "Каталог";
   const breadcrumbItems = [
