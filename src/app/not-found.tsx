@@ -4,7 +4,7 @@ import { cn } from "@/src/lib/utils";
 
 export default function NotFound() {
   return (
-    <div className="bg-background flex min-h-[80vh] flex-col items-center justify-center p-4 text-center">
+    <div className="bg-background flex min-h-screen flex-col items-center justify-center p-4 text-center">
       <div className="relative mb-8 flex h-40 w-64 items-center justify-center md:h-48 md:w-80">
         <svg
           viewBox="0 0 100 100"
@@ -41,7 +41,7 @@ export default function NotFound() {
         </svg>
       </div>
 
-      <h1 className="text-foreground text-4xl font-bold md:text-5xl lg:text-6xl">
+      <h1 className="text-foreground text-4xl font-bold md:text-5xl lg:text-8xl">
         404
       </h1>
       <h2 className="text-foreground mt-4 text-xl font-medium md:text-2xl">
@@ -54,7 +54,7 @@ export default function NotFound() {
 
       <Button
         asChild
-        className="mt-10 h-12 rounded-[16px] px-8 text-base font-medium shadow-sm transition-all hover:scale-105"
+        className="bg-brand text-foreground hover:bg-brand/80 mt-10 h-12 rounded-[16px] px-8 text-base font-medium shadow-sm transition-all hover:scale-105"
       >
         <Link href="/catalog/hob">Перейти в каталог</Link>
       </Button>

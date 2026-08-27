@@ -10,18 +10,22 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx --conditions=react-server src/server/db/migrate.ts",
     "db:seed": "tsx --conditions=react-server --env-file=.env.local src/server/db/seed.ts",
-    "db:seed-media": "tsx --conditions=react-server src/server/db/generate-media-seeds.ts"
+    "db:seed-media": "tsx --conditions=react-server src/server/db/generate-media-seeds.ts",
+    "db:seed-admin": "tsx --conditions=react-server --env-file=.env.local src/server/db/seed-admin.ts"
   },
   "dependencies": {
+    "@auth/drizzle-adapter": "^1.11.3",
     "@aws-sdk/client-s3": "^3.1109.0",
     "@aws-sdk/s3-presigned-post": "^3.1117.0",
     "@aws-sdk/s3-request-presigner": "^3.1109.0",
+    "bcrypt-ts": "^9.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "drizzle-orm": "^0.45.2",
     "lucide-react": "^1.28.0",
     "next": "16.2.9",
+    "next-auth": "^5.0.0-beta.32",
     "next-themes": "^0.4.6",
     "postgres": "^3.4.9",
     "radix-ui": "^1.6.7",

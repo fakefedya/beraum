@@ -1,4 +1,3 @@
-// src/server/db/normalize-colors.ts
 import { db } from "./client";
 import { products } from "./schema";
 import { eq } from "drizzle-orm";

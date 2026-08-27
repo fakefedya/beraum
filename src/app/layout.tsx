@@ -4,6 +4,7 @@ import { cn } from "@/src/lib/utils";
 import { Toaster } from "@/src/components/ui/sonner";
 import { clientEnv } from "@/src/lib/env/client";
 import { Metadata } from "next";
+import { ThemeProvider } from "@/src/components/providers/theme-provider";
 
 const golosText = Golos_Text({
   subsets: ["latin", "cyrillic"],
@@ -34,14 +35,22 @@ export default function RootLayout({
   return (
     <html
       lang="ru"
+      suppressHydrationWarning
       className={cn(
         "scrollbar-track-background scrollbar-thumb-muted-foreground/20 font-sans antialiased",
         golosText.variable,
       )}
     >
       <body>
-        {children}
-        <Toaster position="bottom-right" />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster position="bottom-right" />
+        </ThemeProvider>
       </body>
     </html>
   );
