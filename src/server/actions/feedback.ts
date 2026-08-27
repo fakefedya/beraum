@@ -13,6 +13,7 @@ import {
 } from "@/src/lib/validations/feedback";
 import { checkRateLimit } from "../utils/rate-limit";
 import { inArray, and, eq, isNull } from "drizzle-orm";
+import { generateTicketNumber } from "../utils/ticket";
 
 export type ActionState = {
   success: boolean;
@@ -72,6 +73,7 @@ export async function submitPartnershipAction(
     }
 
     await db.insert(feedbackRequests).values({
+      ticketNumber: generateTicketNumber(),
       type: "partnership",
       name,
       phone,
@@ -158,6 +160,7 @@ export async function submitSupportAction(
     const [newRequest] = await db
       .insert(feedbackRequests)
       .values({
+        ticketNumber: generateTicketNumber(),
         type: "support",
         name,
         phone,
@@ -221,6 +224,7 @@ export async function submitConsultAction(
     }
 
     await db.insert(feedbackRequests).values({
+      ticketNumber: generateTicketNumber(),
       type: "consultation",
       name,
       phone,

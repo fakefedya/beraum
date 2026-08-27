@@ -10,6 +10,7 @@ import { getCategoriesList } from "@/src/server/queries/categories";
 import { RequestsTable } from "./_components/RequestsTable";
 import Link from "next/link";
 import { cn } from "@/src/lib/utils";
+import { RequestsSearch } from "./_components/RequestsSearch";
 
 export const metadata: Metadata = {
   title: "Заявки — Beraum Admin",

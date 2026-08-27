@@ -7,6 +7,7 @@ import {
   pgEnum,
   index,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 export const requestTypeEnum = pgEnum("request_type", [
   "consultation",
@@ -25,6 +26,10 @@ export const feedbackRequests = pgTable(
   "feedback_requests",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    ticketNumber: text("ticket_number")
+      .default(sql`upper(substr(gen_random_uuid()::text, 1, 8))`)
+      .notNull()
+      .unique(),
     type: requestTypeEnum("type").notNull(),
     status: requestStatusEnum("status").default("new").notNull(),
 
@@ -55,6 +60,7 @@ export const feedbackRequests = pgTable(
     index("idx_feedback_type").on(table.type),
     index("idx_feedback_status").on(table.status),
     index("idx_feedback_created_at").on(table.createdAt),
+    index("idx_feedback_ticket").on(table.ticketNumber),
   ],
 );
 

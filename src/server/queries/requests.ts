@@ -1,7 +1,7 @@
 import "server-only";
 import { db } from "@/src/server/db/client";
 import { feedbackRequests } from "@/src/server/db/schema/feedback.schema";
-import { desc, eq, and, type SQL } from "drizzle-orm";
+import { desc, eq, and, ilike, or, type SQL } from "drizzle-orm";
 
 export type RequestType =
   "all" | "consultation" | "partnership" | "support" | "wholesale";
@@ -10,6 +10,7 @@ export type RequestStatus = "all" | "new" | "in_progress" | "resolved";
 export async function getFeedbackRequests(
   filterType: RequestType = "all",
   filterStatus: RequestStatus = "all",
+  searchQuery: string = "", // 🛡️ Новый параметр
 ) {
   try {
     const filters: SQL[] = [];
@@ -19,6 +20,17 @@ export async function getFeedbackRequests(
     }
     if (filterStatus !== "all") {
       filters.push(eq(feedbackRequests.status, filterStatus));
+    }
+
+    // 🛡️ Security: Поиск строго через параметризованный ilike
+    if (searchQuery.trim()) {
+      const q = `%${searchQuery.trim()}%`;
+      filters.push(
+        or(
+          ilike(feedbackRequests.ticketNumber, q),
+          ilike(feedbackRequests.email, q),
+        ),
+      );
     }
 
     const query = db

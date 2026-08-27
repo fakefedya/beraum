@@ -5,6 +5,7 @@ import { feedbackRequests } from "@/src/server/db/schema/feedback.schema";
 import { checkRateLimit } from "@/src/server/utils/rate-limit";
 import { wholesaleSchema } from "@/src/lib/validations/feedback"; // Импорт единой схемы
 import type { ActionState } from "./feedback";
+import { generateTicketNumber } from "../utils/ticket";
 
 export async function submitWholesaleAction(
   prevState: ActionState,
@@ -32,6 +33,7 @@ export async function submitWholesaleAction(
 
     // Сохраняем в таблицу с новым типом "wholesale"[cite: 3]
     await db.insert(feedbackRequests).values({
+      ticketNumber: generateTicketNumber(),
       type: "wholesale",
       name: parsed.data.name,
       phone: parsed.data.phone,
