@@ -162,12 +162,17 @@ export async function loginAction(
       })
       .where(eq(users.id, existingUser.id));
 
-    await signIn("credentials", {
+    const authPayload: Record<string, string> = {
       email,
       password,
-      code,
       redirectTo: "/dashboard",
-    });
+    };
+
+    if (code) {
+      authPayload.code = code;
+    }
+
+    await signIn("credentials", authPayload);
 
     return { success: true };
   } catch (error) {

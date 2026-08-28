@@ -3,7 +3,10 @@ import { redirect } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
 import { Sidebar } from "./_components/Sidebar";
 import { Role } from "@/src/lib/constants/dashboard";
-import { ThemeToggle } from "./_components/ThemeToggle"; // 👈 Импорт
+import { ThemeToggle } from "./_components/ThemeToggle";
+import { db } from "@/src/server/db/client";
+import { users } from "@/src/server/db/schema";
+import { eq } from "drizzle-orm";
 
 export default async function DashboardLayout({
   children,
@@ -12,8 +15,17 @@ export default async function DashboardLayout({
 }) {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user?.id) {
     redirect("/auth/login");
+  }
+
+  const [dbUser] = await db
+    .select({ isLocked: users.isLocked })
+    .from(users)
+    .where(eq(users.id, session.user.id));
+
+  if (!dbUser || dbUser.isLocked) {
+    redirect("/auth/login?error=locked");
   }
 
   const userRole = session.user.role as Role;

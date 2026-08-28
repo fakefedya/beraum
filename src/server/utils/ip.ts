@@ -5,18 +5,19 @@ import { NextRequest } from "next/server";
 import { serverEnv } from "@/src/lib/env/server";
 
 export async function getClientIp(req?: NextRequest): Promise<string> {
-  const forwardedFor = req
-    ? req.headers.get("x-forwarded-for")
-    : (await headers()).get("x-forwarded-for");
-  const realIp = req
-    ? req.headers.get("x-real-ip")
-    : (await headers()).get("x-real-ip");
+  const headersList = req ? req.headers : await headers();
 
+  const cfIp = headersList.get("cf-connecting-ip");
+  if (cfIp) return cfIp;
+
+  const realIp = headersList.get("x-real-ip");
   if (realIp) return realIp;
+
+  const forwardedFor = headersList.get("x-forwarded-for");
   if (forwardedFor) {
-    const ips = forwardedFor.split(",");
-    return ips[ips.length - 1].trim();
+    return forwardedFor.split(",")[0].trim();
   }
+
   return "127.0.0.1";
 }
 
