@@ -29,6 +29,13 @@ const serverSchema = z.object({
   OZON_API_KEY: z.string().optional(),
   WB_API_KEY: z.string().optional(),
 
+  // Почта
+  SMTP_HOST: z.string().min(1, "SMTP_HOST обязателен"),
+  SMTP_PORT: z.coerce.number().default(465),
+  SMTP_USER: z.string().min(1, "SMTP_USER обязателен"),
+  SMTP_PASS: z.string().min(1, "SMTP_PASS обязателен"),
+  SMTP_FROM: z.string().min(1, "SMTP_FROM обязателен"),
+
   // Крон-задачи
   CRON_SECRET: z
     .string()

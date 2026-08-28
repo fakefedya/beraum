@@ -1,0 +1,1 @@
+ALTER TABLE "two_factor_tokens" ADD COLUMN "attempts" integer DEFAULT 0 NOT NULL;
