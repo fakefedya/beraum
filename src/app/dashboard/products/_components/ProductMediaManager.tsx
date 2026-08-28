@@ -34,7 +34,6 @@ type ProductImage = typeof productImages.$inferSelect;
 type ProductDocument = typeof productDocuments.$inferSelect;
 type DocumentType = "user_instruction" | "service_instruction" | "certificate";
 
-// 🛡️ Strict typing for auto-generated titles
 const DOC_TYPE_LABELS: Record<DocumentType, string> = {
   user_instruction: "Руководство пользователя",
   service_instruction: "Схема встраивания",
@@ -61,7 +60,6 @@ export const ProductMediaManager = ({
   const [isUploadingImg, setIsUploadingImg] = useState(false);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
 
-  // Стейт для селекта типа документа
   const [docType, setDocType] = useState<DocumentType>("user_instruction");
 
   const fetchAssets = async () => {
@@ -133,7 +131,7 @@ export const ProductMediaManager = ({
         await saveProductImageAction({
           productId,
           fileKey: preSignRes.fileKey,
-          isCover: assets.images.length === 0, // Делаем первой картинкой обложку автоматически
+          isCover: assets.images.length === 0,
           imageFit: "contain",
         });
         toast.success(`Фото ${file.name} загружено`);
@@ -150,7 +148,6 @@ export const ProductMediaManager = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // 🛡️ Автогенерация чистого названия без участия пользователя
     const generatedTitle = `${DOC_TYPE_LABELS[docType]} ${article}`;
 
     setIsUploadingDoc(true);
@@ -264,7 +261,6 @@ export const ProductMediaManager = ({
                   </div>
                 ))}
 
-                {/* Upload Image Button */}
                 <label
                   className={cn(
                     "hover:bg-muted/50 border-ring/30 group flex aspect-square cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed transition-all duration-200",

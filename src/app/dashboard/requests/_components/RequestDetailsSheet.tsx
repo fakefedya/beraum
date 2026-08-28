@@ -19,7 +19,6 @@ interface RequestDetailsProps {
   onClose: () => void;
 }
 
-// 🛡️ Arch: Словарь для русификации полей Payload
 const PAYLOAD_LABELS: Record<string, string> = {
   address: "Адрес",
   deviceCondition: "Тип техники",
@@ -97,12 +96,10 @@ export const RequestDetailsSheet = ({
       }
     }
 
-    // 1. Маппинг типа техники (обрабатываем и старые, и новые ключи схемы)
     if (key === "deviceCondition" || key === "techType") {
       const conditionMap: Record<string, string> = {
         new: "Новая",
         discount: "Дисконт",
-        // Поддержка legacy-данных (если в БД остались старые заявки)
         working: "Исправная уценка (Спб)",
         broken: "Неисправная техника (Мск/Спб)",
       };
@@ -131,7 +128,6 @@ export const RequestDetailsSheet = ({
     return String(value);
   };
 
-  // Фильтруем системные ключи, которые не нужно выводить в цикле
   const specificEntries = Object.entries(payload).filter(
     ([k]) => k !== "mediaKeys",
   );
@@ -173,7 +169,6 @@ export const RequestDetailsSheet = ({
             </div>
           </section>
 
-          {/* 🛡️ Dynamic Rendering: Отображает абсолютно все доступные поля из Payload */}
           {specificEntries.length > 0 && (
             <section className="flex flex-col gap-3">
               <h4 className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
@@ -201,7 +196,7 @@ export const RequestDetailsSheet = ({
             <h4 className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
               Сообщение
             </h4>
-            <div className="bg-muted/30 rounded-xl p-4 text-sm leading-relaxed break-words whitespace-pre-wrap">
+            <div className="bg-muted/30 rounded-xl p-4 text-sm leading-relaxed wrap-break-word whitespace-pre-wrap">
               {request.message || (
                 <span className="text-muted-foreground italic">
                   Без сообщения

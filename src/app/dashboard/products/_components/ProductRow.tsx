@@ -180,7 +180,7 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
             placeholder="Filters (JSON)"
             className={cn(
               inputClass,
-              "min-h-[70px] resize-y font-mono text-[10px]",
+              "min-h-17.5 resize-y font-mono text-[10px]",
             )}
           />
           <textarea
@@ -190,7 +190,7 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
             placeholder="Specs (JSON)"
             className={cn(
               inputClass,
-              "min-h-[70px] resize-y font-mono text-[10px]",
+              "min-h-17.5 resize-y font-mono text-[10px]",
             )}
           />
         </div>

@@ -23,7 +23,6 @@ const STATUS_FILTERS = [
   { label: "Архив", value: "archived" },
 ];
 
-// 🛡️ Security: Строгая валидация входящих URL-параметров (Zero Trust)
 const searchParamsSchema = z.object({
   page: z.coerce.number().min(1).catch(1),
   q: z.string().trim().catch(""),
@@ -41,7 +40,6 @@ export default async function AdminProductsPage(props: {
     redirect("/dashboard");
   }
 
-  // Парсинг параметров через Zod
   const rawParams = await props.searchParams;
   const {
     page: currentPage,
@@ -49,7 +47,6 @@ export default async function AdminProductsPage(props: {
     status: currentStatus,
   } = searchParamsSchema.parse(rawParams);
 
-  // Категории нужны для CreateProductSheet (выносим на уровень страницы)
   const { data: categoriesData } = await getCategoriesList();
 
   const createFilterUrl = (statusVal: string) => {

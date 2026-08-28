@@ -13,7 +13,6 @@ interface SidebarProps {
 export const Sidebar = ({ userRole }: SidebarProps) => {
   const pathname = usePathname();
 
-  // 🛡️ Отфильтровываем ссылки по роли
   const allowedLinks = DASHBOARD_NAV.filter((item) =>
     item.roles.includes(userRole),
   );
@@ -45,7 +44,7 @@ export const Sidebar = ({ userRole }: SidebarProps) => {
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors outline-none",
                 "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-1",
                 isActive
-                  ? "bg-foreground text-background" // Активный: Инверсия в стиле минимализма
+                  ? "bg-foreground text-background"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground",
               )}
             >

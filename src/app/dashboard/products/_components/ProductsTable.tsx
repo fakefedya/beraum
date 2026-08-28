@@ -19,8 +19,8 @@ export const ProductsTable = ({
           <th className="w-32 px-4 py-3 font-medium">Стоимость до скидки</th>
           <th className="w-32 px-4 py-3 font-medium">Статус</th>
           <th className="w-24 px-4 py-3 font-medium">Скидка %</th>
-          <th className="min-w-[200px] px-4 py-3 font-medium">Маркетплейсы</th>
-          <th className="min-w-[240px] px-4 py-3 font-medium">Свойства JSON</th>
+          <th className="min-w-50 px-4 py-3 font-medium">Маркетплейсы</th>
+          <th className="min-w-60 px-4 py-3 font-medium">Свойства JSON</th>
           <th className="w-32 px-4 py-3 font-medium">Действия</th>
         </tr>
       </thead>
