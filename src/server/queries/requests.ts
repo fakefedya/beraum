@@ -1,7 +1,7 @@
 import "server-only";
 import { db } from "@/src/server/db/client";
 import { feedbackRequests } from "@/src/server/db/schema/feedback.schema";
-import { desc, eq, and, ilike, or, type SQL } from "drizzle-orm";
+import { desc, eq, and, ilike, or, count, type SQL } from "drizzle-orm";
 
 export type RequestType =
   "all" | "consultation" | "partnership" | "support" | "wholesale";
@@ -11,9 +11,10 @@ export async function getFeedbackRequests(
   filterType: RequestType = "all",
   filterStatus: RequestStatus = "all",
   searchQuery: string = "",
+  limit: number = 25,
+  offset: number = 0,
 ) {
   try {
-    // 🛡️ Arch: Расширяем тип, чтобы push принимал результаты от or()
     const filters: (SQL | undefined)[] = [];
 
     if (filterType !== "all") {
@@ -33,19 +34,25 @@ export async function getFeedbackRequests(
       );
     }
 
-    const query = db
-      .select()
-      .from(feedbackRequests)
-      .orderBy(desc(feedbackRequests.createdAt));
+    const finalCondition = filters.length > 0 ? and(...filters) : undefined;
 
-    if (filters.length > 0) {
-      query.where(and(...filters));
-    }
+    const [data, [{ totalCount }]] = await Promise.all([
+      db
+        .select()
+        .from(feedbackRequests)
+        .where(finalCondition)
+        .orderBy(desc(feedbackRequests.createdAt))
+        .limit(limit)
+        .offset(offset),
+      db
+        .select({ totalCount: count() })
+        .from(feedbackRequests)
+        .where(finalCondition),
+    ]);
 
-    const data = await query;
-    return { success: true, data };
+    return { success: true, data, totalCount };
   } catch (error) {
     console.error("❌ [DAL] Ошибка получения заявок:", error);
-    return { success: false, data: [] };
+    return { success: false, data: [], totalCount: 0 };
   }
 }

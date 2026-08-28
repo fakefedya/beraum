@@ -25,6 +25,7 @@ export const RequestsSearch = () => {
     } else {
       params.delete("q");
     }
+    params.delete("page");
 
     replace(`${pathname}?${params.toString()}`);
   }, [debouncedQuery, pathname, replace, searchParams]);

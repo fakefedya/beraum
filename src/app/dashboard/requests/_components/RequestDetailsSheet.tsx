@@ -21,17 +21,18 @@ interface RequestDetailsProps {
 
 // 🛡️ Arch: Словарь для русификации полей Payload
 const PAYLOAD_LABELS: Record<string, string> = {
-  city: "Город",
-  techType: "Тип техники",
+  address: "Адрес",
+  deviceCondition: "Тип техники",
   categoryId: "Категория",
-  article: "Артикул",
+  modelArticle: "Артикул / Модель",
   purchaseDate: "Дата покупки",
-  purchasePlace: "Место покупки",
+  marketplace: "Место покупки",
   sourcePage: "Страница обращения",
   topic: "Тема вопроса",
   companyName: "Название компании",
   inn: "ИНН",
   volume: "Ожидаемый объем",
+  source: "Источник перехода",
 };
 
 export const RequestDetailsSheet = ({
@@ -99,9 +100,16 @@ export const RequestDetailsSheet = ({
       return value === "working"
         ? "Исправная уценка (Спб)"
         : value === "broken"
-          ? "Неисправная"
+          ? "Неисправная техника (Мск/Спб)"
           : "Обе категории";
     }
+    if (key === "source" && value === "discount_page") {
+      return "Страница дисконта (Опт)";
+    }
+    if (key === "sourcePage" && value === "/") {
+      return "Главная страница";
+    }
+
     return String(value);
   };
 
