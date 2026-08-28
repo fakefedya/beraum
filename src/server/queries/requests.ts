@@ -10,10 +10,11 @@ export type RequestStatus = "all" | "new" | "in_progress" | "resolved";
 export async function getFeedbackRequests(
   filterType: RequestType = "all",
   filterStatus: RequestStatus = "all",
-  searchQuery: string = "", // 🛡️ Новый параметр
+  searchQuery: string = "",
 ) {
   try {
-    const filters: SQL[] = [];
+    // 🛡️ Arch: Расширяем тип, чтобы push принимал результаты от or()
+    const filters: (SQL | undefined)[] = [];
 
     if (filterType !== "all") {
       filters.push(eq(feedbackRequests.type, filterType));
@@ -22,7 +23,6 @@ export async function getFeedbackRequests(
       filters.push(eq(feedbackRequests.status, filterStatus));
     }
 
-    // 🛡️ Security: Поиск строго через параметризованный ilike
     if (searchQuery.trim()) {
       const q = `%${searchQuery.trim()}%`;
       filters.push(

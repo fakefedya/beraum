@@ -32,7 +32,7 @@ const STATUS_FILTERS: { label: string; value: RequestStatus }[] = [
 ];
 
 export default async function RequestsPage(props: {
-  searchParams: Promise<{ type?: string; status?: string }>;
+  searchParams: Promise<{ type?: string; status?: string; q?: string }>;
 }) {
   const session = await auth();
   const allowedRoles = ["superadmin", "support"];
@@ -44,10 +44,11 @@ export default async function RequestsPage(props: {
   const resolvedParams = await props.searchParams;
   const currentType = (resolvedParams.type as RequestType) || "all";
   const currentStatus = (resolvedParams.status as RequestStatus) || "all";
+  const searchQuery = resolvedParams.q || ""; // 👈 Достаем query
 
   // Запрашиваем заявки и категории параллельно для оптимизации
   const [{ data: requests }, { data: categories }] = await Promise.all([
-    getFeedbackRequests(currentType, currentStatus),
+    getFeedbackRequests(currentType, currentStatus, searchQuery), // 👈 Передаем в DAL
     getCategoriesList(),
   ]);
 
@@ -55,6 +56,7 @@ export default async function RequestsPage(props: {
     const params = new URLSearchParams();
     if (type !== "all") params.set("type", type);
     if (status !== "all") params.set("status", status);
+    if (searchQuery) params.set("q", searchQuery);
     const str = params.toString();
     return `/dashboard/requests${str ? `?${str}` : ""}`;
   };
@@ -65,6 +67,7 @@ export default async function RequestsPage(props: {
         <h1 className="text-3xl font-semibold tracking-tight">
           Входящие заявки
         </h1>
+        <RequestsSearch />
       </div>
 
       <div className="flex flex-col gap-4">

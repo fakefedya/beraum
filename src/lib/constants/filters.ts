@@ -442,4 +442,11 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
       ],
     },
   ],
+  "carbon-filter": [
+    {
+      key: "type",
+      label: "Тип фильтра",
+      options: ["Угольный"],
+    },
+  ],
 };

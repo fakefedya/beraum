@@ -105,6 +105,7 @@ export const RequestsTable = ({ requests, categories }: RequestsTableProps) => {
           <table className="w-full text-left text-sm">
             <thead className="text-muted-foreground bg-muted/50 border-b text-xs uppercase">
               <tr>
+                <th className="px-6 py-4 font-medium">ID</th>
                 <th className="px-6 py-4 font-medium">Дата / Тип</th>
                 <th className="px-6 py-4 font-medium">Клиент</th>
                 <th className="px-6 py-4 font-medium">Кратко</th>
@@ -124,6 +125,11 @@ export const RequestsTable = ({ requests, categories }: RequestsTableProps) => {
                     key={req.id}
                     className="hover:bg-muted/30 transition-colors"
                   >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-foreground font-mono text-xs font-semibold">
+                        {req.ticketNumber}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex flex-col gap-1.5">
                         <span className="font-medium">

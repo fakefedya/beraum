@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
 import { Sidebar } from "./_components/Sidebar";
 import { Role } from "@/src/lib/constants/dashboard";
-import { Moon, Sun } from "lucide-react";
+import { ThemeToggle } from "./_components/ThemeToggle"; // 👈 Импорт
 
 export default async function DashboardLayout({
   children,
@@ -25,7 +25,6 @@ export default async function DashboardLayout({
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="border-border/50 bg-background/50 flex h-16 items-center justify-between border-b px-6 backdrop-blur-md">
           <div className="flex items-center gap-4 lg:hidden">
-            {/* Здесь позже добавим мобильный Sheet */}
             <span className="text-lg font-semibold tracking-tight">
               Beraum Admin
             </span>
@@ -38,7 +37,10 @@ export default async function DashboardLayout({
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="text-muted-foreground hidden text-sm font-medium md:block">
+            {/* 👈 Вставляем тогл темы */}
+            <ThemeToggle />
+
+            <span className="text-muted-foreground border-border/50 hidden border-l pl-4 text-sm font-medium md:block">
               {session.user.email}
             </span>
 

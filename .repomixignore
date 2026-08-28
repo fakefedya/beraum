@@ -8,4 +8,5 @@ backup/
 .next/
 .vscode/
 node_modules/
+src/components/ui/
 

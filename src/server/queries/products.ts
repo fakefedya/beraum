@@ -182,22 +182,26 @@ async function getProductsDb(params: GetProductsParams = {}) {
             'isLatest', COALESCE(${products.isLatest}, false),
             'price', ${computedPriceSql},
             'stock', ${computedStockSql},
-            'image', (
-              SELECT jsonb_build_object(
-                'fileKey', pi.file_key,
-                'bucketName', pi.bucket_name,
-                'fit', pi.image_fit
+            'image', CASE 
+              WHEN ${productImages.fileKey} IS NOT NULL THEN jsonb_build_object(
+                'fileKey', ${productImages.fileKey},
+                'bucketName', ${productImages.bucketName},
+                'fit', ${productImages.imageFit}
               )
-              FROM ${productImages} pi
-              WHERE pi.product_id = ${products.id}
-              ORDER BY pi.sort_order ASC
-              LIMIT 1
-            )
+              ELSE NULL
+            END
           ) ORDER BY ${products.itemArticle} ASC
         )`.as("variants"),
       })
       .from(products)
       .leftJoin(categories, eq(products.categoryId, categories.id))
+      .leftJoin(
+        productImages,
+        and(
+          eq(productImages.productId, products.id),
+          eq(productImages.isCover, true),
+        ),
+      )
       .where(and(...conditions))
       .groupBy(products.siteArticle, categories.slug, categories.titleRu)
       .orderBy(...orderConditions)
