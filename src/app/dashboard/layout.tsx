@@ -37,7 +37,6 @@ export default async function DashboardLayout({
           </div>
 
           <div className="flex items-center gap-4">
-            {/* 👈 Вставляем тогл темы */}
             <ThemeToggle />
 
             <span className="text-muted-foreground border-border/50 hidden border-l pl-4 text-sm font-medium md:block">

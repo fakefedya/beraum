@@ -16,6 +16,7 @@ export const ProductsTable = ({
         <tr>
           <th className="px-4 py-3 font-medium">Артикул / SKU</th>
           <th className="px-4 py-3 font-medium">Остатки</th>
+          <th className="w-32 px-4 py-3 font-medium">Стоимость до скидки</th>
           <th className="w-32 px-4 py-3 font-medium">Статус</th>
           <th className="w-24 px-4 py-3 font-medium">Скидка %</th>
           <th className="min-w-[200px] px-4 py-3 font-medium">Маркетплейсы</th>

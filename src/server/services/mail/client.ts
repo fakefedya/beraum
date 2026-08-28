@@ -7,6 +7,9 @@ const transporter = nodemailer.createTransport({
   host: serverEnv.SMTP_HOST,
   port: serverEnv.SMTP_PORT,
   secure: serverEnv.SMTP_PORT === 465,
+  pool: true, // Переиспользование соединений
+  maxConnections: 1, // Для Timeweb лучше держать 1 коннект
+  maxMessages: 100,
   auth: {
     user: serverEnv.SMTP_USER,
     pass: serverEnv.SMTP_PASS,

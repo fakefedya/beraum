@@ -9,7 +9,6 @@ import {
   SheetTrigger,
 } from "@/src/components/ui/sheet";
 import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -35,6 +34,13 @@ type ProductImage = typeof productImages.$inferSelect;
 type ProductDocument = typeof productDocuments.$inferSelect;
 type DocumentType = "user_instruction" | "service_instruction" | "certificate";
 
+// 🛡️ Strict typing for auto-generated titles
+const DOC_TYPE_LABELS: Record<DocumentType, string> = {
+  user_instruction: "Руководство пользователя",
+  service_instruction: "Схема встраивания",
+  certificate: "Сертификат соответствия",
+};
+
 export const ProductMediaManager = ({
   productId,
   article,
@@ -55,9 +61,8 @@ export const ProductMediaManager = ({
   const [isUploadingImg, setIsUploadingImg] = useState(false);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
 
-  // Стейт для конструктора документа
+  // Стейт для селекта типа документа
   const [docType, setDocType] = useState<DocumentType>("user_instruction");
-  const [docTitle, setDocTitle] = useState("");
 
   const fetchAssets = async () => {
     setIsLoading(true);
@@ -77,8 +82,8 @@ export const ProductMediaManager = ({
   };
 
   const handleDelete = async (id: string, type: "image" | "document") => {
-    if (!confirm("Удалить файл безвозвратно?")) return;
     const res = await deleteProductAssetAction(id, type);
+
     if (res.success) {
       toast.success("Файл удален");
       fetchAssets();
@@ -145,11 +150,8 @@ export const ProductMediaManager = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!docTitle.trim()) {
-      toast.error("Сначала укажите название документа");
-      e.target.value = "";
-      return;
-    }
+    // 🛡️ Автогенерация чистого названия без участия пользователя
+    const generatedTitle = `${DOC_TYPE_LABELS[docType]} ${article}`;
 
     setIsUploadingDoc(true);
     try {
@@ -178,12 +180,11 @@ export const ProductMediaManager = ({
         productId,
         fileKey: preSignRes.fileKey,
         type: docType,
-        title: docTitle.trim(),
+        title: generatedTitle,
       });
 
       if (saveRes.success) {
         toast.success(`Документ сохранен`);
-        setDocTitle(""); // Очищаем форму
       } else {
         toast.error(saveRes.error);
       }
@@ -308,25 +309,21 @@ export const ProductMediaManager = ({
                     value={docType}
                     onValueChange={(val: DocumentType) => setDocType(val)}
                   >
-                    <SelectTrigger className="bg-background w-1/2">
+                    <SelectTrigger className="bg-background w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="user_instruction">
-                        Руководство
+                        Руководство пользователя
                       </SelectItem>
                       <SelectItem value="service_instruction">
-                        Схема встройки
+                        Инструкция по установке
                       </SelectItem>
-                      <SelectItem value="certificate">Сертификат</SelectItem>
+                      <SelectItem value="certificate">
+                        Сертификат соответствия
+                      </SelectItem>
                     </SelectContent>
                   </Select>
-                  <Input
-                    placeholder="Название файла"
-                    value={docTitle}
-                    onChange={(e) => setDocTitle(e.target.value)}
-                    className="bg-background w-1/2"
-                  />
                 </div>
 
                 <Button

@@ -4,7 +4,6 @@ import { useActionState, useState } from "react";
 import { loginAction } from "@/src/server/actions/auth";
 import { FloatingField } from "@/src/components/shared/FloatingField";
 import { Button } from "@/src/components/ui/button";
-import { Icons } from "@/src/components/ui/icons";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 
 export const LoginForm = () => {
@@ -32,14 +31,12 @@ export const LoginForm = () => {
   };
 
   return (
-    <div className="bg-card shadow-card w-full max-w-md rounded-[32px] p-8 md:p-10">
+    <div className="flex w-full max-w-md flex-col py-8 md:py-10">
       <div className="mb-8 flex flex-col items-center gap-4 text-center">
-        <Icons.logo className="text-foreground h-6 w-auto" />
         <div>
-          <h1 className="text-2xl font-semibold">Вход в систему</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Панель управления Beraum Store
-          </p>
+          <h1 className="text-left text-3xl font-semibold">
+            Привет! Войдите в личный кабинет Beraum
+          </h1>
         </div>
       </div>
 
@@ -56,7 +53,7 @@ export const LoginForm = () => {
             <FloatingField
               name="email"
               type="email"
-              label="Корпоративный Email"
+              label="Электронная почта"
               defaultValue={state.payload?.email}
             />
             <FloatingField
@@ -79,11 +76,11 @@ export const LoginForm = () => {
               value={state.payload?.password || ""}
             />
 
-            <div className="bg-brand/10 border-brand/20 flex flex-col gap-1 rounded-xl border p-4 text-center">
-              <span className="text-foreground text-sm font-medium">
+            <div className="bg-brand/10 border-brand/20 flex flex-col gap-1 rounded-xl border p-4">
+              <span className="text-foreground text-lg font-semibold">
                 Двухфакторная аутентификация
               </span>
-              <span className="text-muted-foreground text-xs">
+              <span className="text-muted-foreground text-sm">
                 Код отправлен на вашу почту
               </span>
             </div>
@@ -110,7 +107,7 @@ export const LoginForm = () => {
         <Button
           type="submit"
           disabled={isPending}
-          className="bg-brand text-foreground hover:bg-brand-hover mt-4 h-12 w-full rounded-xl text-base font-semibold transition-all disabled:opacity-70"
+          className="bg-foreground text-background hover:bg-muted-foreground mt-4 h-14 w-full rounded-xl text-base font-semibold transition-all disabled:opacity-70"
         >
           {isPending ? "Обработка..." : showTwoFactor ? "Подтвердить" : "Войти"}
         </Button>

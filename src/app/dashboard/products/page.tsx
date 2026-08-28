@@ -1,23 +1,20 @@
+import { Suspense } from "react";
 import { Metadata } from "next";
-import { db } from "@/src/server/db/client";
-import { products, categories } from "@/src/server/db/schema";
 import { auth } from "@/src/lib/auth/auth";
 import { redirect } from "next/navigation";
-import { count, desc, or, ilike, eq, and } from "drizzle-orm";
-import { ProductsTable } from "./_components/ProductsTable";
-import { CatalogPagination } from "@/src/app/(store)/catalog/[category]/_components/CatalogPagination";
-import { ProductsSearch } from "./_components/ProductsSearch";
+import { z } from "zod";
 import Link from "next/link";
-import { CreateProductSheet } from "./_components/CreateProductSheet"; // 👈 Импорт
-import { getCategoriesList } from "@/src/server/queries/categories"; // 👈 Импорт
+import { Loader2 } from "lucide-react";
 
 import { cn } from "@/src/lib/utils";
+import { getCategoriesList } from "@/src/server/queries/categories";
+import { ProductsSearch } from "./_components/ProductsSearch";
+import { CreateProductSheet } from "./_components/CreateProductSheet";
+import { ProductsTableWrapper } from "./_components/ProductsTableWrapper";
 
 export const metadata: Metadata = {
   title: "Управление товарами — Beraum Admin",
 };
-
-const LIMIT = 25;
 
 const STATUS_FILTERS = [
   { label: "Все", value: "all" },
@@ -26,8 +23,15 @@ const STATUS_FILTERS = [
   { label: "Архив", value: "archived" },
 ];
 
+// 🛡️ Security: Строгая валидация входящих URL-параметров (Zero Trust)
+const searchParamsSchema = z.object({
+  page: z.coerce.number().min(1).catch(1),
+  q: z.string().trim().catch(""),
+  status: z.enum(["all", "published", "draft", "archived"]).catch("all"),
+});
+
 export default async function AdminProductsPage(props: {
-  searchParams: Promise<{ page?: string; q?: string; status?: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const session = await auth();
   if (
@@ -37,58 +41,16 @@ export default async function AdminProductsPage(props: {
     redirect("/dashboard");
   }
 
-  const searchParams = await props.searchParams;
-  const pageStr = searchParams.page;
-  const currentPage =
-    typeof pageStr === "string" ? Math.max(parseInt(pageStr, 10) || 1, 1) : 1;
-  const offset = (currentPage - 1) * LIMIT;
-  const query = searchParams.q?.trim() || "";
-  const currentStatus = searchParams.status || "all";
+  // Парсинг параметров через Zod
+  const rawParams = await props.searchParams;
+  const {
+    page: currentPage,
+    q: query,
+    status: currentStatus,
+  } = searchParamsSchema.parse(rawParams);
 
-  // Динамическая сборка фильтров
-  const filters = [];
-
-  if (currentStatus !== "all") {
-    filters.push(
-      eq(products.status, currentStatus as "published" | "draft" | "archived"),
-    );
-  }
-
-  if (query) {
-    filters.push(
-      or(
-        ilike(products.itemArticle, `%${query}%`),
-        ilike(products.siteArticle, `%${query}%`),
-        ilike(categories.titleRu, `%${query}%`),
-      ),
-    );
-  }
-
-  const finalCondition = filters.length > 0 ? and(...filters) : undefined;
-
-  const [rawData, [{ totalCount }], { data: categoriesData }] =
-    await Promise.all([
-      db
-        .select({ product: products, categoryTitle: categories.titleRu })
-        .from(products)
-        .leftJoin(categories, eq(products.categoryId, categories.id))
-        .where(finalCondition)
-        .orderBy(desc(products.createdAt))
-        .limit(LIMIT)
-        .offset(offset),
-      db
-        .select({ totalCount: count() })
-        .from(products)
-        .leftJoin(categories, eq(products.categoryId, categories.id))
-        .where(finalCondition),
-      getCategoriesList(), // 👈 Вызов слоя абстракции
-    ]);
-
-  const hasMore = offset + LIMIT < totalCount;
-  const flatData = rawData.map((row) => ({
-    ...row.product,
-    categoryTitle: row.categoryTitle,
-  }));
+  // Категории нужны для CreateProductSheet (выносим на уровень страницы)
+  const { data: categoriesData } = await getCategoriesList();
 
   const createFilterUrl = (statusVal: string) => {
     const params = new URLSearchParams();
@@ -97,6 +59,8 @@ export default async function AdminProductsPage(props: {
     const str = params.toString();
     return `/dashboard/products${str ? `?${str}` : ""}`;
   };
+
+  const suspenseKey = `${query}-${currentStatus}-${currentPage}`;
 
   return (
     <div className="flex flex-col gap-6">
@@ -123,15 +87,20 @@ export default async function AdminProductsPage(props: {
         ))}
       </div>
 
-      <div className="bg-card overflow-hidden rounded-xl border">
-        <div className="overflow-x-auto">
-          <ProductsTable initialData={flatData} />
-        </div>
-      </div>
-
-      <div className="py-4">
-        <CatalogPagination currentPage={currentPage} hasMore={hasMore} />
-      </div>
+      <Suspense
+        key={suspenseKey}
+        fallback={
+          <div className="bg-card flex h-64 w-full items-center justify-center rounded-xl border">
+            <Loader2 className="text-muted-foreground size-8 animate-spin" />
+          </div>
+        }
+      >
+        <ProductsTableWrapper
+          query={query}
+          status={currentStatus}
+          page={currentPage}
+        />
+      </Suspense>
     </div>
   );
 }

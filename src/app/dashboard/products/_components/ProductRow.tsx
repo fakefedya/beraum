@@ -93,6 +93,18 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
         </div>
       </td>
 
+      <td className="px-4 py-4 align-top">
+        <div className="text-foreground flex h-8 items-center text-[13px] font-medium">
+          {product.wbDiscountedPrice != null
+            ? new Intl.NumberFormat("ru-RU", {
+                style: "currency",
+                currency: "RUB",
+                maximumFractionDigits: 0,
+              }).format(product.wbDiscountedPrice)
+            : "—"}
+        </div>
+      </td>
+
       {/* 3. Статус */}
       <td className="px-4 py-4 align-top">
         <Select value={status} onValueChange={setStatus}>

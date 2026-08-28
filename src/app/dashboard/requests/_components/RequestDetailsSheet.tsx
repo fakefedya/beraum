@@ -81,7 +81,6 @@ export const RequestDetailsSheet = ({
 
   if (!request) return null;
 
-  // Форматтер для красивого вывода значений
   const renderPayloadValue = (key: string, value: unknown) => {
     if (!value) return "—";
 
@@ -89,6 +88,7 @@ export const RequestDetailsSheet = ({
       const cat = categories.find((c) => c.id === value);
       return cat ? cat.name : "Неизвестная категория";
     }
+
     if (key === "purchaseDate" && typeof value === "string") {
       try {
         return new Intl.DateTimeFormat("ru-RU").format(new Date(value));
@@ -96,13 +96,31 @@ export const RequestDetailsSheet = ({
         return value;
       }
     }
-    if (key === "techType") {
-      return value === "working"
-        ? "Исправная уценка (Спб)"
-        : value === "broken"
-          ? "Неисправная техника (Мск/Спб)"
-          : "Обе категории";
+
+    // 1. Маппинг типа техники (обрабатываем и старые, и новые ключи схемы)
+    if (key === "deviceCondition" || key === "techType") {
+      const conditionMap: Record<string, string> = {
+        new: "Новая",
+        discount: "Дисконт",
+        // Поддержка legacy-данных (если в БД остались старые заявки)
+        working: "Исправная уценка (Спб)",
+        broken: "Неисправная техника (Мск/Спб)",
+      };
+      return conditionMap[String(value)] || String(value);
     }
+
+    // 2. Маппинг маркетплейсов по внутренним константам
+    if (key === "marketplace" || key === "purchasePlace") {
+      const marketplaceMap: Record<string, string> = {
+        ozon: "Ozon",
+        wb: "Wildberries",
+        ymarket: "Яндекс Маркет",
+        mvideo: "М.Видео",
+      };
+      return marketplaceMap[String(value)] || String(value);
+    }
+
+    // Маппинг источников
     if (key === "source" && value === "discount_page") {
       return "Страница дисконта (Опт)";
     }

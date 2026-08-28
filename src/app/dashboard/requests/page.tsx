@@ -29,7 +29,8 @@ const STATUS_FILTERS: { label: string; value: RequestStatus }[] = [
   { label: "Решенные", value: "resolved" },
 ];
 
-// 🛡️ Security: Строгая валидация входящих параметров из URL (защита от Type Casting уязвимостей)
+// 🛡️ Security: Жесткая типизация и валидация URL-параметров.
+// Метод .catch() гарантирует фоллбэк к дефолтным значениям при XSS-попытках или битых ссылках (например, передача массивов).
 const searchParamsSchema = z.object({
   type: z
     .enum(["all", "consultation", "partnership", "support", "wholesale"])
@@ -49,7 +50,7 @@ export default async function RequestsPage(props: {
     redirect("/dashboard");
   }
 
-  // 1. Парсинг и очистка пользовательского ввода
+  // 1. Парсинг и санитизация пользовательского ввода
   const rawParams = await props.searchParams;
   const parsedParams = searchParamsSchema.parse(rawParams);
 
@@ -65,12 +66,12 @@ export default async function RequestsPage(props: {
     if (type !== "all") params.set("type", type);
     if (status !== "all") params.set("status", status);
     if (searchQuery) params.set("q", searchQuery);
-    // 🛡️ Пагинация намеренно не передается, чтобы сбросить ее на 1 страницу при смене фильтров
+    // 🛡️ Пагинация намеренно не передается, чтобы сбрасывать на 1 страницу при смене табов
     const str = params.toString();
     return `/dashboard/requests${str ? `?${str}` : ""}`;
   };
 
-  // 2. Уникальный ключ для принудительного ререндера Suspense при смене параметров
+  // 2. Уникальный ключ для принудительного ререндера Suspense при смене фильтров
   const suspenseKey = `${currentType}-${currentStatus}-${searchQuery}-${currentPage}`;
 
   return (
@@ -126,7 +127,7 @@ export default async function RequestsPage(props: {
         </div>
       </div>
 
-      {/* 3. Неблокирующий рендер данных */}
+      {/* 3. Неблокирующий рендер таблицы через Suspense */}
       <Suspense
         key={suspenseKey}
         fallback={

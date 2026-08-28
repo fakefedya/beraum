@@ -1,4 +1,3 @@
-// src/server/actions/auth.ts
 "use server";
 
 import { signIn } from "@/src/lib/auth/auth";
@@ -11,6 +10,7 @@ import { AuthError } from "next-auth";
 import { checkRateLimit } from "../utils/rate-limit";
 import { generateTwoFactorToken } from "../utils/tokens";
 import { sendTwoFactorTokenEmail } from "../services/mail/client";
+import { getClientIp } from "../utils/ip";
 
 export type LoginActionState = {
   success: boolean;
@@ -19,7 +19,6 @@ export type LoginActionState = {
   payload?: Record<string, string>;
 };
 
-// Статичный bcrypt-хэш для защиты от тайминг-атак (чтобы время проверки не выдавало наличие юзера)
 const DUMMY_HASH =
   "$2b$10$EpRnTzVlqHIJvw2p0YQf2.gH9Q9k2rNq1G8zGv1l2v1l2v1l2v1l2";
 
@@ -57,7 +56,6 @@ export async function loginAction(
       .from(users)
       .where(eq(users.email, email));
 
-    // 🛡️ Security: Выполняем compare в ЛЮБОМ СЛУЧАЕ, чтобы защититься от User Enumeration
     const hashToCompare = existingUser?.passwordHash || DUMMY_HASH;
     const passwordsMatch = await compare(password, hashToCompare);
 
@@ -77,15 +75,28 @@ export async function loginAction(
       };
     }
 
-    // 🛡️ Security: Жесткий контроль 2FA с лимитом попыток
     if (existingUser.isTwoFactorEnabled) {
       if (!code) {
+        const [existingToken] = await db
+          .select()
+          .from(twoFactorTokens)
+          .where(eq(twoFactorTokens.email, existingUser.email));
+
+        if (existingToken && new Date() < existingToken.expires) {
+          return {
+            success: false,
+            error:
+              "Код уже отправлен. Проверьте почту или подождите истечения таймера.",
+            isTwoFactor: true,
+            payload: data,
+          };
+        }
+
         const twoFactorToken = await generateTwoFactorToken(existingUser.email);
         await sendTwoFactorTokenEmail(existingUser.email, twoFactorToken.token);
         return { success: false, isTwoFactor: true, payload: data };
       }
 
-      // Ищем токен ТОЛЬКО по email, чтобы проверить количество попыток
       const [twoFactorToken] = await db
         .select()
         .from(twoFactorTokens)
@@ -112,7 +123,6 @@ export async function loginAction(
         };
       }
 
-      // Проверка на Brute-force
       if (twoFactorToken.token !== code) {
         const newAttempts = twoFactorToken.attempts + 1;
 
@@ -123,7 +133,7 @@ export async function loginAction(
           return {
             success: false,
             error: "Превышен лимит попыток. Запросите код заново.",
-            isTwoFactor: false, // Возвращаем на шаг ввода пароля
+            isTwoFactor: false,
             payload: { email, password },
           };
         } else {
@@ -140,10 +150,17 @@ export async function loginAction(
           };
         }
       }
-
-      // Если код верный, пропускаем дальше.
-      // NextAuth (в auth.ts) проведет финальную сверку и удалит запись.
     }
+
+    const ip = await getClientIp();
+
+    await db
+      .update(users)
+      .set({
+        lastLoginAt: new Date(),
+        lastLoginIp: ip,
+      })
+      .where(eq(users.id, existingUser.id));
 
     await signIn("credentials", {
       email,
@@ -162,7 +179,6 @@ export async function loginAction(
         isTwoFactor: prevState.isTwoFactor,
       };
     }
-    // Пробрасываем ошибку SMTP на клиент без стектрейса
     if (
       error instanceof Error &&
       error.message === "Не удалось отправить код на почту"

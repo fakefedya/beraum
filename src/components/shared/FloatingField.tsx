@@ -11,6 +11,7 @@ interface FloatingFieldProps {
   disabled?: boolean;
   isTextarea?: boolean;
   defaultValue?: string;
+  className?: string;
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
@@ -26,6 +27,7 @@ export const FloatingField = ({
   disabled,
   isTextarea = false,
   defaultValue,
+  className,
   onChange,
 }: FloatingFieldProps) => {
   const commonClasses = cn(
@@ -59,7 +61,7 @@ export const FloatingField = ({
             defaultValue={defaultValue}
             onChange={onChange}
             rows={4}
-            className={cn(commonClasses, "resize-none")}
+            className={cn(commonClasses, "resize-none", className)}
             aria-invalid={!!error}
           />
         ) : (
@@ -72,7 +74,7 @@ export const FloatingField = ({
             disabled={disabled}
             defaultValue={defaultValue}
             onChange={onChange}
-            className={cn(commonClasses, "h-14")}
+            className={cn(commonClasses, "h-14", className)}
             aria-invalid={!!error}
           />
         )}
