@@ -54,6 +54,7 @@ export default async function DashboardLayout({
             <span className="text-muted-foreground border-border/50 hidden border-l pl-4 text-sm font-medium md:block">
               {session.user.email}
             </span>
+            <span>{session.user.name}</span>
 
             <form
               action={async () => {

@@ -24,6 +24,7 @@ export const marketplaceClicks = pgTable(
     index("idx_clicks_article").on(table.article),
     index("idx_clicks_marketplace").on(table.marketplace),
     index("idx_clicks_device_id").on(table.deviceId),
+    index("idx_clicks_created_at").on(table.createdAt),
   ],
 );
 
