@@ -13,6 +13,10 @@ export const marketplaceClicks = pgTable(
     id: uuid("id").defaultRandom().primaryKey(),
     article: text("article").notNull(),
     marketplace: text("marketplace").notNull(),
+    source: text("source").default("unknown").notNull(),
+    deviceType: text("device_type", { enum: ["mobile", "desktop", "unknown"] })
+      .default("unknown")
+      .notNull(),
     deviceId: uuid("device_id").notNull(),
     ipHash: text("ip_hash").notNull(),
     userAgent: text("user_agent"),
@@ -25,6 +29,7 @@ export const marketplaceClicks = pgTable(
     index("idx_clicks_marketplace").on(table.marketplace),
     index("idx_clicks_device_id").on(table.deviceId),
     index("idx_clicks_created_at").on(table.createdAt),
+    index("idx_clicks_article_date").on(table.article, table.createdAt),
   ],
 );
 

@@ -6,9 +6,9 @@ import crypto from "crypto";
 import { db } from "@/src/server/db/client";
 import { marketplaceClicks } from "@/src/server/db/schema";
 import { getClientIp, hashIp } from "@/src/server/utils/ip";
+import { checkRateLimit } from "@/src/server/utils/rate-limit";
 import { VALID_MARKETPLACES } from "@/src/lib/constants/marketplaces";
 
-// --- SECURITY: Строгий Whitelist доменов (Защита от Open Redirect) ---
 const ALLOWED_DOMAINS = [
   "ozon.ru",
   "wildberries.ru",
@@ -30,59 +30,28 @@ const redirectSchema = z.object({
         return false;
       }
     }, "Недопустимый домен"),
-  // 🚀 ПАТЧ: Синхронизированный массив без зависимостей
   marketplace: z.enum(VALID_MARKETPLACES),
   article: z.string().min(1).max(50),
+  source: z.string().min(1).max(50).default("unknown"), // 🚀 Получаем контекст
 });
 
-const isBot = (userAgent: string) => {
-  return /bot|crawler|spider|crawling|google|yandex|bing|slurp|duckduckgo|baiduspider/i.test(
-    userAgent,
-  );
+const isBot = (ua: string) =>
+  /bot|crawler|spider|crawling|google|yandex/i.test(ua);
+
+const getDeviceType = (ua: string) => {
+  if (!ua) return "unknown";
+  return /mobile|android|iphone|ipad|ipod/i.test(ua) ? "mobile" : "desktop";
 };
-
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_WINDOW_MS = 60000;
-const MAX_REQUESTS_PER_WINDOW = 20;
-
-function checkRateLimit(ipHash: string): boolean {
-  const now = Date.now();
-  const record = rateLimitMap.get(ipHash);
-
-  if (!record || now > record.resetAt) {
-    rateLimitMap.set(ipHash, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return true;
-  }
-
-  if (record.count >= MAX_REQUESTS_PER_WINDOW) {
-    return false;
-  }
-
-  record.count += 1;
-  return true;
-}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const cookieStore = await cookies();
 
-  const parsed = redirectSchema.safeParse({
-    url: searchParams.get("url"),
-    marketplace: searchParams.get("marketplace"),
-    article: searchParams.get("article"),
-  });
+  const parsed = redirectSchema.safeParse(Object.fromEntries(searchParams));
+  if (!parsed.success) return NextResponse.redirect(new URL("/", request.url));
 
-  if (!parsed.success) {
-    console.warn(
-      "⚠️ [SECURITY] Попытка эксплуатации Open Redirect или невалидные параметры:",
-      searchParams.toString(),
-    );
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  const { url, marketplace, article } = parsed.data;
+  const { url, marketplace, article, source } = parsed.data;
   const userAgent = request.headers.get("user-agent") || "";
-
   const ip = await getClientIp(request);
   const ipHash = hashIp(ip);
 
@@ -94,12 +63,16 @@ export async function GET(request: NextRequest) {
     isNewDevice = true;
   }
 
-  if (!isBot(userAgent) && checkRateLimit(ipHash)) {
+  const rateLimit = await checkRateLimit("link_click", 10, 60000);
+
+  if (!isBot(userAgent) && rateLimit.success) {
     after(async () => {
       try {
         await db.insert(marketplaceClicks).values({
           article,
           marketplace,
+          source,
+          deviceType: getDeviceType(userAgent),
           deviceId: deviceId!,
           userAgent: userAgent.substring(0, 255),
           ipHash,
@@ -111,14 +84,12 @@ export async function GET(request: NextRequest) {
   }
 
   const targetUrl = new URL(url);
-
   if (!targetUrl.searchParams.has("utm_source")) {
     targetUrl.searchParams.set("utm_source", "beraum_showcase");
     targetUrl.searchParams.set("utm_medium", "referral");
   }
 
   const response = NextResponse.redirect(targetUrl, 302);
-
   if (isNewDevice) {
     response.cookies.set("beraum_device_id", deviceId, {
       httpOnly: true,

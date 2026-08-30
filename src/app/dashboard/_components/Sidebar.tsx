@@ -24,7 +24,7 @@ export const Sidebar = ({ userRole }: SidebarProps) => {
           href="/dashboard"
           className="flex items-center gap-2 outline-none"
         >
-          <Icons.logo className="text-foreground h-5 w-auto" />
+          <Icons.logo className="text-foreground h-5 w-auto fill-current" />
         </Link>
       </div>
 

@@ -18,16 +18,12 @@ const MARKETPLACE_LABELS: Record<string, string> = {
   mvideo: "М.Видео",
 };
 
-function formatDevice(ua: string | null): string {
-  if (!ua) return "Неизвестно";
-  const isMobile = /mobile|android|iphone|ipad|ipod/i.test(ua);
-  const isMac = /macintosh|mac os x/i.test(ua);
-  const isWindows = /windows/i.test(ua);
-
-  const type = isMobile ? "📱 Мобильное" : "💻 Десктоп";
-  const os = isMac ? " (Mac)" : isWindows ? " (Windows)" : "";
-  return `${type}${os}`;
-}
+// Выносим маппинг в константы — работает со скоростью чтения ключа из объекта
+const DEVICE_LABELS: Record<string, string> = {
+  mobile: "📱 Мобильное",
+  desktop: "💻 Десктоп",
+  unknown: "❓ Неизвестно",
+};
 
 export default async function DashboardPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -40,7 +36,6 @@ export default async function DashboardPage(props: {
       ? resolvedParams.article
       : undefined;
 
-  // Комбинированный ключ для Suspense, чтобы лоадер срабатывал при смене любого фильтра
   const suspenseKey = `${period}-${article || "all"}`;
 
   return (
@@ -133,7 +128,6 @@ async function AnalyticsContent({
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Скрываем Топ-10, если смотрим конкретный артикул (нет смысла выводить таблицу из 1 строки) */}
         {!stats.searchedArticle && (
           <div className="bg-card flex flex-col overflow-hidden rounded-2xl border">
             <div className="border-border/50 border-b p-6">
@@ -189,6 +183,7 @@ async function AnalyticsContent({
                     <th className="px-6 py-3 font-medium">Модель</th>
                   )}
                   <th className="px-6 py-3 font-medium">МП</th>
+                  <th className="px-6 py-3 font-medium">Источник</th>
                   <th className="px-6 py-3 text-right font-medium">
                     Устройство
                   </th>
@@ -223,7 +218,6 @@ async function AnalyticsContent({
                           {MARKETPLACE_LABELS[event.marketplace] ||
                             event.marketplace}
                         </span>
-                        {/* Если артикул скрыт, выводим дату здесь */}
                         {stats.searchedArticle && (
                           <span className="text-muted-foreground text-[10px]">
                             {new Intl.DateTimeFormat("ru-RU", {
@@ -236,11 +230,15 @@ async function AnalyticsContent({
                         )}
                       </div>
                     </td>
-                    <td
-                      className="text-muted-foreground max-w-[150px] truncate px-6 py-4 text-right text-xs"
-                      title={event.userAgent || "Нет данных"}
-                    >
-                      {formatDevice(event.userAgent)}
+                    <td className="px-6 py-4">
+                      <span className="text-foreground text-xs font-medium">
+                        {event.source === "unknown"
+                          ? "Прямой переход"
+                          : event.source}
+                      </span>
+                    </td>
+                    <td className="text-foreground px-6 py-4 text-right text-xs font-medium">
+                      {DEVICE_LABELS[event.deviceType] || DEVICE_LABELS.unknown}
                     </td>
                   </tr>
                 ))}
