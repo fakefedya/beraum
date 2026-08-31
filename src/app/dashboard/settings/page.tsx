@@ -18,7 +18,15 @@ export default async function SettingsPage() {
   }
 
   const usersList = await db
-    .select()
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      role: users.role,
+      isLocked: users.isLocked,
+      isTwoFactorEnabled: users.isTwoFactorEnabled,
+      createdAt: users.createdAt,
+    })
     .from(users)
     .orderBy(desc(users.createdAt));
 

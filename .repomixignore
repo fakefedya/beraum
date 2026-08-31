@@ -9,4 +9,5 @@ backup/
 .vscode/
 node_modules/
 src/components/ui/
+src/app/(store)
 

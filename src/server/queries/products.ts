@@ -25,7 +25,7 @@ const getProductsSchema = z.object({
   categorySlug: z.string().min(1).max(100).optional(),
   limit: z.number().int().min(1).max(50).default(12),
   offset: z.number().int().min(0).default(0),
-  q: z.string().max(100, "Слишком длинный запрос").optional(),
+  q: z.string().max(100).optional(),
   filters: z.record(z.string(), filterValueSchema).optional(),
   sort: z
     .union([z.string(), z.array(z.string())])
@@ -39,7 +39,9 @@ const getProductByArticleSchema = z.object({
 });
 
 export type GetProductsParams = z.input<typeof getProductsSchema>;
-export type CatalogProduct = Awaited<ReturnType<typeof getProducts>>["data"][0];
+export type CatalogProduct = Awaited<
+  ReturnType<typeof getProductsDb>
+>["data"][0];
 
 const computedBasePriceSql = sql<number>`COALESCE(
   NULLIF(${products.wbDiscountedPrice}, 0),
@@ -182,26 +184,22 @@ async function getProductsDb(params: GetProductsParams = {}) {
             'isLatest', COALESCE(${products.isLatest}, false),
             'price', ${computedPriceSql},
             'stock', ${computedStockSql},
-            'image', CASE 
-              WHEN ${productImages.fileKey} IS NOT NULL THEN jsonb_build_object(
-                'fileKey', ${productImages.fileKey},
-                'bucketName', ${productImages.bucketName},
-                'fit', ${productImages.imageFit}
+            'image', (
+              SELECT jsonb_build_object(
+                'fileKey', pi.file_key,
+                'bucketName', pi.bucket_name,
+                'fit', pi.image_fit
               )
-              ELSE NULL
-            END
+              FROM ${productImages} pi
+              WHERE pi.product_id = ${products.id}
+              ORDER BY pi.is_cover DESC, pi.sort_order ASC
+              LIMIT 1
+            )
           ) ORDER BY ${products.itemArticle} ASC
         )`.as("variants"),
       })
       .from(products)
       .leftJoin(categories, eq(products.categoryId, categories.id))
-      .leftJoin(
-        productImages,
-        and(
-          eq(productImages.productId, products.id),
-          eq(productImages.isCover, true),
-        ),
-      )
       .where(and(...conditions))
       .groupBy(products.siteArticle, categories.slug, categories.titleRu)
       .orderBy(...orderConditions)
@@ -210,7 +208,6 @@ async function getProductsDb(params: GetProductsParams = {}) {
 
     return { success: true, data: items };
   } catch (error) {
-    console.error("❌ Ошибка Server Action (getProducts):", error);
     return {
       success: false,
       code: "INTERNAL_ERROR" as const,
@@ -220,12 +217,16 @@ async function getProductsDb(params: GetProductsParams = {}) {
   }
 }
 
-export const getProducts = unstable_cache(getProductsDb, ["products_list"], {
-  tags: ["products"],
-  revalidate: 3600,
-});
+export const getProducts = async (params: GetProductsParams = {}) => {
+  const cacheKey = JSON.stringify(params);
+  return unstable_cache(
+    async () => getProductsDb(params),
+    ["products_list", cacheKey],
+    { tags: ["products"], revalidate: 3600 },
+  )();
+};
 
-export async function getProductByArticleDb(rawArticle: string) {
+async function getProductByArticleDb(rawArticle: string) {
   try {
     const { article } = getProductByArticleSchema.parse({
       article: rawArticle,
@@ -296,7 +297,7 @@ export async function getProductByArticleDb(rawArticle: string) {
       })
       .from(productImages)
       .where(eq(productImages.productId, product.id))
-      .orderBy(productImages.sortOrder);
+      .orderBy(desc(productImages.isCover), asc(productImages.sortOrder));
 
     const documentsPromise = db
       .select({
@@ -307,7 +308,6 @@ export async function getProductByArticleDb(rawArticle: string) {
       .from(productDocuments)
       .where(eq(productDocuments.productId, product.id));
 
-    // Выполняем независимые запросы параллельно
     const [variants, rawImages, rawDocs] = await Promise.all([
       variantsPromise,
       imagesPromise,
@@ -329,7 +329,6 @@ export async function getProductByArticleDb(rawArticle: string) {
       data: { ...product, variants, documents: formattedDocs, images },
     };
   } catch (error) {
-    console.error("❌ Ошибка Server Action (getProductByArticle):", error);
     return {
       success: false,
       code: "INVALID_REQUEST" as const,
@@ -338,11 +337,13 @@ export async function getProductByArticleDb(rawArticle: string) {
   }
 }
 
-export const getProductByArticle = unstable_cache(
-  getProductByArticleDb,
-  ["product_article"],
-  { tags: ["products"], revalidate: 3600 },
-);
+export const getProductByArticle = async (article: string) => {
+  return unstable_cache(
+    async () => getProductByArticleDb(article),
+    ["product_article", article.toLowerCase()],
+    { tags: ["products"], revalidate: 3600 },
+  )();
+};
 
 export async function getSimilarProducts(
   categoryId: string,
@@ -411,7 +412,7 @@ export async function getSimilarProducts(
               )
               FROM ${productImages} pi
               WHERE pi.product_id = ${products.id}
-              ORDER BY pi.sort_order ASC
+              ORDER BY pi.is_cover DESC, pi.sort_order ASC
               LIMIT 1
             )
           ) ORDER BY ${products.itemArticle} ASC
@@ -429,40 +430,29 @@ export async function getSimilarProducts(
 
     return { success: true, data: items };
   } catch (error) {
-    console.error("❌ Ошибка Server Action (getSimilarProducts):", error);
     return { success: false, data: [] };
   }
 }
 
-async function getSupportModelsByCategoryDb(categoryId: string) {
+export async function getSupportModelsByCategory(categoryId: string) {
   try {
     const parsedId = z.string().uuid().safeParse(categoryId);
     if (!parsedId.success) return { success: false, data: [] };
 
-    const items = await db
+    const data = await db
       .select({
+        id: products.id,
         itemArticle: products.itemArticle,
-        siteArticle: products.siteArticle,
       })
       .from(products)
       .where(eq(products.categoryId, parsedId.data))
       .orderBy(asc(products.itemArticle));
 
-    return { success: true, data: items };
+    return { success: true, data };
   } catch (error) {
-    console.error(
-      "❌ Ошибка Server Action (getSupportModelsByCategory):",
-      error,
-    );
     return { success: false, data: [] };
   }
 }
-
-export const getSupportModelsByCategory = unstable_cache(
-  getSupportModelsByCategoryDb,
-  ["products_support"],
-  { tags: ["products"], revalidate: 3600 },
-);
 
 async function getPublishedArticlesDb() {
   const data = await db

@@ -9,10 +9,10 @@ const apiPrefix = "/api";
 
 export default auth((req) => {
   const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
+  const user = req.auth?.user;
+  const isLoggedIn = !!user;
 
   const response = NextResponse.next();
-  // Zero Trust Headers
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -30,9 +30,26 @@ export default auth((req) => {
     return response;
   }
 
-  // Защита всех панелей админа и приватных API
-  if (!isLoggedIn && (isDashboardRoute || isProtectedApi)) {
-    return NextResponse.redirect(new URL("/auth/login", nextUrl));
+  // Защита Edge
+  if (isDashboardRoute || isProtectedApi) {
+    if (!isLoggedIn) {
+      return NextResponse.redirect(new URL("/auth/login", nextUrl));
+    }
+
+    // Блокируем залоченных юзеров сразу
+    if (user.isLocked) {
+      return NextResponse.redirect(
+        new URL("/auth/login?error=locked", nextUrl),
+      );
+    }
+
+    // RBAC: Только Superadmin может войти в /settings
+    if (
+      nextUrl.pathname.startsWith("/dashboard/settings") &&
+      user.role !== "superadmin"
+    ) {
+      return NextResponse.redirect(new URL("/dashboard", nextUrl));
+    }
   }
 
   return response;

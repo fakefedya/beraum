@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
-import { slides, users } from "@/src/server/db/schema";
+import { slides } from "@/src/server/db/schema";
 import { auth } from "@/src/lib/auth/auth";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
@@ -13,6 +13,18 @@ import crypto from "crypto";
 
 const BUCKET = "system-assets";
 const UPLOAD_DIR = "components/banners";
+
+async function requireAdmin() {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Не авторизован");
+  if (
+    session.user.isLocked ||
+    !["superadmin", "manager"].includes(session.user.role)
+  ) {
+    throw new Error("Доступ запрещен");
+  }
+  return session.user.id;
+}
 
 const presignedUrlSchema = z.object({
   contentType: z
@@ -29,12 +41,9 @@ const presignedUrlSchema = z.object({
 const tagSchema = z.object({
   xPercent: z.coerce.number().min(0).max(100),
   yPercent: z.coerce.number().min(0).max(100),
-  title: z.string().min(1, "Требуется заголовок").trim(),
+  title: z.string().min(1).trim(),
   subtitle: z.string().trim(),
-  href: z
-    .string()
-    .regex(/^\//, "Только относительные ссылки (защита от XSS)")
-    .trim(),
+  href: z.string().regex(/^\//, "Только относительные ссылки").trim(),
 });
 
 const bannerSchema = z
@@ -42,7 +51,7 @@ const bannerSchema = z
     id: z.string().uuid().optional(),
     internalTitle: z.string().min(1).trim(),
     placement: z.enum(["home_hero", "catalog_hero"]),
-    fileKey: z.string().min(1, "Требуется ключ файла"),
+    fileKey: z.string().min(1),
     mobileFileKey: z.string().optional(),
     isActive: z
       .preprocess((val) => val === "true" || val === true, z.boolean())
@@ -67,92 +76,68 @@ const bannerSchema = z
     ]),
   );
 
-async function verifyAdmin() {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Не авторизован");
-  const [dbUser] = await db
-    .select({ role: users.role, isLocked: users.isLocked })
-    .from(users)
-    .where(eq(users.id, session.user.id));
-  if (
-    !dbUser ||
-    dbUser.isLocked ||
-    !["superadmin", "manager"].includes(dbUser.role)
-  ) {
-    throw new Error("Доступ запрещен");
-  }
-}
-
 export async function upsertBannerAction(formData: FormData) {
-  await verifyAdmin();
-  const rawData = Object.fromEntries(formData.entries());
-
-  // Парсим вложенный JSON payload
   try {
-    if (typeof rawData.payload === "string") {
-      rawData.payload = JSON.parse(rawData.payload);
+    await requireAdmin();
+    const rawData = Object.fromEntries(formData.entries());
+
+    try {
+      if (typeof rawData.payload === "string")
+        rawData.payload = JSON.parse(rawData.payload);
+    } catch {
+      return { success: false, error: "Невалидный формат JSON payload" };
     }
-  } catch {
-    return { success: false, error: "Невалидный формат JSON payload" };
-  }
 
-  const parsed = bannerSchema.safeParse(rawData);
-  if (!parsed.success)
-    return { success: false, error: parsed.error.issues[0].message };
+    const parsed = bannerSchema.safeParse(rawData);
+    if (!parsed.success)
+      return { success: false, error: parsed.error.issues[0].message };
 
-  try {
     if (parsed.data.id) {
       await db
         .update(slides)
-        .set({
-          ...parsed.data,
-          updatedAt: new Date(),
-        })
+        .set({ ...parsed.data, updatedAt: new Date() })
         .where(eq(slides.id, parsed.data.id));
     } else {
-      await db.insert(slides).values({
-        ...parsed.data,
-      });
+      await db.insert(slides).values({ ...parsed.data });
     }
 
     revalidateTag("slides", { expire: 0 });
     revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
-    console.error("❌ Ошибка записи баннера:", error);
+    if (error instanceof Error) return { success: false, error: error.message };
     return { success: false, error: "Ошибка БД" };
   }
 }
 
 export async function deleteBannerAction(id: string) {
-  await verifyAdmin();
-  if (!z.string().uuid().safeParse(id).success)
-    return { success: false, error: "Невалидный ID" };
-
   try {
+    await requireAdmin();
+    if (!z.string().uuid().safeParse(id).success)
+      return { success: false, error: "Невалидный ID" };
+
     await db.delete(slides).where(eq(slides.id, id));
     revalidateTag("slides", { expire: 0 });
     revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
+    if (error instanceof Error) return { success: false, error: error.message };
     return { success: false, error: "Ошибка при удалении" };
   }
 }
 
 export async function getBannerPresignedUploadUrl(rawData: unknown) {
-  await verifyAdmin();
-  const parsed = presignedUrlSchema.safeParse(rawData);
-
-  if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0].message };
-  }
-
-  const { contentType, fileSize } = parsed.data;
-  const ext = MIME_TO_EXT[contentType];
-  const fileName = `${crypto.randomUUID()}.${ext}`;
-  const s3Key = `${UPLOAD_DIR}/${fileName}`;
-
   try {
+    await requireAdmin();
+    const parsed = presignedUrlSchema.safeParse(rawData);
+    if (!parsed.success)
+      return { success: false, error: parsed.error.issues[0].message };
+
+    const { contentType, fileSize } = parsed.data;
+    const ext = MIME_TO_EXT[contentType];
+    const fileName = `${crypto.randomUUID()}.${ext}`;
+    const s3Key = `${UPLOAD_DIR}/${fileName}`;
+
     const { url, fields } = await createPresignedPost(s3Public, {
       Bucket: BUCKET,
       Key: s3Key,
@@ -161,13 +146,12 @@ export async function getBannerPresignedUploadUrl(rawData: unknown) {
         ["eq", "$Content-Type", contentType],
       ],
       Fields: { "Content-Type": contentType },
-      Expires: 300, // Ссылка живет 5 минут
+      Expires: 300,
     });
 
-    // Возвращаем fileName, так как в БД мы храним только имя файла без пути
     return { success: true, url, fields, fileName };
   } catch (error) {
-    console.error("❌ S3 Presign Error:", error);
+    if (error instanceof Error) return { success: false, error: error.message };
     return { success: false, error: "Ошибка инициализации загрузки" };
   }
 }

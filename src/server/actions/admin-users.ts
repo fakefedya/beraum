@@ -8,15 +8,14 @@ import { auth } from "@/src/lib/auth/auth";
 import { revalidatePath } from "next/cache";
 import { hash } from "bcrypt-ts";
 
-// Защита от FormData: checkbox отправляет строку "true" или "false"
 const booleanField = z.preprocess(
   (val) => val === "true" || val === true,
   z.boolean(),
 );
 
 const baseUserSchema = {
-  name: z.string().min(2, "Минимум 2 символа").trim(),
-  email: z.string().email("Неверный формат email").trim().toLowerCase(),
+  name: z.string().min(2).trim(),
+  email: z.string().email().trim().toLowerCase(),
   role: z.enum(["superadmin", "manager", "support"]),
   isLocked: booleanField.default(false),
   isTwoFactorEnabled: booleanField.default(true),
@@ -24,52 +23,49 @@ const baseUserSchema = {
 
 const createUserSchema = z.object({
   ...baseUserSchema,
-  // Пароль строго обязателен при создании
-  password: z.string().min(8, "Минимум 8 символов"),
+  password: z.string().min(8),
 });
 
 const updateUserSchema = z.object({
   ...baseUserSchema,
-  id: z.string().uuid("ID обязателен"),
-  // Пустая строка пройдет (пароль не меняется), но если есть ввод — минимум 8 символов
-  password: z
-    .string()
-    .optional()
-    .refine((val) => !val || val.length >= 8, {
-      message: "Минимум 8 символов",
-    }),
+  id: z.string().uuid(),
+  password: z.preprocess(
+    (val) => (val === "" || val === null ? undefined : val),
+    z.string().min(8).optional(),
+  ),
 });
+
+type UpdateUserPayload = {
+  name: string;
+  role: "superadmin" | "manager" | "support";
+  isLocked: boolean;
+  isTwoFactorEnabled: boolean;
+  passwordHash?: string;
+};
 
 async function requireSuperadmin() {
   const session = await auth();
-  if (!session?.user?.id) throw new Error("Не авторизован");
-
-  const [dbUser] = await db
-    .select({ role: users.role, isLocked: users.isLocked })
-    .from(users)
-    .where(eq(users.id, session.user.id));
-
-  if (!dbUser || dbUser.isLocked || dbUser.role !== "superadmin") {
-    throw new Error("Доступ запрещен. Требуются права Superadmin.");
+  if (!session?.user?.id) throw new Error("UNAUTHORIZED");
+  if (session.user.isLocked || session.user.role !== "superadmin") {
+    throw new Error("FORBIDDEN");
   }
   return session.user.id;
 }
 
 export async function createUserAction(formData: FormData) {
-  await requireSuperadmin();
-  const rawData = Object.fromEntries(formData.entries());
-
-  const parsed = createUserSchema.safeParse(rawData);
-  if (!parsed.success)
-    return { success: false, error: parsed.error.issues[0].message };
-
   try {
+    await requireSuperadmin();
+    const rawData = Object.fromEntries(formData.entries());
+
+    const parsed = createUserSchema.safeParse(rawData);
+    if (!parsed.success) return { success: false, error: "INVALID_DATA" };
+
     const [existing] = await db
       .select({ id: users.id })
       .from(users)
       .where(eq(users.email, parsed.data.email));
 
-    if (existing) return { success: false, error: "Email уже используется" };
+    if (existing) return { success: false, error: "EMAIL_EXISTS" };
 
     const passwordHash = await hash(parsed.data.password, 12);
 
@@ -84,38 +80,27 @@ export async function createUserAction(formData: FormData) {
     revalidatePath("/dashboard/settings");
     return { success: true };
   } catch (error) {
-    return { success: false, error: "Ошибка базы данных" };
+    return { success: false, error: "DB_ERROR" };
   }
 }
 
-type UpdateUserPayload = {
-  name: string;
-  role: "superadmin" | "manager" | "support";
-  isLocked: boolean;
-  isTwoFactorEnabled: boolean;
-  passwordHash?: string;
-};
-
 export async function updateUserAction(formData: FormData) {
-  const currentUserId = await requireSuperadmin();
-  const rawData = Object.fromEntries(formData.entries());
-
-  const parsed = updateUserSchema.safeParse(rawData);
-  if (!parsed.success)
-    return { success: false, error: parsed.error.issues[0].message };
-
-  const { id, name, role, isLocked, isTwoFactorEnabled, password } =
-    parsed.data;
-
-  // Защита от блокировки самого себя
-  if (id === currentUserId) {
-    if (isLocked)
-      return { success: false, error: "Нельзя заблокировать самого себя" };
-    if (role !== "superadmin")
-      return { success: false, error: "Нельзя понизить свою роль" };
-  }
-
   try {
+    const currentUserId = await requireSuperadmin();
+    const rawData = Object.fromEntries(formData.entries());
+
+    const parsed = updateUserSchema.safeParse(rawData);
+    if (!parsed.success) return { success: false, error: "INVALID_DATA" };
+
+    const { id, name, role, isLocked, isTwoFactorEnabled, password } =
+      parsed.data;
+
+    if (id === currentUserId) {
+      if (isLocked) return { success: false, error: "SELF_LOCK_FORBIDDEN" };
+      if (role !== "superadmin")
+        return { success: false, error: "SELF_DEMOTE_FORBIDDEN" };
+    }
+
     const updateData: UpdateUserPayload = {
       name,
       role,
@@ -123,8 +108,7 @@ export async function updateUserAction(formData: FormData) {
       isTwoFactorEnabled,
     };
 
-    // Хэшируем только если пароль реально передан и валиден
-    if (password) {
+    if (password !== undefined) {
       updateData.passwordHash = await hash(password, 12);
     }
 
@@ -133,23 +117,23 @@ export async function updateUserAction(formData: FormData) {
     revalidatePath("/dashboard/settings");
     return { success: true };
   } catch (error) {
-    return { success: false, error: "Ошибка обновления пользователя" };
+    return { success: false, error: "DB_ERROR" };
   }
 }
 
 export async function deleteUserAction(id: string) {
-  const currentUserId = await requireSuperadmin();
-  if (!z.string().uuid().safeParse(id).success)
-    return { success: false, error: "Невалидный ID" };
-
-  if (id === currentUserId)
-    return { success: false, error: "Нельзя удалить свою учетную запись" };
-
   try {
+    const currentUserId = await requireSuperadmin();
+    if (!z.string().uuid().safeParse(id).success)
+      return { success: false, error: "INVALID_ID" };
+
+    if (id === currentUserId)
+      return { success: false, error: "SELF_DELETE_FORBIDDEN" };
+
     await db.delete(users).where(eq(users.id, id));
     revalidatePath("/dashboard/settings");
     return { success: true };
   } catch (error) {
-    return { success: false, error: "Ошибка при удалении" };
+    return { success: false, error: "DB_ERROR" };
   }
 }

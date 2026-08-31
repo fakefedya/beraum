@@ -3,102 +3,105 @@
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
-import { products, users } from "@/src/server/db/schema";
+import { products } from "@/src/server/db/schema";
+import type {
+  ProductFilters,
+  ProductSpecifications,
+} from "@/src/server/db/schema";
 import { auth } from "@/src/lib/auth/auth";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
-const jsonStringSchema = z
+async function requireAdmin() {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("UNAUTHORIZED");
+  if (
+    session.user.isLocked ||
+    !["superadmin", "manager"].includes(session.user.role)
+  ) {
+    throw new Error("FORBIDDEN");
+  }
+  return session.user.id;
+}
+
+const filtersSchema = z
   .string()
-  .max(15000, "Слишком большой объем данных")
-  .refine((val) => {
+  .max(15000)
+  .transform((val, ctx) => {
     try {
       const parsed = JSON.parse(val);
-      return typeof parsed === "object" && parsed !== null;
+      const schema = z.record(
+        z.string(),
+        z.union([
+          z.string(),
+          z.number(),
+          z.boolean(),
+          z.array(z.string()),
+          z.null(),
+        ]),
+      );
+      return schema.parse(parsed) as ProductFilters;
     } catch {
-      return false;
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "INVALID_FILTERS_JSON",
+      });
+      return z.NEVER;
     }
-  }, "Ожидается валидный JSON объект");
+  });
 
-// 🛡️ SECURITY: Строгий Whitelist для артикулов (защита от Path Traversal и XSS)
+const specificationsSchema = z
+  .string()
+  .max(15000)
+  .transform((val, ctx) => {
+    try {
+      const parsed = JSON.parse(val);
+      const schema = z.record(
+        z.string(),
+        z.union([z.string(), z.number(), z.null()]),
+      );
+      return schema.parse(parsed) as ProductSpecifications;
+    } catch {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "INVALID_SPECS_JSON",
+      });
+      return z.NEVER;
+    }
+  });
+
 const articleRegex = /^[A-Za-z0-9\-_]+$/;
 
 const updateProductSchema = z.object({
-  id: z.string().uuid("Некорректный ID"),
-  siteArticle: z
-    .string()
-    .regex(
-      articleRegex,
-      "Разрешены только латиница, цифры, тире и подчеркивания",
-    )
-    .min(1, "Модель (site_article) обязательна")
-    .trim(),
-  itemArticle: z
-    .string()
-    .regex(
-      articleRegex,
-      "Разрешены только латиница, цифры, тире и подчеркивания",
-    )
-    .min(1, "SKU (item_article) обязателен")
-    .trim(),
+  id: z.string().uuid(),
+  siteArticle: z.string().regex(articleRegex).min(1).trim(),
+  itemArticle: z.string().regex(articleRegex).min(1).trim(),
   status: z.enum(["draft", "published", "archived"]),
   discountPercentage: z.coerce.number().min(0).max(100).default(0),
-  ozonLink: z.string().url("Невалидный URL Ozon").or(z.literal("")).optional(),
-  wbLink: z.string().url("Невалидный URL WB").or(z.literal("")).optional(),
-  ymarketLink: z
-    .string()
-    .url("Невалидный URL Яндекс Маркет")
-    .or(z.literal(""))
-    .optional(),
-  mvideoLink: z
-    .string()
-    .url("Невалидный URL М.Видео")
-    .or(z.literal(""))
-    .optional(),
-  filters: jsonStringSchema,
-  specifications: jsonStringSchema,
+  ozonLink: z.string().url().or(z.literal("")).optional(),
+  wbLink: z.string().url().or(z.literal("")).optional(),
+  ymarketLink: z.string().url().or(z.literal("")).optional(),
+  mvideoLink: z.string().url().or(z.literal("")).optional(),
+  filters: filtersSchema,
+  specifications: specificationsSchema,
 });
 
 export async function updateProductAction(formData: FormData) {
-  const session = await auth();
-  if (!session?.user?.id) return { success: false, error: "Не авторизован" };
-
-  const [dbUser] = await db
-    .select({ isLocked: users.isLocked, role: users.role })
-    .from(users)
-    .where(eq(users.id, session.user.id));
-
-  if (
-    !dbUser ||
-    dbUser.isLocked ||
-    !["superadmin", "manager"].includes(dbUser.role)
-  ) {
-    return {
-      success: false,
-      error: "Доступ запрещен или аккаунт заблокирован",
-    };
-  }
-
-  const rawData = Object.fromEntries(formData.entries());
-  const parsed = updateProductSchema.safeParse(rawData);
-
-  if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0].message };
-  }
-
-  const data = parsed.data;
-
   try {
-    // 🛡️ SECURITY: Проверяем, не занят ли новый SKU другим товаром (Race Condition protection)
+    await requireAdmin();
+    const rawData = Object.fromEntries(formData.entries());
+    const parsed = updateProductSchema.safeParse(rawData);
+
+    if (!parsed.success) return { success: false, error: "INVALID_DATA" };
+
+    const data = parsed.data;
+
     const [existingSku] = await db
       .select({ id: products.id })
       .from(products)
       .where(eq(products.itemArticle, data.itemArticle));
 
     if (existingSku && existingSku.id !== data.id) {
-      return {
-        success: false,
-        error: `SKU ${data.itemArticle} уже используется`,
-      };
+      return { success: false, error: `SKU_EXISTS` };
     }
 
     await db
@@ -112,91 +115,60 @@ export async function updateProductAction(formData: FormData) {
         wbLink: data.wbLink || null,
         ymarketLink: data.ymarketLink || null,
         mvideoLink: data.mvideoLink || null,
-        filters: JSON.parse(data.filters),
-        specifications: JSON.parse(data.specifications),
+        filters: data.filters,
+        specifications: data.specifications,
         updatedAt: new Date(),
       })
       .where(eq(products.id, data.id));
 
+    revalidateTag("products", { expire: 0 });
     revalidatePath("/dashboard/products");
-    revalidatePath("/", "layout"); // Жесткий сброс кэша всей витрины, так как URL мог измениться
 
     return { success: true };
   } catch (error) {
-    console.error("❌ Ошибка обновления товара:", error);
-    return { success: false, error: "Системная ошибка БД" };
+    return { success: false, error: "DB_ERROR" };
   }
 }
 
 const createProductSchema = z.object({
-  categoryId: z.string().uuid("Выберите категорию"),
-  siteArticle: z
-    .string()
-    .regex(
-      articleRegex,
-      "Разрешены только латиница, цифры, тире и подчеркивания",
-    )
-    .min(1, "Модель (site_article) обязательна")
-    .trim(),
-  itemArticle: z
-    .string()
-    .regex(
-      articleRegex,
-      "Разрешены только латиница, цифры, тире и подчеркивания",
-    )
-    .min(1, "SKU (item_article) обязателен")
-    .trim(),
+  categoryId: z.string().uuid(),
+  siteArticle: z.string().regex(articleRegex).min(1).trim(),
+  itemArticle: z.string().regex(articleRegex).min(1).trim(),
   colorName: z.string().optional(),
 });
 
 export async function createProductAction(formData: FormData) {
-  const session = await auth();
-  if (
-    !session?.user ||
-    !["superadmin", "manager"].includes(session.user.role)
-  ) {
-    return { success: false, error: "Недостаточно прав" };
-  }
-
-  const rawData = Object.fromEntries(formData.entries());
-  const parsed = createProductSchema.safeParse(rawData);
-
-  if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0].message };
-  }
-
-  const data = parsed.data;
-
   try {
-    // 🛡️ Защита от дублей при создании
+    await requireAdmin();
+    const rawData = Object.fromEntries(formData.entries());
+    const parsed = createProductSchema.safeParse(rawData);
+
+    if (!parsed.success) return { success: false, error: "INVALID_DATA" };
+
+    const data = parsed.data;
+
     const [existing] = await db
       .select({ id: products.id })
       .from(products)
       .where(eq(products.itemArticle, data.itemArticle));
 
-    if (existing) {
-      return {
-        success: false,
-        error: `Артикул ${data.itemArticle} уже существует`,
-      };
-    }
+    if (existing) return { success: false, error: `SKU_EXISTS` };
 
     await db.insert(products).values({
       categoryId: data.categoryId,
       siteArticle: data.siteArticle,
       itemArticle: data.itemArticle,
       colorName: data.colorName || null,
-      status: "draft", // Строго черновик по умолчанию
+      status: "draft",
       filters: {},
       specifications: {},
     });
 
+    revalidateTag("products", { expire: 0 });
     revalidatePath("/dashboard/products");
-    revalidatePath("/", "layout");
 
     return { success: true };
   } catch (error) {
-    console.error("❌ Ошибка создания товара:", error);
-    return { success: false, error: "Системная ошибка БД" };
+    return { success: false, error: "DB_ERROR" };
   }
 }

@@ -5,6 +5,7 @@ declare module "next-auth" {
     user: {
       id: string;
       role: "superadmin" | "manager" | "support";
+      isLocked: boolean;
     } & DefaultSession["user"];
   }
 

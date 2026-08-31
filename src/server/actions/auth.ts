@@ -4,7 +4,7 @@ import { signIn } from "@/src/lib/auth/auth";
 import { LoginSchema } from "@/src/lib/auth/auth.config";
 import { db } from "@/src/server/db/client";
 import { users, twoFactorTokens } from "@/src/server/db/schema/auth.schema";
-import { eq } from "drizzle-orm"; // Убрали and, он тут больше не нужен
+import { eq } from "drizzle-orm";
 import { compare } from "bcrypt-ts";
 import { AuthError } from "next-auth";
 import { checkRateLimit } from "../utils/rate-limit";
@@ -29,16 +29,6 @@ export async function loginAction(
   const data = Object.fromEntries(formData.entries()) as Record<string, string>;
 
   try {
-    const rateLimit = await checkRateLimit("login_attempt", 5, 60000);
-    if (!rateLimit.success) {
-      return {
-        success: false,
-        error: "Слишком много попыток. Подождите минуту.",
-        payload: data,
-        isTwoFactor: prevState.isTwoFactor,
-      };
-    }
-
     const parsed = LoginSchema.safeParse(data);
     if (!parsed.success) {
       return {
@@ -50,6 +40,16 @@ export async function loginAction(
     }
 
     const { email, password, code } = parsed.data;
+
+    const rateLimit = await checkRateLimit("login_attempt", 5, 60000, email);
+    if (!rateLimit.success) {
+      return {
+        success: false,
+        error: "Слишком много попыток. Подождите минуту.",
+        payload: data,
+        isTwoFactor: prevState.isTwoFactor,
+      };
+    }
 
     const [existingUser] = await db
       .select()
@@ -85,8 +85,7 @@ export async function loginAction(
         if (existingToken && new Date() < existingToken.expires) {
           return {
             success: false,
-            error:
-              "Код уже отправлен. Проверьте почту или подождите истечения таймера.",
+            error: "Код уже отправлен. Проверьте почту или подождите.",
             isTwoFactor: true,
             payload: data,
           };
@@ -144,7 +143,7 @@ export async function loginAction(
 
           return {
             success: false,
-            error: `Неверный код. Осталось попыток: ${3 - newAttempts}`,
+            error: "Неверный код",
             isTwoFactor: true,
             payload: data,
           };

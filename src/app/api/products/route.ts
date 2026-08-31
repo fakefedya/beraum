@@ -1,29 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getProducts } from "@/src/server/queries/products";
+import { z } from "zod";
+
+// Строгая схема URL-параметров
+const querySchema = z
+  .object({
+    categorySlug: z.string().max(100).optional(),
+    q: z.string().max(100).optional(),
+    limit: z.coerce.number().min(1).max(100).default(12),
+    offset: z.coerce.number().min(0).default(0),
+    sort: z.enum(["newest", "price_asc", "price_desc"]).default("newest"),
+  })
+  .catchall(z.union([z.string(), z.array(z.string())]));
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
-  const categorySlug = searchParams.get("categorySlug") || undefined;
-  const q = searchParams.get("q") || undefined;
-  const limit = Number(searchParams.get("limit")) || 12;
-  const offset = Number(searchParams.get("offset")) || 0;
-  const sort = searchParams.get("sort") || "newest";
-
-  const systemKeys = new Set(["categorySlug", "q", "limit", "offset", "sort"]);
-  const filters: Record<string, string | string[]> = {};
-
+  // Собираем массивы, если ключи дублируются (?color=Белый&color=Черный)
+  const rawParams: Record<string, string | string[]> = {};
   searchParams.forEach((value, key) => {
-    if (!systemKeys.has(key)) {
-      if (filters[key]) {
-        filters[key] = Array.isArray(filters[key])
-          ? [...filters[key], value]
-          : [filters[key] as string, value];
-      } else {
-        filters[key] = value;
-      }
+    if (rawParams[key]) {
+      rawParams[key] = Array.isArray(rawParams[key])
+        ? [...rawParams[key], value]
+        : [rawParams[key] as string, value];
+    } else {
+      rawParams[key] = value;
     }
   });
+
+  const parsed = querySchema.safeParse(rawParams);
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { success: false, data: [], error: "Invalid Query Parameters" },
+      { status: 400 },
+    );
+  }
+
+  const { categorySlug, q, limit, offset, sort, ...filters } = parsed.data;
 
   try {
     const result = await getProducts({
@@ -32,7 +46,7 @@ export async function GET(request: NextRequest) {
       offset,
       sort,
       q,
-      filters,
+      filters: filters as Record<string, string | string[]>,
     });
 
     return NextResponse.json(result);

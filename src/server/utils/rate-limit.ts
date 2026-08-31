@@ -8,10 +8,13 @@ export async function checkRateLimit(
   action: string,
   limit: number,
   windowMs: number,
+  identifier?: string,
 ): Promise<{ success: boolean; ipHash: string }> {
   const ip = await getClientIp();
   const ipHash = hashIp(ip);
-  const key = `${action}:${ipHash}`;
+  const key = identifier
+    ? `${action}:${ipHash}:${identifier}`
+    : `${action}:${ipHash}`;
   const resetAt = new Date(Date.now() + windowMs);
 
   const [row] = await db

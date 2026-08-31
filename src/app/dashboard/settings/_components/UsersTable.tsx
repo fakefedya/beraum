@@ -12,19 +12,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-import type { users } from "@/src/server/db/schema";
 import {
   updateUserAction,
   deleteUserAction,
 } from "@/src/server/actions/admin-users";
 
-type UserItem = typeof users.$inferSelect;
+export type SafeUserItem = {
+  id: string;
+  name: string | null;
+  email: string;
+  role: "superadmin" | "manager" | "support";
+  isLocked: boolean;
+  isTwoFactorEnabled: boolean;
+  createdAt: Date;
+};
 
 export const UsersTable = ({
   initialData,
   currentUserId,
 }: {
-  initialData: UserItem[];
+  initialData: SafeUserItem[];
   currentUserId: string;
 }) => {
   if (!initialData.length)
@@ -56,9 +63,11 @@ export const UsersTable = ({
   );
 };
 
-const UserRow = ({ user, isSelf }: { user: UserItem; isSelf: boolean }) => {
+const UserRow = ({ user, isSelf }: { user: SafeUserItem; isSelf: boolean }) => {
   const [isPending, startTransition] = useTransition();
-  const [role, setRole] = useState(user.role);
+  const [role, setRole] = useState<"superadmin" | "manager" | "support">(
+    user.role,
+  );
   const [isLocked, setIsLocked] = useState(user.isLocked ? "true" : "false");
   const [is2FA, setIs2FA] = useState(
     user.isTwoFactorEnabled ? "true" : "false",
@@ -110,7 +119,9 @@ const UserRow = ({ user, isSelf }: { user: UserItem; isSelf: boolean }) => {
       <td className="px-4 py-4 align-top">
         <Select
           value={role}
-          onValueChange={setRole}
+          onValueChange={(val) =>
+            setRole(val as "superadmin" | "manager" | "support")
+          }
           disabled={isPending || isSelf}
         >
           <SelectTrigger className="h-8 w-32 text-xs">

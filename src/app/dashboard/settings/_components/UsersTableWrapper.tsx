@@ -19,7 +19,15 @@ export const UsersTableWrapper = async ({
 
   const [usersList, [{ totalCount }]] = await Promise.all([
     db
-      .select()
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        isLocked: users.isLocked,
+        isTwoFactorEnabled: users.isTwoFactorEnabled,
+        createdAt: users.createdAt,
+      }) // <-- Проекция применена и здесь!
       .from(users)
       .orderBy(desc(users.createdAt))
       .limit(LIMIT)
