@@ -111,10 +111,19 @@ export const ProductMediaManager = ({
           contentType: file.type,
           fileSize: file.size,
           productId,
+          assetType: "image",
         });
 
-        if (!preSignRes.success || !preSignRes.url || !preSignRes.fields)
-          throw new Error();
+        if (
+          !preSignRes.success ||
+          !("url" in preSignRes) ||
+          !("fields" in preSignRes) ||
+          !("fileKey" in preSignRes)
+        ) {
+          throw new Error(
+            "error" in preSignRes ? String(preSignRes.error) : "Ошибка S3",
+          );
+        }
 
         const formData = new FormData();
         Object.entries(preSignRes.fields).forEach(([k, v]) =>
@@ -126,6 +135,7 @@ export const ProductMediaManager = ({
           method: "POST",
           body: formData,
         });
+
         if (!uploadRes.ok) throw new Error("S3 Upload Failed");
 
         await saveProductImageAction({
@@ -156,10 +166,19 @@ export const ProductMediaManager = ({
         contentType: file.type,
         fileSize: file.size,
         productId,
+        assetType: "document",
       });
 
-      if (!preSignRes.success || !preSignRes.url || !preSignRes.fields)
-        throw new Error();
+      if (
+        !preSignRes.success ||
+        !("url" in preSignRes) ||
+        !("fields" in preSignRes) ||
+        !("fileKey" in preSignRes)
+      ) {
+        throw new Error(
+          "error" in preSignRes ? String(preSignRes.error) : "Ошибка S3",
+        );
+      }
 
       const formData = new FormData();
       Object.entries(preSignRes.fields).forEach(([k, v]) =>
@@ -171,6 +190,7 @@ export const ProductMediaManager = ({
         method: "POST",
         body: formData,
       });
+
       if (!uploadRes.ok) throw new Error("S3 Upload Failed");
 
       const saveRes = await saveProductDocumentAction({
@@ -217,7 +237,6 @@ export const ProductMediaManager = ({
           </div>
         ) : (
           <div className="flex flex-col gap-10">
-            {/* БЛОК 1: Изображения */}
             <div className="flex flex-col gap-4">
               <h3 className="border-b pb-2 text-lg font-semibold">
                 Изображения
@@ -289,13 +308,11 @@ export const ProductMediaManager = ({
               </div>
             </div>
 
-            {/* БЛОК 2: Документация */}
             <div className="flex flex-col gap-4">
               <h3 className="border-b pb-2 text-lg font-semibold">
                 Инструкции и сертификаты
               </h3>
 
-              {/* Конструктор загрузки документа */}
               <div className="bg-muted/30 border-border flex flex-col gap-3 rounded-xl border p-4">
                 <span className="text-sm font-medium">
                   Добавить документ (PDF)
@@ -346,7 +363,6 @@ export const ProductMediaManager = ({
                 </Button>
               </div>
 
-              {/* Список загруженных документов */}
               <div className="flex flex-col gap-2">
                 {assets.docs.map((doc) => (
                   <div

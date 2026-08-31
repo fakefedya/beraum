@@ -36,13 +36,30 @@ export async function getProductAssetsAction(productId: string) {
   return { images, docs };
 }
 
-const getUrlSchema = z.object({
-  contentType: z
-    .string()
-    .refine((v) => Object.keys(MIME_TO_EXT).includes(v), "INVALID_MIME"),
-  fileSize: z.number().max(50 * 1024 * 1024),
-  productId: z.string().uuid(),
-});
+const getUrlSchema = z
+  .object({
+    contentType: z
+      .string()
+      .refine((v) => Object.keys(MIME_TO_EXT).includes(v), "INVALID_MIME"),
+    fileSize: z.number().max(50 * 1024 * 1024),
+    productId: z.string().uuid(),
+    assetType: z.enum(["image", "document"]),
+  })
+  .refine(
+    (data) => {
+      if (data.assetType === "document") {
+        return data.contentType === "application/pdf";
+      }
+      return [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/heic",
+        "image/heif",
+      ].includes(data.contentType);
+    },
+    { message: "INVALID_MIME_FOR_THIS_ASSET_TYPE" },
+  );
 
 export async function getAdminPresignedUploadUrl(rawData: unknown) {
   try {
@@ -50,7 +67,7 @@ export async function getAdminPresignedUploadUrl(rawData: unknown) {
     const parsed = getUrlSchema.safeParse(rawData);
     if (!parsed.success) return { success: false, error: "INVALID_DATA" };
 
-    const { contentType, fileSize, productId } = parsed.data;
+    const { contentType, fileSize, productId, assetType } = parsed.data;
     const ext = MIME_TO_EXT[contentType];
     const fileKey = `${productId}/${crypto.randomUUID()}.${ext}`;
 

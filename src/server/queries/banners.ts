@@ -9,12 +9,21 @@ import { unstable_cache } from "next/cache";
 
 const IMAGE_PATH = "components/banners";
 
+const safeUrlSchema = z
+  .string()
+  .trim()
+  .startsWith("/", "Только относительные ссылки")
+  .refine(
+    (s) => !s.startsWith("//"),
+    "Protocol-relative ссылки запрещены (XSS/Open Redirect)",
+  );
+
 const tagSchema = z.object({
   xPercent: z.number().min(0).max(100),
   yPercent: z.number().min(0).max(100),
   title: z.string().min(1),
   subtitle: z.string(),
-  href: z.string().regex(/^\//, "Только относительные ссылки (XSS protection)"),
+  href: safeUrlSchema,
 });
 
 const slidePayloadSchema = z.discriminatedUnion("type", [
@@ -27,7 +36,7 @@ const slidePayloadSchema = z.discriminatedUnion("type", [
     title: z.string(),
     description: z.string(),
     buttonText: z.string(),
-    href: z.string().regex(/^\//),
+    href: safeUrlSchema,
   }),
 ]);
 

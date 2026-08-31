@@ -36,23 +36,10 @@ async function fetchAnalyticsFromDb(
     : undefined;
   const finalFilter = and(dateFilter, articleFilter);
 
-  const isFullScan = period === "all" && !article;
-
-  const totalPromise = isFullScan
-    ? db
-        .execute(
-          sql`SELECT reltuples::bigint as estimate FROM pg_class WHERE relname = 'marketplace_clicks'`,
-        )
-        .then((res) => Number(res[0]?.estimate || 0))
-    : db
-        .select({ value: count() })
-        .from(marketplaceClicks)
-        .where(finalFilter)
-        .then((res) => res[0]?.value || 0);
-
-  const [totalValue, marketplaceStats, topArticles, recentEvents] =
+  // Убираем бессмысленный pg_class.reltuples, используем точный count
+  const [totalResult, marketplaceStats, topArticles, recentEvents] =
     await Promise.all([
-      totalPromise,
+      db.select({ value: count() }).from(marketplaceClicks).where(finalFilter),
       db
         .select({ marketplace: marketplaceClicks.marketplace, clicks: count() })
         .from(marketplaceClicks)
@@ -82,7 +69,7 @@ async function fetchAnalyticsFromDb(
     ]);
 
   return {
-    total: totalValue,
+    total: totalResult[0]?.value || 0,
     marketplaces: marketplaceStats,
     topArticles,
     recentEvents,

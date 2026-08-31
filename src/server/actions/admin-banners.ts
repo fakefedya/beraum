@@ -18,12 +18,21 @@ const presignedUrlSchema = z.object({
   fileSize: z.number().max(10 * 1024 * 1024),
 });
 
+const safeUrlSchema = z
+  .string()
+  .trim()
+  .startsWith("/", "Только относительные ссылки")
+  .refine(
+    (s) => !s.startsWith("//"),
+    "Protocol-relative ссылки запрещены (XSS/Open Redirect)",
+  );
+
 const tagSchema = z.object({
   xPercent: z.coerce.number().min(0).max(100),
   yPercent: z.coerce.number().min(0).max(100),
   title: z.string().min(1).trim(),
   subtitle: z.string().trim(),
-  href: z.string().regex(/^\//).trim(),
+  href: safeUrlSchema,
 });
 
 const bannerSchema = z
@@ -50,7 +59,7 @@ const bannerSchema = z
           title: z.string().min(1).trim(),
           description: z.string().trim(),
           buttonText: z.string().min(1).trim(),
-          href: z.string().regex(/^\//).trim(),
+          href: safeUrlSchema,
         }),
       }),
     ]),

@@ -24,7 +24,7 @@ export const PeriodSelector = () => {
 
   return (
     <Select value={currentPeriod} onValueChange={handleChange}>
-      <SelectTrigger className="bg-background w-[180px]">
+      <SelectTrigger className="bg-background w-45">
         <SelectValue placeholder="За период" />
       </SelectTrigger>
       <SelectContent>
