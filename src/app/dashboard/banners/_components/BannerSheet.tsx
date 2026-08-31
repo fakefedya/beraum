@@ -24,8 +24,9 @@ import {
   getBannerPresignedUploadUrl,
 } from "@/src/server/actions/admin-banners";
 import { SafeImage } from "@/src/components/shared/SafeImage";
-import { buildImageUrl } from "@/src/lib/utils";
+import { buildImageUrl, cn } from "@/src/lib/utils";
 import type { slides } from "@/src/server/db/schema";
+import type { SlidePayload } from "@/src/server/db/schema/marketing.schema";
 
 type SlideItem = typeof slides.$inferSelect;
 
@@ -59,16 +60,17 @@ export const BannerSheet = ({
   let initInfo = defaultInfo;
   let initTags = defaultTags;
 
+  // 🛡️ Type-Safe: Используем Type Guard для payload
   if (slide?.payload) {
-    const p = slide.payload as Record<string, unknown>;
-    if (slide.type === "promo_information") {
+    const p = slide.payload as SlidePayload;
+    if (slide.type === "promo_information" && "title" in p) {
       initInfo = {
-        title: (p.title as string) || "",
-        description: (p.description as string) || "",
-        buttonText: (p.buttonText as string) || "",
-        href: (p.href as string) || "/",
+        title: p.title || "",
+        description: p.description || "",
+        buttonText: p.buttonText || "",
+        href: p.href || "/",
       };
-    } else if (slide.type === "promo_product") {
+    } else if (slide.type === "promo_product" && "tags" in p) {
       initTags = JSON.stringify(p.tags || [], null, 2);
     }
   }
@@ -99,6 +101,7 @@ export const BannerSheet = ({
         fileSize: file.size,
       });
 
+      // 🛡️ Type-Safe: Физическая проверка ключей, исключающая Union Type Error
       if (
         !preSignRes.success ||
         !("url" in preSignRes) ||
@@ -145,7 +148,11 @@ export const BannerSheet = ({
     formData.append("type", type);
 
     formData.append("fileKey", fileKey);
-    if (mobileFileKey) formData.append("mobileFileKey", mobileFileKey);
+
+    // 🛡️ Багфикс: ВСЕГДА отправляем mobileFileKey, даже пустой.
+    // Drizzle получит "", распарсит через Zod как z.string().optional() -> "",
+    // и принудительно затрет старый ключ в базе данных.
+    formData.append("mobileFileKey", mobileFileKey);
 
     let payloadData;
     if (type === "promo_information") {
@@ -273,8 +280,8 @@ export const BannerSheet = ({
             <label className="text-sm font-medium">Тип контента *</label>
             <Select
               value={type}
-              onValueChange={(val: "promo_product" | "promo_information") =>
-                setType(val)
+              onValueChange={(val: string) =>
+                setType(val as "promo_product" | "promo_information")
               }
               disabled={isPending || isEdit}
             >
