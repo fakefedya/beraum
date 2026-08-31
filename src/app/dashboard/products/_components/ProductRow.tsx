@@ -26,6 +26,9 @@ const inputClass =
 export const ProductRow = ({ product }: { product: ProductItem }) => {
   const [isPending, startTransition] = useTransition();
   const [status, setStatus] = useState<string>(product.status);
+  const [isLatest, setIsLatest] = useState<string>(
+    product.isLatest ? "true" : "false",
+  );
   const formId = `form-${product.id}`;
 
   const handleAction = (formData: FormData) => {
@@ -46,6 +49,7 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
         <form id={formId} action={handleAction} className="hidden">
           <input type="hidden" name="id" value={product.id} />
           <input type="hidden" name="status" value={status} />
+          <input type="hidden" name="isLatest" value={isLatest} />
         </form>
         <div className="flex flex-col gap-2">
           <Input
@@ -103,6 +107,26 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
             <SelectItem value="draft">Черновик</SelectItem>
             <SelectItem value="published">Опубликован</SelectItem>
             <SelectItem value="archived">Архив</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={isLatest}
+          onValueChange={setIsLatest}
+          disabled={isPending}
+        >
+          <SelectTrigger
+            className={cn(
+              "h-8 border-none text-xs",
+              isLatest === "true"
+                ? "bg-brand/20 text-brand-secondary-muted dark:bg-brand/10 dark:text-brand"
+                : "bg-muted text-muted-foreground",
+            )}
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="false">Базовый</SelectItem>
+            <SelectItem value="true">Новинка</SelectItem>
           </SelectContent>
         </Select>
       </td>
