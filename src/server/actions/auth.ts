@@ -40,12 +40,19 @@ export async function loginAction(
     }
 
     const { email, password, code } = parsed.data;
+    const ipLimit = await checkRateLimit("login_ip", 15, 60000);
+    const emailLimit = await checkRateLimit(
+      "login_email",
+      5,
+      60000,
+      email,
+      true,
+    );
 
-    const rateLimit = await checkRateLimit("login_attempt", 5, 60000, email);
-    if (!rateLimit.success) {
+    if (!ipLimit.success || !emailLimit.success) {
       return {
         success: false,
-        error: "Слишком много попыток. Подождите минуту.",
+        error: "Обнаружена подозрительная активность. Попробуйте позже.",
         payload: data,
         isTwoFactor: prevState.isTwoFactor,
       };

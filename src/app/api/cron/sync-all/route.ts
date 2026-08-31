@@ -6,10 +6,22 @@ import { feedbackRequests } from "@/src/server/db/schema/feedback.schema";
 import { syncOzonStocks } from "@/src/server/services/ozon/client";
 import { syncWbStocks, syncWbPrices } from "@/src/server/services/wb/client";
 import { serverEnv } from "@/src/lib/env/server";
+import crypto from "crypto";
 
 export async function GET(request: Request) {
-  const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${serverEnv.CRON_SECRET}`) {
+  const authHeader = request.headers.get("authorization") || "";
+  const expectedHeader = `Bearer ${serverEnv.CRON_SECRET}`;
+
+  if (authHeader.length !== expectedHeader.length) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
+  const isMatch = crypto.timingSafeEqual(
+    Buffer.from(authHeader, "utf8"),
+    Buffer.from(expectedHeader, "utf8"),
+  );
+
+  if (!isMatch) {
     return new Response("Unauthorized", { status: 401 });
   }
 
