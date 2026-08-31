@@ -16,11 +16,6 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-start gap-8 p-4 md:gap-0">
-      {/* <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="bg-brand/5 absolute top-[-10%] left-[-10%] h-[50vw] w-[50vw] rounded-full blur-[120px]" />
-        <div className="absolute right-[-10%] bottom-[-10%] h-[50vw] w-[50vw] rounded-full bg-blue-500/5 blur-[120px]" />
-      </div> */}
-
       <div className="flex w-full items-center justify-between p-0 md:p-12">
         <Icons.logo className="fill-foreground stroke-current stroke-[0.25] [shape-rendering:crispEdges]" />
         <Link

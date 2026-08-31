@@ -11,6 +11,7 @@ import {
 } from "@/src/server/db/schema";
 import { CATEGORY_FILTERS } from "@/src/lib/constants";
 import { buildImageUrl } from "@/src/lib/utils";
+import { cache } from "react";
 import { unstable_cache } from "next/cache";
 
 export type QueryErrorCode =
@@ -217,16 +218,10 @@ async function getProductsDb(params: GetProductsParams = {}) {
   }
 }
 
-// 🛡️ Архитектурный фикс: Инициализация кэша в Module Scope для работы Request Memoization
-const getProductsCached = unstable_cache(
-  async (params: GetProductsParams) => getProductsDb(params),
-  ["products_list"],
-  { tags: ["products"], revalidate: 3600 },
-);
-
-export const getProducts = async (params: GetProductsParams = {}) => {
-  return getProductsCached(params);
-};
+// 🛡️ Request Memoization (React cache принимает ровно 1 аргумент)
+export const getProducts = cache(async (params: GetProductsParams = {}) => {
+  return getProductsDb(params);
+});
 
 async function getProductByArticleDb(rawArticle: string) {
   try {
@@ -339,17 +334,10 @@ async function getProductByArticleDb(rawArticle: string) {
   }
 }
 
-// 🛡️ Архитектурный фикс: Инициализация кэша в Module Scope
-const getProductByArticleCached = unstable_cache(
-  async (article: string) => getProductByArticleDb(article),
-  ["product_article"],
-  { tags: ["products"], revalidate: 3600 },
-);
-
-export const getProductByArticle = async (article: string) => {
-  // Передаем аргумент в lowercase для стандартизации кэш-хитов
-  return getProductByArticleCached(article.toLowerCase());
-};
+// 🛡️ Request Memoization (React cache принимает ровно 1 аргумент)
+export const getProductByArticle = cache(async (article: string) => {
+  return getProductByArticleDb(article.toLowerCase());
+});
 
 export async function getSimilarProducts(
   categoryId: string,

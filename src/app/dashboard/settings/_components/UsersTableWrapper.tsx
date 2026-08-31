@@ -39,7 +39,7 @@ export const UsersTableWrapper = async ({
 
   return (
     <div className="animate-in fade-in flex flex-col gap-4 duration-500">
-      <div className="bg-card overflow-hidden rounded-xl border">
+      <div className="overflow-hidden rounded-xl">
         <div className="overflow-x-auto">
           <UsersTable initialData={usersList} currentUserId={currentUserId} />
         </div>

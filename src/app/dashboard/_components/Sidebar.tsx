@@ -24,7 +24,7 @@ export const Sidebar = ({ userRole }: SidebarProps) => {
           href="/dashboard"
           className="flex items-center gap-2 outline-none"
         >
-          <Icons.logo className="text-foreground h-5 w-auto fill-current" />
+          <Icons.logo className="fill-foreground stroke-current stroke-[0.25] [shape-rendering:crispEdges]" />
         </Link>
       </div>
 
@@ -41,14 +41,14 @@ export const Sidebar = ({ userRole }: SidebarProps) => {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors outline-none",
+                "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors outline-none",
                 "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-1",
                 isActive
                   ? "bg-foreground text-background"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground",
               )}
             >
-              <Icon className="h-4 w-4" strokeWidth={isActive ? 2.5 : 2} />
+              <Icon className="h-5 w-5" strokeWidth={isActive ? 2.5 : 2} />
               {item.label}
             </Link>
           );

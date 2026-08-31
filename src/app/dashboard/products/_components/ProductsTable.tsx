@@ -11,8 +11,8 @@ export const ProductsTable = ({
   initialData: ProductItem[];
 }) => {
   return (
-    <table className="w-full text-left text-sm">
-      <thead className="text-muted-foreground bg-muted/50 border-b text-xs uppercase">
+    <table className="bg-muted w-full border-0 text-left text-sm">
+      <thead className="text-muted-foreground border-b text-xs uppercase">
         <tr>
           <th className="px-4 py-3 font-medium">Артикул / SKU</th>
           <th className="px-4 py-3 font-medium">Остатки</th>

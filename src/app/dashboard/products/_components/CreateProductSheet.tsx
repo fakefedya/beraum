@@ -49,7 +49,7 @@ export const CreateProductSheet = ({
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button className="bg-foreground text-background hover:bg-foreground/80 font-medium">
+        <Button className="bg-foreground text-background hover:bg-foreground/80 h-10 px-4 font-medium">
           <Plus className="mr-2 size-4" /> Добавить товар
         </Button>
       </SheetTrigger>

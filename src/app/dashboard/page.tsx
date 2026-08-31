@@ -49,7 +49,7 @@ export default async function DashboardPage(props: {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-3xl font-semibold tracking-tight">
-          Сводка переходов
+          Статистика переходов
         </h1>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <SearchInput
@@ -74,12 +74,12 @@ function AnalyticsSkeleton({ hasArticle }: { hasArticle: boolean }) {
   return (
     <div className="flex w-full flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="bg-card flex flex-col gap-3 rounded-2xl border p-6 shadow-sm">
+        <div className="bg-muted flex flex-col gap-3 rounded-2xl border p-6 shadow-sm">
           <div className="bg-muted h-4 w-24 animate-pulse rounded-md" />
           <div className="bg-muted mt-1 h-8 w-32 animate-pulse rounded-md" />
         </div>
 
-        <div className="bg-card flex flex-col gap-5 rounded-2xl border p-6 shadow-sm md:col-span-2">
+        <div className="bg-muted flex flex-col gap-5 rounded-2xl border p-6 shadow-sm md:col-span-2">
           <div className="bg-muted h-4 w-48 animate-pulse rounded-md" />
           <div className="flex flex-col gap-4">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -97,7 +97,7 @@ function AnalyticsSkeleton({ hasArticle }: { hasArticle: boolean }) {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {!hasArticle && (
-          <div className="bg-card flex min-h-[300px] flex-col overflow-hidden rounded-2xl border shadow-sm">
+          <div className="bg-muted flex min-h-75 flex-col overflow-hidden rounded-2xl border shadow-sm">
             <div className="border-border/50 border-b p-6">
               <div className="bg-muted h-5 w-40 animate-pulse rounded-md" />
             </div>
@@ -114,7 +114,7 @@ function AnalyticsSkeleton({ hasArticle }: { hasArticle: boolean }) {
 
         <div
           className={cn(
-            "bg-card flex min-h-[300px] flex-col overflow-hidden rounded-2xl border shadow-sm",
+            "bg-muted flex min-h-75 flex-col overflow-hidden rounded-2xl",
             hasArticle && "lg:col-span-2",
           )}
         >
@@ -147,23 +147,23 @@ async function AnalyticsContent({
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="bg-card flex flex-col gap-2 rounded-2xl border p-6 shadow-sm">
-          <span className="text-muted-foreground text-sm font-medium">
+        <div className="bg-brand-secondary flex flex-col justify-between rounded-2xl p-6">
+          <span className="text-sm font-medium text-black/75">
             {stats.searchedArticle
               ? `Переходы: ${stats.searchedArticle}`
               : "Всего переходов"}
           </span>
-          <div className="flex items-center gap-3">
-            <MousePointerClick className="text-brand-secondary-muted size-6" />
-            <span className="text-3xl font-bold">
+          <div className="flex items-center justify-between">
+            <span className="text-7xl font-medium text-black">
               {stats.total.toLocaleString("ru-RU")}
             </span>
+            <MousePointerClick className="size-20 text-[#70db3f]" />
           </div>
         </div>
 
-        <div className="bg-card flex flex-col gap-4 rounded-2xl border p-6 shadow-sm md:col-span-2">
+        <div className="bg-muted flex flex-col gap-4 rounded-2xl p-6 md:col-span-2">
           <span className="text-muted-foreground text-sm font-medium">
-            Распределение по площадкам
+            Распределение по маркетплейсам
           </span>
           <div className="flex flex-col gap-3">
             {stats.marketplaces.map((mp) => {
@@ -200,7 +200,7 @@ async function AnalyticsContent({
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {!stats.searchedArticle && (
-          <div className="bg-card flex flex-col overflow-hidden rounded-2xl border shadow-sm">
+          <div className="bg-muted flex flex-col overflow-hidden rounded-2xl">
             <div className="border-border/50 border-b p-6">
               <h2 className="font-semibold">Топ-10 моделей</h2>
             </div>
@@ -239,7 +239,7 @@ async function AnalyticsContent({
 
         <div
           className={cn(
-            "bg-card flex flex-col overflow-hidden rounded-2xl border shadow-sm",
+            "bg-muted flex flex-col overflow-hidden rounded-2xl",
             stats.searchedArticle && "lg:col-span-2",
           )}
         >
@@ -251,10 +251,9 @@ async function AnalyticsContent({
               <thead className="bg-muted/30 text-muted-foreground text-xs uppercase">
                 <tr>
                   {!stats.searchedArticle && (
-                    <th className="px-6 py-3 font-medium">Модель</th>
+                    <th className="px-6 py-3 font-medium">Артикул</th>
                   )}
-                  <th className="px-6 py-3 font-medium">МП</th>
-                  <th className="px-6 py-3 font-medium">Источник</th>
+                  <th className="px-6 py-3 font-medium">Маркетплейс</th>
                   <th className="px-6 py-3 text-right font-medium">
                     Устройство
                   </th>
@@ -300,13 +299,6 @@ async function AnalyticsContent({
                           </span>
                         )}
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-foreground text-xs font-medium">
-                        {event.source === "unknown"
-                          ? "Прямой переход"
-                          : event.source}
-                      </span>
                     </td>
                     <td className="text-foreground px-6 py-4 text-right text-xs font-medium">
                       {DEVICE_LABELS[event.deviceType] || DEVICE_LABELS.unknown}

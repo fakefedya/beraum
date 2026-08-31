@@ -100,7 +100,7 @@ export const RequestsTable = ({ requests, categories }: RequestsTableProps) => {
 
   return (
     <>
-      <div className="bg-card overflow-hidden rounded-xl border">
+      <div className="bg-muted overflow-hidden rounded-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="text-muted-foreground bg-muted/50 border-b text-xs uppercase">

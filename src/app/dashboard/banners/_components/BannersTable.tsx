@@ -15,8 +15,8 @@ export const BannersTable = ({ initialData }: { initialData: SlideItem[] }) => {
   }
 
   return (
-    <table className="w-full text-left text-sm">
-      <thead className="bg-muted/50 text-muted-foreground border-b text-xs uppercase">
+    <table className="bg-muted w-full text-left text-sm">
+      <thead className="text-muted-foreground border-b text-xs uppercase">
         <tr>
           <th className="w-32 px-4 py-3 font-medium">Превью</th>
           <th className="px-4 py-3 font-medium">Идентификатор / Место</th>

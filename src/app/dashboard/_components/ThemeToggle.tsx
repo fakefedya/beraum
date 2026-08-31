@@ -32,14 +32,14 @@ export const ThemeToggle = () => {
     <Button
       variant="ghost"
       size="icon"
-      className="text-muted-foreground hover:text-foreground h-9 w-9 transition-colors"
+      className="text-muted-foreground bg-muted hover:text-foreground h-9 w-9 transition-colors"
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
       aria-label="Переключить тему"
     >
       {theme === "light" ? (
-        <Moon className="h-4 w-4" />
+        <Moon className="h-5 w-5" />
       ) : (
-        <Sun className="h-4 w-4" />
+        <Sun className="h-5 w-5" />
       )}
     </Button>
   );

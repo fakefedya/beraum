@@ -40,8 +40,8 @@ export const UsersTable = ({
     );
 
   return (
-    <table className="w-full text-left text-sm">
-      <thead className="bg-muted/50 text-muted-foreground border-b text-xs uppercase">
+    <table className="bg-muted w-full text-left text-sm">
+      <thead className="text-muted-foreground border-b text-xs uppercase">
         <tr>
           <th className="px-4 py-3 font-medium">Пользователь</th>
           <th className="px-4 py-3 font-medium">Роль</th>

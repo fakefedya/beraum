@@ -1,9 +1,9 @@
 import {
-  LayoutDashboard,
   Inbox,
   Package,
   Image as ImageIcon,
   Settings,
+  ChartBar,
 } from "lucide-react";
 
 export type Role = "superadmin" | "manager" | "support";
@@ -17,9 +17,9 @@ export type DashboardNavItem = {
 
 export const DASHBOARD_NAV: DashboardNavItem[] = [
   {
-    label: "Сводка",
+    label: "Статистика",
     href: "/dashboard",
-    icon: LayoutDashboard,
+    icon: ChartBar,
     roles: ["superadmin", "manager", "support"],
   },
   {

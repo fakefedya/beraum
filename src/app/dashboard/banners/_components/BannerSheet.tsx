@@ -83,6 +83,11 @@ export const BannerSheet = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (!file.type.startsWith("image/")) {
+      toast.error(`Файл ${file.name} не является изображением`);
+      return;
+    }
+
     const setUploading =
       target === "desktop" ? setIsUploadingDesktop : setIsUploadingMobile;
     const setKey = target === "desktop" ? setFileKey : setMobileFileKey;
@@ -94,8 +99,15 @@ export const BannerSheet = ({
         fileSize: file.size,
       });
 
-      if (!preSignRes.success || !preSignRes.url || !preSignRes.fields) {
-        throw new Error(preSignRes.error || "Ошибка запроса подписи S3");
+      if (
+        !preSignRes.success ||
+        !("url" in preSignRes) ||
+        !("fields" in preSignRes) ||
+        !("fileName" in preSignRes)
+      ) {
+        throw new Error(
+          "error" in preSignRes ? String(preSignRes.error) : "Ошибка S3",
+        );
       }
 
       const formData = new FormData();
@@ -111,7 +123,7 @@ export const BannerSheet = ({
 
       if (!uploadRes.ok) throw new Error("Ошибка физической загрузки в MinIO");
 
-      setKey(preSignRes.fileName!);
+      setKey(preSignRes.fileName);
       toast.success("Файл успешно загружен");
     } catch (err: unknown) {
       const errorMessage =
@@ -202,7 +214,7 @@ export const BannerSheet = ({
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         {trigger || (
-          <Button className="bg-foreground text-background hover:bg-foreground/80 font-medium">
+          <Button className="bg-foreground text-background hover:bg-foreground/80 h-10 px-4 font-medium">
             <Plus className="mr-2 size-4" /> Добавить слайд
           </Button>
         )}

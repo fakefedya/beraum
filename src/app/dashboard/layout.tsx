@@ -7,6 +7,13 @@ import { ThemeToggle } from "./_components/ThemeToggle";
 import { db } from "@/src/server/db/client";
 import { users } from "@/src/server/db/schema";
 import { eq } from "drizzle-orm";
+import { LogOut } from "lucide-react";
+
+const PAYLOAD_ROLES: Record<Role, string> = {
+  superadmin: "Администратор",
+  support: "Поддержка",
+  manager: "Менеджер",
+};
 
 export default async function DashboardLayout({
   children,
@@ -36,26 +43,18 @@ export default async function DashboardLayout({
 
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="border-border/50 bg-background/50 flex h-16 items-center justify-between border-b px-6 backdrop-blur-md">
-          <div className="flex items-center gap-4 lg:hidden">
-            <span className="text-lg font-semibold tracking-tight">
-              Beraum Admin
+          <div className="flex items-center">
+            <span className="text-sm">{session.user.name}</span>
+            <span className="bg-brand ml-2 rounded-sm px-1 text-xs font-medium tracking-normal text-black/80">
+              {PAYLOAD_ROLES[userRole]}
             </span>
-          </div>
-
-          <div className="hidden items-center gap-2 lg:flex">
-            <span className="bg-primary/10 text-primary rounded-md px-2 py-1 text-xs font-medium tracking-wider uppercase">
-              {userRole}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-
-            <span className="text-muted-foreground border-border/50 hidden border-l pl-4 text-sm font-medium md:block">
+            <span className="text-muted-foreground border-border/50 ml-4 hidden border-l pl-4 text-sm md:block">
               {session.user.email}
             </span>
-            <span>{session.user.name}</span>
+          </div>
 
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
             <form
               action={async () => {
                 "use server";
@@ -64,9 +63,11 @@ export default async function DashboardLayout({
             >
               <Button
                 variant="ghost"
-                size="sm"
-                className="hover:bg-destructive/10 hover:text-destructive font-medium transition-colors"
+                size="icon"
+                className="bg-muted text-muted-foreground hover:text-foreground h-9 w-fit px-4 transition-colors"
+                title="Выйти"
               >
+                <LogOut className="h-5 w-5" />
                 Выйти
               </Button>
             </form>
