@@ -93,18 +93,6 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
         </div>
       </td>
 
-      <td className="px-4 py-4 align-top">
-        <div className="text-foreground flex h-8 items-center text-[13px] font-medium">
-          {product.wbDiscountedPrice != null
-            ? new Intl.NumberFormat("ru-RU", {
-                style: "currency",
-                currency: "RUB",
-                maximumFractionDigits: 0,
-              }).format(product.wbDiscountedPrice)
-            : "—"}
-        </div>
-      </td>
-
       {/* 3. Статус */}
       <td className="px-4 py-4 align-top">
         <Select value={status} onValueChange={setStatus}>
@@ -121,15 +109,26 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
 
       {/* 4. Скидка */}
       <td className="px-4 py-4 align-top">
-        <input
-          type="number"
-          name="discountPercentage"
-          form={formId}
-          defaultValue={product.discountPercentage}
-          className={cn(inputClass, "h-8 w-16")}
-          min="0"
-          max="100"
-        />
+        <div className="flex flex-col gap-1">
+          <input
+            type="number"
+            name="discountPercentage"
+            form={formId}
+            defaultValue={product.discountPercentage}
+            className={cn(inputClass, "h-8 w-16")}
+            min="0"
+            max="100"
+          />
+          <div className="text-foreground flex h-8 items-center text-[13px] font-medium">
+            {product.wbDiscountedPrice != null
+              ? new Intl.NumberFormat("ru-RU", {
+                  style: "currency",
+                  currency: "RUB",
+                  maximumFractionDigits: 0,
+                }).format(product.wbDiscountedPrice)
+              : "—"}
+          </div>
+        </div>
       </td>
 
       {/* 5. Маркетплейсы */}

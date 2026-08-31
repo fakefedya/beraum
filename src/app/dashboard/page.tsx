@@ -1,10 +1,12 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { getDashboardAnalytics } from "@/src/server/queries/analytics";
 import { PeriodSelector } from "./_components/PeriodSelector";
 import { SearchInput } from "@/src/components/shared/SearchInput";
-import { Loader2, MousePointerClick } from "lucide-react";
+import { MousePointerClick } from "lucide-react";
 import { cn } from "@/src/lib/utils";
+import { requireAuthRole } from "@/src/server/utils/auth-check";
 
 export const metadata: Metadata = {
   title: "Дашборд — Beraum",
@@ -27,6 +29,12 @@ const DEVICE_LABELS: Record<string, string> = {
 export default async function DashboardPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  try {
+    await requireAuthRole(["superadmin", "manager", "support"]);
+  } catch {
+    redirect("/auth/login");
+  }
+
   const resolvedParams = await props.searchParams;
   const period =
     typeof resolvedParams.period === "string" ? resolvedParams.period : "30d";
@@ -54,14 +62,75 @@ export default async function DashboardPage(props: {
 
       <Suspense
         key={suspenseKey}
-        fallback={
-          <div className="bg-card flex h-64 w-full items-center justify-center rounded-xl border">
-            <Loader2 className="text-muted-foreground size-8 animate-spin" />
-          </div>
-        }
+        fallback={<AnalyticsSkeleton hasArticle={!!article} />}
       >
         <AnalyticsContent period={period} article={article} />
       </Suspense>
+    </div>
+  );
+}
+
+function AnalyticsSkeleton({ hasArticle }: { hasArticle: boolean }) {
+  return (
+    <div className="flex w-full flex-col gap-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="bg-card flex flex-col gap-3 rounded-2xl border p-6 shadow-sm">
+          <div className="bg-muted h-4 w-24 animate-pulse rounded-md" />
+          <div className="bg-muted mt-1 h-8 w-32 animate-pulse rounded-md" />
+        </div>
+
+        <div className="bg-card flex flex-col gap-5 rounded-2xl border p-6 shadow-sm md:col-span-2">
+          <div className="bg-muted h-4 w-48 animate-pulse rounded-md" />
+          <div className="flex flex-col gap-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex flex-col gap-2">
+                <div className="flex justify-between">
+                  <div className="bg-muted h-3 w-20 animate-pulse rounded-md" />
+                  <div className="bg-muted h-3 w-16 animate-pulse rounded-md" />
+                </div>
+                <div className="bg-muted h-2 w-full animate-pulse rounded-full" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {!hasArticle && (
+          <div className="bg-card flex min-h-[300px] flex-col overflow-hidden rounded-2xl border shadow-sm">
+            <div className="border-border/50 border-b p-6">
+              <div className="bg-muted h-5 w-40 animate-pulse rounded-md" />
+            </div>
+            <div className="flex flex-col gap-4 p-6">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-muted h-5 w-full animate-pulse rounded-md"
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div
+          className={cn(
+            "bg-card flex min-h-[300px] flex-col overflow-hidden rounded-2xl border shadow-sm",
+            hasArticle && "lg:col-span-2",
+          )}
+        >
+          <div className="border-border/50 border-b p-6">
+            <div className="bg-muted h-5 w-40 animate-pulse rounded-md" />
+          </div>
+          <div className="flex flex-col gap-4 p-6">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className="bg-muted h-8 w-full animate-pulse rounded-md"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -78,7 +147,7 @@ async function AnalyticsContent({
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="bg-card flex flex-col gap-2 rounded-2xl border p-6">
+        <div className="bg-card flex flex-col gap-2 rounded-2xl border p-6 shadow-sm">
           <span className="text-muted-foreground text-sm font-medium">
             {stats.searchedArticle
               ? `Переходы: ${stats.searchedArticle}`
@@ -92,7 +161,7 @@ async function AnalyticsContent({
           </div>
         </div>
 
-        <div className="bg-card flex flex-col gap-4 rounded-2xl border p-6 md:col-span-2">
+        <div className="bg-card flex flex-col gap-4 rounded-2xl border p-6 shadow-sm md:col-span-2">
           <span className="text-muted-foreground text-sm font-medium">
             Распределение по площадкам
           </span>
@@ -131,7 +200,7 @@ async function AnalyticsContent({
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {!stats.searchedArticle && (
-          <div className="bg-card flex flex-col overflow-hidden rounded-2xl border">
+          <div className="bg-card flex flex-col overflow-hidden rounded-2xl border shadow-sm">
             <div className="border-border/50 border-b p-6">
               <h2 className="font-semibold">Топ-10 моделей</h2>
             </div>
@@ -170,7 +239,7 @@ async function AnalyticsContent({
 
         <div
           className={cn(
-            "bg-card flex flex-col overflow-hidden rounded-2xl border",
+            "bg-card flex flex-col overflow-hidden rounded-2xl border shadow-sm",
             stats.searchedArticle && "lg:col-span-2",
           )}
         >
