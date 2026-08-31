@@ -45,7 +45,7 @@ export const ModeSection = () => {
       >
         <div
           className={cn(
-            "bg-brand-gradient absolute top-0 bottom-0 left-0 rounded-lg",
+            "bg-brand absolute top-0 bottom-0 left-0 rounded-lg",
             "md:rounded-[16px]",
             isMounted
               ? "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
