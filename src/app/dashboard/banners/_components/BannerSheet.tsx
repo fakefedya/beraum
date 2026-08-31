@@ -60,7 +60,6 @@ export const BannerSheet = ({
   let initInfo = defaultInfo;
   let initTags = defaultTags;
 
-  // 🛡️ Type-Safe: Используем Type Guard для payload
   if (slide?.payload) {
     const p = slide.payload as SlidePayload;
     if (slide.type === "promo_information" && "title" in p) {
@@ -101,7 +100,6 @@ export const BannerSheet = ({
         fileSize: file.size,
       });
 
-      // 🛡️ Type-Safe: Физическая проверка ключей, исключающая Union Type Error
       if (
         !preSignRes.success ||
         !("url" in preSignRes) ||
@@ -148,10 +146,6 @@ export const BannerSheet = ({
     formData.append("type", type);
 
     formData.append("fileKey", fileKey);
-
-    // 🛡️ Багфикс: ВСЕГДА отправляем mobileFileKey, даже пустой.
-    // Drizzle получит "", распарсит через Zod как z.string().optional() -> "",
-    // и принудительно затрет старый ключ в базе данных.
     formData.append("mobileFileKey", mobileFileKey);
 
     let payloadData;

@@ -53,20 +53,20 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
         </form>
         <div className="flex flex-col gap-2">
           <Input
-            name="siteArticle"
+            name="itemArticle"
             form={formId}
-            defaultValue={product.siteArticle}
-            className="h-8 text-xs font-semibold"
-            placeholder="Модель (Группа)"
+            defaultValue={product.itemArticle}
+            className="h-8 font-medium shadow-none"
+            placeholder="Точный SKU"
             required
             disabled={isPending}
           />
           <Input
-            name="itemArticle"
+            name="siteArticle"
             form={formId}
-            defaultValue={product.itemArticle}
-            className="h-8 font-mono text-[11px] tracking-wider"
-            placeholder="Точный SKU"
+            defaultValue={product.siteArticle}
+            className="text-foreground/60 h-8 shadow-none"
+            placeholder="Модель (Группа)"
             required
             disabled={isPending}
           />
@@ -75,75 +75,71 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
 
       {/* 2. Остатки (Только для чтения) */}
       <td className="px-4 py-4 align-top">
-        <div className="flex flex-col gap-1 text-[11px] tracking-wider uppercase">
-          <span className="text-muted-foreground">
-            Ozon:{" "}
+        <div className="flex flex-col gap-2 text-xs tracking-wider uppercase">
+          <div className="text-muted-foreground flex h-8 flex-nowrap items-center gap-0.5">
+            <span className="text-muted-foreground">FBO:</span>
             <span className="text-foreground font-medium">
               {product.ozonStockFbo ?? 0}
             </span>
-          </span>
-          <span className="text-muted-foreground">
-            WB:{" "}
+          </div>
+          <div className="text-muted-foreground flex h-8 flex-nowrap items-center gap-0.5">
+            <span className="text-muted-foreground">FBS: </span>
             <span className="text-foreground font-medium">
               {product.fbsStock ?? 0}
             </span>
-          </span>
-          <span className="text-muted-foreground">
-            Ручн:{" "}
-            <span className="text-foreground font-medium">
-              {product.manualStock ?? 0}
-            </span>
-          </span>
+          </div>
         </div>
       </td>
 
       {/* 3. Статус */}
       <td className="px-4 py-4 align-top">
-        <Select value={status} onValueChange={setStatus}>
-          <SelectTrigger className="h-8 text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="draft">Черновик</SelectItem>
-            <SelectItem value="published">Опубликован</SelectItem>
-            <SelectItem value="archived">Архив</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select
-          value={isLatest}
-          onValueChange={setIsLatest}
-          disabled={isPending}
-        >
-          <SelectTrigger
-            className={cn(
-              "h-8 border-none text-xs",
-              isLatest === "true"
-                ? "bg-brand/20 text-brand-secondary-muted dark:bg-brand/10 dark:text-brand"
-                : "bg-muted text-muted-foreground",
-            )}
+        <div className="flex flex-col gap-2">
+          <Select value={status} onValueChange={setStatus}>
+            <SelectTrigger className="h-8 w-full text-xs font-medium shadow-none">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="draft">Черновик</SelectItem>
+              <SelectItem value="published">Опубликован</SelectItem>
+              <SelectItem value="archived">Архив</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select
+            value={isLatest}
+            onValueChange={setIsLatest}
+            disabled={isPending}
           >
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="false">Базовый</SelectItem>
-            <SelectItem value="true">Новинка</SelectItem>
-          </SelectContent>
-        </Select>
+            <SelectTrigger
+              className={cn(
+                "h-8 w-full text-xs font-medium shadow-none",
+                isLatest === "true"
+                  ? "bg-brand/20 text-brand-secondary-muted dark:bg-brand/10 dark:text-brand"
+                  : "bg-muted text-foreground",
+              )}
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="false">Базовый</SelectItem>
+              <SelectItem value="true">Новинка</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </td>
 
       {/* 4. Скидка */}
       <td className="px-4 py-4 align-top">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <input
             type="number"
             name="discountPercentage"
             form={formId}
             defaultValue={product.discountPercentage}
-            className={cn(inputClass, "h-8 w-16")}
+            className={cn(inputClass, "h-8 w-full bg-transparent shadow-none")}
             min="0"
             max="100"
           />
-          <div className="text-foreground flex h-8 items-center text-[13px] font-medium">
+          <div className="text-muted-foreground bg-foreground/5 flex h-8 items-center rounded-md px-3 text-xs font-medium">
             {product.wbDiscountedPrice != null
               ? new Intl.NumberFormat("ru-RU", {
                   style: "currency",
@@ -163,32 +159,44 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
             name="ozonLink"
             form={formId}
             defaultValue={product.ozonLink || ""}
-            placeholder="Ozon URL"
-            className={inputClass}
+            placeholder="OZON"
+            className={cn(
+              inputClass,
+              "placeholder:text-muted-foreground text-foreground h-8 w-full bg-transparent font-medium shadow-none placeholder:font-normal",
+            )}
           />
           <input
             type="url"
             name="wbLink"
             form={formId}
             defaultValue={product.wbLink || ""}
-            placeholder="WB URL"
-            className={inputClass}
+            placeholder="WB"
+            className={cn(
+              inputClass,
+              "placeholder:text-muted-foreground text-foreground h-8 w-full bg-transparent font-medium shadow-none placeholder:font-normal",
+            )}
           />
           <input
             type="url"
             name="ymarketLink"
             form={formId}
             defaultValue={product.ymarketLink || ""}
-            placeholder="YaMarket URL"
-            className={inputClass}
+            placeholder="ЯНДЕКС МАРКЕТ"
+            className={cn(
+              inputClass,
+              "placeholder:text-muted-foreground text-foreground h-8 w-full bg-transparent font-medium shadow-none placeholder:font-normal",
+            )}
           />
           <input
             type="url"
             name="mvideoLink"
             form={formId}
             defaultValue={product.mvideoLink || ""}
-            placeholder="MVideo URL"
-            className={inputClass}
+            placeholder="М.ВИДЕО"
+            className={cn(
+              inputClass,
+              "placeholder:text-muted-foreground text-foreground h-8 w-full bg-transparent font-medium shadow-none placeholder:font-normal",
+            )}
           />
         </div>
       </td>
@@ -203,7 +211,7 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
             placeholder="Filters (JSON)"
             className={cn(
               inputClass,
-              "min-h-17.5 resize-y font-mono text-[10px]",
+              "min-h-18 resize-y bg-transparent font-mono text-xs shadow-none",
             )}
           />
           <textarea
@@ -213,7 +221,7 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
             placeholder="Specs (JSON)"
             className={cn(
               inputClass,
-              "min-h-17.5 resize-y font-mono text-[10px]",
+              "min-h-18 resize-y bg-transparent font-mono text-xs shadow-none",
             )}
           />
         </div>
@@ -227,22 +235,29 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
             form={formId}
             disabled={isPending}
             size="sm"
-            className="w-full"
+            className="w-fit"
           >
             {isPending ? (
               <Loader2 className="size-4 animate-spin" />
             ) : (
               <Save className="size-4" />
             )}
-            <span className="ml-2">Сохранить</span>
+            <span className="text-sm">Сохранить</span>
           </Button>
 
-          <Button variant="outline" size="sm" asChild className="w-full">
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="hover:bg-background/60 w-full border-none shadow-none"
+          >
             <Link
               href={`/product/${product.itemArticle.toLowerCase()}`}
               target="_blank"
+              className="flex w-full gap-2"
             >
-              <ExternalLink className="mr-2 size-4" /> На сайт
+              <ExternalLink className="size-4" />
+              <span className="text-sm">На сайт</span>
             </Link>
           </Button>
 

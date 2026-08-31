@@ -220,9 +220,10 @@ export const ProductMediaManager = ({
         <Button
           variant="outline"
           size="sm"
-          className="text-brand-secondary-muted hover:text-brand-secondary w-full"
+          className="hover:bg-background/60 w-full border-none shadow-none"
         >
-          <Images className="mr-2 size-4" /> Медиа
+          <Images className="mr-2 size-4" />
+          <span className="text-sm">Медиа</span>
         </Button>
       </SheetTrigger>
 
