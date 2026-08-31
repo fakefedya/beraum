@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 
 import { cn } from "@/src/lib/utils";
 import { getCategoriesList } from "@/src/server/queries/categories";
-import { ProductsSearch } from "./_components/ProductsSearch";
+import { SearchInput } from "@/src/components/shared/SearchInput";
 import { CreateProductSheet } from "./_components/CreateProductSheet";
 import { ProductsTableWrapper } from "./_components/ProductsTableWrapper";
 
@@ -63,7 +63,10 @@ export default async function AdminProductsPage(props: {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-semibold tracking-tight">Товары</h1>
-        <ProductsSearch />
+        <SearchInput
+          paramName="q"
+          placeholder="Поиск по артикулу или категории..."
+        />
         <CreateProductSheet categories={categoriesData || []} />
       </div>
 

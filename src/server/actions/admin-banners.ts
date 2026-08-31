@@ -4,38 +4,18 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
 import { slides } from "@/src/server/db/schema";
-import { auth } from "@/src/lib/auth/auth";
 import { revalidatePath, revalidateTag } from "next/cache";
-import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
-import { s3Public } from "@/src/server/services/s3/client";
 import { MIME_TO_EXT } from "@/src/lib/constants/uploads";
 import crypto from "crypto";
+import { generatePresignedUrl } from "../services/s3/upload";
+import { requireAuthRole } from "../utils/auth-check";
 
 const BUCKET = "system-assets";
 const UPLOAD_DIR = "components/banners";
 
-async function requireAdmin() {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Не авторизован");
-  if (
-    session.user.isLocked ||
-    !["superadmin", "manager"].includes(session.user.role)
-  ) {
-    throw new Error("Доступ запрещен");
-  }
-  return session.user.id;
-}
-
 const presignedUrlSchema = z.object({
-  contentType: z
-    .string()
-    .refine(
-      (v) => Object.keys(MIME_TO_EXT).includes(v),
-      "Запрещенный тип файла",
-    ),
-  fileSize: z
-    .number()
-    .max(10 * 1024 * 1024, "Размер файла не должен превышать 10MB"),
+  contentType: z.string().refine((v) => Object.keys(MIME_TO_EXT).includes(v)),
+  fileSize: z.number().max(10 * 1024 * 1024),
 });
 
 const tagSchema = z.object({
@@ -43,7 +23,7 @@ const tagSchema = z.object({
   yPercent: z.coerce.number().min(0).max(100),
   title: z.string().min(1).trim(),
   subtitle: z.string().trim(),
-  href: z.string().regex(/^\//, "Только относительные ссылки").trim(),
+  href: z.string().regex(/^\//).trim(),
 });
 
 const bannerSchema = z
@@ -78,19 +58,18 @@ const bannerSchema = z
 
 export async function upsertBannerAction(formData: FormData) {
   try {
-    await requireAdmin();
+    await requireAuthRole(["superadmin", "manager"]);
     const rawData = Object.fromEntries(formData.entries());
 
     try {
       if (typeof rawData.payload === "string")
         rawData.payload = JSON.parse(rawData.payload);
     } catch {
-      return { success: false, error: "Невалидный формат JSON payload" };
+      return { success: false, error: "INVALID_JSON" };
     }
 
     const parsed = bannerSchema.safeParse(rawData);
-    if (!parsed.success)
-      return { success: false, error: parsed.error.issues[0].message };
+    if (!parsed.success) return { success: false, error: "INVALID_DATA" };
 
     if (parsed.data.id) {
       await db
@@ -105,53 +84,45 @@ export async function upsertBannerAction(formData: FormData) {
     revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
-    if (error instanceof Error) return { success: false, error: error.message };
-    return { success: false, error: "Ошибка БД" };
+    return { success: false, error: "DB_ERROR" };
   }
 }
 
 export async function deleteBannerAction(id: string) {
   try {
-    await requireAdmin();
+    await requireAuthRole(["superadmin", "manager"]);
     if (!z.string().uuid().safeParse(id).success)
-      return { success: false, error: "Невалидный ID" };
+      return { success: false, error: "INVALID_ID" };
 
     await db.delete(slides).where(eq(slides.id, id));
     revalidateTag("slides", { expire: 0 });
     revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
-    if (error instanceof Error) return { success: false, error: error.message };
-    return { success: false, error: "Ошибка при удалении" };
+    return { success: false, error: "DELETE_FAILED" };
   }
 }
 
 export async function getBannerPresignedUploadUrl(rawData: unknown) {
   try {
-    await requireAdmin();
+    await requireAuthRole(["superadmin", "manager"]);
     const parsed = presignedUrlSchema.safeParse(rawData);
-    if (!parsed.success)
-      return { success: false, error: parsed.error.issues[0].message };
+    if (!parsed.success) return { success: false, error: "INVALID_DATA" };
 
     const { contentType, fileSize } = parsed.data;
     const ext = MIME_TO_EXT[contentType];
     const fileName = `${crypto.randomUUID()}.${ext}`;
-    const s3Key = `${UPLOAD_DIR}/${fileName}`;
+    const fileKey = `${UPLOAD_DIR}/${fileName}`;
 
-    const { url, fields } = await createPresignedPost(s3Public, {
-      Bucket: BUCKET,
-      Key: s3Key,
-      Conditions: [
-        ["content-length-range", 1, fileSize],
-        ["eq", "$Content-Type", contentType],
-      ],
-      Fields: { "Content-Type": contentType },
-      Expires: 300,
+    const payload = await generatePresignedUrl({
+      bucket: BUCKET,
+      fileKey,
+      contentType,
+      fileSize,
     });
 
-    return { success: true, url, fields, fileName };
+    return { success: true, ...payload, fileName };
   } catch (error) {
-    if (error instanceof Error) return { success: false, error: error.message };
-    return { success: false, error: "Ошибка инициализации загрузки" };
+    return { success: false, error: "URL_GENERATION_FAILED" };
   }
 }

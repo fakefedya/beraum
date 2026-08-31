@@ -20,7 +20,7 @@ export default async function DashboardLayout({
   }
 
   const [dbUser] = await db
-    .select({ isLocked: users.isLocked })
+    .select({ isLocked: users.isLocked, role: users.role })
     .from(users)
     .where(eq(users.id, session.user.id));
 
@@ -28,7 +28,7 @@ export default async function DashboardLayout({
     redirect("/auth/login?error=locked");
   }
 
-  const userRole = session.user.role as Role;
+  const userRole = dbUser.role as Role;
 
   return (
     <div className="text-foreground flex min-h-screen bg-[#FCFCFC] transition-colors duration-300 dark:bg-[#1A1A1A]">

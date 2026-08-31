@@ -4,32 +4,20 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
 import { productImages, productDocuments } from "@/src/server/db/schema";
-import { auth } from "@/src/lib/auth/auth";
-import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { s3Internal, s3Public } from "@/src/server/services/s3/client";
+import { s3Internal } from "@/src/server/services/s3/client";
 import { MIME_TO_EXT } from "@/src/lib/constants/uploads";
 import crypto from "crypto";
 import { revalidateTag } from "next/cache";
+import { generatePresignedUrl } from "../services/s3/upload";
+import { requireAuthRole } from "../utils/auth-check";
 
 const BUCKET = "products";
 const FILE_KEY_REGEX =
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\.[a-z0-9]+$/;
 
-async function requireAdmin() {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("UNAUTHORIZED");
-  if (
-    session.user.isLocked ||
-    !["superadmin", "manager"].includes(session.user.role)
-  ) {
-    throw new Error("FORBIDDEN");
-  }
-  return session.user.id;
-}
-
 export async function getProductAssetsAction(productId: string) {
-  await requireAdmin();
+  await requireAuthRole(["superadmin", "manager"]);
   if (!z.string().uuid().safeParse(productId).success)
     throw new Error("INVALID_ID");
 
@@ -58,7 +46,7 @@ const getUrlSchema = z.object({
 
 export async function getAdminPresignedUploadUrl(rawData: unknown) {
   try {
-    await requireAdmin();
+    await requireAuthRole(["superadmin", "manager"]);
     const parsed = getUrlSchema.safeParse(rawData);
     if (!parsed.success) return { success: false, error: "INVALID_DATA" };
 
@@ -66,18 +54,15 @@ export async function getAdminPresignedUploadUrl(rawData: unknown) {
     const ext = MIME_TO_EXT[contentType];
     const fileKey = `${productId}/${crypto.randomUUID()}.${ext}`;
 
-    const { url, fields } = await createPresignedPost(s3Public, {
-      Bucket: BUCKET,
-      Key: fileKey,
-      Conditions: [
-        ["content-length-range", 1, fileSize],
-        ["eq", "$Content-Type", contentType],
-      ],
-      Fields: { "Content-Type": contentType },
-      Expires: 600,
+    const payload = await generatePresignedUrl({
+      bucket: BUCKET,
+      fileKey,
+      contentType,
+      fileSize,
+      expires: 600,
     });
 
-    return { success: true, url, fields, fileKey };
+    return { success: true, ...payload };
   } catch (error) {
     return { success: false, error: "URL_GENERATION_FAILED" };
   }
@@ -92,7 +77,7 @@ const saveImageSchema = z.object({
 
 export async function saveProductImageAction(rawData: unknown) {
   try {
-    await requireAdmin();
+    await requireAuthRole(["superadmin", "manager"]);
     const parsed = saveImageSchema.safeParse(rawData);
     if (!parsed.success) return { success: false, error: "INVALID_DATA" };
 
@@ -116,7 +101,7 @@ export async function setProductImageCoverAction(
   productId: string,
 ) {
   try {
-    await requireAdmin();
+    await requireAuthRole(["superadmin", "manager"]);
     if (
       !z.string().uuid().safeParse(imageId).success ||
       !z.string().uuid().safeParse(productId).success
@@ -151,7 +136,7 @@ const saveDocumentSchema = z.object({
 
 export async function saveProductDocumentAction(rawData: unknown) {
   try {
-    await requireAdmin();
+    await requireAuthRole(["superadmin", "manager"]);
     const parsed = saveDocumentSchema.safeParse(rawData);
     if (!parsed.success) return { success: false, error: "INVALID_DATA" };
 
@@ -175,7 +160,7 @@ export async function deleteProductAssetAction(
   type: "image" | "document",
 ) {
   try {
-    await requireAdmin();
+    await requireAuthRole(["superadmin", "manager"]);
     if (!z.string().uuid().safeParse(id).success)
       return { success: false, error: "INVALID_ID" };
 

@@ -1,7 +1,8 @@
 import "server-only";
+
 import { db } from "@/src/server/db/client";
 import { marketplaceClicks } from "@/src/server/db/schema";
-import { desc, gte, count, eq, and } from "drizzle-orm";
+import { desc, gte, count, eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
 import { unstable_cache } from "next/cache";
 
@@ -10,7 +11,7 @@ export type AnalyticsPeriod = z.infer<typeof periodSchema>;
 
 export const articleSearchSchema = z
   .string()
-  .regex(/^[A-Za-z0-9\-_]+$/, "Неверный формат артикула")
+  .regex(/^[A-Za-z0-9\-_]+$/)
   .optional()
   .catch(undefined);
 
@@ -22,7 +23,6 @@ function getCutoffDate(period: AnalyticsPeriod): Date | undefined {
   return d;
 }
 
-// Прямой запрос к БД
 async function fetchAnalyticsFromDb(
   period: AnalyticsPeriod,
   article: string | undefined,
@@ -36,9 +36,23 @@ async function fetchAnalyticsFromDb(
     : undefined;
   const finalFilter = and(dateFilter, articleFilter);
 
-  const [totalResult, marketplaceStats, topArticles, recentEvents] =
+  const isFullScan = period === "all" && !article;
+
+  const totalPromise = isFullScan
+    ? db
+        .execute(
+          sql`SELECT reltuples::bigint as estimate FROM pg_class WHERE relname = 'marketplace_clicks'`,
+        )
+        .then((res) => Number(res[0]?.estimate || 0))
+    : db
+        .select({ value: count() })
+        .from(marketplaceClicks)
+        .where(finalFilter)
+        .then((res) => res[0]?.value || 0);
+
+  const [totalValue, marketplaceStats, topArticles, recentEvents] =
     await Promise.all([
-      db.select({ value: count() }).from(marketplaceClicks).where(finalFilter),
+      totalPromise,
       db
         .select({ marketplace: marketplaceClicks.marketplace, clicks: count() })
         .from(marketplaceClicks)
@@ -68,7 +82,7 @@ async function fetchAnalyticsFromDb(
     ]);
 
   return {
-    total: totalResult[0]?.value || 0,
+    total: totalValue,
     marketplaces: marketplaceStats,
     topArticles,
     recentEvents,
@@ -76,10 +90,9 @@ async function fetchAnalyticsFromDb(
   };
 }
 
-// Кэшируем только запросы БЕЗ конкретного артикула
 const getGlobalAnalyticsCached = unstable_cache(
   async (period: AnalyticsPeriod) => fetchAnalyticsFromDb(period, undefined),
-  ["global-analytics"], // Базовый тег
+  ["global-analytics"],
   { revalidate: 300, tags: ["analytics"] },
 );
 
@@ -91,10 +104,8 @@ export async function getDashboardAnalytics(
   const article = articleSearchSchema.parse(rawArticle);
 
   if (article) {
-    // Детальный запрос пропускаем мимо кэша, чтобы не плодить мусор
     return fetchAnalyticsFromDb(period, article);
   }
 
-  // Общую сводку тянем из кэша
   return getGlobalAnalyticsCached(period);
 }

@@ -1,6 +1,5 @@
 "use server";
 
-import { auth } from "@/src/lib/auth/auth";
 import { db } from "@/src/server/db/client";
 import { feedbackRequests } from "@/src/server/db/schema/feedback.schema";
 import { eq } from "drizzle-orm";
@@ -9,21 +8,10 @@ import { revalidatePath } from "next/cache";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3Public } from "../services/s3/client";
+import { requireAuthRole } from "../utils/auth-check";
 
 const REQUEST_MEDIA_KEY_REGEX =
   /^requests\/\d{4}-\d{2}-\d{2}\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\.[a-z0-9]+$/;
-
-async function requireSupportOrAdmin() {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("UNAUTHORIZED");
-  if (
-    session.user.isLocked ||
-    !["superadmin", "support"].includes(session.user.role)
-  ) {
-    throw new Error("FORBIDDEN");
-  }
-  return session.user.id;
-}
 
 const updateStatusSchema = z.object({
   id: z.string().uuid(),
@@ -32,7 +20,7 @@ const updateStatusSchema = z.object({
 
 export async function updateRequestStatus(formData: FormData) {
   try {
-    await requireSupportOrAdmin();
+    await requireAuthRole(["superadmin", "support"]);
 
     const rawId = formData.get("id");
     const rawStatus = formData.get("status");
@@ -58,7 +46,7 @@ export async function updateRequestStatus(formData: FormData) {
 }
 
 export async function getMediaUrlsAction(keys: string[]) {
-  await requireSupportOrAdmin();
+  await requireAuthRole(["superadmin", "support"]);
   if (!keys || keys.length === 0) return [];
 
   try {

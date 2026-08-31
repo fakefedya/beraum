@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Metadata } from "next";
 import { getDashboardAnalytics } from "@/src/server/queries/analytics";
 import { PeriodSelector } from "./_components/PeriodSelector";
-import { AnalyticsSearch } from "./_components/AnalyticsSearch";
+import { SearchInput } from "@/src/components/shared/SearchInput";
 import { Loader2, MousePointerClick } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 
@@ -18,7 +18,6 @@ const MARKETPLACE_LABELS: Record<string, string> = {
   mvideo: "М.Видео",
 };
 
-// Выносим маппинг в константы — работает со скоростью чтения ключа из объекта
 const DEVICE_LABELS: Record<string, string> = {
   mobile: "📱 Мобильное",
   desktop: "💻 Десктоп",
@@ -45,7 +44,10 @@ export default async function DashboardPage(props: {
           Сводка переходов
         </h1>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <AnalyticsSearch />
+          <SearchInput
+            paramName="article"
+            placeholder="Аналитика по артикулу (SKU)..."
+          />
           <PeriodSelector />
         </div>
       </div>

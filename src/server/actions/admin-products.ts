@@ -8,25 +8,13 @@ import type {
   ProductFilters,
   ProductSpecifications,
 } from "@/src/server/db/schema";
-import { auth } from "@/src/lib/auth/auth";
 import { revalidatePath, revalidateTag } from "next/cache";
-
-async function requireAdmin() {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("UNAUTHORIZED");
-  if (
-    session.user.isLocked ||
-    !["superadmin", "manager"].includes(session.user.role)
-  ) {
-    throw new Error("FORBIDDEN");
-  }
-  return session.user.id;
-}
+import { requireAuthRole } from "../utils/auth-check";
 
 const filtersSchema = z
   .string()
   .max(15000)
-  .transform((val, ctx) => {
+  .transform((val, ctx): ProductFilters => {
     try {
       const parsed = JSON.parse(val);
       const schema = z.record(
@@ -39,7 +27,7 @@ const filtersSchema = z
           z.null(),
         ]),
       );
-      return schema.parse(parsed) as ProductFilters;
+      return schema.parse(parsed);
     } catch {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -52,14 +40,14 @@ const filtersSchema = z
 const specificationsSchema = z
   .string()
   .max(15000)
-  .transform((val, ctx) => {
+  .transform((val, ctx): ProductSpecifications => {
     try {
       const parsed = JSON.parse(val);
       const schema = z.record(
         z.string(),
         z.union([z.string(), z.number(), z.null()]),
       );
-      return schema.parse(parsed) as ProductSpecifications;
+      return schema.parse(parsed);
     } catch {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -87,7 +75,7 @@ const updateProductSchema = z.object({
 
 export async function updateProductAction(formData: FormData) {
   try {
-    await requireAdmin();
+    await requireAuthRole(["superadmin", "manager"]);
     const rawData = Object.fromEntries(formData.entries());
     const parsed = updateProductSchema.safeParse(rawData);
 
@@ -139,7 +127,7 @@ const createProductSchema = z.object({
 
 export async function createProductAction(formData: FormData) {
   try {
-    await requireAdmin();
+    await requireAuthRole(["superadmin", "manager"]);
     const rawData = Object.fromEntries(formData.entries());
     const parsed = createProductSchema.safeParse(rawData);
 

@@ -1,19 +1,21 @@
 import { Metadata } from "next";
-import { auth } from "@/src/lib/auth/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/src/server/db/client";
 import { users } from "@/src/server/db/schema";
 import { desc } from "drizzle-orm";
 import { UsersTable } from "./_components/UsersTable";
 import { CreateUserSheet } from "./_components/CreateUserSheet";
+import { requireAuthRole } from "@/src/server/utils/auth-check";
 
 export const metadata: Metadata = {
   title: "Настройки и Пользователи — Beraum Admin",
 };
 
 export default async function SettingsPage() {
-  const session = await auth();
-  if (!session?.user || session.user.role !== "superadmin") {
+  let userContext;
+  try {
+    userContext = await requireAuthRole(["superadmin"]);
+  } catch {
     redirect("/dashboard");
   }
 
@@ -39,7 +41,10 @@ export default async function SettingsPage() {
 
       <div className="bg-card overflow-hidden rounded-xl border">
         <div className="overflow-x-auto">
-          <UsersTable initialData={usersList} currentUserId={session.user.id} />
+          <UsersTable
+            initialData={usersList}
+            currentUserId={userContext.userId}
+          />
         </div>
       </div>
     </div>

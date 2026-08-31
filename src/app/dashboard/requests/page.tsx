@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { z } from "zod";
 import { cn } from "@/src/lib/utils";
-import { RequestsSearch } from "./_components/RequestsSearch";
+import { SearchInput } from "@/src/components/shared/SearchInput";
 import { RequestsTableWrapper } from "./_components/RequestsTableWrapper";
 import type { RequestType, RequestStatus } from "@/src/server/queries/requests";
 
@@ -76,7 +76,7 @@ export default async function RequestsPage(props: {
         <h1 className="text-3xl font-semibold tracking-tight">
           Входящие заявки
         </h1>
-        <RequestsSearch />
+        <SearchInput paramName="q" placeholder="Поиск по ID или Email..." />
       </div>
 
       <div className="flex flex-col gap-4">

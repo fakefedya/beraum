@@ -4,9 +4,9 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
 import { users } from "@/src/server/db/schema";
-import { auth } from "@/src/lib/auth/auth";
 import { revalidatePath } from "next/cache";
 import { hash } from "bcrypt-ts";
+import { requireAuthRole } from "../utils/auth-check";
 
 const booleanField = z.preprocess(
   (val) => val === "true" || val === true,
@@ -43,18 +43,9 @@ type UpdateUserPayload = {
   passwordHash?: string;
 };
 
-async function requireSuperadmin() {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("UNAUTHORIZED");
-  if (session.user.isLocked || session.user.role !== "superadmin") {
-    throw new Error("FORBIDDEN");
-  }
-  return session.user.id;
-}
-
 export async function createUserAction(formData: FormData) {
   try {
-    await requireSuperadmin();
+    await requireAuthRole(["superadmin"]);
     const rawData = Object.fromEntries(formData.entries());
 
     const parsed = createUserSchema.safeParse(rawData);
@@ -86,7 +77,7 @@ export async function createUserAction(formData: FormData) {
 
 export async function updateUserAction(formData: FormData) {
   try {
-    const currentUserId = await requireSuperadmin();
+    const { userId: currentUserId } = await requireAuthRole(["superadmin"]);
     const rawData = Object.fromEntries(formData.entries());
 
     const parsed = updateUserSchema.safeParse(rawData);
@@ -123,7 +114,7 @@ export async function updateUserAction(formData: FormData) {
 
 export async function deleteUserAction(id: string) {
   try {
-    const currentUserId = await requireSuperadmin();
+    const { userId: currentUserId } = await requireAuthRole(["superadmin"]);
     if (!z.string().uuid().safeParse(id).success)
       return { success: false, error: "INVALID_ID" };
 
