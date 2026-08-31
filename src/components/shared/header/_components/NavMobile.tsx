@@ -44,19 +44,19 @@ export const NavMobile = ({ links }: NavMobileProps) => {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button
-          variant="transparent"
-          size="icon-xs"
+        <button
+          type="button"
           className={cn(
-            "text-foreground",
-            "transition-colors duration-300",
-            "[&_svg:size-6]",
+            "text-foreground relative z-20 flex h-11 w-11 shrink-0 touch-manipulation items-center justify-center rounded-lg outline-none",
+            "hover:bg-card transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-black",
+            "cursor-pointer select-none",
+            "[&_svg]:pointer-events-none [&_svg]:size-6",
             "lg:hidden",
           )}
           aria-label="Открыть меню"
         >
           <Menu />
-        </Button>
+        </button>
       </SheetTrigger>
 
       <SheetContent
@@ -71,7 +71,7 @@ export const NavMobile = ({ links }: NavMobileProps) => {
 
         <div
           className={cn(
-            "bg-brand-gradient absolute top-4 left-4 h-11 rounded-lg px-4",
+            "bg-brand absolute top-4 left-4 h-11 rounded-lg px-4",
             "md:h-12 md:rounded-[16px]",
           )}
         >
@@ -95,21 +95,52 @@ export const NavMobile = ({ links }: NavMobileProps) => {
               {links.map((link, idx) => {
                 if (link.type === "link" || link.type === "external") {
                   const isExt = link.type === "external";
+                  const isComingSoon =
+                    "isDisabled" in link ? link.isDisabled : false;
+
                   return (
                     <div key={`mobile-nav-${idx}`} className="py-4">
                       <Link
-                        href={link.href}
+                        prefetch={false}
+                        href={isComingSoon ? "#" : link.href}
                         target={isExt ? link.target : "_self"}
                         rel={isExt ? "noopener noreferrer" : undefined}
-                        onClick={() => setIsOpen(false)}
+                        aria-disabled={isComingSoon}
+                        onClick={(e) => {
+                          if (isComingSoon) {
+                            e.preventDefault();
+                          } else {
+                            setIsOpen(false);
+                          }
+                        }}
                         className={cn(
                           "flex items-center justify-between text-xl font-medium outline-none",
-                          "focus-visible:ring-2 focus-visible:ring-black/20",
+                          "transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-black/20",
+                          isComingSoon
+                            ? "text-muted-foreground/50 cursor-default"
+                            : "text-foreground hover:text-brand-secondary-muted",
                         )}
                       >
-                        {link.label}
-                        {isExt && (
-                          <ExternalLink className="stroke-muted-foreground size-3.5" />
+                        <div className="flex items-center gap-3">
+                          <span>{link.label}</span>
+
+                          {isComingSoon && (
+                            <span className="pointer-events-none -rotate-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_2px_4px_rgba(255,255,255,0.05)]">
+                              <span
+                                className={cn(
+                                  "bg-brand flex items-center justify-center px-2 py-0.5",
+                                  "text-[9px] font-bold tracking-widest whitespace-nowrap text-[#1a1a1b] uppercase",
+                                  "[clip-path:polygon(0%_0%,_100%_0%,_calc(100%-4px)_16.6%,_100%_33.3%,_calc(100%-4px)_50%,_100%_66.6%,_calc(100%-4px)_83.3%,_100%_100%,_0%_100%,_4px_83.3%,_0%_66.6%,_4px_50%,_0%_33.3%,_4px_16.6%)]",
+                                )}
+                              >
+                                Скоро
+                              </span>
+                            </span>
+                          )}
+                        </div>
+
+                        {isExt && !isComingSoon && (
+                          <ExternalLink className="stroke-muted-foreground size-4.5" />
                         )}
                       </Link>
                     </div>

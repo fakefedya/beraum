@@ -1,12 +1,19 @@
-export type NavLink = { label: string; type: "link"; href: string };
+export type NavLink = {
+  label: string;
+  isDisabled: boolean;
+  type: "link";
+  href: string;
+};
 export type NavExternal = {
   label: string;
+  isDisabled: boolean;
   type: "external";
   href: string;
   target?: "_blank" | "_self";
 };
 export type NavMenuMega = {
   label: string;
+  isDisabled: boolean;
   type: "mega";
   sidebarLinks: { label: string; isNew?: boolean; href: string }[];
   promoCards: {
@@ -30,6 +37,7 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
   store: [
     {
       label: "Каталог",
+      isDisabled: false,
       type: "mega",
       sidebarLinks: [
         { label: "Варочные панели", href: "/catalog/hob", isNew: true },
@@ -70,7 +78,12 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
         },
       ],
     },
-    { label: "Коллекции", type: "link", href: "/collections" },
+    {
+      label: "Коллекции",
+      isDisabled: true,
+      type: "link",
+      href: "/collections",
+    },
     {
       label: "О бренде",
       type: "default",
@@ -115,14 +128,15 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
     },
     {
       label: "Студия дизайна",
+      isDisabled: false,
       type: "external",
       href: "https://design.beraum.com",
       target: "_blank",
     },
   ],
   discount: [
-    { label: "О бренде", type: "link", href: "/about" },
-    { label: "Поддержка", type: "link", href: "/support" },
+    { label: "О бренде", isDisabled: false, type: "link", href: "/about" },
+    { label: "Поддержка", isDisabled: false, type: "link", href: "/support" },
   ],
 } as const;
 

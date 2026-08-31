@@ -264,21 +264,56 @@ const LinkNode = ({
 }) => {
   const isActive = checkActive(item.href, pathname);
 
+  const isComingSoon = item.isDisabled;
+
   return (
     <NavigationMenuItem className="flex h-full items-center">
       <NavigationMenuLink asChild>
         <Link
           prefetch={false}
-          href={item.href}
+          href={isComingSoon ? "#" : item.href}
+          onClick={isComingSoon ? (e) => e.preventDefault() : undefined}
+          aria-disabled={isComingSoon}
           className={cn(
             navigationMenuTriggerStyle(),
-            "text-foreground h-full rounded-[12px] bg-transparent px-2 text-[15px] font-medium",
-            "hover:bg-background/80",
-            isActive ? "bg-background/" : "bg-transparent",
+            "group text-foreground relative flex h-full items-center justify-center rounded-[12px] bg-transparent px-2 text-[15px] font-medium transition-colors duration-300",
             "xl:px-4",
+            isComingSoon
+              ? "cursor-default"
+              : "hover:bg-background/80 text-foreground",
+            isActive && !isComingSoon ? "bg-background/80" : "bg-transparent",
           )}
         >
-          {item.label}
+          <span
+            className={cn(
+              "transition-opacity duration-300",
+              isComingSoon && "group-hover:opacity-30",
+            )}
+          >
+            {item.label}
+          </span>
+
+          {isComingSoon && (
+            <span
+              className={cn(
+                "pointer-events-none absolute top-1/2 left-1/2 z-10",
+                "-translate-x-1/2 translate-y-4 scale-90 rotate-0 opacity-0",
+                "transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+                "group-hover:-translate-x-1/2 group-hover:-translate-y-1/2 group-hover:scale-100 group-hover:-rotate-3 group-hover:opacity-100",
+                "drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_2px_4px_rgba(255,255,255,0.05)]",
+              )}
+            >
+              <span
+                className={cn(
+                  "bg-brand flex items-center justify-center px-3 py-1",
+                  "text-[10px] font-bold tracking-widest whitespace-nowrap text-[#1a1a1b] uppercase",
+                  "[clip-path:polygon(0%_0%,_100%_0%,_calc(100%-4px)_16.6%,_100%_33.3%,_calc(100%-4px)_50%,_100%_66.6%,_calc(100%-4px)_83.3%,_100%_100%,_0%_100%,_4px_83.3%,_0%_66.6%,_4px_50%,_0%_33.3%,_4px_16.6%)]",
+                )}
+              >
+                Скоро
+              </span>
+            </span>
+          )}
         </Link>
       </NavigationMenuLink>
     </NavigationMenuItem>
