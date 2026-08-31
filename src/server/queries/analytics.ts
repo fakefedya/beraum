@@ -2,7 +2,7 @@ import "server-only";
 
 import { db } from "@/src/server/db/client";
 import { marketplaceClicks } from "@/src/server/db/schema";
-import { desc, gte, count, eq, and, sql } from "drizzle-orm";
+import { desc, gte, count, eq, and } from "drizzle-orm";
 import { z } from "zod";
 import { unstable_cache } from "next/cache";
 
@@ -36,7 +36,6 @@ async function fetchAnalyticsFromDb(
     : undefined;
   const finalFilter = and(dateFilter, articleFilter);
 
-  // Убираем бессмысленный pg_class.reltuples, используем точный count
   const [totalResult, marketplaceStats, topArticles, recentEvents] =
     await Promise.all([
       db.select({ value: count() }).from(marketplaceClicks).where(finalFilter),
@@ -77,6 +76,7 @@ async function fetchAnalyticsFromDb(
   };
 }
 
+// 🛡️ Архитектурный фикс: Опираемся на встроенную дедупликацию и сериализацию аргументов Next.js
 const getGlobalAnalyticsCached = unstable_cache(
   async (period: AnalyticsPeriod) => fetchAnalyticsFromDb(period, undefined),
   ["global-analytics"],
@@ -91,6 +91,7 @@ export async function getDashboardAnalytics(
   const article = articleSearchSchema.parse(rawArticle);
 
   if (article) {
+    // Не кэшируем поисковые запросы по конкретному артикулу во избежание разрастания Data Cache
     return fetchAnalyticsFromDb(period, article);
   }
 

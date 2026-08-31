@@ -217,13 +217,15 @@ async function getProductsDb(params: GetProductsParams = {}) {
   }
 }
 
+// 🛡️ Архитектурный фикс: Инициализация кэша в Module Scope для работы Request Memoization
+const getProductsCached = unstable_cache(
+  async (params: GetProductsParams) => getProductsDb(params),
+  ["products_list"],
+  { tags: ["products"], revalidate: 3600 },
+);
+
 export const getProducts = async (params: GetProductsParams = {}) => {
-  const cacheKey = JSON.stringify(params);
-  return unstable_cache(
-    async () => getProductsDb(params),
-    ["products_list", cacheKey],
-    { tags: ["products"], revalidate: 3600 },
-  )();
+  return getProductsCached(params);
 };
 
 async function getProductByArticleDb(rawArticle: string) {
@@ -337,12 +339,16 @@ async function getProductByArticleDb(rawArticle: string) {
   }
 }
 
+// 🛡️ Архитектурный фикс: Инициализация кэша в Module Scope
+const getProductByArticleCached = unstable_cache(
+  async (article: string) => getProductByArticleDb(article),
+  ["product_article"],
+  { tags: ["products"], revalidate: 3600 },
+);
+
 export const getProductByArticle = async (article: string) => {
-  return unstable_cache(
-    async () => getProductByArticleDb(article),
-    ["product_article", article.toLowerCase()],
-    { tags: ["products"], revalidate: 3600 },
-  )();
+  // Передаем аргумент в lowercase для стандартизации кэш-хитов
+  return getProductByArticleCached(article.toLowerCase());
 };
 
 export async function getSimilarProducts(

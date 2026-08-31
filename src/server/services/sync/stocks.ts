@@ -1,8 +1,6 @@
 import "server-only";
+import { sql } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
-import { products } from "@/src/server/db/schema";
-import { eq } from "drizzle-orm";
-import { chunkArray } from "@/src/server/utils/sync-helpers";
 
 export type NormalizedStock = {
   article: string;
@@ -18,23 +16,44 @@ export async function updateStocksInDb(
 
   try {
     if (debug)
-      console.log(`💾 [DB] Старт транзакции. Всего записей: ${stocks.length}`);
+      console.log(
+        `💾 [DB] Старт пакетного обновления. Всего записей: ${stocks.length}`,
+      );
 
-    const chunks = chunkArray(stocks, 100);
+    const ozonStocks = stocks.filter((s) => s.marketplace === "ozon");
+    const wbStocks = stocks.filter((s) => s.marketplace === "wb");
 
     await db.transaction(async (tx) => {
-      for (const chunk of chunks) {
-        for (const item of chunk) {
-          const updateField =
-            item.marketplace === "ozon"
-              ? { ozonStockFbo: item.stock }
-              : { fbsStock: item.stock };
+      // Пакетное обновление Ozon
+      if (ozonStocks.length > 0) {
+        const articles = ozonStocks.map((s) => s.article);
+        const values = ozonStocks.map((s) => s.stock);
 
-          await tx
-            .update(products)
-            .set(updateField)
-            .where(eq(products.itemArticle, item.article));
-        }
+        await tx.execute(sql`
+          UPDATE products AS p
+          SET ozon_stock_fbo = u.stock::int
+          FROM (
+            SELECT unnest(${articles}::text[]) AS article, 
+                   unnest(${values}::int[]) AS stock
+          ) AS u
+          WHERE p.item_article = u.article
+        `);
+      }
+
+      // Пакетное обновление Wildberries
+      if (wbStocks.length > 0) {
+        const articles = wbStocks.map((s) => s.article);
+        const values = wbStocks.map((s) => s.stock);
+
+        await tx.execute(sql`
+          UPDATE products AS p
+          SET fbs_stock = u.stock::int
+          FROM (
+            SELECT unnest(${articles}::text[]) AS article, 
+                   unnest(${values}::int[]) AS stock
+          ) AS u
+          WHERE p.item_article = u.article
+        `);
       }
     });
 
