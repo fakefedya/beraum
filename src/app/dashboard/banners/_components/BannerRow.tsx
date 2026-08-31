@@ -68,7 +68,7 @@ export const BannerRow = ({ slide }: { slide: SlideItem }) => {
   return (
     <tr className="hover:bg-muted/30 transition-colors">
       <td className="px-4 py-4 align-top">
-        <div className="bg-accent relative flex aspect-video w-24 items-center justify-center overflow-hidden rounded-md border">
+        <div className="bg-accent relative flex aspect-square w-32 items-center justify-center overflow-hidden rounded-md border">
           {slide.fileKey ? (
             <SafeImage
               src={imageUrl}
@@ -102,22 +102,22 @@ export const BannerRow = ({ slide }: { slide: SlideItem }) => {
             />
           )}
         </form>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <span
-            className="text-foreground max-w-50 truncate font-semibold"
+            className="text-foreground max-w-50 truncate text-xs font-semibold"
             title={slide.internalTitle}
           >
             {slide.internalTitle}
           </span>
-          <span className="text-muted-foreground text-xs tracking-wider uppercase">
+          <span className="text-muted-foreground text-xs tracking-wider">
             {slide.placement === "home_hero" ? "Главная" : "Каталог"}
           </span>
         </div>
       </td>
 
       <td className="px-4 py-4 align-top">
-        <div className="flex flex-col gap-1">
-          <span className="bg-muted w-fit rounded-sm px-2 py-0.5 text-xs font-medium">
+        <div className="flex flex-col gap-2">
+          <span className="bg-muted w-fit rounded-sm py-0.5 text-xs font-medium">
             {slide.type}
           </span>
           <span className="text-muted-foreground max-w-50 truncate font-mono text-[10px]">
@@ -132,7 +132,7 @@ export const BannerRow = ({ slide }: { slide: SlideItem }) => {
           form={formId}
           type="number"
           defaultValue={slide.sortOrder}
-          className="h-8 w-16 text-xs"
+          className="h-8 w-16 text-xs shadow-none"
           disabled={isPending || isDeleting}
         />
       </td>
@@ -143,7 +143,7 @@ export const BannerRow = ({ slide }: { slide: SlideItem }) => {
           onValueChange={setIsActive}
           disabled={isPending || isDeleting}
         >
-          <SelectTrigger className="h-8 text-xs">
+          <SelectTrigger className="h-8 w-full text-xs font-medium shadow-none">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -158,8 +158,13 @@ export const BannerRow = ({ slide }: { slide: SlideItem }) => {
           <BannerSheet
             slide={slide}
             trigger={
-              <Button variant="outline" size="sm" className="w-full">
-                <Edit2 className="mr-2 size-4" /> Изменить
+              <Button
+                variant="outline"
+                size="sm"
+                className="hover:bg-background/60 w-full border-none shadow-none"
+              >
+                <Edit2 className="size-4" />
+                <span className="text-sm">Изменить</span>
               </Button>
             }
           />
@@ -169,14 +174,14 @@ export const BannerRow = ({ slide }: { slide: SlideItem }) => {
             form={formId}
             disabled={isPending || isDeleting}
             size="sm"
-            className="w-full"
+            className="w-full gap-2"
           >
             {isPending ? (
-              <Loader2 className="mr-2 size-4 animate-spin" />
+              <Loader2 className="size-4 animate-spin" />
             ) : (
-              <Save className="mr-2 size-4" />
+              <Save className="size-4" />
             )}
-            Быстрое сохр.
+            <span className="text-sm">Сохранить</span>
           </Button>
 
           <Button
@@ -184,14 +189,14 @@ export const BannerRow = ({ slide }: { slide: SlideItem }) => {
             size="sm"
             onClick={handleDelete}
             disabled={isPending || isDeleting}
-            className="w-full"
+            className="w-full gap-2"
           >
             {isDeleting ? (
-              <Loader2 className="mr-2 size-4 animate-spin" />
+              <Loader2 className="size-4 animate-spin" />
             ) : (
-              <Trash2 className="mr-2 size-4" />
+              <Trash2 className="size-4" />
             )}
-            Удалить
+            <span className="text-sm">Удалить</span>
           </Button>
         </div>
       </td>

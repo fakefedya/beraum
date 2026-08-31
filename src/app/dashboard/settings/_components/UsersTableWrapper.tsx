@@ -27,7 +27,7 @@ export const UsersTableWrapper = async ({
         isLocked: users.isLocked,
         isTwoFactorEnabled: users.isTwoFactorEnabled,
         createdAt: users.createdAt,
-      }) // <-- Проекция применена и здесь!
+      })
       .from(users)
       .orderBy(desc(users.createdAt))
       .limit(LIMIT)

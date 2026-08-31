@@ -23,7 +23,7 @@ export const BannersTable = ({ initialData }: { initialData: SlideItem[] }) => {
           <th className="px-4 py-3 font-medium">Конфигурация</th>
           <th className="w-24 px-4 py-3 font-medium">Сортировка</th>
           <th className="w-32 px-4 py-3 font-medium">Статус</th>
-          <th className="w-32 px-4 py-3 text-right font-medium">Действия</th>
+          <th className="w-32 px-4 py-3 font-medium">Действия</th>
         </tr>
       </thead>
       <tbody className="divide-y">

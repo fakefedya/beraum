@@ -139,6 +139,15 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
             min="0"
             max="100"
           />
+          <input
+            name="manualPrice"
+            form={formId}
+            defaultValue={product.manualPrice ? product.manualPrice : 0}
+            className={cn(
+              inputClass,
+              "h-8 w-full bg-transparent font-medium shadow-none",
+            )}
+          />
           <div className="text-muted-foreground bg-foreground/5 flex h-8 items-center rounded-md px-3 text-xs font-medium">
             {product.wbDiscountedPrice != null
               ? new Intl.NumberFormat("ru-RU", {

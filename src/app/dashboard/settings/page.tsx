@@ -39,7 +39,7 @@ export default async function SettingsPage() {
         <CreateUserSheet />
       </div>
 
-      <div className="bg-card overflow-hidden rounded-xl border">
+      <div className="bg-muted overflow-hidden rounded-xl">
         <div className="overflow-x-auto">
           <UsersTable
             initialData={usersList}

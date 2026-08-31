@@ -40,7 +40,7 @@ export const UsersTable = ({
     );
 
   return (
-    <table className="bg-muted w-full text-left text-sm">
+    <table className="w-full text-left text-sm">
       <thead className="text-muted-foreground border-b text-xs uppercase">
         <tr>
           <th className="px-4 py-3 font-medium">Пользователь</th>
@@ -93,7 +93,7 @@ const UserRow = ({ user, isSelf }: { user: SafeUserItem; isSelf: boolean }) => {
   };
 
   return (
-    <tr className="hover:bg-muted/30 transition-colors">
+    <tr className="transition-colors">
       <td className="px-4 py-4 align-top">
         <form id={formId} action={handleUpdate} className="hidden">
           <input type="hidden" name="id" value={user.id} />
