@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
 import { Metadata } from "next";
-import { auth } from "@/src/lib/auth/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { z } from "zod";
@@ -9,6 +8,7 @@ import { cn } from "@/src/lib/utils";
 import { SearchInput } from "@/src/components/shared/SearchInput";
 import { RequestsTableWrapper } from "./_components/RequestsTableWrapper";
 import type { RequestType, RequestStatus } from "@/src/server/queries/requests";
+import { requireAuthRole } from "@/src/server/utils/auth-check";
 
 export const metadata: Metadata = {
   title: "Заявки — Beraum Admin",
@@ -41,10 +41,9 @@ const searchParamsSchema = z.object({
 export default async function RequestsPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const session = await auth();
-  const allowedRoles = ["superadmin", "support"];
-
-  if (!session?.user || !allowedRoles.includes(session.user.role)) {
+  try {
+    await requireAuthRole(["superadmin", "support"]);
+  } catch {
     redirect("/dashboard");
   }
 

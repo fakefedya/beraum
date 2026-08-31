@@ -9,8 +9,7 @@ const apiPrefix = "/api";
 
 export default auth((req) => {
   const { nextUrl } = req;
-  const user = req.auth?.user;
-  const isLoggedIn = !!user;
+  const isLoggedIn = !!req.auth?.user;
 
   const response = NextResponse.next();
   response.headers.set("X-Frame-Options", "DENY");
@@ -25,30 +24,15 @@ export default auth((req) => {
   if (isApiAuthRoute) return response;
 
   if (isAuthRoute) {
-    if (isLoggedIn)
+    if (isLoggedIn && !nextUrl.searchParams.has("error")) {
       return NextResponse.redirect(new URL("/dashboard", nextUrl));
+    }
     return response;
   }
 
-  // Защита Edge
   if (isDashboardRoute || isProtectedApi) {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL("/auth/login", nextUrl));
-    }
-
-    // Блокируем залоченных юзеров сразу
-    if (user.isLocked) {
-      return NextResponse.redirect(
-        new URL("/auth/login?error=locked", nextUrl),
-      );
-    }
-
-    // RBAC: Только Superadmin может войти в /settings
-    if (
-      nextUrl.pathname.startsWith("/dashboard/settings") &&
-      user.role !== "superadmin"
-    ) {
-      return NextResponse.redirect(new URL("/dashboard", nextUrl));
     }
   }
 

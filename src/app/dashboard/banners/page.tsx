@@ -1,21 +1,19 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
-import { auth } from "@/src/lib/auth/auth";
 import { redirect } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { BannersTableWrapper } from "./_components/BannersTableWrapper";
 import { BannerSheet } from "./_components/BannerSheet";
+import { requireAuthRole } from "@/src/server/utils/auth-check";
 
 export const metadata: Metadata = {
   title: "Управление баннерами — Beraum Admin",
 };
 
 export default async function AdminBannersPage() {
-  const session = await auth();
-  if (
-    !session?.user ||
-    !["superadmin", "manager"].includes(session.user.role)
-  ) {
+  try {
+    await requireAuthRole(["superadmin", "manager"]);
+  } catch {
     redirect("/dashboard");
   }
 

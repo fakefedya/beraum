@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
-import { auth } from "@/src/lib/auth/auth";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import Link from "next/link";
@@ -11,6 +10,7 @@ import { getCategoriesList } from "@/src/server/queries/categories";
 import { SearchInput } from "@/src/components/shared/SearchInput";
 import { CreateProductSheet } from "./_components/CreateProductSheet";
 import { ProductsTableWrapper } from "./_components/ProductsTableWrapper";
+import { requireAuthRole } from "@/src/server/utils/auth-check";
 
 export const metadata: Metadata = {
   title: "Управление товарами — Beraum Admin",
@@ -32,11 +32,9 @@ const searchParamsSchema = z.object({
 export default async function AdminProductsPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const session = await auth();
-  if (
-    !session?.user ||
-    !["superadmin", "manager"].includes(session.user.role)
-  ) {
+  try {
+    await requireAuthRole(["superadmin", "manager"]);
+  } catch {
     redirect("/dashboard");
   }
 
