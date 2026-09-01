@@ -24,7 +24,7 @@ export async function sendTwoFactorTokenEmail(email: string, token: string) {
     const mailOptions = {
       from: serverEnv.SMTP_FROM,
       to: email,
-      subject: "Beraum Admin: Код подтверждения (2FA)",
+      subject: "Безопасность Beraum: Код подтверждения (2FA)",
       text: `Ваш код для входа в панель управления: ${token}. Код действителен 5 минут.`,
       html: `
         <div style="font-family: sans-serif; max-width: 400px; margin: auto; padding: 24px; border: 1px solid #eaeaea; border-radius: 12px;">
