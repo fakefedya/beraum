@@ -195,7 +195,7 @@ export const BannerSheet = ({
         fileKey: `components/banners/${key}`,
       });
       return (
-        <div className="group border-border bg-accent relative flex h-24 w-full items-center justify-center overflow-hidden rounded-xl border">
+        <div className="group border-border bg-accent relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-xl border">
           <SafeImage src={url} alt={label} fill className="object-cover" />
           <button
             type="button"
@@ -221,14 +221,21 @@ export const BannerSheet = ({
         )}
       </SheetTrigger>
 
-      <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-md">
-        <SheetHeader className="mb-6">
-          <SheetTitle>
+      <SheetContent
+        side="right"
+        className={cn(
+          "flex h-auto w-full flex-col gap-0 border-none p-0",
+          "sm:max-w-md",
+          "md:inset-y-4 md:right-4 md:rounded-4xl",
+        )}
+      >
+        <SheetHeader className="px-6 pt-6 text-left">
+          <SheetTitle className="text-xl">
             {isEdit ? "Редактирование слайда" : "Новый слайд"}
           </SheetTitle>
         </SheetHeader>
 
-        <form action={handleAction} className="flex flex-col gap-5">
+        <form action={handleAction} className="h-[calc(100%-68px)]">
           {isEdit && (
             <>
               <input
@@ -239,169 +246,186 @@ export const BannerSheet = ({
               <input type="hidden" name="sortOrder" value={slide.sortOrder} />
             </>
           )}
-
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium">
-              Название (внутреннее) *
-            </label>
-            <Input
-              name="internalTitle"
-              required
-              disabled={isPending}
-              defaultValue={slide?.internalTitle}
-              className="bg-background"
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium">Расположение *</label>
-            <Select
-              name="placement"
-              defaultValue={slide?.placement || "home_hero"}
-              disabled={isPending}
-            >
-              <SelectTrigger className="bg-background">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="home_hero">Главная страница</SelectItem>
-                <SelectItem value="catalog_hero">Каталог</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium">Тип контента *</label>
-            <Select
-              value={type}
-              onValueChange={(val: string) =>
-                setType(val as "promo_product" | "promo_information")
-              }
-              disabled={isPending || isEdit}
-            >
-              <SelectTrigger className="bg-background">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="promo_information">
-                  Информационный (Текст + Кнопка)
-                </SelectItem>
-                <SelectItem value="promo_product">
-                  Товарный (Точки на фото)
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium">
-              Изображение (Desktop) *
-            </label>
-            {renderFilePreview(fileKey, "Desktop", isUploadingDesktop, () =>
-              setFileKey(""),
-            )}
-            {!fileKey && !isUploadingDesktop && (
-              <label className="hover:bg-muted/50 border-ring/30 flex h-24 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed transition-all">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => handleFileUpload(e, "desktop")}
-                />
-                <UploadCloud className="text-muted-foreground size-6" />
-                <span className="text-muted-foreground text-xs font-medium">
-                  Загрузить фото (16:9)
-                </span>
+          <div className="flex max-h-[calc(100%-112px)] flex-1 flex-col gap-8 overflow-y-auto p-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-foreground font-medium">
+                Название (внутреннее) <span className="text-red-500">*</span>
               </label>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium">
-              Изображение (Mobile) [Опц.]
-            </label>
-            {renderFilePreview(mobileFileKey, "Mobile", isUploadingMobile, () =>
-              setMobileFileKey(""),
-            )}
-            {!mobileFileKey && !isUploadingMobile && (
-              <label className="hover:bg-muted/50 border-ring/30 flex h-24 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed transition-all">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => handleFileUpload(e, "mobile")}
-                />
-                <UploadCloud className="text-muted-foreground size-6" />
-                <span className="text-muted-foreground text-xs font-medium">
-                  Загрузить фото (9:16)
-                </span>
-              </label>
-            )}
-          </div>
-
-          {type === "promo_information" && (
-            <div className="border-border/50 flex flex-col gap-3 rounded-xl border p-4">
-              <span className="text-sm font-semibold">Настройки Payload</span>
               <Input
-                placeholder="Заголовок"
-                value={payloadInfo.title}
-                onChange={(e) =>
-                  setPayloadInfo({ ...payloadInfo, title: e.target.value })
-                }
+                name="internalTitle"
+                required
                 disabled={isPending}
-              />
-              <Input
-                placeholder="Описание"
-                value={payloadInfo.description}
-                onChange={(e) =>
-                  setPayloadInfo({
-                    ...payloadInfo,
-                    description: e.target.value,
-                  })
-                }
-                disabled={isPending}
-              />
-              <Input
-                placeholder="Текст кнопки"
-                value={payloadInfo.buttonText}
-                onChange={(e) =>
-                  setPayloadInfo({ ...payloadInfo, buttonText: e.target.value })
-                }
-                disabled={isPending}
-              />
-              <Input
-                placeholder="Ссылка (напр. /catalog/hob)"
-                value={payloadInfo.href}
-                onChange={(e) =>
-                  setPayloadInfo({ ...payloadInfo, href: e.target.value })
-                }
-                disabled={isPending}
+                defaultValue={slide?.internalTitle}
+                className="bg-background shadow-none"
               />
             </div>
-          )}
 
-          {type === "promo_product" && (
-            <div className="border-border/50 flex flex-col gap-3 rounded-xl border p-4">
-              <span className="text-sm font-semibold">Точки (JSON)</span>
-              <textarea
-                className="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-50 w-full rounded-md border bg-transparent px-3 py-2 font-mono text-xs shadow-sm focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                value={tagsJson}
-                onChange={(e) => setTagsJson(e.target.value)}
+            <div className="flex flex-col gap-2">
+              <label className="text-foreground font-medium">
+                Расположение <span className="text-red-500">*</span>
+              </label>
+              <Select
+                name="placement"
+                defaultValue={slide?.placement || "home_hero"}
                 disabled={isPending}
-              />
+              >
+                <SelectTrigger className="bg-background w-full shadow-none">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="home_hero">Главная страница</SelectItem>
+                  <SelectItem value="catalog_hero">Каталог</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          )}
 
-          <Button
-            type="submit"
-            disabled={isPending || isUploadingDesktop || isUploadingMobile}
-            className="mt-4 h-12 w-full"
-          >
-            {isPending ? (
-              <Loader2 className="mr-2 size-4 animate-spin" />
-            ) : null}
-            {isEdit ? "Сохранить изменения" : "Создать слайд"}
-          </Button>
+            <div className="flex flex-col gap-2">
+              <label className="text-foreground font-medium">
+                Тип контента <span className="text-red-500">*</span>
+              </label>
+              <Select
+                value={type}
+                onValueChange={(val: string) =>
+                  setType(val as "promo_product" | "promo_information")
+                }
+                disabled={isPending || isEdit}
+              >
+                <SelectTrigger className="bg-background w-full shadow-none">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="promo_information">
+                    Информационный (Текст + Кнопка)
+                  </SelectItem>
+                  <SelectItem value="promo_product">
+                    Товарный (Точки на фото)
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-foreground font-medium">
+                Изображение для ПК <span className="text-red-500">*</span>
+              </label>
+              {renderFilePreview(fileKey, "Desktop", isUploadingDesktop, () =>
+                setFileKey(""),
+              )}
+              {!fileKey && !isUploadingDesktop && (
+                <label className="hover:bg-muted/50 border-ring/30 flex h-24 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed transition-all">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handleFileUpload(e, "desktop")}
+                  />
+                  <UploadCloud className="text-muted-foreground size-6" />
+                  <span className="text-muted-foreground text-xs font-medium">
+                    Загрузить фото (16:9)
+                  </span>
+                </label>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-foreground font-medium">
+                Изображение для телефона
+              </label>
+              {renderFilePreview(
+                mobileFileKey,
+                "Mobile",
+                isUploadingMobile,
+                () => setMobileFileKey(""),
+              )}
+              {!mobileFileKey && !isUploadingMobile && (
+                <label className="hover:bg-muted/50 border-ring/30 flex h-24 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed transition-all">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handleFileUpload(e, "mobile")}
+                  />
+                  <UploadCloud className="text-muted-foreground size-6" />
+                  <span className="text-muted-foreground text-xs font-medium">
+                    Загрузить фото (9:16)
+                  </span>
+                </label>
+              )}
+            </div>
+
+            {type === "promo_information" && (
+              <div className="flex flex-col gap-2">
+                <span className="text-foreground font-medium">
+                  Настройки Payload
+                </span>
+                <Input
+                  placeholder="Заголовок"
+                  value={payloadInfo.title}
+                  onChange={(e) =>
+                    setPayloadInfo({ ...payloadInfo, title: e.target.value })
+                  }
+                  disabled={isPending}
+                />
+                <Input
+                  placeholder="Описание"
+                  value={payloadInfo.description}
+                  onChange={(e) =>
+                    setPayloadInfo({
+                      ...payloadInfo,
+                      description: e.target.value,
+                    })
+                  }
+                  disabled={isPending}
+                />
+                <Input
+                  placeholder="Текст кнопки"
+                  value={payloadInfo.buttonText}
+                  onChange={(e) =>
+                    setPayloadInfo({
+                      ...payloadInfo,
+                      buttonText: e.target.value,
+                    })
+                  }
+                  disabled={isPending}
+                />
+                <Input
+                  placeholder="Ссылка (напр. /catalog/hob)"
+                  value={payloadInfo.href}
+                  onChange={(e) =>
+                    setPayloadInfo({ ...payloadInfo, href: e.target.value })
+                  }
+                  disabled={isPending}
+                />
+              </div>
+            )}
+
+            {type === "promo_product" && (
+              <div className="flex flex-col gap-2">
+                <span className="text-foreground font-medium">
+                  Точки (JSON)
+                </span>
+
+                <textarea
+                  className="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-50 w-full rounded-md border bg-transparent px-3 py-2 font-mono text-xs focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  value={tagsJson}
+                  onChange={(e) => setTagsJson(e.target.value)}
+                  disabled={isPending}
+                />
+              </div>
+            )}
+          </div>
+          <div className="bg-background mt-auto rounded-4xl p-6">
+            <Button
+              type="submit"
+              disabled={isPending || isUploadingDesktop || isUploadingMobile}
+              className="mt-4 h-12 w-full"
+            >
+              {isPending ? (
+                <Loader2 className="mr-2 size-4 animate-spin" />
+              ) : null}
+              {isEdit ? "Сохранить изменения" : "Создать слайд"}
+            </Button>
+          </div>
         </form>
       </SheetContent>
     </Sheet>

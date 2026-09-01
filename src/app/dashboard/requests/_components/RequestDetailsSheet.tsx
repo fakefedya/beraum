@@ -11,6 +11,7 @@ import {
 import { Loader2, ExternalLink, FileIcon } from "lucide-react";
 import { SafeImage } from "@/src/components/shared/SafeImage";
 import type { RequestItem, FeedbackPayload } from "./RequestsTable";
+import { cn } from "@/src/lib/utils";
 
 interface RequestDetailsProps {
   request: RequestItem | null;
@@ -21,6 +22,7 @@ interface RequestDetailsProps {
 
 const PAYLOAD_LABELS: Record<string, string> = {
   address: "Адрес",
+  city: "Город",
   deviceCondition: "Тип техники",
   categoryId: "Категория",
   modelArticle: "Артикул / Модель",
@@ -28,10 +30,11 @@ const PAYLOAD_LABELS: Record<string, string> = {
   marketplace: "Место покупки",
   sourcePage: "Страница обращения",
   topic: "Тема вопроса",
-  companyName: "Название компании",
+  company: "Компания / ИНН",
   inn: "ИНН",
   volume: "Ожидаемый объем",
   source: "Источник перехода",
+  techType: "Категория",
 };
 
 export const RequestDetailsSheet = ({
@@ -113,6 +116,8 @@ export const RequestDetailsSheet = ({
         wb: "Wildberries",
         ymarket: "Яндекс Маркет",
         mvideo: "М.Видео",
+        megamarket: "МегаМаркет",
+        beraum: "Оф. сайт",
       };
       return marketplaceMap[String(value)] || String(value);
     }
@@ -134,8 +139,14 @@ export const RequestDetailsSheet = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={(o) => !o && onClose()}>
-      <SheetContent className="border-border/50 bg-background/95 w-full overflow-y-auto border-l backdrop-blur-xl sm:max-w-md">
-        <SheetHeader className="mb-6">
+      <SheetContent
+        className={cn(
+          "flex h-auto w-full flex-col gap-0 border-none p-0",
+          "sm:max-w-md",
+          "md:inset-y-4 md:right-4 md:rounded-4xl",
+        )}
+      >
+        <SheetHeader className="px-6 pt-6 text-left">
           <SheetTitle className="text-xl">Детали заявки</SheetTitle>
           <div className="text-muted-foreground text-sm">
             {new Intl.DateTimeFormat("ru-RU", {
@@ -145,24 +156,22 @@ export const RequestDetailsSheet = ({
           </div>
         </SheetHeader>
 
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-1 flex-col gap-8 overflow-y-auto p-6">
           <section className="flex flex-col gap-3">
-            <h4 className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
-              Контакты
-            </h4>
-            <div className="bg-muted/30 flex flex-col gap-1 rounded-xl p-4">
-              <span className="text-foreground font-medium">
+            <h4 className="text-foreground font-medium">Контакты</h4>
+            <div className="bg-muted flex flex-col gap-2 rounded-xl p-4">
+              <span className="text-foreground text-sm font-medium">
                 {request.name}
               </span>
               <a
                 href={`mailto:${request.email}`}
-                className="text-blue-500 hover:underline"
+                className="text-sm text-blue-500 hover:underline"
               >
                 {request.email}
               </a>
               <a
                 href={`tel:${request.phone}`}
-                className="text-foreground hover:underline"
+                className="text-foreground text-sm hover:underline"
               >
                 {request.phone}
               </a>
@@ -171,10 +180,8 @@ export const RequestDetailsSheet = ({
 
           {specificEntries.length > 0 && (
             <section className="flex flex-col gap-3">
-              <h4 className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
-                Специфика
-              </h4>
-              <div className="bg-muted/30 flex flex-col gap-3 rounded-xl p-4 text-sm">
+              <h4 className="text-foreground font-medium">Подробности</h4>
+              <div className="bg-muted flex flex-col gap-3 rounded-xl p-4 text-sm">
                 {specificEntries.map(([key, value]) => (
                   <div
                     key={key}
@@ -193,10 +200,8 @@ export const RequestDetailsSheet = ({
           )}
 
           <section className="flex flex-col gap-3">
-            <h4 className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
-              Сообщение
-            </h4>
-            <div className="bg-muted/30 rounded-xl p-4 text-sm leading-relaxed wrap-break-word whitespace-pre-wrap">
+            <h4 className="text-foreground font-medium">Сообщение</h4>
+            <div className="bg-muted text-muted-foreground rounded-xl p-4 text-sm wrap-break-word whitespace-pre-wrap">
               {request.message || (
                 <span className="text-muted-foreground italic">
                   Без сообщения
@@ -207,9 +212,7 @@ export const RequestDetailsSheet = ({
 
           {hasMedia && (
             <section className="flex flex-col gap-3">
-              <h4 className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
-                Вложения
-              </h4>
+              <h4 className="text-foreground font-medium">Вложения</h4>
               {isLoadingMedia ? (
                 <div className="text-muted-foreground flex items-center gap-2 text-sm">
                   <Loader2 className="h-4 w-4 animate-spin" /> Генерация

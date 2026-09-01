@@ -227,9 +227,17 @@ export const ProductMediaManager = ({
         </Button>
       </SheetTrigger>
 
-      <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-xl">
-        <SheetHeader className="mb-6">
-          <SheetTitle>Медиафайлы: {article}</SheetTitle>
+      <SheetContent
+        side="right"
+        className={cn(
+          "flex h-auto w-full flex-col gap-0 border-none p-0",
+          "sm:max-w-md",
+          "md:inset-y-4 md:right-4 md:rounded-4xl",
+        )}
+      >
+        <SheetHeader className="flex flex-col gap-1 px-6 pt-6 text-left">
+          <SheetTitle className="text-xl">{article}</SheetTitle>
+          <span className="text-muted-foreground text-sm">Работа с медиа</span>
         </SheetHeader>
 
         {isLoading ? (
@@ -237,11 +245,9 @@ export const ProductMediaManager = ({
             <Loader2 className="size-6 animate-spin" />
           </div>
         ) : (
-          <div className="flex flex-col gap-10">
+          <div className="flex flex-1 flex-col gap-8 overflow-y-auto p-6">
             <div className="flex flex-col gap-4">
-              <h3 className="border-b pb-2 text-lg font-semibold">
-                Изображения
-              </h3>
+              <h3 className="text-foreground font-medium">Изображения</h3>
               <div className="grid grid-cols-2 gap-4">
                 {assets.images.map((img) => (
                   <div
@@ -310,12 +316,12 @@ export const ProductMediaManager = ({
             </div>
 
             <div className="flex flex-col gap-4">
-              <h3 className="border-b pb-2 text-lg font-semibold">
+              <h3 className="text-foreground font-medium">
                 Инструкции и сертификаты
               </h3>
 
               <div className="bg-muted/30 border-border flex flex-col gap-3 rounded-xl border p-4">
-                <span className="text-sm font-medium">
+                <span className="text-muted-background text-sm font-medium">
                   Добавить документ (PDF)
                 </span>
                 <div className="flex gap-2">
@@ -323,7 +329,7 @@ export const ProductMediaManager = ({
                     value={docType}
                     onValueChange={(val: DocumentType) => setDocType(val)}
                   >
-                    <SelectTrigger className="bg-background w-full">
+                    <SelectTrigger className="bg-background w-full shadow-none">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -343,7 +349,7 @@ export const ProductMediaManager = ({
                 <Button
                   asChild
                   variant="secondary"
-                  className="mt-1 w-full cursor-pointer"
+                  className="mt-1 h-12 w-full cursor-pointer"
                   disabled={isUploadingDoc}
                 >
                   <label>
