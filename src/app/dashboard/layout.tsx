@@ -44,8 +44,10 @@ export default async function DashboardLayout({
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="border-border/50 bg-background/50 flex h-16 items-center justify-between border-b px-6 backdrop-blur-md">
           <div className="flex items-center">
-            <span className="text-sm">{session.user.name}</span>
-            <span className="bg-brand ml-2 rounded-sm px-1 text-xs font-medium tracking-normal text-black/80">
+            <span className="border-border/50 mr-4 border-r pr-4 text-sm">
+              {session.user.name}
+            </span>
+            <span className="bg-brand rounded-sm px-1 text-sm tracking-normal text-black/80">
               {PAYLOAD_ROLES[userRole]}
             </span>
             <span className="text-muted-foreground border-border/50 ml-4 hidden border-l pl-4 text-sm md:block">

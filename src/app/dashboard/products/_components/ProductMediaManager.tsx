@@ -265,7 +265,7 @@ export const ProductMediaManager = ({
                     />
 
                     {img.isCover ? (
-                      <span className="bg-brand absolute top-2 left-2 rounded px-2 py-0.5 text-[10px] font-bold text-black shadow-sm">
+                      <span className="bg-brand absolute top-2 left-2 rounded px-2 py-0.5 text-[10px] font-medium text-black">
                         ОБЛОЖКА
                       </span>
                     ) : (
