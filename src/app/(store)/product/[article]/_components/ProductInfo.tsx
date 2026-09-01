@@ -1,12 +1,7 @@
 import Link from "next/link";
 import { CheckCircle2, XCircle, Info } from "lucide-react";
 import { Badge } from "@/src/components/ui/badge";
-import {
-  COLOR_SWATCH_MAP,
-  DEFAULT_SWATCH_COLOR,
-  getSwatchStyle,
-  MARKETPLACE_LINKS,
-} from "@/src/lib/constants";
+import { getSwatchStyle, MARKETPLACE_LINKS } from "@/src/lib/constants";
 import { cn } from "@/src/lib/utils";
 import { getProductByArticle } from "@/src/server/queries/products";
 
