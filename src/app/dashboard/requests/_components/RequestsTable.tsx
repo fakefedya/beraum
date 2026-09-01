@@ -14,7 +14,7 @@ import {
 import type { feedbackRequests } from "@/src/server/db/schema";
 import { RequestDetailsSheet } from "./RequestDetailsSheet";
 import { Button } from "@/src/components/ui/button";
-import { Paperclip } from "lucide-react";
+import { PanelRightOpen, Paperclip } from "lucide-react";
 
 export type RequestItem = typeof feedbackRequests.$inferSelect;
 
@@ -65,7 +65,7 @@ const typeMap = {
   consultation: "Консультация",
   partnership: "Партнерство",
   support: "Поддержка",
-  wholesale: "Опт",
+  wholesale: "Дисконт",
 };
 
 export const RequestsTable = ({ requests, categories }: RequestsTableProps) => {
@@ -108,7 +108,7 @@ export const RequestsTable = ({ requests, categories }: RequestsTableProps) => {
                 <th className="px-6 py-4 font-medium">ID</th>
                 <th className="px-6 py-4 font-medium">Дата / Тип</th>
                 <th className="px-6 py-4 font-medium">Клиент</th>
-                <th className="px-6 py-4 font-medium">Кратко</th>
+                <th className="px-6 py-4 font-medium">Описание</th>
                 <th className="w-48 px-6 py-4 font-medium">Статус</th>
                 <th className="w-24 px-6 py-4 font-medium">Действия</th>
               </tr>
@@ -126,13 +126,13 @@ export const RequestsTable = ({ requests, categories }: RequestsTableProps) => {
                     className="hover:bg-muted/30 transition-colors"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-foreground font-mono text-xs font-semibold">
+                      <span className="text-foreground h-8 text-xs font-semibold">
                         {req.ticketNumber}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex flex-col gap-1.5">
-                        <span className="font-medium">
+                      <div className="flex flex-col gap-2">
+                        <span className="text-muted-foreground text-xs font-medium">
                           {new Intl.DateTimeFormat("ru-RU", {
                             day: "2-digit",
                             month: "short",
@@ -140,14 +140,40 @@ export const RequestsTable = ({ requests, categories }: RequestsTableProps) => {
                             minute: "2-digit",
                           }).format(new Date(req.createdAt))}
                         </span>
-                        <Badge variant="outline" className="w-fit text-[10px]">
-                          {typeMap[req.type]}
-                        </Badge>
+
+                        {(() => {
+                          switch (typeMap[req.type]) {
+                            case "Консультация":
+                              return (
+                                <Badge className="text-teak-700 w-fit bg-teal-100 text-xs text-teal-700">
+                                  {typeMap[req.type]}
+                                </Badge>
+                              );
+                            case "Партнерство":
+                              return (
+                                <Badge className="w-fit bg-rose-100 text-xs text-rose-700">
+                                  {typeMap[req.type]}
+                                </Badge>
+                              );
+                            case "Дисконт":
+                              return (
+                                <Badge className="w-fit bg-orange-100 text-xs text-orange-700">
+                                  {typeMap[req.type]}
+                                </Badge>
+                              );
+                            default:
+                              return (
+                                <Badge className="w-fit bg-blue-100 text-xs text-blue-700">
+                                  {typeMap[req.type]}
+                                </Badge>
+                              );
+                          }
+                        })()}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex flex-col gap-1">
-                        <span className="text-foreground font-semibold">
+                      <div className="flex flex-col gap-2">
+                        <span className="text-foreground font-medium">
                           {req.name}
                         </span>
                         <span className="text-muted-foreground text-xs">
@@ -175,7 +201,7 @@ export const RequestsTable = ({ requests, categories }: RequestsTableProps) => {
                         onValueChange={(val) => handleStatusChange(req.id, val)}
                       >
                         <SelectTrigger
-                          className={`h-8 ${statusMap[req.status as keyof typeof statusMap].color} border-none font-medium`}
+                          className={`h-8 ${statusMap[req.status as keyof typeof statusMap].color} border-none font-medium shadow-none`}
                         >
                           <SelectValue />
                         </SelectTrigger>
@@ -190,9 +216,11 @@ export const RequestsTable = ({ requests, categories }: RequestsTableProps) => {
                       <Button
                         variant="outline"
                         size="sm"
+                        className="hover:bg-background/60 w-full border-none shadow-none"
                         onClick={() => setSelectedRequest(req)}
                       >
-                        Открыть
+                        <PanelRightOpen className="size-4" />
+                        <span className="text-sm">Открыть</span>
                       </Button>
                     </td>
                   </tr>

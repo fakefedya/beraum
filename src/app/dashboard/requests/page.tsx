@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 const TYPE_FILTERS: { label: string; value: RequestType }[] = [
   { label: "Все", value: "all" },
   { label: "Служба поддержки", value: "support" },
-  { label: "Оптовые закупки", value: "wholesale" },
+  { label: "Дисконт", value: "wholesale" },
   { label: "B2B Партнерство", value: "partnership" },
   { label: "Консультации", value: "consultation" },
 ];

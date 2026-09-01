@@ -113,7 +113,7 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
               className={cn(
                 "h-8 w-full text-xs font-medium shadow-none",
                 isLatest === "true"
-                  ? "bg-brand/20 text-brand-secondary-muted dark:bg-brand/10 dark:text-brand"
+                  ? "bg-brand text-foreground dark:bg-brand dark:text-black"
                   : "bg-muted text-foreground",
               )}
             >

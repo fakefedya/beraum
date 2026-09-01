@@ -47,7 +47,7 @@ export const UsersTable = ({
           <th className="px-4 py-3 font-medium">Роль</th>
           <th className="px-4 py-3 font-medium">Безопасность</th>
           <th className="px-4 py-3 font-medium">Новый пароль</th>
-          <th className="px-4 py-3 text-right font-medium">Действия</th>
+          <th className="px-4 py-3 font-medium">Действия</th>
         </tr>
       </thead>
       <tbody className="divide-y">
@@ -102,17 +102,17 @@ const UserRow = ({ user, isSelf }: { user: SafeUserItem; isSelf: boolean }) => {
           <input type="hidden" name="isLocked" value={isLocked} />
           <input type="hidden" name="isTwoFactorEnabled" value={is2FA} />
         </form>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <Input
             name="name"
             form={formId}
             defaultValue={user.name || ""}
-            className="h-8 text-xs font-semibold"
+            className="h-8 font-medium shadow-none"
             disabled={isPending}
           />
-          <span className="text-muted-foreground font-mono text-[11px] tracking-wider">
+          <div className="text-muted-foreground bg-foreground/5 flex h-8 items-center rounded-md px-3 text-xs font-medium">
             {user.email}
-          </span>
+          </div>
         </div>
       </td>
 
@@ -124,7 +124,7 @@ const UserRow = ({ user, isSelf }: { user: SafeUserItem; isSelf: boolean }) => {
           }
           disabled={isPending || isSelf}
         >
-          <SelectTrigger className="h-8 w-32 text-xs">
+          <SelectTrigger className="text-foreground h-8 w-32 bg-transparent text-xs font-medium shadow-none">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -143,7 +143,7 @@ const UserRow = ({ user, isSelf }: { user: SafeUserItem; isSelf: boolean }) => {
             disabled={isPending || isSelf}
           >
             <SelectTrigger
-              className={`h-8 w-32 border-none text-xs ${isLocked === "true" ? "bg-red-100 text-red-700 dark:bg-red-900/50" : "bg-green-100 text-green-700 dark:bg-green-900/50"}`}
+              className={`h-8 w-32 border-none text-xs font-medium ${isLocked === "true" ? "bg-red-500 text-red-100 dark:bg-red-500" : "bg-green-500 text-green-100 dark:bg-green-500"}`}
             >
               <SelectValue />
             </SelectTrigger>
@@ -153,7 +153,7 @@ const UserRow = ({ user, isSelf }: { user: SafeUserItem; isSelf: boolean }) => {
             </SelectContent>
           </Select>
           <Select value={is2FA} onValueChange={setIs2FA} disabled={isPending}>
-            <SelectTrigger className="h-8 w-32 text-xs">
+            <SelectTrigger className="h-8 w-32 text-xs font-medium shadow-none">
               <div className="flex items-center gap-2">
                 {is2FA === "true" ? (
                   <ShieldCheck className="size-3 text-green-500" />
@@ -177,7 +177,7 @@ const UserRow = ({ user, isSelf }: { user: SafeUserItem; isSelf: boolean }) => {
           form={formId}
           type="password"
           placeholder="Оставьте пустым"
-          className="h-8 text-xs"
+          className="text-foreground placeholder:text-muted-foreground h-8 font-medium shadow-none placeholder:font-normal"
           disabled={isPending}
         />
       </td>
@@ -192,11 +192,11 @@ const UserRow = ({ user, isSelf }: { user: SafeUserItem; isSelf: boolean }) => {
             className="w-28"
           >
             {isPending ? (
-              <Loader2 className="mr-2 size-4 animate-spin" />
+              <Loader2 className="size-4 animate-spin" />
             ) : (
-              <Save className="mr-2 size-4" />
+              <Save className="size-4" />
             )}
-            Сохранить
+            <span className="text-sm">Сохранить</span>
           </Button>
           {!isSelf && (
             <Button
@@ -206,7 +206,8 @@ const UserRow = ({ user, isSelf }: { user: SafeUserItem; isSelf: boolean }) => {
               disabled={isPending}
               className="w-28"
             >
-              <Trash2 className="mr-2 size-4" /> Удалить
+              <Trash2 className="mr-2 size-4" />
+              <span className="text-sm">Удалить</span>
             </Button>
           )}
         </div>

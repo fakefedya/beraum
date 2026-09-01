@@ -41,7 +41,7 @@ export const CreateUserSheet = () => {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button className="bg-foreground text-background h-10 px-4 font-medium">
-          <Plus className="mr-2 size-4" /> Добавить сотрудника
+          <Plus className="mr-2 size-4" /> Добавить пользователя
         </Button>
       </SheetTrigger>
 
