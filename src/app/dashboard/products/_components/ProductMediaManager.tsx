@@ -36,7 +36,7 @@ type DocumentType = "user_instruction" | "service_instruction" | "certificate";
 
 const DOC_TYPE_LABELS: Record<DocumentType, string> = {
   user_instruction: "Руководство пользователя",
-  service_instruction: "Схема встраивания",
+  service_instruction: "Инструкция по установке",
   certificate: "Сертификат соответствия",
 };
 
