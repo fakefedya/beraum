@@ -3,7 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDebounce } from "@/src/hooks/use-debounce";
 import { useEffect, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 
 interface SearchInputProps {
   paramName?: string;
@@ -48,10 +48,21 @@ export const SearchInput = ({
       <input
         type="text"
         placeholder={placeholder}
-        className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring h-10 w-full rounded-md border pr-4 pl-9 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none"
+
+        className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring h-10 w-full rounded-md border pr-9 pl-9 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
+      {query && (
+        <button
+          type="button"
+          aria-label="Очистить поиск"
+          onClick={() => setQuery("")}
+          className="text-muted-foreground hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-2 flex -translate-y-1/2 items-center justify-center rounded-sm transition-colors focus-visible:ring-2 focus-visible:outline-none"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      )}
     </div>
   );
 };
