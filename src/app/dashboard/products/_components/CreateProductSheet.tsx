@@ -67,8 +67,8 @@ export const CreateProductSheet = ({
           <SheetTitle className="text-xl">Создание нового товара</SheetTitle>
         </SheetHeader>
 
-        <form action={handleAction}>
-          <div className="flex max-h-[calc(100%-112px)] flex-1 flex-col gap-8 overflow-y-auto p-6">
+        <form action={handleAction} className="h-[calc(100%-68px)]">
+          <div className="flex h-full max-h-[calc(100%-112px)] flex-1 flex-col gap-8 overflow-y-auto p-6">
             <div className="flex items-start gap-3 rounded-xl bg-blue-50 p-4 text-sm text-blue-800 dark:bg-blue-950/30 dark:text-blue-300">
               <AlertCircle className="mt-0.5 size-5 shrink-0" />
               <p>
