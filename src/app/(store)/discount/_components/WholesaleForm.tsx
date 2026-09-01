@@ -72,7 +72,7 @@ export const WholesaleForm = () => {
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <FloatingField
           name="name"
-          label="Ваше имя"
+          label="Имя"
           disabled={isPending}
           error={state.fieldErrors?.name}
           defaultValue={state.payload?.name as string}
