@@ -1,5 +1,6 @@
 "use server";
 
+import "server-only";
 import { signIn } from "@/src/lib/auth/auth";
 import { LoginSchema } from "@/src/lib/auth/auth.config";
 import { db } from "@/src/server/db/client";
@@ -11,6 +12,7 @@ import { checkRateLimit } from "../utils/rate-limit";
 import { generateTwoFactorToken } from "../utils/tokens";
 import { sendTwoFactorTokenEmail } from "../services/mail/client";
 import { getClientIp } from "../utils/ip";
+import { after } from "next/server";
 
 export type LoginActionState = {
   success: boolean;
@@ -63,6 +65,7 @@ export async function loginAction(
       .from(users)
       .where(eq(users.email, email));
 
+    // Защита от Time-based
     const hashToCompare = existingUser?.passwordHash || DUMMY_HASH;
     const passwordsMatch = await compare(password, hashToCompare);
 
@@ -92,14 +95,24 @@ export async function loginAction(
         if (existingToken && new Date() < existingToken.expires) {
           return {
             success: false,
-            error: "Код уже отправлен. Проверьте почту или подождите.",
             isTwoFactor: true,
             payload: data,
           };
         }
 
         const twoFactorToken = await generateTwoFactorToken(existingUser.email);
-        await sendTwoFactorTokenEmail(existingUser.email, twoFactorToken.token);
+
+        after(async () => {
+          try {
+            await sendTwoFactorTokenEmail(
+              existingUser.email,
+              twoFactorToken.token,
+            );
+          } catch (err) {
+            console.error("❌ Фоновая отправка 2FA не удалась:", err);
+          }
+        });
+
         return { success: false, isTwoFactor: true, payload: data };
       }
 

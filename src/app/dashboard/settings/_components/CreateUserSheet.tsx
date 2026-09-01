@@ -107,7 +107,7 @@ export const CreateUserSheet = () => {
               </label>
               <Input
                 name="password"
-                type="text"
+                type="password"
                 required
                 minLength={8}
                 disabled={isPending}

@@ -1,4 +1,3 @@
-// src/server/services/mail/client.ts
 import "server-only";
 import nodemailer from "nodemailer";
 import { serverEnv } from "@/src/lib/env/server";
@@ -7,8 +6,8 @@ const transporter = nodemailer.createTransport({
   host: serverEnv.SMTP_HOST,
   port: serverEnv.SMTP_PORT,
   secure: serverEnv.SMTP_PORT === 465,
-  pool: true, // Переиспользование соединений
-  maxConnections: 1, // Для Timeweb лучше держать 1 коннект
+  pool: true,
+  maxConnections: 1,
   maxMessages: 100,
   auth: {
     user: serverEnv.SMTP_USER,
@@ -17,7 +16,6 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendTwoFactorTokenEmail(email: string, token: string) {
-  // 🛡️ Security: Выводим код в консоль ТОЛЬКО в режиме локальной разработки
   if (process.env.NODE_ENV === "development") {
     console.log(`\n\n🛡️ [SECURITY] 2FA Код для ${email}: ${token}\n\n`);
   }
@@ -42,17 +40,14 @@ export async function sendTwoFactorTokenEmail(email: string, token: string) {
       `,
     };
 
-    // 🛡️ Security/Architecture: Fail-fast паттерн
-    // Ограничиваем ожидание ответа от Timeweb 8 секундами
     const sendPromise = transporter.sendMail(mailOptions);
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("SMTP_TIMEOUT")), 8000),
+      setTimeout(() => reject(new Error("SMTP_TIMEOUT")), 15000),
     );
 
     await Promise.race([sendPromise, timeoutPromise]);
   } catch (error) {
     console.error("❌ [MAIL] Ошибка отправки 2FA кода:", error);
-    // Отдаем наверх очищенную ошибку
     throw new Error("Не удалось отправить код на почту");
   }
 }

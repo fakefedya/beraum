@@ -67,7 +67,7 @@ const updateProductSchema = z.object({
   isLatest: z.preprocess((val) => val === "true" || val === true, z.boolean()),
   discountPercentage: z.coerce.number().min(0).max(100).default(0),
   manualPrice: z.preprocess(
-    (val) => (val === "" || val === null ? null : Number(val)),
+    (val) => (val === "—" || val === null ? null : Number(val)),
     z.number().nullable().optional(),
   ),
   ozonLink: z.string().url().or(z.literal("")).optional(),
