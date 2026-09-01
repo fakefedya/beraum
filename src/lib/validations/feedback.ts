@@ -17,7 +17,18 @@ const baseFeedbackSchema = z.object({
   }),
 });
 
-export const consultSchema = baseFeedbackSchema;
+export const consultSchema = baseFeedbackSchema.extend({
+  sourcePage: z
+    .string()
+    .trim()
+    .max(255, "Путь слишком длинный")
+    .startsWith("/", "Путь должен быть относительным")
+    .refine(
+      (val) => !val.startsWith("//"),
+      "Protocol-relative ссылки запрещены",
+    )
+    .default("/"), // Fallback, если поля вдруг нет
+});
 
 export const partnershipSchema = baseFeedbackSchema.extend({
   company: z.string().max(150, "Слишком длинное название").optional(),

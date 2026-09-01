@@ -87,7 +87,7 @@ export const WholesaleForm = () => {
         />
         <FloatingField
           name="email"
-          label="Email"
+          label="Почта"
           type="email"
           disabled={isPending}
           error={state.fieldErrors?.email}

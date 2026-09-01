@@ -213,6 +213,7 @@ export async function submitConsultAction(
 
     const { name, phone, email, message, consent, ...payloadData } =
       parsed.data;
+    console.log(parsed.data);
 
     const rateLimit = await checkRateLimit("consultation", 3, 60000);
     if (!rateLimit.success) {
@@ -230,7 +231,7 @@ export async function submitConsultAction(
       phone,
       email,
       message,
-      payload: { sourcePage: "/", ...payloadData },
+      payload: payloadData,
       ipHash: rateLimit.ipHash,
       consentAt: new Date(),
     });
