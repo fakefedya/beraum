@@ -142,7 +142,7 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
           <input
             name="manualPrice"
             form={formId}
-            defaultValue={product.manualPrice ? product.manualPrice : 0}
+            defaultValue={product.manualPrice ?? "—"}
             className={cn(
               inputClass,
               "h-8 w-full bg-transparent font-medium shadow-none",

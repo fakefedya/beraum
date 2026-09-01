@@ -66,7 +66,10 @@ const updateProductSchema = z.object({
   status: z.enum(["draft", "published", "archived"]),
   isLatest: z.preprocess((val) => val === "true" || val === true, z.boolean()),
   discountPercentage: z.coerce.number().min(0).max(100).default(0),
-  manualPrice: z.coerce.number().optional(),
+  manualPrice: z.preprocess(
+    (val) => (val === "" || val === null ? null : Number(val)),
+    z.number().nullable().optional(),
+  ),
   ozonLink: z.string().url().or(z.literal("")).optional(),
   wbLink: z.string().url().or(z.literal("")).optional(),
   ymarketLink: z.string().url().or(z.literal("")).optional(),
