@@ -143,7 +143,13 @@ export const BannerRow = ({ slide }: { slide: SlideItem }) => {
           onValueChange={setIsActive}
           disabled={isPending || isDeleting}
         >
-          <SelectTrigger className="h-8 w-full text-xs font-medium shadow-none">
+          <SelectTrigger
+            className={cn(
+              "h-8 w-full text-xs font-medium shadow-none",
+              isActive === "true" &&
+                "bg-green-400 text-black dark:bg-green-400 dark:text-black dark:hover:bg-green-500",
+            )}
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -155,20 +161,6 @@ export const BannerRow = ({ slide }: { slide: SlideItem }) => {
 
       <td className="px-4 py-4 text-right align-top">
         <div className="flex flex-col gap-2">
-          <BannerSheet
-            slide={slide}
-            trigger={
-              <Button
-                variant="outline"
-                size="sm"
-                className="hover:bg-background/60 w-full border-none shadow-none"
-              >
-                <Edit2 className="size-4" />
-                <span className="text-sm">Изменить</span>
-              </Button>
-            }
-          />
-
           <Button
             type="submit"
             form={formId}
@@ -183,6 +175,20 @@ export const BannerRow = ({ slide }: { slide: SlideItem }) => {
             )}
             <span className="text-sm">Сохранить</span>
           </Button>
+
+          <BannerSheet
+            slide={slide}
+            trigger={
+              <Button
+                variant="outline"
+                size="sm"
+                className="hover:bg-background/60 w-full border-none shadow-none"
+              >
+                <Edit2 className="size-4" />
+                <span className="text-sm">Изменить</span>
+              </Button>
+            }
+          />
 
           <Button
             variant="destructive"

@@ -95,7 +95,15 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
       <td className="px-4 py-4 align-top">
         <div className="flex flex-col gap-2">
           <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="h-8 w-full text-xs font-medium shadow-none">
+            <SelectTrigger
+              className={cn(
+                "h-8 w-full text-xs font-medium shadow-none transition-colors duration-300",
+                status === "published" &&
+                  "bg-green-400 text-black dark:bg-green-400 dark:text-black dark:hover:bg-green-500",
+                status === "draft" &&
+                  "bg-yellow-400 text-black dark:bg-yellow-400 dark:text-black dark:hover:bg-yellow-500",
+              )}
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
