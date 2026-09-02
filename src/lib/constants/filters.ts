@@ -19,7 +19,7 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
     {
       key: "width",
       label: "Ширина панели, см",
-      options: ["28.8", "31", "32", "35", "45", "52", "53", "59", "60"],
+      options: ["28.8", "31", "32", "35", "45", "52", "53", "59", "60", "80"],
     },
     {
       key: "controlType",
@@ -62,6 +62,8 @@ export const CATEGORY_FILTERS: Record<string, FilterConfig[]> = {
         "Расширение зоны нагрева",
         "Комплект для подключения газового баллона",
         "Автоматический электроподжиг",
+        "Встроенная вытяжка",
+        "Индукционный мост",
       ],
     },
   ],
