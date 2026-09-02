@@ -274,7 +274,9 @@ export const BannerSheet = ({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="home_hero">Главная страница</SelectItem>
-                  <SelectItem value="catalog_hero">Каталог</SelectItem>
+                  <SelectItem disabled value="catalog_hero">
+                    Каталог
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>

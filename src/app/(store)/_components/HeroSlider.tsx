@@ -148,8 +148,8 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
                   >
                     <div className="absolute flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center transition-transform duration-300 group-hover:scale-110">
                       <span className="bg-brand absolute inline-flex h-full w-full animate-[ping_2s_ease-in-out_infinite] rounded-full" />
-                      <span className="bg-background ring-brand/50 relative flex h-4 w-4 items-center justify-center rounded-full shadow-sm ring-2">
-                        <span className="bg-card h-1 w-1 rounded-full" />
+                      <span className="bg-card/80 ring-brand/50 relative flex h-4 w-4 items-center justify-center rounded-full shadow-sm ring-2">
+                        <span className="bg-background/20 h-1 w-1 rounded-full" />
                       </span>
                     </div>
 
