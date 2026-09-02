@@ -68,14 +68,14 @@ export const BannerRow = ({ slide }: { slide: SlideItem }) => {
   return (
     <tr className="hover:bg-muted/30 transition-colors">
       <td className="px-4 py-4 align-top">
-        <div className="bg-accent relative flex aspect-square w-32 items-center justify-center overflow-hidden rounded-md border">
+        <div className="bg-accent relative flex aspect-video w-50 items-center justify-center overflow-hidden rounded-md border">
           {slide.fileKey ? (
             <SafeImage
               src={imageUrl}
               alt={slide.internalTitle}
               fill
               className="object-cover"
-              sizes="96px"
+              sizes="300px"
             />
           ) : (
             <ImageIcon className="text-muted-foreground size-6 opacity-50" />
