@@ -156,7 +156,7 @@ export default async function ProductPage({ params }: PageProps) {
             <Container>
               <div className="flex flex-col items-center justify-center gap-10">
                 <h2 className="text-3xl font-medium">Документация</h2>
-                <div className="flex flex-wrap justify-center gap-4">
+                <div className="flex w-full flex-col justify-center gap-4 sm:flex-row">
                   {product.documents.map((doc, idx) => {
                     const meta = DOC_META[doc.type];
                     if (!meta) return null;
