@@ -55,7 +55,7 @@ export const BannerSheet = ({
 
   const defaultInfo = { title: "", description: "", buttonText: "", href: "/" };
   const defaultTags =
-    '[\n  {\n    "xPercent": 50,\n    "yPercent": 50,\n    "title": "SKU",\n    "subtitle": "Описание",\n    "href": "/catalog/hob"\n  }\n]';
+    '[\n  {\n    "xPercent": 50,\n    "yPercent": 50,\n    "mobileXPercent": 50,\n    "mobileYPercent": 50,\n     "title": "SKU",\n    "subtitle": "Описание",\n    "href": "/catalog/hob"\n  }\n]';
 
   let initInfo = defaultInfo;
   let initTags = defaultTags;

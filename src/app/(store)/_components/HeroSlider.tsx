@@ -20,6 +20,7 @@ import "swiper/css/effect-fade";
 import { EmptyState } from "@/src/components/ui/empty-state";
 import { cn } from "@/src/lib/utils";
 import { SafeImage } from "@/src/components/shared/SafeImage";
+import { ChevronRight } from "lucide-react";
 
 interface HeroSliderProps {
   slides: ValidatedSlide[];
@@ -114,28 +115,74 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
 
           {slide.type === "promo_product" && (
             <div className="absolute inset-0 z-20">
-              {slide.tags.map((tag, i) => (
-                <Link
-                  key={i}
-                  href={tag.href}
-                  className={cn(
-                    "bg-background/90 border-brand/90 shadow-nav absolute flex items-center gap-2 rounded-full border-4 backdrop-blur-xl backdrop-saturate-150",
-                    "hover:bg-background hover:border-brand transition-colors duration-300",
-                  )}
-                  style={{ left: `${tag.xPercent}%`, top: `${tag.yPercent}%` }}
-                  data-swiper-parallax="-300"
-                  data-swiper-parallax-opacity="0"
-                >
-                  <div className="flex flex-col rounded-full px-6 py-2">
-                    <span className="text-black-muted text-xs leading-3">
-                      {tag.title}
-                    </span>
-                    <span className="text-base font-medium text-black">
-                      {tag.subtitle}
-                    </span>
-                  </div>
-                </Link>
-              ))}
+              {slide.tags.map((tag, i) => {
+                const xDesk = tag.xPercent;
+                const yDesk = tag.yPercent;
+                const xMob = tag.mobileXPercent ?? xDesk;
+                const yMob = tag.mobileYPercent ?? yDesk;
+
+                const isRightDesk = xDesk > 50;
+                const isBottomDesk = yDesk > 50;
+                const isRightMob = xMob > 50;
+                const isBottomMob = yMob > 50;
+
+                return (
+                  <Link
+                    key={i}
+                    href={tag.href}
+                    className={cn(
+                      "group absolute z-30 transition-all duration-300 outline-none hover:z-40",
+                      "top-(--y-mob) left-(--x-mob)",
+                      "md:top-(--y-desk) md:left-(--x-desk)",
+                    )}
+                    style={
+                      {
+                        "--x-mob": `${xMob}%`,
+                        "--y-mob": `${yMob}%`,
+                        "--x-desk": `${xDesk}%`,
+                        "--y-desk": `${yDesk}%`,
+                      } as React.CSSProperties
+                    }
+                    data-swiper-parallax="-300"
+                    data-swiper-parallax-opacity="0"
+                  >
+                    <div className="absolute flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                      <span className="bg-brand absolute inline-flex h-full w-full animate-[ping_2s_ease-in-out_infinite] rounded-full" />
+                      <span className="bg-background ring-brand/50 relative flex h-4 w-4 items-center justify-center rounded-full shadow-sm ring-2">
+                        <span className="bg-card h-1 w-1 rounded-full" />
+                      </span>
+                    </div>
+
+                    <div
+                      className={cn(
+                        "bg-background/80 shadow-nav absolute rounded-xl p-1 backdrop-blur-xl backdrop-saturate-150",
+
+                        isRightMob ? "right-4" : "left-4",
+                        isBottomMob ? "bottom-4" : "top-4",
+
+                        isRightDesk
+                          ? "md:right-4 md:left-auto"
+                          : "md:right-auto md:left-4",
+                        isBottomDesk
+                          ? "md:top-auto md:bottom-4"
+                          : "md:top-4 md:bottom-auto",
+                      )}
+                    >
+                      <div className="bg-card flex items-center gap-2 rounded-lg px-4 py-2">
+                        <div className="flex flex-col text-left">
+                          <span className="text-muted-foreground text-xs font-medium whitespace-nowrap md:text-sm">
+                            {tag.title}
+                          </span>
+                          <span className="text-foreground text-sm font-medium md:text-base">
+                            {tag.subtitle}
+                          </span>
+                        </div>
+                        <ChevronRight className="text-foreground group-hover:text-foreground h-5 w-5 shrink-0 transition-all duration-300 group-hover:translate-x-0.5" />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
 

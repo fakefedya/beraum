@@ -30,6 +30,8 @@ const safeUrlSchema = z
 const tagSchema = z.object({
   xPercent: z.coerce.number().min(0).max(100),
   yPercent: z.coerce.number().min(0).max(100),
+  mobileXPercent: z.number().min(0).max(100).optional(),
+  mobileYPercent: z.number().min(0).max(100).optional(),
   title: z.string().min(1).trim(),
   subtitle: z.string().trim(),
   href: safeUrlSchema,
