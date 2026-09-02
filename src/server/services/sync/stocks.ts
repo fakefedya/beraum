@@ -24,34 +24,30 @@ export async function updateStocksInDb(
     const wbStocks = stocks.filter((s) => s.marketplace === "wb");
 
     await db.transaction(async (tx) => {
-      // Пакетное обновление Ozon
+      // Пакетное обновление Ozon через безопасный JSONB-маппинг
       if (ozonStocks.length > 0) {
-        const articles = ozonStocks.map((s) => s.article);
-        const values = ozonStocks.map((s) => s.stock);
+        const payload = JSON.stringify(
+          ozonStocks.map((s) => ({ article: s.article, stock: s.stock })),
+        );
 
         await tx.execute(sql`
           UPDATE products AS p
-          SET ozon_stock_fbo = u.stock::int
-          FROM (
-            SELECT unnest(${articles}::text[]) AS article, 
-                   unnest(${values}::int[]) AS stock
-          ) AS u
+          SET ozon_stock_fbo = u.stock
+          FROM jsonb_to_recordset(${payload}::jsonb) AS u(article text, stock int)
           WHERE p.item_article = u.article
         `);
       }
 
-      // Пакетное обновление Wildberries
+      // Пакетное обновление Wildberries через безопасный JSONB-маппинг
       if (wbStocks.length > 0) {
-        const articles = wbStocks.map((s) => s.article);
-        const values = wbStocks.map((s) => s.stock);
+        const payload = JSON.stringify(
+          wbStocks.map((s) => ({ article: s.article, stock: s.stock })),
+        );
 
         await tx.execute(sql`
           UPDATE products AS p
-          SET fbs_stock = u.stock::int
-          FROM (
-            SELECT unnest(${articles}::text[]) AS article, 
-                   unnest(${values}::int[]) AS stock
-          ) AS u
+          SET fbs_stock = u.stock
+          FROM jsonb_to_recordset(${payload}::jsonb) AS u(article text, stock int)
           WHERE p.item_article = u.article
         `);
       }
