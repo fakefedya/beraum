@@ -78,7 +78,6 @@ export const RequestRow = ({
         return "bg-blue-100 text-blue-700";
     }
   })();
-
   return (
     <tr className="hover:bg-muted/30 transition-colors">
       <td className="px-6 py-4 whitespace-nowrap">
@@ -114,10 +113,14 @@ export const RequestRow = ({
         </div>
       </td>
       <td className="max-w-xs px-6 py-4">
-        <div className="flex items-center gap-2">
-          <p className="text-muted-foreground line-clamp-2 text-xs">
-            {req.message ||
-              (payload.article ? `Модель: ${payload.article}` : "—")}
+        <div className="flex flex-col items-start gap-2">
+          {payload.modelArticle && (
+            <p className="text-sm font-medium">
+              {String(payload.modelArticle)}
+            </p>
+          )}
+          <p className="text-muted-foreground line-clamp-1 text-xs">
+            {req.message}
           </p>
           {hasMedia && (
             <Paperclip className="text-brand-secondary-muted h-4 w-4 shrink-0" />

@@ -21,7 +21,7 @@ export interface FeedbackPayload {
   topic?: string;
   // Поддержка
   categoryId?: string;
-  article?: string;
+  modelArticle?: string;
   purchaseDate?: string;
   purchasePlace?: string;
   mediaKeys?: string[];
