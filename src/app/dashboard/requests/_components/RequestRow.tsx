@@ -14,6 +14,7 @@ import {
 import { Button } from "@/src/components/ui/button";
 import { PanelRightOpen, Paperclip } from "lucide-react";
 import type { RequestItem, FeedbackPayload } from "./RequestsTable";
+import { CopyButton } from "@/src/components/shared/CopyButton";
 
 const statusMap = {
   new: {
@@ -81,9 +82,15 @@ export const RequestRow = ({
   return (
     <tr className="hover:bg-muted/30 transition-colors">
       <td className="px-6 py-4 whitespace-nowrap">
-        <span className="text-foreground h-8 text-xs font-semibold">
-          {req.ticketNumber}
-        </span>
+        <div className="flex items-center gap-1">
+          <span className="text-foreground text-xs font-semibold">
+            {req.ticketNumber}
+          </span>
+          <CopyButton
+            textToCopy={req.ticketNumber}
+            className="text-muted-foreground hover:text-foreground h-6 w-6"
+          />
+        </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex flex-col gap-2">

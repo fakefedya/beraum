@@ -8,4 +8,6 @@ backup/
 .next/
 .vscode/
 node_modules/
-src/components/ui/
+src/components/
+src/store
+src/dashboard

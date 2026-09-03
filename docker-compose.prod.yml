@@ -1,0 +1,44 @@
+services:
+  web:
+    build: .
+    container_name: brm-web
+    restart: unless-stopped
+    env_file: .env.production
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: brm-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+      - minio
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: brm-postgres
+    restart: unless-stopped
+    env_file: .env.production
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio:latest
+    container_name: brm-minio
+    restart: unless-stopped
+    env_file: .env.production
+    volumes:
+      - miniodata:/data
+    command: server /data --console-address ":9001"
+
+volumes:
+  pgdata:
+  miniodata:
+  caddy_data:
+  caddy_config:
