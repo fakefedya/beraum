@@ -173,7 +173,7 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
                           <span className="text-muted-foreground text-xs font-medium whitespace-nowrap md:text-sm">
                             {tag.title}
                           </span>
-                          <span className="text-foreground text-sm font-medium md:text-base">
+                          <span className="text-foreground text-sm font-medium whitespace-nowrap md:text-base">
                             {tag.subtitle}
                           </span>
                         </div>
