@@ -1,0 +1,15 @@
+# 1. Основной сайт (Next.js)
+beraum.com, www.beraum.com {
+    # Caddy сам обернет это в HTTPS и перенаправит трафик во внутренний контейнер web на порт 3000
+    reverse_proxy web:3000
+}
+
+# 2. Публичный доступ к фото товаров (API MinIO)
+s3.beraum.com {
+    reverse_proxy storage:9000
+}
+
+# 3. Консоль администратора MinIO (Web UI)
+admin-s3.beraum.com {
+    reverse_proxy storage:9001
+}
