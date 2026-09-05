@@ -168,16 +168,16 @@ export const HeroSlider = ({ slides: initialSlides }: HeroSliderProps) => {
                           : "md:top-4 md:bottom-auto",
                       )}
                     >
-                      <div className="bg-card flex items-center gap-2 rounded-lg px-4 py-2">
+                      <div className="bg-card flex items-center gap-2 rounded-lg px-2 py-1 md:px-4 md:py-2">
                         <div className="flex flex-col text-left">
-                          <span className="text-muted-foreground text-xs font-medium whitespace-nowrap md:text-sm">
+                          <span className="text-muted-foreground hidden text-xs font-medium whitespace-nowrap md:block md:text-sm">
                             {tag.title}
                           </span>
-                          <span className="text-foreground text-sm font-medium whitespace-nowrap md:text-base">
+                          <span className="text-foreground text-xs font-medium whitespace-nowrap md:text-base">
                             {tag.subtitle}
                           </span>
                         </div>
-                        <ChevronRight className="text-foreground group-hover:text-foreground h-5 w-5 shrink-0 transition-all duration-300 group-hover:translate-x-0.5" />
+                        <ChevronRight className="text-foreground group-hover:text-foreground h-3 w-3 shrink-0 transition-all duration-300 group-hover:translate-x-0.5 md:h-5 md:w-5" />
                       </div>
                     </div>
                   </Link>

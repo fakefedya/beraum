@@ -14,15 +14,13 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Публичные переменные (допустимы в билде)
+# Публичные переменные
 ENV NEXT_PUBLIC_APP_URL=https://beraum.com
 ENV NEXT_PUBLIC_STORAGE_URL=https://s3.beraum.com
 
-# Архитектурные флаги для безопасной сборки
 ENV SKIP_DB_PREFETCH=1
 ENV SKIP_ENV_VALIDATION=1
 
-# Билдим приложение
 RUN npm run build
 
 # Стейдж 3: Продакшн образ
