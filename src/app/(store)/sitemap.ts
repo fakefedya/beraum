@@ -3,6 +3,8 @@ import { getPublishedArticles } from "@/src/server/queries/products";
 import { getCategoriesList } from "@/src/server/queries/categories";
 import { clientEnv } from "@/src/lib/env/client";
 
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = clientEnv.NEXT_PUBLIC_APP_URL;
 

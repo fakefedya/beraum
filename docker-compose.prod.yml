@@ -23,6 +23,13 @@ services:
       - beraum_caddy_config:/config
     depends_on:
       - web
+    networks:
+      default:
+        aliases:
+          - beraum.com
+          - www.beraum.com
+          - s3.beraum.com
+          - admin-s3.beraum.com
 
   db:
     image: postgres:16-alpine

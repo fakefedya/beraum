@@ -43,12 +43,20 @@ const serverSchema = z.object({
     .optional(),
 });
 
-const parsed = serverSchema.safeParse(process.env);
+// Экспортируем результат самовызывающейся функции
+export const serverEnv = (() => {
+  // Архитектурный флаг обхода валидации при сборке Docker-образа
+  if (process.env.SKIP_ENV_VALIDATION === "1") {
+    return process.env as unknown as z.infer<typeof serverSchema>;
+  }
 
-if (!parsed.success) {
-  console.error("❌ КРИТИЧЕСКАЯ ОШИБКА СЕРВЕРНОГО ОКРУЖЕНИЯ:");
-  console.error(JSON.stringify(parsed.error.format(), null, 2));
-  throw new Error("Невалидные серверные переменные окружения");
-}
+  const parsed = serverSchema.safeParse(process.env);
 
-export const serverEnv = parsed.data;
+  if (!parsed.success) {
+    console.error("❌ КРИТИЧЕСКАЯ ОШИБКА СЕРВЕРНОГО ОКРУЖЕНИЯ:");
+    console.error(JSON.stringify(parsed.error.format(), null, 2));
+    throw new Error("Невалидные серверные переменные окружения");
+  }
+
+  return parsed.data;
+})();

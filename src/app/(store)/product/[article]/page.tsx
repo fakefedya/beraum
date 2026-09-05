@@ -32,8 +32,12 @@ interface PageProps {
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
+  if (process.env.SKIP_DB_PREFETCH === "1") {
+    return [];
+  }
+
   const articles = await getPublishedArticles();
-  return articles.map((article) => ({ article: article.toLowerCase() }));
+  return articles.map((a) => ({ article: a.toLowerCase() }));
 }
 
 export async function generateMetadata({
