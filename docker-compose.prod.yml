@@ -17,6 +17,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "127.0.0.1:5432:5432"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - beraum_caddy_data:/data
@@ -57,6 +58,25 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  storage-init:
+    image: minio/mc:latest
+    container_name: beraum-storage-init
+    depends_on:
+      storage:
+        condition: service_healthy
+    env_file: .env.production
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://storage:9000 $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY;
+      /usr/bin/mc mb --ignore-existing myminio/products;
+      /usr/bin/mc anonymous set download myminio/products;
+      /usr/bin/mc mb --ignore-existing myminio/system-assets;
+      /usr/bin/mc anonymous set download myminio/system-assets;
+      /usr/bin/mc mb --ignore-existing myminio/support-media;
+      /usr/bin/mc ilm rule add myminio/support-media --expire-days 30 || true;
+      exit 0;
+      "
 
 volumes:
   beraum_pgdata:

@@ -8,11 +8,6 @@ export const dynamic = "force-dynamic";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = clientEnv.NEXT_PUBLIC_APP_URL;
 
-  const [products, categoriesRes] = await Promise.all([
-    getPublishedArticles(),
-    getCategoriesList(),
-  ]);
-
   const staticPages = [
     "",
     "/about",
@@ -26,6 +21,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(),
     priority: route === "" ? 1.0 : 0.8,
   }));
+
+  // 🛡️ ЗАЩИТА: Блокируем обращение к БД при сборке Docker-образа
+  if (process.env.SKIP_DB_PREFETCH === "1") {
+    return staticPages;
+  }
+
+  // В Runtime этот блок отработает штатно
+  const [products, categoriesRes] = await Promise.all([
+    getPublishedArticles(),
+    getCategoriesList(),
+  ]);
 
   const categoryPages = (categoriesRes.data || []).map((cat) => ({
     url: `${base}/catalog/${cat.slug}`,

@@ -10,13 +10,17 @@ const globalForDb = globalThis as unknown as {
   conn: postgres.Sql | undefined;
 };
 
+// 🛡️ Архитектурный фикс: Fallback для этапа Docker-сборки, когда ENV-переменные пустые
+const connectionString = serverEnv.DATABASE_URL || "";
+
 const conn =
   globalForDb.conn ??
-  postgres(serverEnv.DATABASE_URL, {
-    max: Number(process.env.DB_POOL_MAX ?? 10), // Максимум соединений в пуле
-    idle_timeout: 20, // Закрывать простаивающие соединения через 20 секунд
-    connect_timeout: 10, // Таймаут подключения (сек) — быстрый отказ при падении БД
-    prepare: !serverEnv.DATABASE_URL.includes("pgbouncer"),
+  postgres(connectionString, {
+    max: Number(process.env.DB_POOL_MAX ?? 10),
+    idle_timeout: 20,
+    connect_timeout: 10,
+    // Безопасная проверка строки
+    prepare: !connectionString.includes("pgbouncer"),
   });
 
 if (process.env.NODE_ENV !== "production") {
