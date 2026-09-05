@@ -29,7 +29,7 @@ interface PageProps {
   params: Promise<{ article: string }>;
 }
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
   if (process.env.SKIP_DB_PREFETCH === "1") {
@@ -43,7 +43,14 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const { article } = await params;
+  // Обязательный await для params в Next.js 16
+  const resolvedParams = await params;
+  const article = resolvedParams?.article;
+
+  if (!article) {
+    return { title: "Товар не найден" };
+  }
+
   const res = await getProductByArticle(article);
 
   if (!res.success || !res.data) {
