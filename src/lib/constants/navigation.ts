@@ -64,7 +64,7 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
       promoCards: [
         {
           label: "HI-3C004MW",
-          description: "Дизайнерская овальная панель",
+          description: "Обновленная модель",
           href: "/product/HI-3C004MW",
           isNew: true,
           cover: "system-assets/components/navigation/promo-cover-2.jpg",
