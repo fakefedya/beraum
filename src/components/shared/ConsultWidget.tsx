@@ -49,6 +49,20 @@ const ConsultFormContent = ({ onClose }: { onClose: () => void }) => {
     <form action={formAction} className="flex h-full flex-col gap-4" noValidate>
       <input type="hidden" name="sourcePage" value={pathname} />
 
+      {/* HONEYPOT: Невидимое поле для ботов */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 left-[-9999px] opacity-0"
+      >
+        <input
+          type="text"
+          name="botCheck"
+          tabIndex={-1}
+          autoComplete="off"
+          defaultValue=""
+        />
+      </div>
+
       {state.error && (
         <div className="animate-in fade-in flex items-center gap-3 rounded-xl bg-red-50 p-4 text-red-600">
           <AlertCircle className="h-5 w-5 shrink-0" />

@@ -3,14 +3,38 @@ import { VALID_MARKETPLACES } from "@/src/lib/constants/marketplaces";
 
 const VALID_CONDITIONS = ["new", "discount"] as const;
 
+const hasNoLongWords = (val: string | undefined) => {
+  if (!val) return true;
+  return !val.split(/\s+/).some((word) => word.length > 15);
+};
+
+const hasNormalCasing = (val: string) => {
+  return !/[a-z][A-Z]{2,}[a-z]/g.test(val);
+};
+
 const baseFeedbackSchema = z.object({
-  name: z.string().min(2, "Имя должно содержать минимум 2 символа").max(100),
+  botCheck: z.string().optional(),
+
+  name: z
+    .string()
+    .min(2, "Имя должно содержать минимум 2 символа")
+    .max(50, "Имя слишком длинное")
+    .regex(/^[а-яА-ЯёЁa-zA-Z\s-]+$/, "Недопустимые символы в имени")
+    .refine(hasNormalCasing, "Некорректный формат имени")
+    .refine(
+      (val) => !/^[a-zA-Z]{15,}$/.test(val),
+      "Имя похоже на сгенерированное",
+    ),
   phone: z
     .string()
     .regex(/^\+?[0-9\s\-()]+$/, "Неверный формат телефона")
     .min(10, "Слишком короткий номер телефона"),
   email: z.string().email("Укажите корректный email"),
-  message: z.string().max(2000, "Сообщение слишком длинное").optional(),
+  message: z
+    .string()
+    .max(2000, "Сообщение слишком длинное")
+    .refine(hasNoLongWords, "Сообщение содержит неестественно длинные слова")
+    .optional(),
 
   consent: z.literal("on", {
     message: "Необходимо согласие на обработку персональных данных",

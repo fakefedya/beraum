@@ -48,6 +48,13 @@ export async function submitPartnershipAction(
 ): Promise<ActionState> {
   const data = Object.fromEntries(formData.entries());
 
+  if (typeof data.botCheck === "string" && data.botCheck.length > 0) {
+    console.warn(
+      `[SECURITY] Бот-спам заблокирован через honeypot (IP Hash: pending)`,
+    );
+    return { success: true };
+  }
+
   try {
     const parsed = partnershipSchema.safeParse(data);
 
@@ -60,7 +67,7 @@ export async function submitPartnershipAction(
       return { success: false, fieldErrors, payload: data };
     }
 
-    const { name, phone, email, message, consent, ...payloadData } =
+    const { name, phone, email, message, consent, botCheck, ...payloadData } =
       parsed.data;
 
     const rateLimit = await checkRateLimit("partnership", 3, 60000);
@@ -107,6 +114,13 @@ export async function submitSupportAction(
     data.mediaKeys = mediaKeys;
   }
 
+  if (typeof data.botCheck === "string" && data.botCheck.length > 0) {
+    console.warn(
+      `[SECURITY] Бот-спам заблокирован через honeypot (IP Hash: pending)`,
+    );
+    return { success: true };
+  }
+
   try {
     const parsed = supportSchema.safeParse(data);
 
@@ -125,6 +139,7 @@ export async function submitSupportAction(
       email,
       message,
       consent,
+      botCheck,
       mediaKeys: validatedMediaKeys,
       ...restPayload
     } = parsed.data;
@@ -199,6 +214,13 @@ export async function submitConsultAction(
 ): Promise<ActionState> {
   const data = Object.fromEntries(formData.entries());
 
+  if (typeof data.botCheck === "string" && data.botCheck.length > 0) {
+    console.warn(
+      `[SECURITY] Бот-спам заблокирован через honeypot (IP Hash: pending)`,
+    );
+    return { success: true };
+  }
+
   try {
     const parsed = consultSchema.safeParse(data);
 
@@ -211,7 +233,7 @@ export async function submitConsultAction(
       return { success: false, fieldErrors, payload: data };
     }
 
-    const { name, phone, email, message, consent, ...payloadData } =
+    const { name, phone, email, message, consent, botCheck, ...payloadData } =
       parsed.data;
     console.log(parsed.data);
 
