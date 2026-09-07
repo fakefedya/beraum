@@ -45,7 +45,7 @@ export const MobileSidebar = ({ userRole }: MobileSidebarProps) => {
           <SheetTitle>Навигация панели управления</SheetTitle>
         </SheetHeader>
 
-        <div className="border-border/50 flex h-16 items-center border-b px-6">
+        <div className="border-border/50 flex h-20 items-center border-b px-6">
           <Link
             href="/dashboard"
             onClick={() => setIsOpen(false)}
