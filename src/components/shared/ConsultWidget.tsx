@@ -49,7 +49,7 @@ const ConsultFormContent = ({ onClose }: { onClose: () => void }) => {
     <form action={formAction} className="flex h-full flex-col gap-4" noValidate>
       <input type="hidden" name="sourcePage" value={pathname} />
 
-      {/* HONEYPOT: Невидимое поле для ботов */}
+      {/* Невидимое поле для ботов */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute top-0 left-[-9999px] opacity-0"

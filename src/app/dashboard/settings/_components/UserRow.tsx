@@ -104,7 +104,7 @@ export const UserRow = ({
             disabled={isPending || isSelf}
           >
             <SelectTrigger
-              className={`h-8 w-32 border-none text-xs font-medium ${isLocked === "true" ? "bg-red-400 text-red-100" : "bg-green-400 text-black"}`}
+              className={`h-8 w-32 border-none text-xs font-medium ${isLocked === "true" ? "bg-red-400 text-red-100" : "bg-green-400 text-black dark:bg-green-400 dark:text-black dark:hover:bg-green-500"}`}
             >
               <SelectValue />
             </SelectTrigger>
