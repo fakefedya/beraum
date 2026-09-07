@@ -205,3 +205,37 @@ export async function deleteProductAssetAction(
     return { success: false, error: "DELETE_FAILED" };
   }
 }
+
+export async function toggleProductImageFitAction(imageId: string) {
+  try {
+    await requireAuthRole(["superadmin", "manager"]);
+
+    if (!z.string().uuid().safeParse(imageId).success) {
+      return { success: false, error: "INVALID_ID" };
+    }
+
+    const [img] = await db
+      .select({
+        fit: productImages.imageFit,
+        productId: productImages.productId,
+      })
+      .from(productImages)
+      .where(eq(productImages.id, imageId));
+
+    if (!img) return { success: false, error: "NOT_FOUND" };
+
+    const newFit = img.fit === "contain" ? "cover" : "contain";
+
+    await db
+      .update(productImages)
+      .set({ imageFit: newFit })
+      .where(eq(productImages.id, imageId));
+
+    revalidateTag("products", { expire: 0 });
+
+    return { success: true, newFit };
+  } catch (error) {
+    console.error("❌ Ошибка toggleProductImageFitAction:", error);
+    return { success: false, error: "DB_ERROR" };
+  }
+}

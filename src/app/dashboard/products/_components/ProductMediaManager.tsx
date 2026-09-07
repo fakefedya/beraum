@@ -16,7 +16,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-import { Images, Loader2, Trash2, UploadCloud, Star } from "lucide-react";
+import {
+  Images,
+  Loader2,
+  Trash2,
+  UploadCloud,
+  Star,
+  Maximize,
+  Minimize,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   getProductAssetsAction,
@@ -25,6 +33,7 @@ import {
   saveProductImageAction,
   setProductImageCoverAction,
   saveProductDocumentAction,
+  toggleProductImageFitAction,
 } from "@/src/server/actions/admin-media";
 import { SafeImage } from "@/src/components/shared/SafeImage";
 import { buildImageUrl, cn } from "@/src/lib/utils";
@@ -97,6 +106,18 @@ export const ProductMediaManager = ({
       fetchAssets();
     } else {
       toast.error(res.error);
+    }
+  };
+
+  const handleToggleFit = async (imageId: string) => {
+    const res = await toggleProductImageFitAction(imageId);
+    if (res.success) {
+      toast.success(
+        `Масштабирование изменено на ${res.newFit === "cover" ? "Заполнить" : "Вписать"}`,
+      );
+      fetchAssets();
+    } else {
+      toast.error(res.error || "Ошибка изменения масштаба");
     }
   };
 
@@ -252,7 +273,10 @@ export const ProductMediaManager = ({
                 {assets.images.map((img) => (
                   <div
                     key={img.id}
-                    className="group border-border relative aspect-square overflow-hidden rounded-xl border"
+                    className={cn(
+                      "group border-border relative aspect-square overflow-hidden rounded-xl border transition-all",
+                      img.imageFit === "contain" ? "bg-white" : "bg-muted",
+                    )}
                   >
                     <SafeImage
                       src={buildImageUrl({
@@ -261,17 +285,23 @@ export const ProductMediaManager = ({
                       })}
                       alt="img"
                       fill
-                      className="object-cover"
+                      className={cn(
+                        "transition-all duration-300",
+                        img.imageFit === "cover"
+                          ? "object-cover"
+                          : "object-contain",
+                      )}
+                      sizes="(max-width: 768px) 50vw, 300px"
                     />
 
                     {img.isCover ? (
-                      <span className="bg-brand absolute top-2 left-2 rounded px-2 py-0.5 text-[10px] font-medium text-black">
+                      <span className="bg-brand absolute right-2 bottom-2 rounded px-2 py-0.5 text-[10px] font-medium text-black shadow-sm">
                         ОБЛОЖКА
                       </span>
                     ) : (
                       <button
                         onClick={() => handleSetCover(img.id)}
-                        className="bg-background/90 text-muted-foreground hover:text-foreground absolute top-2 left-2 rounded p-1.5 opacity-0 transition-opacity group-hover:opacity-100"
+                        className="bg-background/90 text-muted-foreground hover:text-foreground absolute top-2 left-2 rounded p-1.5 opacity-0 transition-opacity outline-none group-hover:opacity-100 focus:opacity-100"
                         title="Сделать обложкой"
                       >
                         <Star className="size-4" />
@@ -279,8 +309,25 @@ export const ProductMediaManager = ({
                     )}
 
                     <button
+                      onClick={() => handleToggleFit(img.id)}
+                      className="bg-background/90 text-muted-foreground hover:text-foreground absolute top-2 left-10 rounded p-1.5 opacity-0 transition-opacity outline-none group-hover:opacity-100 focus:opacity-100"
+                      title={
+                        img.imageFit === "cover"
+                          ? "Вписать (Contain)"
+                          : "Заполнить (Cover)"
+                      }
+                    >
+                      {img.imageFit === "cover" ? (
+                        <Minimize className="size-4" />
+                      ) : (
+                        <Maximize className="size-4" />
+                      )}
+                    </button>
+
+                    <button
                       onClick={() => handleDelete(img.id, "image")}
                       className="absolute top-2 right-2 rounded bg-red-500 p-1.5 text-white opacity-0 transition-opacity outline-none group-hover:opacity-100 focus:opacity-100"
+                      title="Удалить"
                     >
                       <Trash2 className="size-4" />
                     </button>
