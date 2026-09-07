@@ -10,8 +10,15 @@ import { Button } from "@/src/components/ui/button";
 import { ExternalLink, CheckCircle2 } from "lucide-react";
 import { RETAIL_INFO, RETAIL_FAQ } from "./data";
 import { cn } from "@/src/lib/utils";
+import {
+  MARKETPLACE_LINKS,
+  MarketplaceProps,
+} from "@/src/lib/constants/marketplaces";
 
 export const RetailTab = () => {
+  const discountLink: MarketplaceProps | undefined =
+    MARKETPLACE_LINKS.discount.find((el) => el.id === "ozon-discount");
+
   return (
     <div className={cn("flex flex-col gap-20", "md:gap-30")}>
       <Section>
@@ -34,7 +41,7 @@ export const RetailTab = () => {
                 )}
               >
                 <a
-                  href="https://ozon.ru/t/wEfsAwP"
+                  href={discountLink && discountLink.href}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
