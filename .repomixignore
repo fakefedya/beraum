@@ -10,4 +10,3 @@ backup/
 node_modules/
 src/components/
 src/store
-src/dashboard
