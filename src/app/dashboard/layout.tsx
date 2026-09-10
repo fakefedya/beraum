@@ -2,7 +2,7 @@ import { auth } from "@/src/lib/auth/auth";
 import { redirect } from "next/navigation";
 import { Sidebar } from "./_components/Sidebar";
 import { DashboardHeader } from "./_components/DashboardHeader";
-import { Role } from "@/src/lib/constants/dashboard";
+import type { Role } from "@/src/lib/constants/roles";
 import { db } from "@/src/server/db/client";
 import { users } from "@/src/server/db/schema";
 import { eq } from "drizzle-orm";
