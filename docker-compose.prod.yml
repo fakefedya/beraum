@@ -10,6 +10,19 @@ services:
       storage:
         condition: service_healthy
 
+  migrator:
+    build:
+      context: .
+      target: builder
+    container_name: beraum-migrator
+    env_file: .env.production
+    command: npm run db:migrate
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - tools
+
   proxy:
     image: caddy:2-alpine
     container_name: beraum-proxy
