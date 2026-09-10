@@ -8,7 +8,7 @@ import { requireAuthRole } from "@/src/server/utils/auth-check";
 import { z } from "zod";
 
 export const metadata: Metadata = {
-  title: "Настройки и Пользователи — Beraum Admin",
+  title: "Настройки и Пользователи",
 };
 
 const searchParamsSchema = z.object({

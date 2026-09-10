@@ -9,7 +9,7 @@ import { cn } from "@/src/lib/utils";
 import { requireAuthRole } from "@/src/server/utils/auth-check";
 
 export const metadata: Metadata = {
-  title: "Дашборд — Beraum",
+  title: "Дашборд",
   robots: { index: false, follow: false },
 };
 

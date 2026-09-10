@@ -11,7 +11,7 @@ import type { RequestType, RequestStatus } from "@/src/server/queries/requests";
 import { requireAuthRole } from "@/src/server/utils/auth-check";
 
 export const metadata: Metadata = {
-  title: "Заявки — Beraum Admin",
+  title: "Заявки",
 };
 
 const TYPE_FILTERS: { label: string; value: RequestType }[] = [

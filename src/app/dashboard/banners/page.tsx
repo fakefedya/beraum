@@ -7,7 +7,7 @@ import { BannerSheet } from "./_components/BannerSheet";
 import { requireAuthRole } from "@/src/server/utils/auth-check";
 
 export const metadata: Metadata = {
-  title: "Управление баннерами — Beraum Admin",
+  title: "Управление баннерами",
 };
 
 export default async function AdminBannersPage() {

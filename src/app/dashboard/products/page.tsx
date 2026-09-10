@@ -13,7 +13,7 @@ import { ProductsTableWrapper } from "./_components/ProductsTableWrapper";
 import { requireAuthRole } from "@/src/server/utils/auth-check";
 
 export const metadata: Metadata = {
-  title: "Управление товарами — Beraum Admin",
+  title: "Управление товарами",
 };
 
 const STATUS_FILTERS = [
