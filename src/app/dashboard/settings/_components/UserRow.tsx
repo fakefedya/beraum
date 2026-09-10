@@ -67,7 +67,7 @@ export const UserRow = ({
             name="name"
             form={formId}
             defaultValue={user.name || ""}
-            className="h-8 font-medium shadow-none"
+            className="h-8 text-xs font-medium shadow-none md:text-sm"
             disabled={isPending}
           />
           <div className="text-muted-foreground bg-foreground/5 flex h-8 items-center rounded-md px-3 text-xs font-medium">
@@ -137,7 +137,7 @@ export const UserRow = ({
           form={formId}
           type="password"
           placeholder="Оставьте пустым"
-          className="text-foreground placeholder:text-muted-foreground h-8 font-medium shadow-none placeholder:font-normal"
+          className="text-foreground placeholder:text-muted-foreground h-8 w-fit text-xs font-medium shadow-none placeholder:font-normal md:text-sm"
           disabled={isPending}
         />
       </td>

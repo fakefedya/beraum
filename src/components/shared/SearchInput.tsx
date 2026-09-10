@@ -14,7 +14,7 @@ interface SearchInputProps {
 export const SearchInput = ({
   paramName = "q",
   placeholder = "Поиск...",
-  className = "relative w-full max-w-sm",
+  className = "relative w-full md:max-w-sm",
 }: SearchInputProps) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
