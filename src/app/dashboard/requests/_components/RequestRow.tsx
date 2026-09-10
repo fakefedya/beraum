@@ -107,6 +107,24 @@ export const RequestRow = ({
         </div>
       </td>
       <td className="px-6 py-4">
+        <Select
+          defaultValue={req.status}
+          disabled={isPending}
+          onValueChange={handleStatusChange}
+        >
+          <SelectTrigger
+            className={`h-8 text-xs md:text-sm ${statusMap[req.status as keyof typeof statusMap].color} border-none font-medium shadow-none`}
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="new">Новая</SelectItem>
+            <SelectItem value="in_progress">В работе</SelectItem>
+            <SelectItem value="resolved">Решена</SelectItem>
+          </SelectContent>
+        </Select>
+      </td>
+      <td className="px-6 py-4">
         <div className="flex flex-col gap-2">
           <span className="text-foreground font-medium">{req.name}</span>
           <span className="text-muted-foreground text-xs">{req.phone}</span>
@@ -115,7 +133,7 @@ export const RequestRow = ({
       <td className="max-w-xs px-6 py-4">
         <div className="flex flex-col items-start gap-2">
           {payload.modelArticle && (
-            <p className="text-sm font-medium">
+            <p className="text-sm text-xs font-medium md:text-sm">
               {String(payload.modelArticle)}
             </p>
           )}
@@ -126,24 +144,6 @@ export const RequestRow = ({
             <Paperclip className="text-brand-secondary-muted h-4 w-4 shrink-0" />
           )}
         </div>
-      </td>
-      <td className="px-6 py-4">
-        <Select
-          defaultValue={req.status}
-          disabled={isPending}
-          onValueChange={handleStatusChange}
-        >
-          <SelectTrigger
-            className={`h-8 ${statusMap[req.status as keyof typeof statusMap].color} border-none font-medium shadow-none`}
-          >
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="new">Новая</SelectItem>
-            <SelectItem value="in_progress">В работе</SelectItem>
-            <SelectItem value="resolved">Решена</SelectItem>
-          </SelectContent>
-        </Select>
       </td>
       <td className="px-6 py-4 text-right">
         <Button

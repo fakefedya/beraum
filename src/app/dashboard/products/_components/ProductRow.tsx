@@ -56,7 +56,7 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
             name="itemArticle"
             form={formId}
             defaultValue={product.itemArticle}
-            className="h-8 font-medium shadow-none"
+            className="h-8 w-fit text-xs font-medium shadow-none md:text-sm"
             placeholder="Точный SKU"
             required
             disabled={isPending}
@@ -65,7 +65,7 @@ export const ProductRow = ({ product }: { product: ProductItem }) => {
             name="siteArticle"
             form={formId}
             defaultValue={product.siteArticle}
-            className="text-foreground/60 h-8 shadow-none"
+            className="text-foreground/60 h-8 w-fit text-xs shadow-none md:text-sm"
             placeholder="Модель (Группа)"
             required
             disabled={isPending}

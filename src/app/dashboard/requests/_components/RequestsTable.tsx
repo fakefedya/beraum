@@ -58,9 +58,9 @@ export const RequestsTable = ({ requests, categories }: RequestsTableProps) => {
               <tr>
                 <th className="px-6 py-4 font-medium">ID</th>
                 <th className="px-6 py-4 font-medium">Дата / Тип</th>
+                <th className="w-48 px-6 py-4 font-medium">Статус</th>
                 <th className="px-6 py-4 font-medium">Клиент</th>
                 <th className="px-6 py-4 font-medium">Описание</th>
-                <th className="w-48 px-6 py-4 font-medium">Статус</th>
                 <th className="w-24 px-6 py-4 font-medium">Действия</th>
               </tr>
             </thead>

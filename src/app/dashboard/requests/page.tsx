@@ -1,5 +1,13 @@
 import { Suspense } from "react";
-import { Loader2 } from "lucide-react";
+import {
+  Loader2,
+  MessageCircle,
+  MessageCircleHeart,
+  MessageCircleCheck,
+  MessageCircleMore,
+  MessageCircleWarning,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -14,13 +22,18 @@ export const metadata: Metadata = {
   title: "Заявки",
 };
 
-const TYPE_FILTERS: { label: string; value: RequestType }[] = [
-  { label: "Все", value: "all" },
-  { label: "Служба поддержки", value: "support" },
-  { label: "Дисконт", value: "wholesale" },
-  { label: "B2B Партнерство", value: "partnership" },
-  { label: "Консультации", value: "consultation" },
-];
+const TYPE_FILTERS: { label: string; icon: LucideIcon; value: RequestType }[] =
+  [
+    { label: "Все", icon: MessageCircle, value: "all" },
+    { label: "Служба поддержки", icon: MessageCircleHeart, value: "support" },
+    { label: "Дисконт", icon: MessageCircleWarning, value: "wholesale" },
+    {
+      label: "B2B Партнерство",
+      icon: MessageCircleCheck,
+      value: "partnership",
+    },
+    { label: "Консультации", icon: MessageCircleMore, value: "consultation" },
+  ];
 
 const STATUS_FILTERS: { label: string; value: RequestStatus }[] = [
   { label: "Любой статус", value: "all" },
@@ -71,29 +84,31 @@ export default async function RequestsPage(props: {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <h1 className="text-3xl font-semibold tracking-tight">
           Входящие заявки
         </h1>
         <SearchInput paramName="q" placeholder="Поиск по ID или Email..." />
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-8">
         <div className="border-border/50 flex flex-wrap gap-2 border-b pb-px">
           {TYPE_FILTERS.map((f) => {
             const isActive = currentType === f.value;
+            const Icon = f.icon;
             return (
               <Link
                 key={f.value}
                 href={createFilterUrl(f.value, currentStatus)}
                 className={cn(
-                  "focus-visible:ring-ring rounded-t-md border-b-2 px-4 py-2 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+                  "focus-visible:ring-ring flex flex-1 justify-center rounded-t-md border-b-2 px-4 py-2 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2 md:justify-start",
                   isActive
                     ? "border-foreground text-foreground"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50 border-transparent",
                 )}
               >
-                {f.label}
+                <span className="hidden md:block"> {f.label}</span>
+                <Icon size={18} className="md:hidden" />
               </Link>
             );
           })}
