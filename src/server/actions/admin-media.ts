@@ -17,7 +17,7 @@ const FILE_KEY_REGEX =
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\.[a-z0-9]+$/;
 
 export async function getProductAssetsAction(productId: string) {
-  await requireAuthRole(["superadmin", "manager"]);
+  await requireAuthRole(["admin", "superadmin", "manager"]);
   if (!z.string().uuid().safeParse(productId).success)
     throw new Error("INVALID_ID");
 
@@ -63,7 +63,7 @@ const getUrlSchema = z
 
 export async function getAdminPresignedUploadUrl(rawData: unknown) {
   try {
-    await requireAuthRole(["superadmin", "manager"]);
+    await requireAuthRole(["admin", "superadmin", "manager"]);
     const parsed = getUrlSchema.safeParse(rawData);
     if (!parsed.success) return { success: false, error: "INVALID_DATA" };
 
@@ -94,7 +94,7 @@ const saveImageSchema = z.object({
 
 export async function saveProductImageAction(rawData: unknown) {
   try {
-    await requireAuthRole(["superadmin", "manager"]);
+    await requireAuthRole(["admin", "superadmin", "manager"]);
     const parsed = saveImageSchema.safeParse(rawData);
     if (!parsed.success) return { success: false, error: "INVALID_DATA" };
 
@@ -118,7 +118,7 @@ export async function setProductImageCoverAction(
   productId: string,
 ) {
   try {
-    await requireAuthRole(["superadmin", "manager"]);
+    await requireAuthRole(["admin", "superadmin", "manager"]);
     if (
       !z.string().uuid().safeParse(imageId).success ||
       !z.string().uuid().safeParse(productId).success
@@ -153,7 +153,7 @@ const saveDocumentSchema = z.object({
 
 export async function saveProductDocumentAction(rawData: unknown) {
   try {
-    await requireAuthRole(["superadmin", "manager"]);
+    await requireAuthRole(["admin", "superadmin", "manager"]);
     const parsed = saveDocumentSchema.safeParse(rawData);
     if (!parsed.success) return { success: false, error: "INVALID_DATA" };
 
@@ -177,7 +177,7 @@ export async function deleteProductAssetAction(
   type: "image" | "document",
 ) {
   try {
-    await requireAuthRole(["superadmin", "manager"]);
+    await requireAuthRole(["admin", "superadmin", "manager"]);
     if (!z.string().uuid().safeParse(id).success)
       return { success: false, error: "INVALID_ID" };
 
@@ -208,7 +208,7 @@ export async function deleteProductAssetAction(
 
 export async function toggleProductImageFitAction(imageId: string) {
   try {
-    await requireAuthRole(["superadmin", "manager"]);
+    await requireAuthRole(["admin", "manager"]);
 
     if (!z.string().uuid().safeParse(imageId).success) {
       return { success: false, error: "INVALID_ID" };

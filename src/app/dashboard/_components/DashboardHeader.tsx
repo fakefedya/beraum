@@ -7,7 +7,8 @@ import Link from "next/link";
 import { type Role } from "@/src/lib/constants/dashboard";
 
 const PAYLOAD_ROLES: Record<Role, string> = {
-  superadmin: "Администратор",
+  superadmin: "Суперадмин",
+  admin: "Админ",
   support: "Поддержка",
   manager: "Менеджер",
 };

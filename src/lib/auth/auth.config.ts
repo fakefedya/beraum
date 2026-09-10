@@ -36,7 +36,8 @@ export const authConfig = {
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as "superadmin" | "manager" | "support";
+        session.user.role = token.role as
+          "superadmin" | "admin" | "manager" | "support";
         session.user.isLocked = token.isLocked as boolean;
       }
       return session;

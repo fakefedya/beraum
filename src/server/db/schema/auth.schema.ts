@@ -4,7 +4,6 @@ import {
   timestamp,
   boolean,
   uuid,
-  primaryKey,
   integer,
   pgEnum,
 } from "drizzle-orm/pg-core";
@@ -13,6 +12,7 @@ import { sql } from "drizzle-orm";
 // Строго типизированные роли (RBAC)
 export const userRoleEnum = pgEnum("user_role", [
   "superadmin",
+  "admin",
   "manager",
   "support",
 ]);

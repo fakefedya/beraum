@@ -94,7 +94,8 @@ export const CreateUserSheet = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="superadmin">Администратор</SelectItem>
+                  <SelectItem value="superadmin">Суперадмин</SelectItem>
+                  <SelectItem value="admin">Админ</SelectItem>
                   <SelectItem value="manager">Менеджер</SelectItem>
                   <SelectItem value="support">Поддержка</SelectItem>
                 </SelectContent>

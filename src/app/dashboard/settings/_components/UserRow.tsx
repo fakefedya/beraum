@@ -26,9 +26,9 @@ export const UserRow = ({
   isSelf: boolean;
 }) => {
   const [isPending, startTransition] = useTransition();
-  const [role, setRole] = useState<"superadmin" | "manager" | "support">(
-    user.role,
-  );
+  const [role, setRole] = useState<
+    "superadmin" | "admin" | "manager" | "support"
+  >(user.role);
   const [isLocked, setIsLocked] = useState(user.isLocked ? "true" : "false");
   const [is2FA, setIs2FA] = useState(
     user.isTwoFactorEnabled ? "true" : "false",
@@ -81,7 +81,7 @@ export const UserRow = ({
         <Select
           value={role}
           onValueChange={(val) =>
-            setRole(val as "superadmin" | "manager" | "support")
+            setRole(val as "superadmin" | "admin" | "manager" | "support")
           }
           disabled={isPending || isSelf}
         >
@@ -89,9 +89,10 @@ export const UserRow = ({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="superadmin">Superadmin</SelectItem>
-            <SelectItem value="manager">Manager</SelectItem>
-            <SelectItem value="support">Support</SelectItem>
+            <SelectItem value="superadmin">Суперадмин</SelectItem>
+            <SelectItem value="admin">Админ</SelectItem>
+            <SelectItem value="manager">Менеджер</SelectItem>
+            <SelectItem value="support">Поддержка</SelectItem>
           </SelectContent>
         </Select>
       </td>

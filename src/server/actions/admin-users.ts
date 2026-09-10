@@ -16,7 +16,7 @@ const booleanField = z.preprocess(
 const baseUserSchema = {
   name: z.string().min(2).trim(),
   email: z.string().email().trim().toLowerCase(),
-  role: z.enum(["superadmin", "manager", "support"]),
+  role: z.enum(["superadmin", "admin", "manager", "support"]),
   isLocked: booleanField.default(false),
   isTwoFactorEnabled: booleanField.default(true),
 };
@@ -37,7 +37,7 @@ const updateUserSchema = z.object({
 
 type UpdateUserPayload = {
   name: string;
-  role: "superadmin" | "manager" | "support";
+  role: "superadmin" | "admin" | "manager" | "support";
   isLocked: boolean;
   isTwoFactorEnabled: boolean;
   passwordHash?: string;

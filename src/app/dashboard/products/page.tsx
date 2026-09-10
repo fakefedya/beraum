@@ -33,7 +33,7 @@ export default async function AdminProductsPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   try {
-    await requireAuthRole(["superadmin", "manager"]);
+    await requireAuthRole(["superadmin", "admin", "manager"]);
   } catch {
     redirect("/dashboard");
   }

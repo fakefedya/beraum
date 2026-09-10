@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function AdminBannersPage() {
   try {
-    await requireAuthRole(["superadmin", "manager"]);
+    await requireAuthRole(["superadmin", "admin", "manager"]);
   } catch {
     redirect("/dashboard");
   }

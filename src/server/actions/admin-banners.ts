@@ -69,7 +69,7 @@ const bannerSchema = z
 
 export async function upsertBannerAction(formData: FormData) {
   try {
-    await requireAuthRole(["superadmin", "manager"]);
+    await requireAuthRole(["superadmin", "admin", "manager"]);
     const rawData = Object.fromEntries(formData.entries());
 
     try {
@@ -101,7 +101,7 @@ export async function upsertBannerAction(formData: FormData) {
 
 export async function deleteBannerAction(id: string) {
   try {
-    await requireAuthRole(["superadmin", "manager"]);
+    await requireAuthRole(["superadmin", "admin", "manager"]);
     if (!z.string().uuid().safeParse(id).success)
       return { success: false, error: "INVALID_ID" };
 
@@ -116,7 +116,7 @@ export async function deleteBannerAction(id: string) {
 
 export async function getBannerPresignedUploadUrl(rawData: unknown) {
   try {
-    await requireAuthRole(["superadmin", "manager"]);
+    await requireAuthRole(["superadmin", "admin", "manager"]);
     const parsed = presignedUrlSchema.safeParse(rawData);
     if (!parsed.success) return { success: false, error: "INVALID_DATA" };
 

@@ -20,7 +20,7 @@ const updateStatusSchema = z.object({
 
 export async function updateRequestStatus(formData: FormData) {
   try {
-    await requireAuthRole(["superadmin", "support"]);
+    await requireAuthRole(["superadmin", "admin", "support"]);
 
     const rawId = formData.get("id");
     const rawStatus = formData.get("status");
@@ -46,7 +46,7 @@ export async function updateRequestStatus(formData: FormData) {
 }
 
 export async function getMediaUrlsAction(keys: string[]) {
-  await requireAuthRole(["superadmin", "support"]);
+  await requireAuthRole(["superadmin", "admin", "support"]);
   if (!keys || keys.length === 0) return [];
 
   try {
