@@ -80,7 +80,7 @@ const updateProductSchema = z.object({
 
 export async function updateProductAction(formData: FormData) {
   try {
-    await requireAuthRole(["superadmin", "manager"]);
+    await requireAuthRole(["superadmin", "admin", "manager"]);
     const rawData = Object.fromEntries(formData.entries());
     const parsed = updateProductSchema.safeParse(rawData);
 
@@ -134,7 +134,7 @@ const createProductSchema = z.object({
 
 export async function createProductAction(formData: FormData) {
   try {
-    await requireAuthRole(["superadmin", "manager"]);
+    await requireAuthRole(["superadmin", "admin", "manager"]);
     const rawData = Object.fromEntries(formData.entries());
     const parsed = createProductSchema.safeParse(rawData);
 

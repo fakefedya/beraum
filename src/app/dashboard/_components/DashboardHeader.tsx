@@ -4,13 +4,7 @@ import { MobileSidebar } from "./MobileSidebar";
 import { ThemeToggle } from "./ThemeToggle";
 import { LogOut, ShoppingCart } from "lucide-react";
 import Link from "next/link";
-import { type Role } from "@/src/lib/constants/dashboard";
-
-const PAYLOAD_ROLES: Record<Role, string> = {
-  superadmin: "Администратор",
-  support: "Поддержка",
-  manager: "Менеджер",
-};
+import { ROLE_LABELS, type Role } from "@/src/lib/constants/roles";
 
 interface DashboardHeaderProps {
   user: {
@@ -31,7 +25,7 @@ export const DashboardHeader = ({ user, userRole }: DashboardHeaderProps) => {
             {user.name}
           </span>
           <span className="bg-brand hidden rounded-sm px-1 text-sm text-black/80 md:block">
-            {PAYLOAD_ROLES[userRole]}
+            {ROLE_LABELS[userRole]}
           </span>
           <span className="text-muted-foreground border-border/50 ml-4 hidden border-l pl-4 text-sm md:block">
             {user.email}

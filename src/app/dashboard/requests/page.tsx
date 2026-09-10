@@ -42,7 +42,7 @@ export default async function RequestsPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   try {
-    await requireAuthRole(["superadmin", "support"]);
+    await requireAuthRole(["superadmin", "admin", "support"]);
   } catch {
     redirect("/dashboard");
   }

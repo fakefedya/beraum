@@ -3,7 +3,7 @@ import { auth } from "@/src/lib/auth/auth";
 import { db } from "@/src/server/db/client";
 import { users } from "@/src/server/db/schema/auth.schema";
 import { eq } from "drizzle-orm";
-import type { Role } from "@/src/lib/constants/dashboard";
+import type { Role } from "@/src/lib/constants/roles";
 
 export async function requireAuthRole(allowedRoles: Role[]) {
   const session = await auth();

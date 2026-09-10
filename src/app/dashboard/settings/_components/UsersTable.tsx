@@ -1,12 +1,13 @@
 "use client";
 
 import { UserRow } from "./UserRow";
+import type { Role } from "@/src/lib/constants/roles";
 
 export type SafeUserItem = {
   id: string;
   name: string | null;
   email: string;
-  role: "superadmin" | "manager" | "support";
+  role: Role;
   isLocked: boolean;
   isTwoFactorEnabled: boolean;
   createdAt: Date;
