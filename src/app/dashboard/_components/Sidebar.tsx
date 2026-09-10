@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { DASHBOARD_NAV, Role } from "@/src/lib/constants/dashboard";
+import { DASHBOARD_NAV } from "@/src/lib/constants/dashboard";
+import type { Role } from "@/src/lib/constants/roles";
 import { cn } from "@/src/lib/utils";
 import { Icons } from "@/src/components/ui/icons";
 

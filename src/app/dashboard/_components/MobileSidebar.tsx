@@ -4,7 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
-import { DASHBOARD_NAV, type Role } from "@/src/lib/constants/dashboard";
+import { DASHBOARD_NAV } from "@/src/lib/constants/dashboard";
+import type { Role } from "@/src/lib/constants/roles";
 import { cn } from "@/src/lib/utils";
 import { Icons } from "@/src/components/ui/icons";
 import {
