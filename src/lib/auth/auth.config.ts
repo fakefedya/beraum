@@ -1,5 +1,6 @@
 import type { NextAuthConfig } from "next-auth";
 import { z } from "zod";
+import type { Role } from "@/src/lib/constants/roles";
 
 export const LoginSchema = z.object({
   email: z.string().email().trim().toLowerCase(),
@@ -36,8 +37,7 @@ export const authConfig = {
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as
-          "superadmin" | "admin" | "manager" | "support";
+        session.user.role = token.role as Role;
         session.user.isLocked = token.isLocked as boolean;
       }
       return session;

@@ -21,6 +21,7 @@ import {
 import { Loader2, Plus } from "lucide-react";
 import { createUserAction } from "@/src/server/actions/admin-users";
 import { cn } from "@/src/lib/utils";
+import { ROLE_LABELS } from "@/src/lib/constants/roles";
 
 export const CreateUserSheet = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -94,10 +95,11 @@ export const CreateUserSheet = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="superadmin">Суперадмин</SelectItem>
-                  <SelectItem value="admin">Админ</SelectItem>
-                  <SelectItem value="manager">Менеджер</SelectItem>
-                  <SelectItem value="support">Поддержка</SelectItem>
+                  {Object.entries(ROLE_LABELS).map(([roleValue, roleName]) => (
+                    <SelectItem key={roleValue} value={roleValue}>
+                      {roleName}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

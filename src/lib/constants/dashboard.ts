@@ -6,7 +6,7 @@ import {
   ChartBar,
 } from "lucide-react";
 
-export type Role = "superadmin" | "admin" | "manager" | "support";
+import type { Role } from "@/src/lib/constants/roles";
 
 export type DashboardNavItem = {
   label: string;

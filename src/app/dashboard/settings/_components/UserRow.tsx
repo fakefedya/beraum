@@ -17,6 +17,7 @@ import {
   deleteUserAction,
 } from "@/src/server/actions/admin-users";
 import type { SafeUserItem } from "./UsersTable";
+import { ROLE_LABELS, type Role } from "@/src/lib/constants/roles";
 
 export const UserRow = ({
   user,
@@ -26,9 +27,7 @@ export const UserRow = ({
   isSelf: boolean;
 }) => {
   const [isPending, startTransition] = useTransition();
-  const [role, setRole] = useState<
-    "superadmin" | "admin" | "manager" | "support"
-  >(user.role);
+  const [role, setRole] = useState<Role>(user.role);
   const [isLocked, setIsLocked] = useState(user.isLocked ? "true" : "false");
   const [is2FA, setIs2FA] = useState(
     user.isTwoFactorEnabled ? "true" : "false",
@@ -80,19 +79,18 @@ export const UserRow = ({
       <td className="px-4 py-4 align-top">
         <Select
           value={role}
-          onValueChange={(val) =>
-            setRole(val as "superadmin" | "admin" | "manager" | "support")
-          }
+          onValueChange={(val) => setRole(val as Role)}
           disabled={isPending || isSelf}
         >
           <SelectTrigger className="text-foreground h-8 w-32 bg-transparent text-xs font-medium shadow-none">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="superadmin">Суперадмин</SelectItem>
-            <SelectItem value="admin">Админ</SelectItem>
-            <SelectItem value="manager">Менеджер</SelectItem>
-            <SelectItem value="support">Поддержка</SelectItem>
+            {Object.entries(ROLE_LABELS).map(([roleValue, roleName]) => (
+              <SelectItem key={roleValue} value={roleValue}>
+                {roleName}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </td>

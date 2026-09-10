@@ -1,10 +1,11 @@
 import NextAuth, { type DefaultSession } from "next-auth";
+import type { Role } from "@/src/lib/constants/roles";
 
 declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-      role: "superadmin" | "admin" | "manager" | "support";
+      role: Role;
       isLocked: boolean;
     } & DefaultSession["user"];
   }

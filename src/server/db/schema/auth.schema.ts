@@ -8,13 +8,11 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
+import { USER_ROLES } from "@/src/lib/constants/roles";
 
-// Строго типизированные роли (RBAC)
 export const userRoleEnum = pgEnum("user_role", [
-  "superadmin",
-  "admin",
-  "manager",
-  "support",
+  USER_ROLES[0],
+  ...USER_ROLES.slice(1),
 ]);
 
 export const users = pgTable("users", {
