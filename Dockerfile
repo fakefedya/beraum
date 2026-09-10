@@ -1,4 +1,4 @@
-FROM node:20-alpine AS deps
+FROM public.ecr.aws/docker/library/node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json* npm-shrinkwrap.json* ./
@@ -9,7 +9,7 @@ RUN \
   fi
 
 # Стейдж 2: Сборка
-FROM node:20-alpine AS builder
+FROM public.ecr.aws/docker/library/node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -24,7 +24,7 @@ ENV SKIP_ENV_VALIDATION=1
 RUN npm run build
 
 # Стейдж 3: Продакшн образ
-FROM node:20-alpine AS runner
+FROM public.ecr.aws/docker/library/node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
