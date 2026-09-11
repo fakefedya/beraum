@@ -28,7 +28,7 @@
 
 ```bash
 # 1. Клонирование и базовая настройка
-git clone <repo-url> && cd beraum-store
+git clone <repo-url> && cd beraum
 cp .env.example .env.local
 
 # 2. Поднятие инфраструктуры (БД и объектное хранилище)
@@ -37,9 +37,8 @@ docker compose up -d postgres minio minio-init
 # 3. Установка зависимостей
 npm ci
 
-# 4. Накатывание миграций и сидирование справочников
+# 4. Накатывание миграций и сидирование
 npm run db:migrate
-npm run db:seed
 npm run db:seed-admin
 
 # 5. Запуск
