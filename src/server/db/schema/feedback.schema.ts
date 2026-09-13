@@ -8,13 +8,7 @@ import {
   index,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
-
-export const requestTypeEnum = pgEnum("request_type", [
-  "consultation",
-  "partnership",
-  "support",
-  "wholesale",
-]);
+import { requestTypeEnum } from "./enums.schema";
 
 export const requestStatusEnum = pgEnum("request_status", [
   "new",

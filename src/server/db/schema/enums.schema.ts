@@ -20,3 +20,17 @@ export const slidePlacementEnum = pgEnum("slide_placement", [
   "home_hero",
   "catalog_hero",
 ]);
+
+export const requestTypeEnum = pgEnum("request_type", [
+  "consultation",
+  "partnership",
+  "support",
+  "wholesale",
+  "discount_order",
+]);
+
+export const discountItemStatusEnum = pgEnum("discount_item_status", [
+  "available",
+  "reserved",
+  "sold",
+]);
