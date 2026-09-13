@@ -127,6 +127,13 @@
       "when": 1789040153058,
       "tag": "0017_loving_goblin_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1789295466068,
+      "tag": "0018_daily_prowler",
+      "breakpoints": true
     }
   ]
 }

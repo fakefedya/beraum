@@ -1,6 +1,7 @@
 import {
   Inbox,
   Package,
+  Percent,
   Image as ImageIcon,
   Settings,
   ChartBar,
@@ -32,6 +33,12 @@ export const DASHBOARD_NAV: DashboardNavItem[] = [
     label: "Товары",
     href: "/dashboard/products",
     icon: Package,
+    roles: ["superadmin", "admin", "manager"],
+  },
+  {
+    label: "Уценка",
+    href: "/dashboard/discount-products",
+    icon: Percent,
     roles: ["superadmin", "admin", "manager"],
   },
   {
