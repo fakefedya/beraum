@@ -10,6 +10,12 @@ import {
 import { discountItemStatusEnum } from "./enums.schema";
 import { products } from "./products.schema";
 
+export type DiscountMedia = {
+  key: string;
+  isCover: boolean;
+  fit: "contain" | "cover";
+};
+
 export const discountItems = pgTable(
   "discount_items",
   {
@@ -23,7 +29,10 @@ export const discountItems = pgTable(
     discountPrice: integer("discount_price").notNull(),
 
     // Массив ключей файлов из S3 (MinIO)
-    mediaKeys: jsonb("media_keys").$type<string[]>().default([]).notNull(),
+    mediaKeys: jsonb("media_keys")
+      .$type<DiscountMedia[]>()
+      .default([])
+      .notNull(),
 
     status: discountItemStatusEnum("status").default("available").notNull(),
     reservedAt: timestamp("reserved_at", { withTimezone: true, mode: "date" }),

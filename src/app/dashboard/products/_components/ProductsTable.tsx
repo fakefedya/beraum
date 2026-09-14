@@ -14,7 +14,7 @@ export const ProductsTable = ({
     <table className="bg-muted w-full border-0 text-left text-sm">
       <thead className="text-muted-foreground border-b text-xs uppercase">
         <tr>
-          <th className="px-4 py-3 font-medium">SKU / Артикул</th>
+          <th className="px-4 py-3 font-medium">SKU</th>
           <th className="px-4 py-3 font-medium">Стоки</th>
           <th className="w-32 px-4 py-3 font-medium">Статус</th>
           <th className="w-24 px-4 py-3 font-medium">Стоимость</th>

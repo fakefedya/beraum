@@ -54,6 +54,7 @@ services:
       /usr/bin/mc ilm rule add myminio/support-media --expire-days 30 || true;
       /usr/bin/mc mb --ignore-existing myminio/discount-products;
       /usr/bin/mc anonymous set download myminio/discount-products;
+      /usr/bin/mc ilm rule add myminio/discount-products --prefix 'temp/' --expire-days 1 || true;
       exit 0;
       "
 
