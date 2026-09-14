@@ -69,7 +69,7 @@ export const DiscountMediaUploader = ({
         status: "existing",
         key,
         isCover: isString ? false : m.isCover,
-        fit: isString ? "contain" : m.fit,
+        fit: isString ? "cover" : m.fit,
         previewUrl: buildImageUrl(
           { bucketName: "discount-products", fileKey: key },
           "discount-products",
@@ -177,7 +177,7 @@ export const DiscountMediaUploader = ({
           status: "uploading",
           previewUrl: createBlobUrl(file),
           isCover: !hasCover && index === 0,
-          fit: "contain",
+          fit: "cover",
         };
         setFiles((prev) => [...prev, uploadItem]);
         uploadFile(uploadItem);

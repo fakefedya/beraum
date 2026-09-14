@@ -1,4 +1,13 @@
-import { AlertTriangle, CheckCircle2, Info, XCircle } from "lucide-react";
+import {
+  AlertTriangle,
+  Barcode,
+  CheckCircle2,
+  Info,
+  ShoppingCart,
+  XCircle,
+  FileText,
+  Download,
+} from "lucide-react";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
@@ -28,11 +37,8 @@ export const DiscountItemInfo = ({ item }: DiscountItemInfoProps) => {
 
   return (
     <div className={cn("flex flex-col gap-10", "md:gap-16")}>
+      {/* 1. Блок заголовка и цены */}
       <div className="flex flex-col gap-6">
-        <Badge className="bg-brand text-foreground w-fit text-xs leading-normal font-medium uppercase">
-          Дисконт
-        </Badge>
-
         <div className="flex flex-col gap-1.5">
           <span className="text-muted-foreground text-lg text-balance">
             {item.categoryName}
@@ -40,9 +46,10 @@ export const DiscountItemInfo = ({ item }: DiscountItemInfoProps) => {
           <h1 className="text-foreground text-3xl font-semibold uppercase lg:text-4xl">
             {item.siteArticle}
           </h1>
-          <span className="text-muted-foreground font-mono text-sm font-medium">
-            SKU: {item.uniqueSku}
-          </span>
+          <div className="text-muted-foreground flex items-center gap-2">
+            <Barcode size={16} />
+            <span className="text-sm">{item.uniqueSku}</span>
+          </div>
         </div>
 
         <div className="flex flex-col gap-6">
@@ -84,27 +91,44 @@ export const DiscountItemInfo = ({ item }: DiscountItemInfoProps) => {
               </div>
             )}
           </div>
+          <div className="bg-brand/20 flex flex-col gap-3 rounded-2xl p-4">
+            <div className="text-foreground flex items-center gap-2 font-medium">
+              <AlertTriangle className="size-5 shrink-0" />
+              <h2>Причина уценки</h2>
+            </div>
+            <p className="text-foreground text-sm leading-relaxed">
+              {item.defectDescription}
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 rounded-2xl bg-orange-50 p-6 dark:bg-orange-950/30">
-        <div className="flex items-center gap-2 font-medium text-orange-800 dark:text-orange-300">
-          <AlertTriangle className="size-5 shrink-0" />
-          <h2 className="text-lg">Причина уценки</h2>
-        </div>
-        <p className="text-sm leading-relaxed text-orange-800/80 dark:text-orange-300/80">
-          {item.defectDescription}
-        </p>
-      </div>
-
+      {/* 2. Блок действия (Action Block) с логикой Fixed на мобилке */}
       <div className="flex flex-col gap-6">
         {isAvailable ? (
-          <Button
-            size="lg"
-            className="h-14 w-full rounded-xl text-base font-semibold transition-transform active:scale-[0.98] md:w-fit md:px-12"
-          >
-            Оформить заказ
-          </Button>
+          <>
+            <div
+              className={cn(
+                "bg-background/90 fixed bottom-0 left-0 z-50 w-full border-t border-black/5 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-xl",
+                "md:static md:w-auto md:border-none md:bg-transparent md:p-0 md:backdrop-blur-none",
+              )}
+            >
+              <Button
+                size="lg"
+                className={cn(
+                  "group bg-brand relative h-14 w-full overflow-hidden rounded-xl text-base font-semibold text-black transition-all duration-300 outline-none active:scale-[0.98]",
+                  "md:w-full md:px-12",
+                  "hover:bg-brand/80",
+                  "focus-visible:ring-brand/30 focus-visible:ring-4",
+                )}
+              >
+                <ShoppingCart className="mr-2 size-5" />
+                Добавить в корзину
+              </Button>
+            </div>
+            {/* Невидимая распорка для мобилки, чтобы контент не проваливался под fixed-блок */}
+            <div className="h-20 w-full md:hidden" aria-hidden="true" />
+          </>
         ) : (
           <div className="bg-muted flex items-start gap-3 rounded-xl p-4">
             <Info className="text-muted-foreground mt-0.5 size-5 shrink-0" />
@@ -116,6 +140,7 @@ export const DiscountItemInfo = ({ item }: DiscountItemInfoProps) => {
         )}
       </div>
 
+      {/* 3. Характеристики */}
       {validSpecs.length > 0 && (
         <div className="mt-2 flex flex-col gap-6">
           <h2 className="text-xl font-medium text-balance">

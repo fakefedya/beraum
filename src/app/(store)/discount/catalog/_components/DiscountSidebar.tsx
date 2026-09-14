@@ -1,7 +1,8 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { ArrowDownUp, SlidersHorizontal, ChevronDown, X } from "lucide-react";
+import { ArrowDownUp, ChevronDown, X, Menu, Search } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
 import {
@@ -40,68 +41,92 @@ export const DiscountSidebar = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const urlQuery = searchParams.get("q") || "";
+
+  const [query, setQuery] = useState(urlQuery);
+  const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery);
+
+  if (urlQuery !== prevUrlQuery) {
+    setPrevUrlQuery(urlQuery);
+    setQuery(urlQuery);
+  }
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleSearchChange = (val: string) => {
+    setQuery(val);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      const current = new URLSearchParams(Array.from(searchParams.entries()));
+      if (val.trim()) {
+        current.set("q", val.trim());
+      } else {
+        current.delete("q");
+      }
+      current.delete("page");
+      router.push(`${pathname}?${current.toString()}`, { scroll: false });
+    }, 400);
+  };
+
   const handleSort = (value: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-    if (value === "newest") {
-      current.delete("sort");
-    } else {
-      current.set("sort", value);
-    }
+    if (value === "newest") current.delete("sort");
+    else current.set("sort", value);
     current.delete("page");
     router.push(`${pathname}?${current.toString()}`, { scroll: false });
   };
 
   const handleCategory = (categoryId: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-    if (categoryId === "all") {
-      current.delete("category");
-    } else {
-      current.set("category", categoryId);
-    }
+    if (categoryId === "all") current.delete("category");
+    else current.set("category", categoryId);
     current.delete("page");
     router.push(`${pathname}?${current.toString()}`, { scroll: false });
   };
 
   const handleReset = () => {
+    setQuery("");
     router.push(pathname, { scroll: false });
   };
 
-  const activeCategoryName = categories.find(
-    (c) => c.id === currentCategory,
-  )?.name;
-  const isFiltered = currentCategory !== "all" || currentSort !== "newest";
+  const activeCategory = categories.find((c) => c.id === currentCategory);
+  const activeCategoryName = activeCategory?.name;
+  const activeCategoryCount = activeCategory?.itemsCount;
+
+  const isFiltered =
+    currentCategory !== "all" ||
+    currentSort !== "newest" ||
+    !!searchParams.get("q");
 
   return (
     <div
       className={cn(
-        "item-center sticky top-20 z-10 flex w-full justify-center",
+        "sticky top-20 z-10 flex w-full items-center justify-center",
         "md:top-24",
       )}
     >
       <div
         className={cn(
-          "bg-background/80 shadow-nav flex w-fit flex-wrap gap-2 rounded-xl p-1 backdrop-blur-xl backdrop-saturate-150",
-          "md:rounded-[20px] md:p-1.5",
+          "bg-background/80 shadow-nav flex w-full items-center gap-1.5 rounded-xl p-1.5 backdrop-blur-xl backdrop-saturate-150 md:w-fit md:gap-2",
+          "md:rounded-[20px]",
         )}
       >
-        {/* Сортировка */}
+        {/* КНОПКА СОРТИРОВКИ */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               className={cn(
-                "bg-card text-foreground h-12 gap-2 rounded-lg px-3 text-base font-medium",
+                "bg-card text-foreground h-12 w-12 shrink-0 gap-0 rounded-lg p-0 text-base font-medium md:w-auto md:gap-2 md:rounded-[16px] md:px-4",
                 "duration-300 outline-none hover:bg-gray-200 focus-visible:ring-2 focus-visible:ring-black/20",
-                "md:gap-4 md:rounded-[16px]",
               )}
             >
               <ArrowDownUp className="size-4" />
               <span className="hidden md:inline">
                 {SORT_OPTIONS.find((o) => o.value === currentSort)?.label}
               </span>
-              <span className={cn("inline", "md:hidden")}>Сортировка</span>
               <ChevronDown
                 className={cn(
-                  "size-4 opacity-50 transition-transform duration-300",
+                  "hidden size-4 opacity-50 transition-transform duration-300 md:block",
                   "group-data-[state=open]:rotate-180",
                 )}
               />
@@ -131,29 +156,68 @@ export const DiscountSidebar = ({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Категории */}
+        {/* СТРОКА ПОИСКА */}
+        <div
+          className={cn(
+            "bg-card flex h-12 flex-1 items-center gap-2 rounded-lg px-3 transition-colors duration-300 md:w-64 md:rounded-[16px]",
+            "focus-within:ring-2 focus-within:ring-black/20 hover:bg-gray-200",
+          )}
+        >
+          <Search className="text-muted-foreground size-4 shrink-0" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            placeholder="Поиск..."
+            className="placeholder:text-muted-foreground/60 w-full border-none bg-transparent text-base font-medium outline-none placeholder:font-normal"
+          />
+          {query && (
+            <button
+              onClick={() => handleSearchChange("")}
+              className="text-muted-foreground hover:text-foreground shrink-0 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-black/20"
+              aria-label="Очистить поиск"
+            >
+              <X className="size-4" />
+            </button>
+          )}
+        </div>
+
+        {/* КНОПКА КАТЕГОРИЙ */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               className={cn(
-                "bg-card text-foreground h-12 gap-2 rounded-lg px-3 text-base font-medium",
+                "bg-card text-foreground relative h-12 w-12 shrink-0 gap-0 rounded-lg p-0 text-base font-medium md:w-auto md:gap-2 md:rounded-[16px] md:px-4",
                 "duration-300 outline-none hover:bg-gray-200 focus-visible:ring-2 focus-visible:ring-black/20",
-                "md:gap-4 md:rounded-[16px]",
               )}
             >
-              <SlidersHorizontal className="size-4" />
-              <div className="flex items-center gap-1">
-                {activeCategoryName || "Категории"}
-                {currentCategory !== "all" && (
-                  <Badge className="bg-brand text-foreground ml-1 h-5 min-w-5 border-none px-1.5 text-xs font-medium">
-                    1
+              <Menu className="size-4" />
+              <div className="hidden items-center gap-1 md:flex">
+                <span>{activeCategoryName || "Категории"}</span>
+                {currentCategory !== "all" &&
+                  activeCategoryCount !== undefined && (
+                    <Badge className="bg-brand text-foreground h-5 min-w-5 border-none px-1.5 text-xs font-medium">
+                      {activeCategoryCount}
+                    </Badge>
+                  )}
+              </div>
+              {/* Бейджик для мобильной версии (абсолютное позиционирование) */}
+              {currentCategory !== "all" &&
+                activeCategoryCount !== undefined && (
+                  <Badge className="bg-brand text-foreground absolute top-2 right-2 flex h-3 min-w-3 items-center justify-center border-none px-1 text-[9px] font-bold md:hidden">
+                    {activeCategoryCount}
                   </Badge>
                 )}
-              </div>
+              <ChevronDown
+                className={cn(
+                  "hidden size-4 opacity-50 transition-transform duration-300 md:block",
+                  "group-data-[state=open]:rotate-180",
+                )}
+              />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            align="start"
+            align="end"
             sideOffset={8}
             className={cn(
               "shadow-card w-64 rounded-lg border-none p-1.5",
@@ -190,14 +254,13 @@ export const DiscountSidebar = ({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Кнопка сброса */}
+        {/* КНОПКА СБРОСА ФИЛЬТРОВ */}
         {isFiltered && (
           <Button
             onClick={handleReset}
             className={cn(
-              "bg-card text-foreground h-12 gap-2 rounded-lg px-3 text-base font-medium",
+              "bg-card text-foreground h-12 w-12 shrink-0 rounded-lg p-0 text-base font-medium md:w-auto md:gap-2 md:rounded-[16px] md:px-4",
               "duration-300 outline-none hover:bg-gray-200 focus-visible:ring-2 focus-visible:ring-black/20",
-              "md:gap-3 md:rounded-[16px] md:px-4",
             )}
             aria-label="Сбросить фильтры"
           >

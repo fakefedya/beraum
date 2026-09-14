@@ -12,6 +12,7 @@ import { buildImageUrl, cn } from "@/src/lib/utils";
 import { getSwatchStyle } from "@/src/lib/constants";
 import { SafeImage } from "@/src/components/shared/SafeImage";
 import type { PublicDiscountItemDTO } from "./DiscountGrid";
+import { Barcode } from "lucide-react";
 
 interface DiscountCardProps {
   product: PublicDiscountItemDTO;
@@ -95,28 +96,26 @@ export const DiscountCard = ({ product }: DiscountCardProps) => {
         </div>
 
         <div className="mt-4 flex flex-col gap-0">
-          <h2 className="text-muted-foreground text-sm">
-            {product.categoryName}
-          </h2>
+          <h2 className="text-muted-foreground">{product.categoryName}</h2>
           <h2 className="font-medium">{product.siteArticle}</h2>
 
-          <div className="mt-1 flex items-center gap-2">
-            <span className="text-muted-foreground font-mono text-xs font-medium">
-              SKU: {product.uniqueSku}
-            </span>
+          <div className="text-muted-foreground mt-1 flex items-center gap-1">
+            <Barcode size={16} />
+            <span className="text-xs font-medium">{product.uniqueSku}</span>
           </div>
         </div>
-
-        <p className="text-muted-foreground/80 bg-background/50 line-clamp-2 min-h-11 rounded-lg px-3 py-2 text-xs leading-relaxed font-medium">
-          {product.defectDescription}
-        </p>
+        <div className="bg-brand/20 text-foreground h-20 rounded-xl p-4">
+          <p className="line-clamp-2 text-sm leading-relaxed">
+            {product.defectDescription}
+          </p>
+        </div>
 
         <div className="mt-2 flex items-end gap-3">
-          <span className="text-foreground text-2xl font-semibold">
+          <span className="text-foreground">
             {product.discountPrice.toLocaleString("ru-RU")} ₽
           </span>
           {hasBasePrice && (
-            <span className="text-muted-foreground mb-1 text-sm text-balance line-through">
+            <span className="text-foreground mb-1 text-balance line-through">
               {product.basePrice!.toLocaleString("ru-RU")} ₽
             </span>
           )}

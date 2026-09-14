@@ -3,12 +3,12 @@ import { Metadata } from "next";
 import { z } from "zod";
 import { Container } from "@/src/components/shared/Container";
 import { Section } from "@/src/components/shared/Section";
-import { Breadcrumbs } from "@/src/components/shared/Breadcrumbs";
 import { getDiscountItemBySku } from "@/src/server/queries/discount";
 import { ProductGallery } from "../../product/[article]/_components/ProductGallery";
 import { SimilarProducts } from "../../product/[article]/_components/SimilarProducts";
 import { DiscountItemInfo } from "./_components/DiscountItemInfo";
 import { buildImageUrl, cn } from "@/src/lib/utils";
+import { Breadcrumbs } from "@/src/components/shared/Breadcrumbs";
 
 type PageProps = {
   params: Promise<{ sku: string }>;
@@ -18,6 +18,12 @@ const skuSchema = z
   .string()
   .min(5)
   .regex(/^[A-Za-z0-9\-]+$/);
+
+const DOC_META: Record<string, { label: string }> = {
+  user_instruction: { label: "Руководство пользователя" },
+  service_instruction: { label: "Инструкция по установке" },
+  certificate: { label: "Сертификат соответствия" },
+};
 
 export async function generateMetadata({
   params,
@@ -47,7 +53,6 @@ export default async function DiscountProductPage({ params }: PageProps) {
   if (!item) notFound();
 
   const breadcrumbItems = [
-    { label: "Главная", href: "/" },
     { label: "Дисконт", href: "/discount" },
     { label: "Каталог", href: "/discount/catalog" },
     { label: item.uniqueSku },
@@ -96,6 +101,43 @@ export default async function DiscountProductPage({ params }: PageProps) {
         </Container>
       </Section>
 
+      {/* ДОКУМЕНТЫ */}
+      {item.documents && item.documents.length > 0 && (
+        <Section>
+          <Container>
+            <div className="flex flex-col items-center justify-center gap-10">
+              <h2 className="text-center text-3xl font-medium">Документация</h2>
+              <div className="flex w-full flex-col justify-center gap-4 sm:flex-row">
+                {item.documents.map((doc, idx) => {
+                  const meta = DOC_META[doc.type];
+                  if (!meta) return null;
+
+                  return (
+                    <a
+                      key={idx}
+                      href={doc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(
+                        "bg-card border-border/50 flex flex-col gap-4 rounded-2xl border p-5",
+                        "hover:border-foreground/30 transition-colors duration-300",
+                        "focus-visible:ring-foreground outline-none focus-visible:ring-2",
+                      )}
+                    >
+                      <span className="text-background w-fit rounded bg-[linear-gradient(to_right_bottom,#fe6455,#fd5b4c,#fa3d2f)] px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase">
+                        PDF
+                      </span>
+                      <span className="text-sm font-medium">{meta.label}</span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </Container>
+        </Section>
+      )}
+
+      {/* ПОХОЖИЕ ТОВАРЫ */}
       {item.categoryId && (
         <SimilarProducts
           categoryId={item.categoryId}

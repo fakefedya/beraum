@@ -50,6 +50,7 @@ export const SearchSection = () => {
 
     if (!queryTrimmed) return;
 
+    const abortController = new AbortController();
     let isMounted = true;
 
     const fetchInitial = async () => {
@@ -60,7 +61,12 @@ export const SearchSection = () => {
         url.searchParams.set("limit", LIMIT.toString());
         url.searchParams.set("offset", "0");
 
-        const res = await fetch(url.toString());
+        const res = await fetch(url.toString(), {
+          signal: abortController.signal,
+        });
+
+        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+
         const json = await res.json();
 
         if (isMounted && json.success && json.data) {
@@ -68,7 +74,10 @@ export const SearchSection = () => {
           setOffset(LIMIT);
           setHasMore(json.data.length === LIMIT);
         }
-      } catch (error) {
+      } catch (error: unknown) {
+        if (error instanceof Error && error.name === "AbortError") {
+          return; // Игнорируем ошибку отмены запроса
+        }
         console.error("Ошибка поиска:", error);
       } finally {
         if (isMounted) setIsLoading(false);
@@ -79,6 +88,7 @@ export const SearchSection = () => {
 
     return () => {
       isMounted = false;
+      abortController.abort();
     };
   }, [debouncedQuery]);
 

@@ -23,8 +23,10 @@ const STATUS_FILTERS = [
 ];
 
 const searchParamsSchema = z.object({
-  page: z.coerce.number().min(1).catch(1),
-  q: z.string().trim().catch(""),
+  page: z.coerce.number().min(1).max(100).catch(1),
+  category: z.string().uuid().or(z.literal("all")).catch("all"),
+  sort: z.enum(["newest", "price_asc", "price_desc"]).catch("newest"),
+  q: z.string().max(100).catch("").default(""),
   status: z.enum(["all", "available", "reserved", "sold"]).catch("all"),
 });
 

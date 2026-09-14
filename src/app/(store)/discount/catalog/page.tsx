@@ -15,33 +15,34 @@ import { cn } from "@/src/lib/utils";
 import { Loader2 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Каталог уцененной техники — Beraum",
+  title: "Каталог дисконт техники",
   description:
     "Оригинальная техника Beraum со скидками. Исправные товары с незначительными внешними дефектами.",
 };
 
 const searchParamsSchema = z.object({
-  page: z.coerce.number().min(1).catch(1),
+  page: z.coerce.number().min(1).max(100).catch(1),
   category: z.string().uuid().or(z.literal("all")).catch("all"),
   sort: z.enum(["newest", "price_asc", "price_desc"]).catch("newest"),
+  q: z.string().max(100).catch("").default(""),
 });
 
 export default async function DiscountCatalogPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const rawParams = await props.searchParams;
-  const { page, category, sort } = searchParamsSchema.parse(rawParams);
+  const { page, category, sort, q } = searchParamsSchema.parse(rawParams);
   const limit = 12;
   const offset = (page - 1) * limit;
 
   const [categoriesRes, itemsRes] = await Promise.all([
     getDiscountCategories(),
-    getPublicDiscountItems({ categoryId: category, limit, offset, sort }),
+    getPublicDiscountItems({ categoryId: category, limit, offset, sort, q }),
   ]);
 
   const breadcrumbItems = [
     { label: "Дисконт", href: "/discount" },
-    { label: "Каталог дисконта" },
+    { label: "Каталог" },
   ];
 
   return (
@@ -65,24 +66,24 @@ export default async function DiscountCatalogPage(props: {
                 currentSort={sort}
               />
             )}
-          </div>
 
-          <Suspense
-            key={`${category}-${sort}-${page}`}
-            fallback={
-              <div className="bg-muted/20 mt-4 flex min-h-100 w-full items-center justify-center rounded-2xl border">
-                <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
+            <Suspense
+              key={`${category}-${sort}-${q}-${page}`}
+              fallback={
+                <div className="bg-muted/20 mt-4 flex min-h-100 w-full items-center justify-center rounded-2xl border">
+                  <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
+                </div>
+              }
+            >
+              <div className="mt-4 flex flex-col items-center gap-12 pb-20">
+                <DiscountGrid products={itemsRes.data || []} />
+                <CatalogPagination
+                  currentPage={page}
+                  hasMore={itemsRes.hasMore ?? false}
+                />
               </div>
-            }
-          >
-            <div className="mt-4 flex flex-col items-center gap-12 pb-20">
-              <DiscountGrid products={itemsRes.data || []} />
-              <CatalogPagination
-                currentPage={page}
-                hasMore={itemsRes.hasMore ?? false}
-              />
-            </div>
-          </Suspense>
+            </Suspense>
+          </div>
         </Container>
       </Section>
     </div>
