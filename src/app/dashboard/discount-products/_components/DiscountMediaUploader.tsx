@@ -55,7 +55,7 @@ export const DiscountMediaUploader = ({
 
   useEffect(() => {
     return () => {
-      blobUrls.current.forEach(URL.revokeObjectURL);
+      blobUrls.current.forEach((url) => URL.revokeObjectURL(url));
       blobUrls.current.clear();
     };
   }, []);

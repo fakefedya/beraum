@@ -4,10 +4,21 @@ import { discountItems } from "@/src/server/db/schema/discount.schema";
 import { products, categories } from "@/src/server/db/schema";
 import { desc, count, eq, ilike, or, and, type SQL } from "drizzle-orm";
 
-export async function getAdminDiscountItems(page = 1, query = "", limit = 25) {
+export async function getAdminDiscountItems(
+  page = 1,
+  query = "",
+  status = "all",
+  limit = 25,
+) {
   const offset = (page - 1) * limit;
 
   const filters: (SQL | undefined)[] = [];
+
+  if (status !== "all") {
+    filters.push(
+      eq(discountItems.status, status as "available" | "reserved" | "sold"),
+    );
+  }
 
   if (query) {
     const searchTerm = `%${query.trim()}%`;

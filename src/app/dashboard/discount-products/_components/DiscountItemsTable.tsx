@@ -36,7 +36,7 @@ export const DiscountItemsTable = ({
           <th className="px-4 py-3 font-medium">Категория</th>
           <th className="px-4 py-3 font-medium">Статус</th>
           <th className="px-4 py-3 font-medium">Дефект</th>
-          <th className="px-4 py-3 font-medium">Цена (Дисконт)</th>
+          <th className="px-4 py-3 font-medium">Цена</th>
           <th className="w-32 px-4 py-3 font-medium">Действия</th>
         </tr>
       </thead>
