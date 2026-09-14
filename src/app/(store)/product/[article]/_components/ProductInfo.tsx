@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { CheckCircle2, XCircle, Info } from "lucide-react";
+import { CheckCircle2, XCircle, Info, Percent } from "lucide-react";
 import { Badge } from "@/src/components/ui/badge";
 import { getSwatchStyle, MARKETPLACE_LINKS } from "@/src/lib/constants";
 import { cn } from "@/src/lib/utils";
 import { getProductByArticle } from "@/src/server/queries/products";
+import { Button } from "@/src/components/ui/button";
 
 type ProductDetails = NonNullable<
   Awaited<ReturnType<typeof getProductByArticle>>["data"]
@@ -173,6 +174,32 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
               {product.colorName || "Стандартный"}
             </span>
           </span>
+        </div>
+      )}
+
+      {product.bestDiscount && (
+        <div className="flex flex-col gap-4 rounded-2xl border border-orange-200 bg-orange-50 p-6 dark:border-orange-900 dark:bg-orange-950/30">
+          <div className="flex items-center gap-2 font-medium text-orange-800 dark:text-orange-300">
+            <Percent className="size-5 shrink-0" />
+            <h2 className="text-lg">Есть уцененный экземпляр</h2>
+          </div>
+          <p className="text-sm leading-relaxed text-orange-800/80 dark:text-orange-300/80">
+            Полностью исправная модель с незначительными внешними дефектами по
+            сниженной стоимости.
+          </p>
+          <div className="mt-1 flex items-center justify-between gap-4">
+            <span className="text-2xl font-semibold text-orange-900 dark:text-orange-100">
+              {product.bestDiscount.discountPrice.toLocaleString("ru-RU")} ₽
+            </span>
+            <Button
+              asChild
+              className="bg-orange-500 text-white shadow-sm outline-none hover:bg-orange-600 focus-visible:ring-2 focus-visible:ring-orange-500/50"
+            >
+              <Link href={`/discount/${product.bestDiscount.uniqueSku}`}>
+                Посмотреть
+              </Link>
+            </Button>
+          </div>
         </div>
       )}
 

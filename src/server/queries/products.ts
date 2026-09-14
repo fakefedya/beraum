@@ -9,6 +9,7 @@ import {
   productImages,
   productDocuments,
 } from "@/src/server/db/schema";
+import { discountItems } from "@/src/server/db/schema/discount.schema";
 import { CATEGORY_FILTERS } from "@/src/lib/constants";
 import { buildImageUrl } from "@/src/lib/utils";
 import { cache } from "react";
@@ -171,6 +172,7 @@ async function getProductsDb(params: GetProductsParams = {}) {
             price: number;
             stock: number;
             isLatest: boolean;
+            hasDiscount: boolean;
             image: {
               fileKey: string;
               bucketName: string;
@@ -185,6 +187,12 @@ async function getProductsDb(params: GetProductsParams = {}) {
             'isLatest', COALESCE(${products.isLatest}, false),
             'price', ${computedPriceSql},
             'stock', ${computedStockSql},
+            'hasDiscount', (
+              SELECT EXISTS(
+                SELECT 1 FROM ${discountItems} di
+                WHERE di.product_id = ${products.id} AND di.status = 'available'
+              )
+            ),
             'image', (
               SELECT jsonb_build_object(
                 'fileKey', pi.file_key,
@@ -218,7 +226,7 @@ async function getProductsDb(params: GetProductsParams = {}) {
   }
 }
 
-// 🛡️ Request Memoization (React cache принимает ровно 1 аргумент)
+// Request Memoization
 export const getProducts = cache(async (params: GetProductsParams = {}) => {
   return getProductsDb(params);
 });
@@ -305,10 +313,27 @@ async function getProductByArticleDb(rawArticle: string) {
       .from(productDocuments)
       .where(eq(productDocuments.productId, product.id));
 
-    const [variants, rawImages, rawDocs] = await Promise.all([
+    // 🛡️ Оптимизация: Запрашиваем только 1 самую дешевую уценку для ТЕКУЩЕГО варианта (без join-ов)
+    const discountPromise = db
+      .select({
+        uniqueSku: discountItems.uniqueSku,
+        discountPrice: discountItems.discountPrice,
+      })
+      .from(discountItems)
+      .where(
+        and(
+          eq(discountItems.productId, product.id),
+          eq(discountItems.status, "available"),
+        ),
+      )
+      .orderBy(asc(discountItems.discountPrice))
+      .limit(1);
+
+    const [variants, rawImages, rawDocs, [bestDiscount]] = await Promise.all([
       variantsPromise,
       imagesPromise,
       documentsPromise,
+      discountPromise,
     ]);
 
     const formattedDocs = rawDocs.map((doc) => ({
@@ -323,7 +348,13 @@ async function getProductByArticleDb(rawArticle: string) {
 
     return {
       success: true,
-      data: { ...product, variants, documents: formattedDocs, images },
+      data: {
+        ...product,
+        variants,
+        documents: formattedDocs,
+        images,
+        bestDiscount: bestDiscount || null,
+      },
     };
   } catch (error) {
     return {
@@ -334,7 +365,7 @@ async function getProductByArticleDb(rawArticle: string) {
   }
 }
 
-// 🛡️ Request Memoization (React cache принимает ровно 1 аргумент)
+// 🛡️ Request Memoization (React cache)
 export const getProductByArticle = cache(async (article: string) => {
   return getProductByArticleDb(article.toLowerCase());
 });
