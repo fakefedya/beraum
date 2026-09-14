@@ -29,6 +29,7 @@ interface NavDesktopProps {
 
 const checkActive = (href: string, currentPath: string) => {
   if (href === "/") return currentPath === "/";
+  if (href === "/discount") return currentPath === "/discount";
   return currentPath === href || currentPath.startsWith(`${href}/`);
 };
 

@@ -135,6 +135,18 @@ export const NAV_LINKS: Record<StoreMode, readonly NavItem[]> = {
     },
   ],
   discount: [
+    {
+      label: "Каталог",
+      isDisabled: false,
+      type: "link",
+      href: "/discount/catalog",
+    },
+    {
+      label: "О дисконте",
+      isDisabled: false,
+      type: "link",
+      href: "/discount",
+    },
     { label: "О бренде", isDisabled: false, type: "link", href: "/about" },
     { label: "Поддержка", isDisabled: false, type: "link", href: "/support" },
   ],

@@ -13,5 +13,7 @@ backup/
 .next/
 .vscode/
 node_modules/
-src/components/
-src/app/(store)
+src/components/ui
+<!-- src/app/(store) -->
+
+src/app/dashboard
