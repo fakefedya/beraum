@@ -93,7 +93,7 @@ export const DiscountItemForm = ({
 
       <div className="flex max-h-[calc(100%-112px)] flex-1 flex-col gap-8 overflow-y-auto p-6">
         {mode === "create" && (
-          <div className="flex items-start gap-3 rounded-xl bg-blue-50 p-4 text-sm text-blue-800">
+          <div className="flex items-start gap-3 rounded-xl bg-blue-50 p-4 text-sm text-blue-800 dark:bg-blue-950/30 dark:text-blue-300">
             <AlertCircle className="mt-0.5 size-5 shrink-0" />
             <p>
               Создается физический экземпляр. SKU должен быть абсолютно
@@ -266,7 +266,7 @@ export const DiscountItemForm = ({
             required
             disabled={isPending}
             defaultValue={initialData?.defectDescription}
-            placeholder="Царапина на стекле 2см, отсутствует коробка..."
+            placeholder="Царапина на стекле 2см, отсутствует коробка, а в Beraum присутствует кризис..."
             className="bg-background border-input focus-visible:ring-ring min-h-24 resize-none rounded-md border p-3 text-sm focus-visible:ring-1 focus-visible:outline-none"
           />
         </div>
