@@ -1,7 +1,12 @@
 # Add patterns to ignore here, one per line
+
 # Example:
+
 # *.log
+
 # tmp/
+
+package-lock.json
 dataExample.json
 src/server/db/migrations/
 backup/
@@ -9,3 +14,4 @@ backup/
 .vscode/
 node_modules/
 src/components/
+src/app/(store)

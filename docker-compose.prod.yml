@@ -89,6 +89,8 @@ services:
       /usr/bin/mc anonymous set download myminio/system-assets;
       /usr/bin/mc mb --ignore-existing myminio/support-media;
       /usr/bin/mc ilm rule add myminio/support-media --expire-days 30 || true;
+      /usr/bin/mc mb --ignore-existing myminio/discount-products;
+      /usr/bin/mc anonymous set download myminio/discount-products;
       exit 0;
       "
 
