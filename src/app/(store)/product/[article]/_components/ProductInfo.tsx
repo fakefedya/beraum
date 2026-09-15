@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle2, XCircle, Info, Percent } from "lucide-react";
+import { CheckCircle2, XCircle, Info, BadgePercent } from "lucide-react";
 import { Badge } from "@/src/components/ui/badge";
 import { getSwatchStyle, MARKETPLACE_LINKS } from "@/src/lib/constants";
 import { cn } from "@/src/lib/utils";
@@ -195,8 +195,10 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
               className="flex flex-col items-start gap-4"
             >
               <div className="flex items-center gap-2 font-medium">
-                <Percent className="size-5 shrink-0" />
-                <h2 className="font-semibold">Есть экземпляр в дисконте</h2>
+                <BadgePercent className="size-5 shrink-0" />
+                <h2 className="text-lg font-medium">
+                  Есть экземпляр в дисконте
+                </h2>
               </div>
               <p className="text-sm leading-relaxed whitespace-pre-wrap text-orange-900/80">
                 Полностью исправная модель, которая по различным причинам не

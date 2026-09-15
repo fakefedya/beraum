@@ -36,7 +36,7 @@ export const DASHBOARD_NAV: DashboardNavItem[] = [
     roles: ["superadmin", "admin", "manager"],
   },
   {
-    label: "Уценка",
+    label: "Дисконт",
     href: "/dashboard/discount-products",
     icon: Percent,
     roles: ["superadmin", "admin", "manager"],

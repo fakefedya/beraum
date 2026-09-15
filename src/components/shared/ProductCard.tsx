@@ -84,7 +84,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             )}
           />
         </div>
-        {/* Левый верхний угол для статуса уценки */}
+        {/* Левый верхний угол для статуса дисконта */}
         {activeVariant.hasDiscount && (
           <Badge className="absolute top-4 left-4 border-none bg-orange-500 text-xs leading-normal font-medium text-white uppercase">
             Есть дисконт

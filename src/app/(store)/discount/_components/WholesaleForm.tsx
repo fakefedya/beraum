@@ -124,16 +124,16 @@ export const WholesaleForm = () => {
                 Обе категории
               </SelectItem>
               <SelectItem value="working" className="cursor-pointer rounded-lg">
-                Исправная уценка (Спб)
+                Исправный дисконт (Спб)
               </SelectItem>
               <SelectItem value="broken" className="cursor-pointer rounded-lg">
-                Неисправная техника (Мск / Спб)
+                Неисправный дисконт (Мск / Спб)
               </SelectItem>
             </SelectContent>
           </Select>
 
           {/* Статичный Floating Label (эмитируем активное состояние) */}
-          <label className="text-muted-foreground pointer-events-none absolute top-4 left-4 z-10 flex origin-[0] -translate-y-2.5 scale-[0.8] gap-0.5 transition-all duration-200">
+          <label className="text-muted-foreground pointer-events-none absolute top-4 left-4 z-10 flex origin-left -translate-y-2.5 scale-[0.8] gap-0.5 transition-all duration-200">
             Интересующая категория <span className="text-red-600/60">*</span>
           </label>
         </div>

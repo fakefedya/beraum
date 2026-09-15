@@ -103,8 +103,8 @@ export const RequestDetailsSheet = ({
       const conditionMap: Record<string, string> = {
         new: "Новая",
         discount: "Дисконт",
-        working: "Исправная уценка (Спб)",
-        broken: "Неисправная техника (Мск/Спб)",
+        working: "Исправный дисконт (СПб)",
+        broken: "Неисправный дисконт (МСК/СПб)",
       };
       return conditionMap[String(value)] || String(value);
     }

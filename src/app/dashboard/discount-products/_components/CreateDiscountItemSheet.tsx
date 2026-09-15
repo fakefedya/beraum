@@ -35,7 +35,7 @@ export const CreateDiscountItemSheet = ({
     startTransition(async () => {
       const result = await createDiscountItemAction(formData);
       if (result.success) {
-        toast.success("Уцененный товар добавлен!");
+        toast.success("Дисконт товар добавлен!");
         setIsOpen(false);
       } else {
         toast.error(result.error);
@@ -47,7 +47,7 @@ export const CreateDiscountItemSheet = ({
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button className="bg-foreground text-background hover:bg-foreground/80 h-10 px-4 font-medium">
-          <Plus className="mr-2 size-4" /> Добавить уценку
+          <Plus className="mr-2 size-4" /> Добавить дисконт
         </Button>
       </SheetTrigger>
 

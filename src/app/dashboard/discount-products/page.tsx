@@ -12,7 +12,7 @@ import { requireAuthRole } from "@/src/server/utils/auth-check";
 import { cn } from "@/src/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Уцененные товары",
+  title: "Дисконт товары",
 };
 
 const STATUS_FILTERS = [
@@ -63,7 +63,7 @@ export default async function DiscountItemsPage(props: {
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">
-            Уцененные товары
+            Дисконт товары
           </h1>
         </div>
 

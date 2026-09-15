@@ -313,7 +313,7 @@ async function getProductByArticleDb(rawArticle: string) {
       .from(productDocuments)
       .where(eq(productDocuments.productId, product.id));
 
-    // 🛡️ Оптимизация: Запрашиваем только 1 самую дешевую уценку для ТЕКУЩЕГО варианта (без join-ов)
+    // 🛡️ Оптимизация: Запрашиваем только 1 самую дешевую дисконт для ТЕКУЩЕГО варианта (без join-ов)
     const discountPromise = db
       .select({
         uniqueSku: discountItems.uniqueSku,
