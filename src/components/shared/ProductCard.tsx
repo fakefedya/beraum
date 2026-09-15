@@ -23,8 +23,6 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const searchParams = useSearchParams();
-
-  // 🛡️ Безопасное определение дефолтного варианта на основе URL params
   const matchedVariant = useMemo(() => {
     const selectedColors = searchParams
       .getAll("color")
@@ -52,7 +50,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const [selectedVariantId, setSelectedVariantId] = useState(matchedVariant.id);
   const [prevMatchedId, setPrevMatchedId] = useState(matchedVariant.id);
 
-  // Синхронизация локального стейта с изменениями URL (Server -> Client handoff)
   if (matchedVariant.id !== prevMatchedId) {
     setPrevMatchedId(matchedVariant.id);
     setSelectedVariantId(matchedVariant.id);
@@ -87,11 +84,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             )}
           />
         </div>
-
-        {/* 🚀 Акцентная плашка дисконта, реактивно зависящая от выбранного варианта */}
+        {/* Левый верхний угол для статуса уценки */}
         {activeVariant.hasDiscount && (
-          <Badge className="absolute top-4 left-4 z-10 border-none bg-orange-500 text-[10px] leading-normal font-bold text-white uppercase shadow-sm hover:bg-orange-600">
-            % Уценка
+          <Badge className="absolute top-4 left-4 border-none bg-orange-500 text-xs leading-normal font-medium text-white uppercase">
+            Есть дисконт
           </Badge>
         )}
 

@@ -415,6 +415,7 @@ export async function getSimilarProducts(
             price: number;
             stock: number;
             isLatest: boolean;
+            hasDiscount: boolean; // 🛡️ Тип синхронизирован с CatalogProduct
             image: {
               fileKey: string;
               bucketName: string;
@@ -429,6 +430,15 @@ export async function getSimilarProducts(
             'isLatest', COALESCE(${products.isLatest}, false),
             'price', ${computedPriceSql},
             'stock', ${computedStockSql},
+            
+            /* 🚀 Добавлена логика проверки наличия дисконта для карточек */
+            'hasDiscount', (
+              SELECT EXISTS(
+                SELECT 1 FROM ${discountItems} di
+                WHERE di.product_id = ${products.id} AND di.status = 'available'
+              )
+            ),
+
             'image', (
               SELECT jsonb_build_object(
                 'fileKey', pi.file_key,

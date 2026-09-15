@@ -178,28 +178,37 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
       )}
 
       {product.bestDiscount && (
-        <div className="flex flex-col gap-4 rounded-2xl border border-orange-200 bg-orange-50 p-6 dark:border-orange-900 dark:bg-orange-950/30">
-          <div className="flex items-center gap-2 font-medium text-orange-800 dark:text-orange-300">
-            <Percent className="size-5 shrink-0" />
-            <h2 className="text-lg">Есть уцененный экземпляр</h2>
-          </div>
-          <p className="text-sm leading-relaxed text-orange-800/80 dark:text-orange-300/80">
-            Полностью исправная модель с незначительными внешними дефектами по
-            сниженной стоимости.
-          </p>
-          <div className="mt-1 flex items-center justify-between gap-4">
-            <span className="text-2xl font-semibold text-orange-900 dark:text-orange-100">
-              {product.bestDiscount.discountPrice.toLocaleString("ru-RU")} ₽
+        <div className="flex flex-col gap-6">
+          <h2 className="text-xl font-medium text-balance">
+            <span className="text-foreground">Дисконт.</span>{" "}
+            <span className="text-muted-foreground/60">
+              Выгодное предложение.
             </span>
-            <Button
-              asChild
-              className="bg-orange-500 text-white shadow-sm outline-none hover:bg-orange-600 focus-visible:ring-2 focus-visible:ring-orange-500/50"
+          </h2>
+          <Button
+            asChild
+            className="rounded-xl border border-orange-200 bg-orange-50 p-5 text-orange-900 hover:bg-orange-100"
+          >
+            <Link
+              scroll={true}
+              href={`/discount/${product.bestDiscount.uniqueSku}`}
+              className="flex flex-col items-start gap-4"
             >
-              <Link href={`/discount/${product.bestDiscount.uniqueSku}`}>
-                Посмотреть
-              </Link>
-            </Button>
-          </div>
+              <div className="flex items-center gap-2 font-medium">
+                <Percent className="size-5 shrink-0" />
+                <h2 className="font-semibold">Есть экземпляр в дисконте</h2>
+              </div>
+              <p className="text-sm leading-relaxed whitespace-pre-wrap text-orange-900/80">
+                Полностью исправная модель, которая по различным причинам не
+                может продаваться как новый товар по полной стоимости.
+              </p>
+              <div className="mt-1 flex items-center justify-between gap-4">
+                <span className="text-lg font-medium">
+                  {product.bestDiscount.discountPrice.toLocaleString("ru-RU")} ₽
+                </span>
+              </div>
+            </Link>
+          </Button>
         </div>
       )}
 

@@ -91,14 +91,12 @@ export const DiscountItemInfo = ({ item }: DiscountItemInfoProps) => {
               </div>
             )}
           </div>
-          <div className="bg-brand/20 flex flex-col gap-3 rounded-2xl p-4">
-            <div className="text-foreground flex items-center gap-2 font-medium">
+          <div className="flex flex-col gap-3 rounded-2xl border border-orange-200 bg-orange-50 p-4 text-orange-900">
+            <div className="flex items-center gap-2 font-medium">
               <AlertTriangle className="size-5 shrink-0" />
-              <h2>Причина уценки</h2>
+              <h2>Причина дисконта</h2>
             </div>
-            <p className="text-foreground text-sm leading-relaxed">
-              {item.defectDescription}
-            </p>
+            <p className="text-sm leading-relaxed">{item.defectDescription}</p>
           </div>
         </div>
       </div>
@@ -116,7 +114,7 @@ export const DiscountItemInfo = ({ item }: DiscountItemInfoProps) => {
               <Button
                 size="lg"
                 className={cn(
-                  "group bg-brand relative h-14 w-full overflow-hidden rounded-xl text-base font-semibold text-black transition-all duration-300 outline-none active:scale-[0.98]",
+                  "group bg-brand relative h-14 w-full overflow-hidden rounded-xl text-base font-medium text-black transition-all duration-300 outline-none active:scale-[0.98]",
                   "md:w-full md:px-12",
                   "hover:bg-brand/80",
                   "focus-visible:ring-brand/30 focus-visible:ring-4",

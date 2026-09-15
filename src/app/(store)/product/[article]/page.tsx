@@ -43,7 +43,6 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  // Обязательный await для params в Next.js 16
   const resolvedParams = await params;
   const article = resolvedParams?.article;
 

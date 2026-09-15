@@ -104,7 +104,7 @@ export const DiscountCard = ({ product }: DiscountCardProps) => {
             <span className="text-xs font-medium">{product.uniqueSku}</span>
           </div>
         </div>
-        <div className="bg-brand/20 text-foreground h-20 rounded-xl p-4">
+        <div className="h-20 rounded-xl border border-orange-200 bg-orange-50 p-4 text-orange-900">
           <p className="line-clamp-2 text-sm leading-relaxed">
             {product.defectDescription}
           </p>

@@ -8,7 +8,6 @@ import { ProductGallery } from "../../product/[article]/_components/ProductGalle
 import { SimilarProducts } from "../../product/[article]/_components/SimilarProducts";
 import { DiscountItemInfo } from "./_components/DiscountItemInfo";
 import { buildImageUrl, cn } from "@/src/lib/utils";
-import { Breadcrumbs } from "@/src/components/shared/Breadcrumbs";
 
 type PageProps = {
   params: Promise<{ sku: string }>;
@@ -37,7 +36,7 @@ export async function generateMetadata({
   if (!item) return {};
 
   return {
-    title: `Уценка: ${item.siteArticle} (${item.uniqueSku})`,
+    title: `Дисконт: ${item.siteArticle} (${item.uniqueSku})`,
     description: `Оригинальная техника Beraum со скидкой. Уникальный SKU: ${item.uniqueSku}. ${item.defectDescription.substring(0, 100)}...`,
   };
 }
