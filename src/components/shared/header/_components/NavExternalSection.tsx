@@ -17,11 +17,13 @@ export const NavExternalSection = ({ links }: NavExternalSectionProps) => {
 
   const externalLinks = links.filter((link) => link.type === "external");
 
+  if (externalLinks.length === 0) return null;
+
   return (
     <NavigationMenuList>
       {externalLinks.map((link, idx) => {
         const key = `nav-item-${idx}`;
-        return <ExternalLinkNode key={key} item={link} />;
+        return <ExternalLinkNode key={key} item={link as NavExternal} />;
       })}
     </NavigationMenuList>
   );

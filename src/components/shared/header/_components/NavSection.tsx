@@ -9,6 +9,7 @@ import { SearchSection } from "./SearchSection";
 import { MarketplaceDropdown } from "./MarketplaceDropdown";
 import { NavigationMenu } from "@/src/components/ui/navigation-menu";
 import { cn } from "@/src/lib/utils";
+import { DiscountCartButton } from "./DiscountCartButton";
 
 export const NavSection = () => {
   const pathname = usePathname();
@@ -19,7 +20,7 @@ export const NavSection = () => {
     <div
       className={cn(
         "flex w-full flex-row-reverse items-center justify-start gap-4",
-        "lg:flex-row lg:gap-1.5",
+        "lg:flex-row lg:gap-2",
       )}
     >
       <NavigationMenu
@@ -30,7 +31,9 @@ export const NavSection = () => {
       </NavigationMenu>
       <NavMobile links={links} />
       <SearchSection />
-      <MarketplaceDropdown />
+
+      {!isDiscount && <MarketplaceDropdown />}
+      {isDiscount && <DiscountCartButton />}
     </div>
   );
 };

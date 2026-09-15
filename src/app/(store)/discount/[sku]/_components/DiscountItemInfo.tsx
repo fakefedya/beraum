@@ -3,11 +3,9 @@ import {
   Barcode,
   CheckCircle2,
   Info,
-  ShoppingCart,
   XCircle,
 } from "lucide-react";
 import { Badge } from "@/src/components/ui/badge";
-import { Button } from "@/src/components/ui/button";
 import { buildImageUrl, cn } from "@/src/lib/utils";
 import { getDiscountItemBySku } from "@/src/server/queries/discount";
 import { AddToCartButton } from "./AddToCartButton";
@@ -123,7 +121,7 @@ export const DiscountItemInfo = ({ item }: DiscountItemInfoProps) => {
                   discountPrice: item.discountPrice,
                   imageUrl,
                 }}
-                className="h-14 w-full rounded-xl text-base font-medium shadow-sm md:w-full md:px-12"
+                className="h-14 w-full rounded-xl text-base font-medium md:w-full md:px-12"
               />
             </div>
 

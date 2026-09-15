@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { VALID_MARKETPLACES } from "@/src/lib/constants/marketplaces";
+import { PAYMENT_METHODS } from "@/src/lib/constants/orders";
 
 const VALID_CONDITIONS = ["new", "discount"] as const;
 
@@ -102,3 +103,38 @@ export const wholesaleSchema = baseFeedbackSchema.extend({
   city: z.string().min(2, "Укажите город").max(100),
   techType: z.enum(["working", "broken", "both"], "Выберите тип техники"),
 });
+
+const cartBaseSchema = baseFeedbackSchema.extend({
+  skus: z
+    .string()
+    .refine((val) => {
+      try {
+        const arr = JSON.parse(val);
+        return Array.isArray(arr) && arr.length > 0 && arr.length <= 3;
+      } catch {
+        return false;
+      }
+    }, "Неверный формат корзины (макс. 3 товара)")
+    .transform((val) => JSON.parse(val) as string[]),
+  paymentMethod: z.enum(PAYMENT_METHODS, {
+    errorMap: () => ({ message: "Выберите способ оплаты" }),
+  }),
+});
+
+export const discountCartSchema = z.discriminatedUnion("deliveryMethod", [
+  cartBaseSchema.extend({
+    deliveryMethod: z.literal("pickup"),
+  }),
+  cartBaseSchema.extend({
+    deliveryMethod: z.literal("delivery"),
+    address: z.string().min(5, "Укажите точный адрес доставки"),
+    apartment: z.string().optional(),
+    entrance: z.string().optional(),
+    floor: z.string().optional(),
+    intercom: z.string().optional(),
+    courierComment: z
+      .string()
+      .max(500, "Слишком длинный комментарий")
+      .optional(),
+  }),
+]);
