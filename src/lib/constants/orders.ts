@@ -11,6 +11,6 @@ export const DELIVERY_LABELS: Record<
 
 export const PAYMENT_LABELS: Record<(typeof PAYMENT_METHODS)[number], string> =
   {
-    card: "Банковская карта (при получении)",
-    cash: "Наличные (при получении)",
+    card: "Банковская карта",
+    cash: "Наличные",
   };

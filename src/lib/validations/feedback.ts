@@ -116,8 +116,9 @@ const cartBaseSchema = baseFeedbackSchema.extend({
       }
     }, "Неверный формат корзины (макс. 3 товара)")
     .transform((val) => JSON.parse(val) as string[]),
-  paymentMethod: z.enum(PAYMENT_METHODS, {
-    errorMap: () => ({ message: "Выберите способ оплаты" }),
+
+  paymentMethod: z.enum(["card", "cash"], {
+    message: "Выберите способ оплаты",
   }),
 });
 
