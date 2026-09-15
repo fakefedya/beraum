@@ -5,13 +5,12 @@ import {
   Info,
   ShoppingCart,
   XCircle,
-  FileText,
-  Download,
 } from "lucide-react";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
-import { cn } from "@/src/lib/utils";
+import { buildImageUrl, cn } from "@/src/lib/utils";
 import { getDiscountItemBySku } from "@/src/server/queries/discount";
+import { AddToCartButton } from "./AddToCartButton";
 
 type DiscountDetails = NonNullable<
   Awaited<ReturnType<typeof getDiscountItemBySku>>["data"]
@@ -34,6 +33,11 @@ export const DiscountItemInfo = ({ item }: DiscountItemInfoProps) => {
   const validSpecs = Object.entries(item.specifications || {}).filter(
     ([_, val]) => val !== null && val !== "",
   );
+
+  const coverImageKey = item.mediaKeys?.[0]?.key;
+  const imageUrl = coverImageKey
+    ? buildImageUrl({ bucketName: "discount-products", fileKey: coverImageKey })
+    : "";
 
   return (
     <div className={cn("flex flex-col gap-10", "md:gap-16")}>
@@ -101,30 +105,29 @@ export const DiscountItemInfo = ({ item }: DiscountItemInfoProps) => {
         </div>
       </div>
 
-      {/* 2. Блок действия (Action Block) с логикой Fixed на мобилке */}
+      {/* 2. Блок действия */}
       <div className="flex flex-col gap-6">
         {isAvailable ? (
           <>
             <div
               className={cn(
-                "bg-background/90 fixed bottom-0 left-0 z-50 w-full border-t border-black/5 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-xl",
+                "bg-background/90 fixed bottom-0 left-0 z-10 w-full border-t border-black/5 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-xl",
                 "md:static md:w-auto md:border-none md:bg-transparent md:p-0 md:backdrop-blur-none",
               )}
             >
-              <Button
-                size="lg"
-                className={cn(
-                  "group bg-brand relative h-14 w-full overflow-hidden rounded-xl text-base font-medium text-black transition-all duration-300 outline-none active:scale-[0.98]",
-                  "md:w-full md:px-12",
-                  "hover:bg-brand/80",
-                  "focus-visible:ring-brand/30 focus-visible:ring-4",
-                )}
-              >
-                <ShoppingCart className="mr-2 size-5" />
-                Добавить в корзину
-              </Button>
+              <AddToCartButton
+                item={{
+                  uniqueSku: item.uniqueSku,
+                  siteArticle: item.siteArticle,
+                  categoryName: item.categoryName,
+                  discountPrice: item.discountPrice,
+                  imageUrl,
+                }}
+                className="h-14 w-full rounded-xl text-base font-medium shadow-sm md:w-full md:px-12"
+              />
             </div>
-            {/* Невидимая распорка для мобилки, чтобы контент не проваливался под fixed-блок */}
+
+            {/* Невидимая распорка для мобилки, чтобы контент не проваливался */}
             <div className="h-20 w-full md:hidden" aria-hidden="true" />
           </>
         ) : (
