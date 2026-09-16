@@ -2,7 +2,7 @@ import { db } from "@/src/server/db/client";
 import { users } from "@/src/server/db/schema";
 import { desc, count } from "drizzle-orm";
 import { UsersTable } from "./UsersTable";
-import { CatalogPagination } from "@/src/app/(store)/catalog/[category]/_components/CatalogPagination";
+import { DashboardPagination } from "@/src/app/dashboard/_components/DashboardPagination";
 
 const LIMIT = 25;
 
@@ -46,7 +46,7 @@ export const UsersTableWrapper = async ({
       </div>
 
       <div className="py-4">
-        <CatalogPagination currentPage={page} hasMore={hasMore} />
+        <DashboardPagination currentPage={page} hasMore={hasMore} />
       </div>
     </div>
   );

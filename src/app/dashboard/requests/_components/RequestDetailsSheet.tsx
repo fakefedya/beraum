@@ -297,42 +297,6 @@ export const RequestDetailsSheet = ({
             )}
           </div>
         </div>
-
-        {/* БЛОК УПРАВЛЕНИЯ РЕЗЕРВАМИ */}
-        {request.type === "discount_order" && request.status !== "resolved" && (
-          <div className="bg-background z-10 flex flex-col gap-3 border-t border-black/5 p-6 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)]">
-            <h4 className="text-foreground text-sm font-medium">
-              Управление заказом
-            </h4>
-            {/* ИСПРАВЛЕНИЕ: Меняем flex на grid grid-cols-2 и убираем w-full у кнопок */}
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                variant="default"
-                className="bg-green-600 text-white transition-colors hover:bg-green-700"
-                disabled={isPending}
-                onClick={() => handleProcessOrder("confirm")}
-              >
-                {isPending ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  "Продано"
-                )}
-              </Button>
-              <Button
-                variant="destructive"
-                className="transition-colors"
-                disabled={isPending}
-                onClick={() => handleProcessOrder("cancel")}
-              >
-                {isPending ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  "Снять бронь"
-                )}
-              </Button>
-            </div>
-          </div>
-        )}
       </SheetContent>
     </Sheet>
   );

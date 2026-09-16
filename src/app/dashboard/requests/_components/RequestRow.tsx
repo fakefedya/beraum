@@ -17,7 +17,6 @@ import type { RequestItem, FeedbackPayload } from "./RequestsTable";
 import { CopyButton } from "@/src/components/shared/CopyButton";
 import { cn } from "@/src/lib/utils";
 
-// Строгий $O(1) маппинг статусов
 const STATUS_MAP: Record<
   RequestItem["status"],
   { label: string; color: string }
@@ -37,7 +36,6 @@ const STATUS_MAP: Record<
   },
 };
 
-// Строгий $O(1) маппинг типов с цветами бейджей (Dark Mode Ready)
 const TYPE_MAP: Record<RequestItem["type"], { label: string; color: string }> =
   {
     consultation: {
@@ -56,11 +54,6 @@ const TYPE_MAP: Record<RequestItem["type"], { label: string; color: string }> =
     support: {
       label: "Поддержка",
       color: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
-    },
-    discount_order: {
-      label: "Заказ дисконта",
-      color:
-        "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300",
     },
   };
 

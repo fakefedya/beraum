@@ -6,7 +6,6 @@ import {
   MessageCircleCheck,
   MessageCircleMore,
   MessageCircleWarning,
-  ShoppingCart,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Metadata } from "next";
@@ -26,7 +25,6 @@ export const metadata: Metadata = {
 const TYPE_FILTERS: { label: string; icon: LucideIcon; value: RequestType }[] =
   [
     { label: "Все", icon: MessageCircle, value: "all" },
-    { label: "Заказы дисконта", icon: ShoppingCart, value: "discount_order" },
     { label: "Служба поддержки", icon: MessageCircleHeart, value: "support" },
     { label: "Дисконт", icon: MessageCircleWarning, value: "wholesale" },
     {
@@ -46,14 +44,7 @@ const STATUS_FILTERS: { label: string; value: RequestStatus }[] = [
 
 const searchParamsSchema = z.object({
   type: z
-    .enum([
-      "all",
-      "consultation",
-      "partnership",
-      "support",
-      "wholesale",
-      "discount_order",
-    ])
+    .enum(["all", "consultation", "partnership", "support", "wholesale"])
     .catch("all"),
   status: z.enum(["all", "new", "in_progress", "resolved"]).catch("all"),
   q: z.string().catch(""),

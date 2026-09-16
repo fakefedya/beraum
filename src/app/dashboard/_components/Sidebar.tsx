@@ -6,6 +6,7 @@ import { DASHBOARD_NAV } from "@/src/lib/constants/dashboard";
 import type { Role } from "@/src/lib/constants/roles";
 import { cn } from "@/src/lib/utils";
 import { Icons } from "@/src/components/ui/icons";
+import { NavBadge } from "./NavBadge";
 
 interface SidebarProps {
   userRole: Role;
@@ -45,12 +46,13 @@ export const Sidebar = ({ userRole }: SidebarProps) => {
                 "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors outline-none",
                 "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-1",
                 isActive
-                  ? "bg-foreground text-background"
+                  ? "bg-foreground/80 text-background"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground",
               )}
             >
               <Icon className="h-5 w-5" strokeWidth={isActive ? 2.5 : 2} />
               {item.label}
+              <NavBadge href={item.href} />
             </Link>
           );
         })}

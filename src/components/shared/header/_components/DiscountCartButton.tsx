@@ -264,7 +264,9 @@ const CartFormContent = ({
 
           {/* 2. СПОСОБ ОПЛАТЫ */}
           <div className="flex flex-col gap-4">
-            <h3 className="text-lg font-medium">Как вам удобнее оплатить?</h3>
+            <h3 className="text-lg font-medium">
+              Как вам удобнее оплатить заказ?
+            </h3>
             <div className="flex flex-col gap-4">
               {(
                 Object.keys(PAYMENT_LABELS) as Array<

@@ -7,13 +7,35 @@
 # tmp/
 
 package-lock.json
-dataExample.json
 src/server/db/migrations/
 backup/
 .next/
 .vscode/
 node_modules/
-src/components/ui
-src/app/(store)
 
-<!-- src/app/dashboard -->
+src/components/ui
+
+<!-- МАГАЗИН -->
+
+<!-- src/app/(store)/ -->
+
+src/app/(store)/_components/
+src/app/(store)/about/
+src/app/(store)/catalog/
+src/app/(store)/faq/
+src/app/(store)/partnership/
+src/app/(store)/policies/
+src/app/(store)/product/
+src/app/(store)/service/
+src/app/(store)/support/
+
+<!-- Дисконт -->
+
+<!-- src/app/(store)/discount -->
+
+<!-- ДАШБОРД -->
+
+<!-- src/app/dashboard/ -->
+
+src/app/dashboard/banners
+src/app/dashboard/settings

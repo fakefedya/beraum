@@ -11,6 +11,9 @@ import type { ActionState } from "./feedback";
 import { generateTicketNumber } from "../utils/ticket";
 import { discountItems } from "../db/schema/discount.schema";
 import { inArray } from "drizzle-orm";
+import { orders } from "../db/schema/orders.schema";
+import { products, categories } from "../db/schema";
+import { eq } from "drizzle-orm";
 
 export async function submitWholesaleAction(
   prevState: ActionState,
@@ -71,7 +74,7 @@ export async function checkoutDiscountCartAction(
   const data = Object.fromEntries(formData.entries());
 
   if (typeof data.botCheck === "string" && data.botCheck.length > 0) {
-    return { success: true }; // Honeypot сработал
+    return { success: true };
   }
 
   try {
@@ -86,55 +89,49 @@ export async function checkoutDiscountCartAction(
 
     const rateLimit = await checkRateLimit("discount_checkout", 3, 60000 * 30);
     if (!rateLimit.success) {
-      return {
-        success: false,
-        error: "Слишком много запросов. Подождите.",
-        payload: data,
-      };
+      return { success: false, error: "Слишком много запросов. Подождите." };
     }
 
-    // TS теперь абсолютно точно знает структуру parsed.data
     const { name, phone, email, message, skus, deliveryMethod, paymentMethod } =
       parsed.data;
 
-    // Безопасная сборка payload для JSONB колонки
-    const payloadData: Record<string, unknown> = {
-      skus,
-      deliveryMethod,
-      paymentMethod,
-      source: "discount_cart",
-    };
-
-    // Если доставка, TS гарантирует наличие этих полей в parsed.data
-    if (parsed.data.deliveryMethod === "delivery") {
-      payloadData.address = parsed.data.address;
-      payloadData.apartment = parsed.data.apartment;
-      payloadData.entrance = parsed.data.entrance;
-      payloadData.floor = parsed.data.floor;
-      payloadData.intercom = parsed.data.intercom;
-      payloadData.courierComment = parsed.data.courierComment;
-    }
-
     await db.transaction(async (tx) => {
-      // 1. Блокируем строки (FOR UPDATE)
-      const items = await tx
+      // 1. Блокируем строки и стягиваем полные данные для Snapshot'а
+      const dbItems = await tx
         .select({
           id: discountItems.id,
           uniqueSku: discountItems.uniqueSku,
           status: discountItems.status,
+          price: discountItems.discountPrice,
+          siteArticle: products.siteArticle,
+          categoryName: categories.titleRu,
         })
         .from(discountItems)
+        .innerJoin(products, eq(discountItems.productId, products.id))
+        .innerJoin(categories, eq(products.categoryId, categories.id))
         .where(inArray(discountItems.uniqueSku, skus))
         .for("update");
 
-      if (items.length !== skus.length) {
-        throw new Error("Некоторые товары уже проданы. Обновите корзину.");
+      if (dbItems.length !== skus.length) {
+        throw new Error("Некоторые товары не найдены. Обновите корзину.");
       }
-      if (items.some((i) => i.status !== "available")) {
-        throw new Error("Один или несколько товаров только что забронировали.");
+      if (dbItems.some((i) => i.status !== "available")) {
+        throw new Error("Один или несколько товаров уже забронированы.");
       }
 
-      // 2. Перевод в резерв
+      // 2. Создаем Snapshot и считаем сумму
+      let totalAmount = 0;
+      const snapshotItems = dbItems.map((item) => {
+        totalAmount += item.price;
+        return {
+          uniqueSku: item.uniqueSku,
+          siteArticle: item.siteArticle,
+          categoryName: item.categoryName,
+          price: item.price,
+        };
+      });
+
+      // 3. Резервируем физические товары
       await tx
         .update(discountItems)
         .set({
@@ -145,28 +142,38 @@ export async function checkoutDiscountCartAction(
         .where(
           inArray(
             discountItems.id,
-            items.map((i) => i.id),
+            dbItems.map((i) => i.id),
           ),
         );
 
-      // 3. Сохранение лида
-      await tx.insert(feedbackRequests).values({
-        ticketNumber: generateTicketNumber(),
-        type: "discount_order",
+      // 4. Записываем заказ в НОВУЮ таблицу
+      await tx.insert(orders).values({
         name,
         phone,
         email,
         message,
-        payload: payloadData,
+        deliveryMethod,
+        paymentMethod,
+        deliveryDetails:
+          deliveryMethod === "delivery"
+            ? {
+                address: parsed.data.address,
+                apartment: parsed.data.apartment,
+                entrance: parsed.data.entrance,
+                floor: parsed.data.floor,
+                intercom: parsed.data.intercom,
+                courierComment: parsed.data.courierComment,
+              }
+            : {},
+        items: snapshotItems,
+        totalAmount,
         ipHash: rateLimit.ipHash,
-        consentAt: new Date(),
       });
     });
 
     return { success: true };
   } catch (error) {
-    console.error("❌ Ошибка checkoutDiscountCartAction:", error);
-    if (error instanceof Error && error.message.includes("забронировали")) {
+    if (error instanceof Error && error.message.includes("забронированы")) {
       return { success: false, error: error.message, payload: data };
     }
     return {

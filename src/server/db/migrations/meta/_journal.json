@@ -148,6 +148,13 @@
       "when": 1789415913106,
       "tag": "0020_fixed_ulik",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1789538956181,
+      "tag": "0021_rapid_hitman",
+      "breakpoints": true
     }
   ]
 }

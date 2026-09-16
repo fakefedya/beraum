@@ -26,7 +26,6 @@ export const requestTypeEnum = pgEnum("request_type", [
   "partnership",
   "support",
   "wholesale",
-  "discount_order",
 ]);
 
 export const discountItemStatusEnum = pgEnum("discount_item_status", [

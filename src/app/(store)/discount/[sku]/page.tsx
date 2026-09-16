@@ -36,7 +36,7 @@ export async function generateMetadata({
   if (!item) return {};
 
   return {
-    title: `Дисконт: ${item.siteArticle} (${item.uniqueSku})`,
+    title: `${item.siteArticle} (${item.uniqueSku})`,
     description: `Оригинальная техника Beraum со скидкой. Уникальный SKU: ${item.uniqueSku}. ${item.defectDescription.substring(0, 100)}...`,
   };
 }

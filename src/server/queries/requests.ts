@@ -4,12 +4,7 @@ import { feedbackRequests } from "@/src/server/db/schema/feedback.schema";
 import { desc, eq, and, ilike, or, count, type SQL } from "drizzle-orm";
 
 export type RequestType =
-  | "all"
-  | "consultation"
-  | "partnership"
-  | "support"
-  | "wholesale"
-  | "discount_order";
+  "all" | "consultation" | "partnership" | "support" | "wholesale";
 export type RequestStatus = "all" | "new" | "in_progress" | "resolved";
 
 export async function getFeedbackRequests(

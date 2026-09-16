@@ -16,6 +16,7 @@ import {
   SheetTrigger,
 } from "@/src/components/ui/sheet";
 import { Button } from "@/src/components/ui/button";
+import { NavBadge } from "./NavBadge";
 
 interface MobileSidebarProps {
   userRole: Role;
@@ -73,12 +74,13 @@ export const MobileSidebar = ({ userRole }: MobileSidebarProps) => {
                   "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors outline-none",
                   "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-1",
                   isActive
-                    ? "bg-foreground text-background"
+                    ? "bg-foreground/80 text-background"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
               >
                 <Icon className="h-5 w-5" strokeWidth={isActive ? 2.5 : 2} />
                 {item.label}
+                <NavBadge href={item.href} />
               </Link>
             );
           })}
