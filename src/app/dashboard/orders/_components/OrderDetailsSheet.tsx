@@ -126,7 +126,12 @@ export const OrderDetailsSheet = ({
                 </div>
                 <div>
                   <span className="text-muted-foreground mr-2">Email:</span>
-                  <span className="font-medium">{order.email}</span>
+                  <a
+                    href={`mailto:${order.email}`}
+                    className="text-sm text-blue-500 hover:underline"
+                  >
+                    {order.email}
+                  </a>
                 </div>
               </div>
             </section>

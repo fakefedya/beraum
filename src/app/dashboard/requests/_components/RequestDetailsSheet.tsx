@@ -1,10 +1,7 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import {
-  getMediaUrlsAction,
-  processDiscountOrderAction,
-} from "@/src/server/actions/requests";
+import { useEffect, useState } from "react";
+import { getMediaUrlsAction } from "@/src/server/actions/requests";
 import {
   Sheet,
   SheetContent,
@@ -15,8 +12,6 @@ import { Loader2, ExternalLink, FileIcon } from "lucide-react";
 import { SafeImage } from "@/src/components/shared/SafeImage";
 import type { RequestItem, FeedbackPayload } from "./RequestsTable";
 import { cn } from "@/src/lib/utils";
-import { Button } from "@/src/components/ui/button";
-import { toast } from "sonner";
 
 interface RequestDetailsProps {
   request: RequestItem | null;
@@ -40,14 +35,6 @@ const PAYLOAD_LABELS: Record<string, string> = {
   volume: "Ожидаемый объем",
   source: "Источник перехода",
   techType: "Категория",
-  skus: "SKU Товаров",
-  deliveryMethod: "Способ получения",
-  paymentMethod: "Способ оплаты",
-  apartment: "Квартира",
-  entrance: "Подъезд",
-  floor: "Этаж",
-  intercom: "Домофон",
-  courierComment: "Комментарий курьеру",
 };
 
 export const RequestDetailsSheet = ({
@@ -61,7 +48,6 @@ export const RequestDetailsSheet = ({
   );
   const [isLoadingMedia, setIsLoadingMedia] = useState(false);
   const [currentRequestId, setCurrentRequestId] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
 
   const safeRequestId = request?.id ?? null;
   const payload = (request?.payload || {}) as FeedbackPayload;
@@ -94,33 +80,6 @@ export const RequestDetailsSheet = ({
       isMounted = false;
     };
   }, [isOpen, safeRequestId, hasMedia]);
-
-  const handleProcessOrder = (actionType: "confirm" | "cancel") => {
-    if (!request) return;
-
-    const actionName =
-      actionType === "confirm" ? "подтвердить продажу" : "отменить резерв";
-    if (
-      !confirm(
-        `Вы уверены, что хотите ${actionName}? Это действие нельзя отменить.`,
-      )
-    )
-      return;
-
-    startTransition(async () => {
-      const res = await processDiscountOrderAction(request.id, actionType);
-      if (res.success) {
-        toast.success(
-          actionType === "confirm"
-            ? "Товары проданы, заявка закрыта"
-            : "Резерв снят, заявка закрыта",
-        );
-        onClose();
-      } else {
-        toast.error(res.error);
-      }
-    });
-  };
 
   if (!request) return null;
 
@@ -164,14 +123,7 @@ export const RequestDetailsSheet = ({
 
     if (key === "source" && value === "discount_page")
       return "Страница дисконта (Опт)";
-    if (key === "source" && value === "discount_cart")
-      return "Корзина дисконта (Розница)";
     if (key === "sourcePage" && value === "/") return "Главная страница";
-    if (key === "deliveryMethod")
-      return value === "pickup" ? "Самовывоз (СПб)" : "Доставка";
-    if (key === "paymentMethod")
-      return value === "card" ? "Карта при получении" : "Наличные";
-    if (key === "skus" && Array.isArray(value)) return value.join(", ");
 
     return String(value);
   };
