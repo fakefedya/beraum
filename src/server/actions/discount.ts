@@ -6,14 +6,18 @@ import { checkRateLimit } from "@/src/server/utils/rate-limit";
 import {
   discountCartSchema,
   wholesaleSchema,
-} from "@/src/lib/validations/feedback"; // Импорт единой схемы
+} from "@/src/lib/validations/feedback";
 import type { ActionState } from "./feedback";
 import { generateTicketNumber } from "../utils/ticket";
 import { discountItems } from "../db/schema/discount.schema";
-import { inArray } from "drizzle-orm";
+import { inArray, eq } from "drizzle-orm";
 import { orders } from "../db/schema/orders.schema";
 import { products, categories } from "../db/schema";
-import { eq } from "drizzle-orm";
+import { after } from "next/server";
+import {
+  sendOrderClientEmail,
+  sendAdminNotificationEmail,
+} from "../services/mail/client";
 
 export async function submitWholesaleAction(
   prevState: ActionState,
@@ -39,14 +43,15 @@ export async function submitWholesaleAction(
         payload: data,
       };
 
-    // Сохраняем в таблицу с новым типом "wholesale"[cite: 3]
+    const ticketNumber = generateTicketNumber();
+
     await db.insert(feedbackRequests).values({
-      ticketNumber: generateTicketNumber(),
+      ticketNumber,
       type: "wholesale",
       name: parsed.data.name,
       phone: parsed.data.phone,
       email: parsed.data.email,
-      message: parsed.data.message, // В базовой схеме поле называется message
+      message: parsed.data.message,
       payload: {
         city: parsed.data.city,
         techType: parsed.data.techType,
@@ -54,6 +59,34 @@ export async function submitWholesaleAction(
       },
       ipHash: rateLimit.ipHash,
       consentAt: new Date(),
+    });
+
+    // 🛡️ Фоновая отправка в пул поддержки
+    after(async () => {
+      const TECH_TYPE_LABELS: Record<string, string> = {
+        both: "Обе категории",
+        working: "Исправный дисконт (СПб)",
+        broken: "Неисправный дисконт (МСК / СПб)",
+      };
+
+      try {
+        await sendAdminNotificationEmail(
+          "support",
+          `Новая заявка на Опт #${ticketNumber}`,
+          {
+            Имя: parsed.data.name,
+            Телефон: parsed.data.phone,
+            Email: parsed.data.email,
+            Город: parsed.data.city,
+            Категория:
+              TECH_TYPE_LABELS[String(parsed.data.techType)] ||
+              String(parsed.data.techType),
+            Комментарий: parsed.data.message || "—",
+          },
+        );
+      } catch (err) {
+        console.error("❌ Фоновая отправка письма по опту не удалась:", err);
+      }
     });
 
     return { success: true };
@@ -95,8 +128,9 @@ export async function checkoutDiscountCartAction(
     const { name, phone, email, message, skus, deliveryMethod, paymentMethod } =
       parsed.data;
 
-    await db.transaction(async (tx) => {
-      // 1. Блокируем строки и стягиваем полные данные для Snapshot'а
+    let totalAmount = 0;
+
+    const { newOrder, orderItems } = await db.transaction(async (tx) => {
       const dbItems = await tx
         .select({
           id: discountItems.id,
@@ -119,8 +153,6 @@ export async function checkoutDiscountCartAction(
         throw new Error("Один или несколько товаров уже забронированы.");
       }
 
-      // 2. Создаем Snapshot и считаем сумму
-      let totalAmount = 0;
       const snapshotItems = dbItems.map((item) => {
         totalAmount += item.price;
         return {
@@ -131,7 +163,6 @@ export async function checkoutDiscountCartAction(
         };
       });
 
-      // 3. Резервируем физические товары
       await tx
         .update(discountItems)
         .set({
@@ -146,29 +177,92 @@ export async function checkoutDiscountCartAction(
           ),
         );
 
-      // 4. Записываем заказ в НОВУЮ таблицу
-      await tx.insert(orders).values({
-        name,
-        phone,
-        email,
-        message,
-        deliveryMethod,
-        paymentMethod,
-        deliveryDetails:
-          deliveryMethod === "delivery"
-            ? {
-                address: parsed.data.address,
-                apartment: parsed.data.apartment,
-                entrance: parsed.data.entrance,
-                floor: parsed.data.floor,
-                intercom: parsed.data.intercom,
-                courierComment: parsed.data.courierComment,
-              }
-            : {},
-        items: snapshotItems,
-        totalAmount,
-        ipHash: rateLimit.ipHash,
-      });
+      const [insertedOrder] = await tx
+        .insert(orders)
+        .values({
+          name,
+          phone,
+          email,
+          message,
+          deliveryMethod,
+          paymentMethod,
+          // 🛡️ Строгий Type Guard для сужения типа Zod-схемы
+          deliveryDetails:
+            parsed.data.deliveryMethod === "delivery"
+              ? {
+                  address: parsed.data.address,
+                  apartment: parsed.data.apartment,
+                  entrance: parsed.data.entrance,
+                  floor: parsed.data.floor,
+                  intercom: parsed.data.intercom,
+                  courierComment: parsed.data.courierComment,
+                }
+              : {},
+          items: snapshotItems,
+          totalAmount,
+          ipHash: rateLimit.ipHash,
+        })
+        .returning({ id: orders.id, orderNumber: orders.orderNumber });
+
+      return { newOrder: insertedOrder, orderItems: snapshotItems };
+    });
+
+    after(async () => {
+      try {
+        await sendOrderClientEmail(
+          email,
+          name,
+          newOrder.orderNumber,
+          totalAmount,
+          orderItems,
+        );
+
+        // 🛡️ Строгий Type Guard при формировании адреса
+        const addressString =
+          parsed.data.deliveryMethod === "delivery"
+            ? [
+                parsed.data.address,
+                parsed.data.apartment ? `кв. ${parsed.data.apartment}` : null,
+                parsed.data.entrance ? `под. ${parsed.data.entrance}` : null,
+                parsed.data.floor ? `эт. ${parsed.data.floor}` : null,
+                parsed.data.intercom ? `дом. ${parsed.data.intercom}` : null,
+              ]
+                .filter(Boolean)
+                .join(", ")
+            : "Самовывоз";
+
+        const productsList = orderItems
+          .map((item) => `${item.uniqueSku} (${item.siteArticle})`)
+          .join("\n");
+
+        await sendAdminNotificationEmail(
+          "orders",
+          `Новый заказ Дисконта: #${newOrder.orderNumber}`,
+          {
+            Имя: name,
+            Телефон: phone,
+            Email: email,
+            Сумма: `${totalAmount.toLocaleString("ru-RU")} ₽`,
+            "Способ оплаты":
+              paymentMethod === "card" ? "Карта (при получении)" : "Наличные",
+            "Тип получения":
+              deliveryMethod === "delivery" ? "Доставка" : "Самовывоз",
+            "Адрес доставки":
+              parsed.data.deliveryMethod === "delivery"
+                ? addressString
+                : undefined,
+            // 🛡️ Обращение к специфичному полю только через дискриминант
+            "Комментарий курьеру":
+              parsed.data.deliveryMethod === "delivery"
+                ? parsed.data.courierComment
+                : undefined,
+            "Комментарий к заказу": message,
+            "Товары (SKU)": productsList,
+          },
+        );
+      } catch (err) {
+        console.error("❌ Фоновая отправка писем заказа не удалась:", err);
+      }
     });
 
     return { success: true };

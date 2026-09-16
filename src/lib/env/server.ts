@@ -29,12 +29,34 @@ const serverSchema = z.object({
   OZON_API_KEY: z.string().optional(),
   WB_API_KEY: z.string().optional(),
 
-  // Почта
+  // 1. Пул OTP (существующий)
   SMTP_HOST: z.string().min(1, "SMTP_HOST обязателен"),
   SMTP_PORT: z.coerce.number().default(465),
   SMTP_USER: z.string().min(1, "SMTP_USER обязателен"),
   SMTP_PASS: z.string().min(1, "SMTP_PASS обязателен"),
   SMTP_FROM: z.string().min(1, "SMTP_FROM обязателен"),
+
+  // 2. Пул Заказов (Транзакционный)
+  ORDERS_SMTP_HOST: z.string().min(1, "ORDERS_SMTP_HOST обязателен"),
+  ORDERS_SMTP_PORT: z.coerce.number().default(465),
+  ORDERS_SMTP_USER: z.string().min(1, "ORDERS_SMTP_USER обязателен"),
+  ORDERS_SMTP_PASS: z.string().min(1, "ORDERS_SMTP_PASS обязателен"),
+  ORDERS_SMTP_FROM: z.string().min(1, "ORDERS_SMTP_FROM обязателен"),
+
+  // 3. Пул Поддержки (Формы, заявки, потенциальный спам)
+  SUPPORT_SMTP_HOST: z.string().min(1, "SUPPORT_SMTP_HOST обязателен"),
+  SUPPORT_SMTP_PORT: z.coerce.number().default(465),
+  SUPPORT_SMTP_USER: z.string().min(1, "SUPPORT_SMTP_USER обязателен"),
+  SUPPORT_SMTP_PASS: z.string().min(1, "SUPPORT_SMTP_PASS обязателен"),
+  SUPPORT_SMTP_FROM: z.string().min(1, "SUPPORT_SMTP_FROM обязателен"),
+
+  // Почта администраторов для алертов
+  ADMIN_ORDERS_EMAIL: z
+    .string()
+    .email("Должен быть валидный email для заказов"),
+  ADMIN_SUPPORT_EMAIL: z
+    .string()
+    .email("Должен быть валидный email для поддержки"),
 
   // Крон-задачи
   CRON_SECRET: z
