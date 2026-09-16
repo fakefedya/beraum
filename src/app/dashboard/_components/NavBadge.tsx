@@ -32,7 +32,7 @@ export const NavBadge = ({ href }: NavBadgeProps) => {
   return (
     <Badge
       className={cn(
-        "bg-brand ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium",
+        "bg-brand ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium text-black",
         "animate-in fade-in zoom-in duration-300",
       )}
     >

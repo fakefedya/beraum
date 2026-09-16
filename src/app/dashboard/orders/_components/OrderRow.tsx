@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/src/components/ui/select";
 import { Button } from "@/src/components/ui/button";
-import { PanelRightOpen, Loader2 } from "lucide-react";
+import { Barcode, PanelRightOpen } from "lucide-react";
 import { CopyButton } from "@/src/components/shared/CopyButton";
 import { cn } from "@/src/lib/utils";
 import type { OrderItem } from "./OrdersTable";
@@ -22,20 +22,23 @@ export const ORDER_STATUS_MAP: Record<
 > = {
   new: {
     label: "Новый",
-    color: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+    color:
+      "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 hover:dark:bg-blue-800",
   },
   processing: {
     label: "В работе",
     color:
-      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 hover:dark:bg-yellow-800",
   },
   completed: {
     label: "Выполнен",
-    color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+    color:
+      "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 hover:dark:bg-green-800",
   },
   cancelled: {
     label: "Отменен",
-    color: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+    color:
+      "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 hover:dark:bg-red-800",
   },
 };
 
@@ -70,7 +73,7 @@ export const OrderRow = ({
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1">
-            <span className="text-foreground text-xs font-semibold">
+            <span className="text-foreground text-xs font-medium">
               {order.orderNumber}
             </span>
             <CopyButton
@@ -89,7 +92,6 @@ export const OrderRow = ({
         </div>
       </td>
       <td className="px-6 py-4">
-        {/* ИСПОЛЬЗУЕМ value ВМЕСТО defaultValue! */}
         <Select
           value={order.status}
           disabled={isPending}
@@ -120,11 +122,12 @@ export const OrderRow = ({
       <td className="px-6 py-4">
         <div className="flex flex-col gap-2">
           {order.items.map((item, idx) => (
-            <div key={idx} className="flex flex-col">
-              <span className="text-foreground text-xs font-medium uppercase">
+            <div key={idx} className="flex flex-col gap-1">
+              <span className="text-foreground text-sm font-medium uppercase">
                 {item.siteArticle}
               </span>
-              <span className="text-muted-foreground font-mono text-[10px]">
+              <span className="text-muted-foreground flex items-center gap-0.5 text-xs">
+                <Barcode size={12} />
                 {item.uniqueSku}
               </span>
             </div>
@@ -133,7 +136,7 @@ export const OrderRow = ({
       </td>
       <td className="px-6 py-4">
         <div className="flex flex-col gap-1 text-xs">
-          <span className="font-medium">
+          <span className="text-sm font-medium">
             {order.deliveryMethod === "pickup" ? "Самовывоз" : "Доставка"}
           </span>
           <span className="text-muted-foreground">
@@ -141,7 +144,7 @@ export const OrderRow = ({
           </span>
         </div>
       </td>
-      <td className="px-6 py-4 font-semibold whitespace-nowrap">
+      <td className="px-6 py-4 text-sm font-semibold whitespace-nowrap">
         {order.totalAmount.toLocaleString("ru-RU")} ₽
       </td>
       <td className="px-6 py-4 text-right">
@@ -149,7 +152,7 @@ export const OrderRow = ({
           variant="outline"
           size="sm"
           onClick={onOpen}
-          className="hover:bg-background/60 w-full border-none shadow-none"
+          className="hover:bg-background/60 w-full border border-none shadow-none"
         >
           <PanelRightOpen className="mr-2 size-4" /> Открыть
         </Button>

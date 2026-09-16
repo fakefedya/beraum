@@ -7,7 +7,6 @@ import { Container } from "@/src/components/shared/Container";
 import { EmptyState } from "@/src/components/ui/empty-state";
 import { Breadcrumbs } from "@/src/components/shared/Breadcrumbs";
 import { CatalogPagination } from "./_components/CatalogPagination";
-import { cn } from "@/src/lib/utils";
 import { Metadata } from "next";
 import { getCategoriesList } from "@/src/server/queries/categories";
 

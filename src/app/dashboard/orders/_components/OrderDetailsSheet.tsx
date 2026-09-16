@@ -9,7 +9,7 @@ import {
 } from "@/src/components/ui/sheet";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Barcode, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { updateOrderStatusAction } from "@/src/server/actions/admin-orders";
 import { cn } from "@/src/lib/utils";
@@ -63,9 +63,10 @@ export const OrderDetailsSheet = ({
         )}
       >
         <SheetHeader className="px-6 pt-6 pb-2 text-left">
-          <div className="flex items-start justify-between">
+          <div className="flex items-center gap-2">
             <SheetTitle className="text-xl">
-              Заказ {order.orderNumber}
+              <span className="text-muted-foreground">Заказ </span>
+              {order.orderNumber}
             </SheetTitle>
             <Badge
               className={cn("border-none shadow-none", statusConfig.color)}
@@ -77,14 +78,14 @@ export const OrderDetailsSheet = ({
 
         <div className="flex-1 scrollbar-thin overflow-y-auto px-6 pb-6">
           <div className="flex flex-col gap-8 pt-4">
-            {/* Блок 1: Снимок товаров */}
+            {/* Блок 1: Товары */}
             <section className="flex flex-col gap-3">
-              <h4 className="text-foreground font-medium">Товары (Снимок)</h4>
-              <div className="flex flex-col gap-2">
+              <h4 className="text-foreground font-medium">Товары</h4>
+              <div className="flex flex-col gap-4">
                 {order.items.map((item, i) => (
                   <div
                     key={i}
-                    className="bg-muted flex flex-col gap-1 rounded-xl p-3"
+                    className="bg-muted flex flex-col gap-0.5 rounded-xl p-3"
                   >
                     <span className="text-muted-foreground text-xs">
                       {item.categoryName}
@@ -92,19 +93,22 @@ export const OrderDetailsSheet = ({
                     <span className="font-semibold uppercase">
                       {item.siteArticle}
                     </span>
-                    <div className="mt-2 flex justify-between">
-                      <span className="text-muted-foreground font-mono text-xs">
-                        {item.uniqueSku}
-                      </span>
-                      <span className="font-medium">
-                        {item.price.toLocaleString("ru-RU")} ₽
-                      </span>
-                    </div>
+
+                    <span className="text-muted-foreground flex items-center gap-1 truncate font-mono text-xs">
+                      <Barcode size={14} />
+                      {item.uniqueSku}
+                    </span>
+                    <span className="text-sm font-medium">
+                      {item.price.toLocaleString("ru-RU")} ₽
+                    </span>
                   </div>
                 ))}
               </div>
-              <div className="mt-2 text-right text-lg font-bold">
-                Итого: {order.totalAmount.toLocaleString("ru-RU")} ₽
+              <div className="mt-2 flex items-center justify-between py-4 font-medium">
+                <span className="text-foreground">Итого:</span>
+                <span className="text-foreground text-lg">
+                  {order.totalAmount.toLocaleString("ru-RU")} ₽
+                </span>
               </div>
             </section>
 
@@ -212,24 +216,21 @@ export const OrderDetailsSheet = ({
         {/* БЛОК УПРАВЛЕНИЯ */}
         {!isFinalStatus && (
           <div className="bg-background z-10 flex flex-col gap-3 border-t border-black/5 p-6 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)]">
-            <h4 className="text-foreground text-sm font-medium">
-              Управление заказом
-            </h4>
+            <h4 className="text-foreground font-medium">Управление заказом</h4>
             <div className="grid grid-cols-2 gap-3">
               <Button
-                className="bg-green-600 text-white transition-colors hover:bg-green-700"
+                className="h-12 bg-green-600 text-white transition-colors hover:bg-green-700"
                 disabled={isPending}
                 onClick={() => handleStatusChange("completed")}
               >
                 {isPending ? (
                   <Loader2 className="size-4 animate-spin" />
                 ) : (
-                  "Продано"
+                  "Подтвердить"
                 )}
               </Button>
               <Button
-                variant="destructive"
-                className="transition-colors"
+                className="h-12 bg-red-600 text-white transition-colors hover:bg-red-700"
                 disabled={isPending}
                 onClick={() => handleStatusChange("cancelled")}
               >

@@ -1,6 +1,7 @@
 import { cn } from "@/src/lib/utils";
 import { DiscountCard } from "./DiscountCard";
 import type { DiscountMedia } from "@/src/server/db/schema/discount.schema";
+import { EmptyState } from "@/src/components/ui/empty-state";
 
 export type PublicDiscountItemDTO = {
   id: string;
@@ -22,12 +23,10 @@ interface DiscountGridProps {
 export const DiscountGrid = ({ products }: DiscountGridProps) => {
   if (!products || products.length === 0) {
     return (
-      <div className="bg-card flex min-h-[300px] w-full flex-col items-center justify-center gap-4 rounded-2xl border text-center">
-        <h3 className="text-xl font-medium">Товаров не найдено</h3>
-        <p className="text-muted-foreground max-w-sm">
-          Возможно, они уже были выкуплены. Попробуйте выбрать другую категорию.
-        </p>
-      </div>
+      <EmptyState
+        title="Товары не найдены"
+        description="Попробуйте изменить параметры фильтрации."
+      />
     );
   }
 

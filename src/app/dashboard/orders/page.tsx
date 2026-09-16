@@ -57,9 +57,6 @@ export default async function OrdersPage(props: {
           <h1 className="text-3xl font-semibold tracking-tight">
             Заказы дисконта
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Обработка покупок из корзины дисконта
-          </p>
         </div>
         <SearchInput paramName="q" placeholder="Номер, email или телефон..." />
       </div>

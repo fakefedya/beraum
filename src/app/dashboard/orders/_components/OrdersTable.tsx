@@ -23,19 +23,19 @@ export const OrdersTable = ({ initialData }: { initialData: OrderItem[] }) => {
 
   return (
     <>
-      <table className="bg-muted w-full text-left text-sm">
+      <table className="w-full text-left text-sm">
         <thead className="text-muted-foreground border-b text-xs uppercase">
           <tr>
-            <th className="px-6 py-3 font-medium">Заказ</th>
-            <th className="px-6 py-3 font-medium">Статус</th>
-            <th className="px-6 py-3 font-medium">Покупатель</th>
-            <th className="px-6 py-3 font-medium">Товары</th>
-            <th className="px-6 py-3 font-medium">Доставка / Оплата</th>
-            <th className="px-6 py-3 font-medium">Сумма</th>
-            <th className="w-32 px-6 py-3 font-medium">Действия</th>
+            <th className="px-6 py-4 font-medium">Заказ</th>
+            <th className="px-6 py-4 font-medium">Статус</th>
+            <th className="px-6 py-4 font-medium">Покупатель</th>
+            <th className="px-6 py-4 font-medium">Товары</th>
+            <th className="px-6 py-4 font-medium">Доставка / Оплата</th>
+            <th className="px-6 py-4 font-medium">Сумма</th>
+            <th className="w-32 px-6 py-4 font-medium">Действия</th>
           </tr>
         </thead>
-        <tbody className="bg-card divide-y">
+        <tbody className="divide-y">
           {initialData.map((order) => (
             <OrderRow
               key={order.id}

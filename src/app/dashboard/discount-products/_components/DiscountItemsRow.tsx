@@ -12,9 +12,18 @@ export const DiscountItemRow = ({ item }: { item: DiscountItemDTO }) => {
   const [isDeleting, startDelete] = useTransition();
 
   const statusMap = {
-    available: { label: "Доступен", cls: "bg-green-100 text-green-800" },
-    reserved: { label: "Бронь", cls: "bg-yellow-100 text-yellow-800" },
-    sold: { label: "Продан", cls: "bg-gray-100 text-gray-800" },
+    available: {
+      label: "Доступен",
+      cls: "bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300",
+    },
+    reserved: {
+      label: "Бронь",
+      cls: "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300",
+    },
+    sold: {
+      label: "Продан",
+      cls: "bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300",
+    },
   } as const;
 
   const handleDelete = () => {
@@ -27,7 +36,7 @@ export const DiscountItemRow = ({ item }: { item: DiscountItemDTO }) => {
   };
 
   return (
-    <tr className="bg-muted hover:bg-muted/70 transition-colors">
+    <tr className="hover:bg-muted/30 transition-colors">
       <td className="px-4 py-4 align-top">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-1">
