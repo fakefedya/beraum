@@ -3,15 +3,13 @@ import {
   CheckCircle2,
   XCircle,
   Info,
-  BadgePercent,
-  CircleArrowRight,
   ArrowUpRight,
+  Barcode,
 } from "lucide-react";
 import { Badge } from "@/src/components/ui/badge";
 import { getSwatchStyle, MARKETPLACE_LINKS } from "@/src/lib/constants";
 import { cn } from "@/src/lib/utils";
 import { getProductByArticle } from "@/src/server/queries/products";
-import { Button } from "@/src/components/ui/button";
 
 type ProductDetails = NonNullable<
   Awaited<ReturnType<typeof getProductByArticle>>["data"]
@@ -95,8 +93,9 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
           <h1 className="text-foreground text-3xl font-semibold uppercase lg:text-4xl">
             {product.siteArticle}
           </h1>
-          <span className="text-muted-foreground text-sm">
-            Арт. {product.itemArticle}
+          <span className="text-muted-foreground flex items-center gap-2 text-sm">
+            <Barcode size={16} />
+            {product.itemArticle}
           </span>
         </div>
 
