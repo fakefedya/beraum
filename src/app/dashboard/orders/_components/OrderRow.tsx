@@ -152,7 +152,7 @@ export const OrderRow = ({
           variant="outline"
           size="sm"
           onClick={onOpen}
-          className="hover:bg-background/60 w-full border border-none shadow-none"
+          className="hover:bg-background/60 w-full border shadow-none"
         >
           <PanelRightOpen className="mr-2 size-4" /> Открыть
         </Button>

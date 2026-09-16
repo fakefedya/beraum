@@ -168,7 +168,7 @@ export const RequestRow = ({
         <Button
           variant="outline"
           size="sm"
-          className="hover:bg-background/60 w-full border-none shadow-none"
+          className="hover:bg-background/60 w-full shadow-none"
           onClick={() => onOpenDetails(req)}
         >
           <PanelRightOpen className="mr-2 size-4" />

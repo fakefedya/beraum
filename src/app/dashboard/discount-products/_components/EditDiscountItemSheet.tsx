@@ -40,7 +40,7 @@ export const EditDiscountItemSheet = ({ item }: { item: DiscountItemDTO }) => {
         <Button
           variant="outline"
           size="sm"
-          className="hover:bg-background/60 w-full border-none shadow-none"
+          className="hover:bg-background/60 w-full shadow-none"
         >
           <Edit2 className="mr-2 size-4" />
           <span className="text-sm">Изменить</span>
