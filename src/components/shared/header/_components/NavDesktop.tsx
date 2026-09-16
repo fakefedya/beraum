@@ -29,6 +29,7 @@ interface NavDesktopProps {
 
 const checkActive = (href: string, currentPath: string) => {
   if (href === "/") return currentPath === "/";
+  if (href === "/discount") return currentPath === "/discount";
   return currentPath === href || currentPath.startsWith(`${href}/`);
 };
 
@@ -307,7 +308,7 @@ const LinkNode = ({
                 className={cn(
                   "bg-brand flex items-center justify-center px-3 py-1",
                   "text-[10px] font-bold tracking-widest whitespace-nowrap text-[#1a1a1b] uppercase",
-                  "[clip-path:polygon(0%_0%,_100%_0%,_calc(100%-4px)_16.6%,_100%_33.3%,_calc(100%-4px)_50%,_100%_66.6%,_calc(100%-4px)_83.3%,_100%_100%,_0%_100%,_4px_83.3%,_0%_66.6%,_4px_50%,_0%_33.3%,_4px_16.6%)]",
+                  "[clip-path:polygon(0%_0%,100%_0%,calc(100%-4px)_16.6%,100%_33.3%,calc(100%-4px)_50%,100%_66.6%,calc(100%-4px)_83.3%,100%_100%,0%_100%,4px_83.3%,0%_66.6%,4px_50%,0%_33.3%,4px_16.6%)]",
                 )}
               >
                 Скоро

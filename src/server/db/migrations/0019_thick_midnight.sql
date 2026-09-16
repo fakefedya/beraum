@@ -1,0 +1,1 @@
+CREATE INDEX "idx_discount_items_sku_trgm" ON "discount_items" USING gin ("unique_sku" gin_trgm_ops);

@@ -206,7 +206,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
                 value="discount"
                 className="cursor-pointer rounded-lg"
               >
-                Уцененная техника (Дисконт)
+                Дисконт техника
               </SelectItem>
             </SelectContent>
           </Select>

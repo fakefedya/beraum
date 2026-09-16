@@ -26,16 +26,16 @@ export const UsersTable = ({
     );
 
   return (
-    <div className="bg-muted overflow-hidden rounded-xl">
+    <div className="overflow-hidden rounded-xl">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead className="text-muted-foreground border-b text-xs uppercase">
             <tr>
-              <th className="px-4 py-3 font-medium">Пользователь</th>
-              <th className="px-4 py-3 font-medium">Роль</th>
-              <th className="px-4 py-3 font-medium">Безопасность</th>
-              <th className="px-4 py-3 font-medium">Новый пароль</th>
-              <th className="px-4 py-3 font-medium">Действия</th>
+              <th className="px-4 py-4 font-medium">Пользователь</th>
+              <th className="px-4 py-4 font-medium">Роль</th>
+              <th className="px-4 py-4 font-medium">Безопасность</th>
+              <th className="px-4 py-4 font-medium">Новый пароль</th>
+              <th className="px-4 py-4 font-medium">Действия</th>
             </tr>
           </thead>
           <tbody className="divide-y">

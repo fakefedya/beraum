@@ -51,10 +51,10 @@ export const RequestsTable = ({ requests, categories }: RequestsTableProps) => {
 
   return (
     <>
-      <div className="bg-muted overflow-hidden rounded-xl">
+      <div className="overflow-hidden rounded-xl border">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="text-muted-foreground bg-muted/50 border-b text-xs uppercase">
+            <thead className="text-muted-foreground border-b text-xs uppercase">
               <tr>
                 <th className="px-6 py-4 font-medium">ID</th>
                 <th className="px-6 py-4 font-medium">Дата / Тип</th>

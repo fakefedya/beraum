@@ -1,14 +1,25 @@
 "use client";
 
-import { Badge } from "@/src/components/ui/badge";
+import type { DiscountMedia } from "@/src/server/db/schema/discount.schema";
+import { DiscountItemRow } from "./DiscountItemsRow";
 
-const statusMap = {
-  available: { label: "Доступен", cls: "bg-green-100 text-green-800" },
-  reserved: { label: "Бронь", cls: "bg-yellow-100 text-yellow-800" },
-  sold: { label: "Продан", cls: "bg-gray-100 text-gray-800" },
+export type DiscountItemDTO = {
+  id: string;
+  uniqueSku: string;
+  defectDescription: string;
+  discountPrice: number;
+  status: "available" | "reserved" | "sold";
+  reservedAt: Date | null;
+  mediaKeys: DiscountMedia[];
+  baseArticle: string;
+  categoryName: string;
 };
 
-export const DiscountItemsTable = ({ initialData }: { initialData: any[] }) => {
+export const DiscountItemsTable = ({
+  initialData,
+}: {
+  initialData: DiscountItemDTO[];
+}) => {
   if (!initialData.length) {
     return (
       <div className="text-muted-foreground p-8 text-center text-sm">
@@ -18,49 +29,20 @@ export const DiscountItemsTable = ({ initialData }: { initialData: any[] }) => {
   }
 
   return (
-    <table className="bg-muted w-full text-left text-sm">
+    <table className="w-full text-left text-sm">
       <thead className="text-muted-foreground border-b text-xs uppercase">
         <tr>
-          <th className="px-4 py-3 font-medium">SKU / База</th>
-          <th className="px-4 py-3 font-medium">Категория</th>
-          <th className="px-4 py-3 font-medium">Дефект</th>
-          <th className="px-4 py-3 font-medium">Цена (Дисконт)</th>
-          <th className="px-4 py-3 font-medium">Статус</th>
+          <th className="px-4 py-4 font-medium">SKU</th>
+          <th className="px-4 py-4 font-medium">Статус</th>
+          <th className="px-4 py-4 font-medium">Категория</th>
+          <th className="px-4 py-4 font-medium">Дефект</th>
+          <th className="px-4 py-4 font-medium">Цена</th>
+          <th className="w-32 px-4 py-4 font-medium">Действия</th>
         </tr>
       </thead>
-      <tbody className="bg-card divide-y">
+      <tbody className="divide-y">
         {initialData.map((item) => (
-          <tr key={item.id} className="hover:bg-muted/50">
-            <td className="px-4 py-3">
-              <div className="flex flex-col gap-1">
-                <span className="font-mono font-semibold">
-                  {item.uniqueSku}
-                </span>
-                <span className="text-muted-foreground text-xs">
-                  База: {item.baseArticle}
-                </span>
-              </div>
-            </td>
-            <td className="text-muted-foreground px-4 py-3">
-              {item.categoryName}
-            </td>
-            <td
-              className="max-w-xs truncate px-4 py-3"
-              title={item.defectDescription}
-            >
-              {item.defectDescription}
-            </td>
-            <td className="px-4 py-3 font-medium">
-              {item.discountPrice.toLocaleString("ru-RU")} ₽
-            </td>
-            <td className="px-4 py-3">
-              <Badge
-                className={`shadow-none ${statusMap[item.status as keyof typeof statusMap].cls}`}
-              >
-                {statusMap[item.status as keyof typeof statusMap].label}
-              </Badge>
-            </td>
-          </tr>
+          <DiscountItemRow key={item.id} item={item} />
         ))}
       </tbody>
     </table>

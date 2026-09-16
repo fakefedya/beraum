@@ -5,6 +5,7 @@ import {
   Image as ImageIcon,
   Settings,
   ChartBar,
+  ShoppingCart,
 } from "lucide-react";
 
 import type { Role } from "@/src/lib/constants/roles";
@@ -30,13 +31,19 @@ export const DASHBOARD_NAV: DashboardNavItem[] = [
     roles: ["superadmin", "admin", "support"],
   },
   {
+    label: "Заказы",
+    href: "/dashboard/orders",
+    icon: ShoppingCart,
+    roles: ["superadmin", "admin", "manager"],
+  },
+  {
     label: "Товары",
     href: "/dashboard/products",
     icon: Package,
     roles: ["superadmin", "admin", "manager"],
   },
   {
-    label: "Уценка",
+    label: "Дисконт",
     href: "/dashboard/discount-products",
     icon: Percent,
     roles: ["superadmin", "admin", "manager"],

@@ -30,7 +30,7 @@ export default async function DashboardLayout({
   const userRole = dbUser.role as Role;
 
   return (
-    <div className="text-foreground flex min-h-screen bg-[#FCFCFC] transition-colors duration-300 dark:bg-[#1A1A1A]">
+    <div className="text-foreground flex min-h-screen transition-colors duration-300">
       <Sidebar userRole={userRole} />
 
       <div className="flex flex-1 flex-col overflow-hidden">

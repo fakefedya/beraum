@@ -39,7 +39,7 @@ export const SearchInput = ({
       params.delete("page");
     }
 
-    replace(`${pathname}?${params.toString()}`);
+    replace(`${pathname}?${params.toString()}`, { scroll: false });
   }, [debouncedQuery, pathname, replace, searchParams, paramName]);
 
   return (

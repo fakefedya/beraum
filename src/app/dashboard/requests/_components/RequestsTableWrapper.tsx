@@ -5,7 +5,7 @@ import {
 } from "@/src/server/queries/requests";
 import { getCategoriesList } from "@/src/server/queries/categories";
 import { RequestsTable } from "./RequestsTable";
-import { CatalogPagination } from "@/src/app/(store)/catalog/[category]/_components/CatalogPagination";
+import { DashboardPagination } from "@/src/app/dashboard/_components/DashboardPagination";
 
 const LIMIT = 25;
 
@@ -36,7 +36,7 @@ export const RequestsTableWrapper = async ({
     <div className="animate-in fade-in flex flex-col gap-4 duration-500">
       <RequestsTable requests={requests || []} categories={categories || []} />
       <div className="py-4">
-        <CatalogPagination currentPage={page} hasMore={hasMore} />
+        <DashboardPagination currentPage={page} hasMore={hasMore} />
       </div>
     </div>
   );

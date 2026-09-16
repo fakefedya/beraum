@@ -161,7 +161,7 @@ async function AnalyticsContent({
           </div>
         </div>
 
-        <div className="bg-muted flex flex-col gap-4 rounded-2xl p-6 md:col-span-2">
+        <div className="flex flex-col gap-4 rounded-2xl border p-6 md:col-span-2">
           <span className="text-muted-foreground text-sm font-medium">
             Распределение по маркетплейсам
           </span>
@@ -200,7 +200,7 @@ async function AnalyticsContent({
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {!stats.searchedArticle && (
-          <div className="bg-muted flex flex-col overflow-hidden rounded-2xl">
+          <div className="flex flex-col overflow-hidden rounded-2xl border">
             <div className="border-border/50 border-b p-6">
               <h2 className="font-semibold">Топ-10 моделей</h2>
             </div>
@@ -239,7 +239,7 @@ async function AnalyticsContent({
 
         <div
           className={cn(
-            "bg-muted flex flex-col overflow-hidden rounded-2xl",
+            "flex flex-col overflow-hidden rounded-2xl border",
             stats.searchedArticle && "lg:col-span-2",
           )}
         >

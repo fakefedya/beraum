@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { type CatalogProduct } from "@/src/server/queries/products";
-import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
 import {
   Tooltip,
@@ -24,7 +23,6 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const searchParams = useSearchParams();
-
   const matchedVariant = useMemo(() => {
     const selectedColors = searchParams
       .getAll("color")
@@ -86,6 +84,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             )}
           />
         </div>
+        {/* Левый верхний угол для статуса дисконта */}
+        {activeVariant.hasDiscount && (
+          <Badge className="absolute top-4 left-4 border-none bg-orange-500 text-xs leading-normal font-medium text-white uppercase">
+            Есть дисконт
+          </Badge>
+        )}
 
         <div
           className="z-1 flex items-center justify-center gap-2"
@@ -151,20 +155,22 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           )}
         </div>
 
-        <div className="absolute top-0 right-0 flex items-center gap-2">
+        {/* Правый верхний угол для системных статусов */}
+        <div className="absolute top-0 right-0 flex items-center gap-2 p-4">
           {activeVariant.stock <= 0 && (
-            <Badge className="bg-background text-foreground text-xs leading-normal font-medium uppercase">
+            <Badge className="bg-background text-foreground border-none text-xs leading-normal font-medium uppercase">
               Под заказ
             </Badge>
           )}
           {activeVariant.isLatest && (
-            <Badge className="bg-brand text-foreground text-xs leading-normal font-medium uppercase">
+            <Badge className="bg-brand text-foreground border-none text-xs leading-normal font-medium uppercase">
               Новинка
             </Badge>
           )}
         </div>
       </div>
 
+      {/* Переход по клику на карточку */}
       <Link
         href={`/product/${activeVariant.itemArticle.toLowerCase()}`}
         aria-label={`Перейти к товару ${product.siteArticle}`}

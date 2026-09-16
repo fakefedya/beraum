@@ -8,7 +8,7 @@ import { HeroSection } from "./_components/HeroSection";
 import { cn } from "@/src/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Уцененная и оптовая техника",
+  title: "Дисконт и оптовая техника",
   description:
     "Оригинальная техника Beraum со скидками до 50%. Розничные продажи через Ozon и специальные условия для оптовых партнеров.",
 };

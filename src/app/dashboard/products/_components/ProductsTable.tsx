@@ -11,16 +11,16 @@ export const ProductsTable = ({
   initialData: ProductItem[];
 }) => {
   return (
-    <table className="bg-muted w-full border-0 text-left text-sm">
+    <table className="w-full border-0 text-left text-sm">
       <thead className="text-muted-foreground border-b text-xs uppercase">
         <tr>
-          <th className="px-4 py-3 font-medium">SKU / Артикул</th>
-          <th className="px-4 py-3 font-medium">Стоки</th>
-          <th className="w-32 px-4 py-3 font-medium">Статус</th>
-          <th className="w-24 px-4 py-3 font-medium">Стоимость</th>
-          <th className="min-w-50 px-4 py-3 font-medium">Маркетплейсы</th>
-          <th className="min-w-60 px-4 py-3 font-medium">Свойства JSON</th>
-          <th className="w-32 px-4 py-3 font-medium">Действия</th>
+          <th className="px-4 py-4 font-medium">SKU</th>
+          <th className="px-4 py-4 font-medium">Стоки</th>
+          <th className="w-32 px-4 py-4 font-medium">Статус</th>
+          <th className="w-24 px-4 py-4 font-medium">Стоимость</th>
+          <th className="min-w-50 px-4 py-4 font-medium">Маркетплейсы</th>
+          <th className="min-w-60 px-4 py-4 font-medium">Свойства JSON</th>
+          <th className="w-32 px-4 py-4 font-medium">Действия</th>
         </tr>
       </thead>
       <tbody className="divide-y">

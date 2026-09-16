@@ -24,7 +24,7 @@ export const WholesaleTab = () => {
               Оптовая продажа техники
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed">
-              Предлагаем оптовым покупателям исправную уценённую и неисправную
+              Предлагаем оптовым покупателям исправную дисконт и неисправную
               бытовую технику из текущего складского наличия.
             </p>
             <div className="mt-2 flex flex-col items-center justify-center gap-4 rounded-2xl bg-orange-50 p-4 text-orange-700 md:flex-row md:flex-wrap">

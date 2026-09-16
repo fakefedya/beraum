@@ -11,7 +11,8 @@ export const cn = (...inputs: ClassValue[]) => {
 
 export function buildImageUrl(
   payload: ImagePayload,
-  defaultBucket: "system-assets" | "products" = "system-assets",
+  defaultBucket:
+    "system-assets" | "discount-products" | "products" = "system-assets",
 ): string {
   if (!payload) return SYSTEM_ASSETS.emptyProduct;
 

@@ -182,7 +182,7 @@ export const BannerRow = ({ slide }: { slide: SlideItem }) => {
               <Button
                 variant="outline"
                 size="sm"
-                className="hover:bg-background/60 w-full border-none shadow-none"
+                className="hover:bg-background/60 w-full shadow-none"
               >
                 <Edit2 className="size-4" />
                 <span className="text-sm">Изменить</span>

@@ -24,7 +24,7 @@ export const DashboardHeader = ({ user, userRole }: DashboardHeaderProps) => {
           <span className="border-border/50 text-sm md:mr-4 md:border-r md:pr-4">
             {user.name}
           </span>
-          <span className="bg-brand hidden rounded-sm px-1 text-sm text-black/80 md:block">
+          <span className="bg-brand hidden rounded-sm px-1 text-sm font-medium text-black/80 md:block">
             {ROLE_LABELS[userRole]}
           </span>
           <span className="text-muted-foreground border-border/50 ml-4 hidden border-l pl-4 text-sm md:block">

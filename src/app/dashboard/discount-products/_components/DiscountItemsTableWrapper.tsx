@@ -1,9 +1,17 @@
 import { getAdminDiscountItems } from "@/src/server/queries/admin-discount";
-import { CatalogPagination } from "@/src/app/(store)/catalog/[category]/_components/CatalogPagination";
+import { DashboardPagination } from "@/src/app/dashboard/_components/DashboardPagination";
 import { DiscountItemsTable } from "./DiscountItemsTable";
 
-export const DiscountItemsTableWrapper = async ({ page }: { page: number }) => {
-  const { data, hasMore } = await getAdminDiscountItems(page);
+export const DiscountItemsTableWrapper = async ({
+  page,
+  query,
+  status,
+}: {
+  page: number;
+  query: string;
+  status: string;
+}) => {
+  const { data, hasMore } = await getAdminDiscountItems(page, query, status);
 
   return (
     <div className="animate-in fade-in flex flex-col gap-4 duration-500">
@@ -13,7 +21,7 @@ export const DiscountItemsTableWrapper = async ({ page }: { page: number }) => {
         </div>
       </div>
       <div className="py-4">
-        <CatalogPagination currentPage={page} hasMore={hasMore} />
+        <DashboardPagination currentPage={page} hasMore={hasMore} />
       </div>
     </div>
   );

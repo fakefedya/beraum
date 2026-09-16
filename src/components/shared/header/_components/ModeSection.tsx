@@ -8,27 +8,45 @@ import { useEffect, useRef, useState } from "react";
 
 export const ModeSection = () => {
   const pathname = usePathname();
-  const isDiscount = pathname === "/discount";
+  const isDiscount = pathname.startsWith("/discount");
+
   const [modeStyle, setModeStyle] = useState({ width: 0, left: 0, opacity: 0 });
   const [isMounted, setIsMounted] = useState(false);
   const activeRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
+    const el = activeRef.current;
+    if (!el) return;
+
     const updateMode = () => {
-      if (activeRef.current) {
-        setModeStyle({
-          width: activeRef.current.offsetWidth,
-          left: activeRef.current.offsetLeft,
-          opacity: 1,
-        });
-        setIsMounted(true);
-      }
+      if (el.offsetWidth === 0) return;
+
+      setModeStyle({
+        width: el.offsetWidth,
+        left: el.offsetLeft,
+        opacity: 1,
+      });
+      setIsMounted(true);
     };
 
     updateMode();
+
+    const observer = new ResizeObserver(() => {
+      requestAnimationFrame(updateMode);
+    });
+    observer.observe(el);
+
+    const interval = setInterval(updateMode, 50);
+    const timeout = setTimeout(() => clearInterval(interval), 1500);
+
     window.addEventListener("resize", updateMode);
 
-    return () => window.removeEventListener("resize", updateMode);
+    return () => {
+      observer.disconnect();
+      clearInterval(interval);
+      clearTimeout(timeout);
+      window.removeEventListener("resize", updateMode);
+    };
   }, [pathname]);
 
   return (
@@ -61,7 +79,7 @@ export const ModeSection = () => {
         <Link
           href="/"
           ref={!isDiscount ? activeRef : null}
-          aria-label="Главная страница"
+          aria-label="Каталог дисконта"
           aria-current={!isDiscount ? "page" : undefined}
           className={cn(
             "relative z-10 flex h-full items-center justify-center rounded-lg px-4",
@@ -81,7 +99,7 @@ export const ModeSection = () => {
           />
         </Link>
         <Link
-          href="/discount"
+          href="/discount/catalog"
           ref={isDiscount ? activeRef : null}
           aria-current={isDiscount ? "page" : undefined}
           className={cn(

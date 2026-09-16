@@ -51,9 +51,11 @@ export const RetailTab = () => {
               </Button>
             </div>
 
-            {/* Инфо-карточка с причинами уценки */}
+            {/* Инфо-карточка с причинами дисконта */}
             <article className="bg-card flex flex-col gap-6 rounded-[32px] p-8 md:p-10">
-              <h3 className="text-xl font-medium">Возможные причины уценки:</h3>
+              <h3 className="text-xl font-medium">
+                Возможные причины дисконта:
+              </h3>
               <ul className="text-muted-foreground flex flex-col gap-3">
                 {RETAIL_INFO.reasons.map((reason, idx) => (
                   <li key={idx} className="flex items-start gap-3">

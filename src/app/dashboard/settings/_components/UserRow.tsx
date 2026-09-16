@@ -53,7 +53,7 @@ export const UserRow = ({
   };
 
   return (
-    <tr className="transition-colors">
+    <tr className="hover:bg-muted/30 transition-colors">
       <td className="px-4 py-4 align-top">
         <form id={formId} action={handleUpdate} className="hidden">
           <input type="hidden" name="id" value={user.id} />

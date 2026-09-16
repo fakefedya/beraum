@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { CheckCircle2, XCircle, Info } from "lucide-react";
+import {
+  CheckCircle2,
+  XCircle,
+  Info,
+  ArrowUpRight,
+  Barcode,
+} from "lucide-react";
 import { Badge } from "@/src/components/ui/badge";
 import { getSwatchStyle, MARKETPLACE_LINKS } from "@/src/lib/constants";
 import { cn } from "@/src/lib/utils";
@@ -87,8 +93,9 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
           <h1 className="text-foreground text-3xl font-semibold uppercase lg:text-4xl">
             {product.siteArticle}
           </h1>
-          <span className="text-muted-foreground text-sm">
-            Арт. {product.itemArticle}
+          <span className="text-muted-foreground flex items-center gap-2 text-sm">
+            <Barcode size={16} />
+            {product.itemArticle}
           </span>
         </div>
 
@@ -173,6 +180,38 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
               {product.colorName || "Стандартный"}
             </span>
           </span>
+        </div>
+      )}
+
+      {product.bestDiscount && (
+        <div className="flex flex-col gap-6">
+          <h2 className="text-xl font-medium text-balance">
+            <span className="text-foreground">Дисконт.</span>{" "}
+            <span className="text-muted-foreground/60">
+              Выгодное предложение.
+            </span>
+          </h2>
+          <Link
+            href={`/discount/${product.bestDiscount.uniqueSku}`}
+            className={cn(
+              "group rounded-xl border border-orange-200 bg-orange-50 p-5 text-orange-900 hover:bg-orange-100",
+              "flex flex-col items-start gap-4 transition-colors",
+            )}
+          >
+            <div className="flex w-full items-center justify-between font-medium">
+              <h2 className="text-lg font-medium">Есть экземпляр в дисконте</h2>
+              <ArrowUpRight className="text-orange-200 transition-colors duration-200 group-hover:text-orange-900" />
+            </div>
+            <p className="text-sm leading-relaxed whitespace-pre-wrap text-orange-900/80">
+              Полностью исправная модель, которая по различным причинам не может
+              продаваться как новый товар по полной стоимости.
+            </p>
+            <div className="mt-1 flex items-center justify-between gap-4">
+              <span className="text-lg font-medium">
+                {product.bestDiscount.discountPrice.toLocaleString("ru-RU")} ₽
+              </span>
+            </div>
+          </Link>
         </div>
       )}
 

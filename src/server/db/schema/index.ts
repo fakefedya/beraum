@@ -6,3 +6,4 @@ export * from "./media.schema";
 export * from "./analytics.schema";
 export * from "./feedback.schema";
 export * from "./auth.schema";
+export * from "./orders.schema";

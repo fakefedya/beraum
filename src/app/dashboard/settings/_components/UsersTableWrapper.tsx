@@ -2,7 +2,7 @@ import { db } from "@/src/server/db/client";
 import { users } from "@/src/server/db/schema";
 import { desc, count } from "drizzle-orm";
 import { UsersTable } from "./UsersTable";
-import { CatalogPagination } from "@/src/app/(store)/catalog/[category]/_components/CatalogPagination";
+import { DashboardPagination } from "@/src/app/dashboard/_components/DashboardPagination";
 
 const LIMIT = 25;
 
@@ -39,14 +39,14 @@ export const UsersTableWrapper = async ({
 
   return (
     <div className="animate-in fade-in flex flex-col gap-4 duration-500">
-      <div className="overflow-hidden rounded-xl">
+      <div className="overflow-hidden rounded-xl border">
         <div className="overflow-x-auto">
           <UsersTable initialData={usersList} currentUserId={currentUserId} />
         </div>
       </div>
 
       <div className="py-4">
-        <CatalogPagination currentPage={page} hasMore={hasMore} />
+        <DashboardPagination currentPage={page} hasMore={hasMore} />
       </div>
     </div>
   );

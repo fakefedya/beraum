@@ -15,29 +15,49 @@ import { Button } from "@/src/components/ui/button";
 import { PanelRightOpen, Paperclip } from "lucide-react";
 import type { RequestItem, FeedbackPayload } from "./RequestsTable";
 import { CopyButton } from "@/src/components/shared/CopyButton";
+import { cn } from "@/src/lib/utils";
 
-const statusMap = {
+const STATUS_MAP: Record<
+  RequestItem["status"],
+  { label: string; color: string }
+> = {
   new: {
     label: "Новая",
-    color: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+    color:
+      "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 hover:dark:bg-blue-800",
   },
   in_progress: {
     label: "В работе",
     color:
-      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 hover:dark:bg-yellow-800",
   },
   resolved: {
     label: "Решена",
-    color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+    color:
+      "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 hover:dark:bg-green-800",
   },
 };
 
-const typeMap: Record<string, string> = {
-  consultation: "Консультация",
-  partnership: "Партнерство",
-  support: "Поддержка",
-  wholesale: "Дисконт",
-};
+const TYPE_MAP: Record<RequestItem["type"], { label: string; color: string }> =
+  {
+    consultation: {
+      label: "Консультация",
+      color: "bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300",
+    },
+    partnership: {
+      label: "Партнерство",
+      color: "bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300",
+    },
+    wholesale: {
+      label: "Оптовый дисконт",
+      color:
+        "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300",
+    },
+    support: {
+      label: "Поддержка",
+      color: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
+    },
+  };
 
 export const RequestRow = ({
   req,
@@ -50,6 +70,9 @@ export const RequestRow = ({
   const payload = req.payload as FeedbackPayload;
   const hasMedia =
     Array.isArray(payload.mediaKeys) && payload.mediaKeys.length > 0;
+
+  const typeConfig = TYPE_MAP[req.type];
+  const statusConfig = STATUS_MAP[req.status];
 
   const handleStatusChange = (newStatus: string) => {
     startTransition(async () => {
@@ -66,18 +89,6 @@ export const RequestRow = ({
     });
   };
 
-  const badgeProps = (() => {
-    switch (typeMap[req.type]) {
-      case "Консультация":
-        return "text-teal-700 bg-teal-100";
-      case "Партнерство":
-        return "bg-rose-100 text-rose-700";
-      case "Дисконт":
-        return "bg-orange-100 text-orange-700";
-      default:
-        return "bg-blue-100 text-blue-700";
-    }
-  })();
   return (
     <tr className="hover:bg-muted/30 transition-colors">
       <td className="px-6 py-4 whitespace-nowrap">
@@ -92,7 +103,7 @@ export const RequestRow = ({
         </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col items-start gap-2">
           <span className="text-muted-foreground text-xs font-medium">
             {new Intl.DateTimeFormat("ru-RU", {
               day: "2-digit",
@@ -101,8 +112,13 @@ export const RequestRow = ({
               minute: "2-digit",
             }).format(new Date(req.createdAt))}
           </span>
-          <Badge className={`w-fit text-xs ${badgeProps}`}>
-            {typeMap[req.type]}
+          <Badge
+            className={cn(
+              "w-fit border-none text-xs shadow-none",
+              typeConfig.color,
+            )}
+          >
+            {typeConfig.label}
           </Badge>
         </div>
       </td>
@@ -113,7 +129,10 @@ export const RequestRow = ({
           onValueChange={handleStatusChange}
         >
           <SelectTrigger
-            className={`h-8 text-xs md:text-sm ${statusMap[req.status as keyof typeof statusMap].color} border-none font-medium shadow-none`}
+            className={cn(
+              "h-8 border-none text-xs font-medium shadow-none md:text-sm",
+              statusConfig.color,
+            )}
           >
             <SelectValue />
           </SelectTrigger>
@@ -125,15 +144,15 @@ export const RequestRow = ({
         </Select>
       </td>
       <td className="px-6 py-4">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
           <span className="text-foreground font-medium">{req.name}</span>
           <span className="text-muted-foreground text-xs">{req.phone}</span>
         </div>
       </td>
       <td className="max-w-xs px-6 py-4">
-        <div className="flex flex-col items-start gap-2">
+        <div className="flex flex-col items-start gap-1">
           {payload.modelArticle && (
-            <p className="text-sm text-xs font-medium md:text-sm">
+            <p className="text-xs font-medium md:text-sm">
               {String(payload.modelArticle)}
             </p>
           )}
@@ -141,7 +160,7 @@ export const RequestRow = ({
             {req.message}
           </p>
           {hasMedia && (
-            <Paperclip className="text-brand-secondary-muted h-4 w-4 shrink-0" />
+            <Paperclip className="text-brand-secondary-muted mt-1 h-4 w-4 shrink-0" />
           )}
         </div>
       </td>
@@ -149,10 +168,10 @@ export const RequestRow = ({
         <Button
           variant="outline"
           size="sm"
-          className="hover:bg-background/60 w-full border-none shadow-none"
+          className="hover:bg-background/60 w-full shadow-none"
           onClick={() => onOpenDetails(req)}
         >
-          <PanelRightOpen className="size-4" />
+          <PanelRightOpen className="mr-2 size-4" />
           <span className="text-sm">Открыть</span>
         </Button>
       </td>
