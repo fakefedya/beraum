@@ -37,5 +37,6 @@ src/app/(store)/support/
 
 <!-- src/app/dashboard/ -->
 
-src/app/dashboard/banners
-src/app/dashboard/settings
+src/app/dashboard/banners/
+src/app/dashboard/settings/
+src/app/dashboard/products/
