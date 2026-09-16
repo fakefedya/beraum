@@ -38,9 +38,9 @@ export const DiscountItemRow = ({ item }: { item: DiscountItemDTO }) => {
   return (
     <tr className="hover:bg-muted/30 transition-colors">
       <td className="px-4 py-4 align-top">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1">
-            <span className="text-foreground text-sm font-semibold">
+            <span className="text-foreground text-xs font-medium">
               {item.uniqueSku}
             </span>
             <CopyButton
@@ -54,15 +54,16 @@ export const DiscountItemRow = ({ item }: { item: DiscountItemDTO }) => {
         </div>
       </td>
       <td className="px-4 py-4 align-top">
-        <span className="text-muted-foreground text-xs font-medium">
-          {item.categoryName}
-        </span>
-      </td>
-      <td className="px-4 py-4 align-top">
         <Badge className={`shadow-none ${statusMap[item.status].cls}`}>
           {statusMap[item.status].label}
         </Badge>
       </td>
+      <td className="px-4 py-4 align-top">
+        <span className="text-muted-foreground text-xs font-medium">
+          {item.categoryName}
+        </span>
+      </td>
+
       <td
         className="max-w-xs truncate px-4 py-4 align-top text-xs"
         title={item.defectDescription}

@@ -33,8 +33,8 @@ export const DiscountItemsTable = ({
       <thead className="text-muted-foreground border-b text-xs uppercase">
         <tr>
           <th className="px-4 py-4 font-medium">SKU</th>
-          <th className="px-4 py-4 font-medium">Категория</th>
           <th className="px-4 py-4 font-medium">Статус</th>
+          <th className="px-4 py-4 font-medium">Категория</th>
           <th className="px-4 py-4 font-medium">Дефект</th>
           <th className="px-4 py-4 font-medium">Цена</th>
           <th className="w-32 px-4 py-4 font-medium">Действия</th>
