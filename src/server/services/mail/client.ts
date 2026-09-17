@@ -26,12 +26,14 @@ const authTransporter = createMailTransporter(
   serverEnv.SMTP_USER,
   serverEnv.SMTP_PASS,
 );
+
 const ordersTransporter = createMailTransporter(
   serverEnv.ORDERS_SMTP_HOST,
   serverEnv.ORDERS_SMTP_PORT,
   serverEnv.ORDERS_SMTP_USER,
   serverEnv.ORDERS_SMTP_PASS,
 );
+
 const supportTransporter = createMailTransporter(
   serverEnv.SUPPORT_SMTP_HOST,
   serverEnv.SUPPORT_SMTP_PORT,
@@ -58,9 +60,7 @@ async function sendMailWithTimeout(
   await Promise.race([sendPromise, timeoutPromise]);
 }
 
-// ------------------------------------------------------------------
-// 1. ОТПРАВКА OTP (ВОССТАНОВЛЕНО)
-// ------------------------------------------------------------------
+// 1. ОТПРАВКА OTP
 export async function sendTwoFactorTokenEmail(email: string, token: string) {
   if (process.env.NODE_ENV === "development") {
     console.log(`\n\n🛡️ [SECURITY] 2FA Код для ${email}: ${token}\n\n`);
@@ -91,9 +91,7 @@ export async function sendTwoFactorTokenEmail(email: string, token: string) {
   }
 }
 
-// ------------------------------------------------------------------
 // 2. УВЕДОМЛЕНИЕ КЛИЕНТУ О ЗАКАЗЕ (ДОБАВЛЕНЫ ТОВАРЫ)
-// ------------------------------------------------------------------
 export async function sendOrderClientEmail(
   email: string,
   name: string,
@@ -102,8 +100,6 @@ export async function sendOrderClientEmail(
   items: OrderMailItem[],
 ) {
   const safeName = escapeHtml(name);
-
-  // 🛡️ Генерируем безопасный HTML списка товаров
   const itemsHtml = items
     .map(
       (item) => `
@@ -142,9 +138,7 @@ export async function sendOrderClientEmail(
   }
 }
 
-// ------------------------------------------------------------------
 // 3. УВЕДОМЛЕНИЯ АДМИНАМ (ОПТИМИЗАЦИЯ ДЛЯ КОПИРОВАНИЯ)
-// ------------------------------------------------------------------
 type NotificationPool = "orders" | "support";
 
 export async function sendAdminNotificationEmail(
@@ -163,7 +157,6 @@ export async function sendAdminNotificationEmail(
       ? serverEnv.ADMIN_ORDERS_EMAIL
       : serverEnv.ADMIN_SUPPORT_EMAIL;
 
-  // 🛡️ Экранирование и улучшенный UX для выделения текста двойным кликом
   const rowsHtml = Object.entries(dataParams)
     .filter(([_, value]) => value !== undefined && value !== "")
     .map(
@@ -202,9 +195,7 @@ export async function sendAdminNotificationEmail(
   }
 }
 
-// ------------------------------------------------------------------
 // 4. УВЕДОМЛЕНИЕ КЛИЕНТУ О ПОЛУЧЕНИИ ЗАЯВКИ (ФОРМЫ)
-// ------------------------------------------------------------------
 export async function sendFeedbackClientEmail(
   email: string,
   name: string,
@@ -217,7 +208,7 @@ export async function sendFeedbackClientEmail(
     await sendMailWithTimeout(supportTransporter, {
       from: serverEnv.SUPPORT_SMTP_FROM,
       to: email,
-      subject: `Beraum: Ваша заявка #${ticketNumber} получена`,
+      subject: `Уведомление от Beraum: Ваша заявка № ${ticketNumber} получена`,
       html: `
         <div style="font-family: sans-serif; max-width: 500px; margin: auto; padding: 24px; border: 1px solid #eaeaea; border-radius: 12px;">
           <h2 style="color: #1a1a1a; margin-top: 0;">Обращение #${escapeHtml(ticketNumber)}</h2>

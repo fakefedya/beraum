@@ -17,6 +17,7 @@ import { after } from "next/server";
 import {
   sendOrderClientEmail,
   sendAdminNotificationEmail,
+  sendFeedbackClientEmail,
 } from "../services/mail/client";
 
 export async function submitWholesaleAction(
@@ -61,7 +62,6 @@ export async function submitWholesaleAction(
       consentAt: new Date(),
     });
 
-    // 🛡️ Фоновая отправка в пул поддержки
     after(async () => {
       const TECH_TYPE_LABELS: Record<string, string> = {
         both: "Обе категории",
@@ -70,6 +70,13 @@ export async function submitWholesaleAction(
       };
 
       try {
+        await sendFeedbackClientEmail(
+          parsed.data.email,
+          parsed.data.name,
+          ticketNumber,
+          "Оптовая продажа дисконта",
+        );
+
         await sendAdminNotificationEmail(
           "support",
           `Новая заявка на Опт #${ticketNumber}`,
@@ -186,7 +193,6 @@ export async function checkoutDiscountCartAction(
           message,
           deliveryMethod,
           paymentMethod,
-          // 🛡️ Строгий Type Guard для сужения типа Zod-схемы
           deliveryDetails:
             parsed.data.deliveryMethod === "delivery"
               ? {
@@ -217,7 +223,6 @@ export async function checkoutDiscountCartAction(
           orderItems,
         );
 
-        // 🛡️ Строгий Type Guard при формировании адреса
         const addressString =
           parsed.data.deliveryMethod === "delivery"
             ? [
@@ -251,7 +256,6 @@ export async function checkoutDiscountCartAction(
               parsed.data.deliveryMethod === "delivery"
                 ? addressString
                 : undefined,
-            // 🛡️ Обращение к специфичному полю только через дискриминант
             "Комментарий курьеру":
               parsed.data.deliveryMethod === "delivery"
                 ? parsed.data.courierComment
