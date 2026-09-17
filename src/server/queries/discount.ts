@@ -173,3 +173,18 @@ export const getDiscountItemBySku = cache(async (uniqueSku: string) => {
     return { success: false, data: null };
   }
 });
+
+export async function getAvailableDiscountSkus() {
+  try {
+    return await db
+      .select({
+        uniqueSku: discountItems.uniqueSku,
+        updatedAt: discountItems.updatedAt,
+      })
+      .from(discountItems)
+      .where(eq(discountItems.status, "available"));
+  } catch (error) {
+    console.error("❌ Ошибка getAvailableDiscountSkus:", error);
+    return [];
+  }
+}
