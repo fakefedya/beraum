@@ -22,7 +22,7 @@ export const DASHBOARD_NAV: DashboardNavItem[] = [
     label: "Статистика",
     href: "/dashboard",
     icon: ChartBar,
-    roles: ["superadmin", "admin", "manager", "support"],
+    roles: ["superadmin", "admin", "manager", "support", "warehouse"],
   },
   {
     label: "Заявки",
@@ -34,7 +34,7 @@ export const DASHBOARD_NAV: DashboardNavItem[] = [
     label: "Заказы",
     href: "/dashboard/orders",
     icon: ShoppingCart,
-    roles: ["superadmin", "admin", "manager"],
+    roles: ["superadmin", "admin", "support"],
   },
   {
     label: "Товары",
@@ -43,10 +43,10 @@ export const DASHBOARD_NAV: DashboardNavItem[] = [
     roles: ["superadmin", "admin", "manager"],
   },
   {
-    label: "Дисконт",
+    label: "Дисконт товары",
     href: "/dashboard/discount-products",
     icon: Percent,
-    roles: ["superadmin", "admin", "manager"],
+    roles: ["superadmin", "admin", "manager", "warehouse", "support"],
   },
   {
     label: "Баннеры",

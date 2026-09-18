@@ -14,12 +14,47 @@ import {
 import { checkRateLimit } from "../utils/rate-limit";
 import { inArray, and, eq, isNull } from "drizzle-orm";
 import { generateTicketNumber } from "../utils/ticket";
+import { after } from "next/server";
+import {
+  sendAdminNotificationEmail,
+  sendFeedbackClientEmail,
+} from "../services/mail/client";
 
 export type ActionState = {
   success: boolean;
   error?: string;
   fieldErrors?: Record<string, string>;
   payload?: Record<string, FormDataEntryValue | FormDataEntryValue[]>;
+};
+
+const MARKETPLACE_LABELS: Record<string, string> = {
+  ozon: "Ozon",
+  wb: "Wildberries",
+  ymarket: "Яндекс Маркет",
+  mvideo: "М.Видео",
+  megamarket: "МегаМаркет",
+  beraum: "Официальный сайт",
+  offline: "Офлайн магазин",
+};
+
+const CONDITION_LABELS: Record<string, string> = {
+  new: "Новая техника",
+  used: "ДДисконт техника",
+};
+
+const formatDate = (dateString?: unknown) => {
+  if (!dateString) return "—";
+  try {
+    const date = new Date(dateString as string);
+    if (isNaN(date.getTime())) return String(dateString);
+    return new Intl.DateTimeFormat("ru-RU", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    }).format(date);
+  } catch {
+    return String(dateString);
+  }
 };
 
 async function keepExistingKeys(
@@ -42,6 +77,9 @@ async function keepExistingKeys(
   return validRecords.map((r) => r.fileKey);
 }
 
+// ------------------------------------------------------------------
+// B2B СОТРУДНИЧЕСТВО
+// ------------------------------------------------------------------
 export async function submitPartnershipAction(
   prevState: ActionState,
   formData: FormData,
@@ -49,9 +87,7 @@ export async function submitPartnershipAction(
   const data = Object.fromEntries(formData.entries());
 
   if (typeof data.botCheck === "string" && data.botCheck.length > 0) {
-    console.warn(
-      `[SECURITY] Бот-спам заблокирован через honeypot (IP Hash: pending)`,
-    );
+    console.warn(`[SECURITY] Бот-спам заблокирован через honeypot`);
     return { success: true };
   }
 
@@ -79,8 +115,10 @@ export async function submitPartnershipAction(
       };
     }
 
+    const ticketNumber = generateTicketNumber();
+
     await db.insert(feedbackRequests).values({
-      ticketNumber: generateTicketNumber(),
+      ticketNumber,
       type: "partnership",
       name,
       phone,
@@ -89,6 +127,35 @@ export async function submitPartnershipAction(
       payload: payloadData,
       ipHash: rateLimit.ipHash,
       consentAt: new Date(),
+    });
+
+    after(async () => {
+      try {
+        await sendFeedbackClientEmail(
+          email,
+          name,
+          ticketNumber,
+          "Сотрудничество",
+        );
+
+        // 🛡️ Строгий маппинг полей
+        await sendAdminNotificationEmail(
+          "support",
+          `Новая заявка на сотрудничество #${ticketNumber}`,
+          {
+            Имя: name,
+            Телефон: phone,
+            Email: email,
+            "Компания / ИНН": String(payloadData.company || "—"),
+            Комментарий: message || "—",
+          },
+        );
+      } catch (err) {
+        console.error(
+          "❌ Фоновая отправка писем (Partnership) не удалась:",
+          err,
+        );
+      }
     });
 
     return { success: true };
@@ -102,6 +169,9 @@ export async function submitPartnershipAction(
   }
 }
 
+// ------------------------------------------------------------------
+// ТЕХНИЧЕСКАЯ ПОДДЕРЖКА
+// ------------------------------------------------------------------
 export async function submitSupportAction(
   prevState: ActionState,
   formData: FormData,
@@ -115,9 +185,7 @@ export async function submitSupportAction(
   }
 
   if (typeof data.botCheck === "string" && data.botCheck.length > 0) {
-    console.warn(
-      `[SECURITY] Бот-спам заблокирован через honeypot (IP Hash: pending)`,
-    );
+    console.warn(`[SECURITY] Бот-спам заблокирован через honeypot`);
     return { success: true };
   }
 
@@ -144,13 +212,14 @@ export async function submitSupportAction(
       ...restPayload
     } = parsed.data;
 
-    const [categoryExists] = await db
-      .select({ id: categories.id })
+    // Получаем русское название категории из БД для письма
+    const [categoryRecord] = await db
+      .select({ id: categories.id, titleRu: categories.titleRu })
       .from(categories)
-      .where(eq(categories.id, restPayload.categoryId))
+      .where(eq(categories.id, restPayload.categoryId as string))
       .limit(1);
 
-    if (!categoryExists) {
+    if (!categoryRecord) {
       return {
         success: false,
         fieldErrors: { categoryId: "Выбранная категория не найдена в базе" },
@@ -172,10 +241,12 @@ export async function submitSupportAction(
         ? await keepExistingKeys(validatedMediaKeys, rateLimit.ipHash)
         : [];
 
+    const ticketNumber = generateTicketNumber();
+
     const [newRequest] = await db
       .insert(feedbackRequests)
       .values({
-        ticketNumber: generateTicketNumber(),
+        ticketNumber,
         type: "support",
         name,
         phone,
@@ -197,6 +268,45 @@ export async function submitSupportAction(
         .where(inArray(mediaUploads.fileKey, confirmedMediaKeys));
     }
 
+    after(async () => {
+      try {
+        await sendFeedbackClientEmail(
+          email,
+          name,
+          ticketNumber,
+          "Сервисная поддержка",
+        );
+
+        // 🛡️ Строгий маппинг технических полей
+        await sendAdminNotificationEmail(
+          "support",
+          `Новое обращение в поддержку #${ticketNumber}`,
+          {
+            Имя: name,
+            Телефон: phone,
+            Email: email,
+            "Категория техники": categoryRecord.titleRu,
+            "Артикул / Модель": String(restPayload.modelArticle || "—"),
+            "Место покупки":
+              MARKETPLACE_LABELS[String(restPayload.marketplace)] ||
+              String(restPayload.marketplace || "—"),
+            "Дата покупки": formatDate(restPayload.purchaseDate),
+            Состояние:
+              CONDITION_LABELS[String(restPayload.deviceCondition)] ||
+              String(restPayload.deviceCondition || "—"),
+            "Адрес нахождения": String(restPayload.address || "—"),
+            "Описание проблемы": message || "—",
+            "Прикрепленные файлы (S3)":
+              confirmedMediaKeys.length > 0
+                ? confirmedMediaKeys.join("\n")
+                : "Нет файлов",
+          },
+        );
+      } catch (err) {
+        console.error("❌ Фоновая отправка писем (Support) не удалась:", err);
+      }
+    });
+
     return { success: true };
   } catch (error) {
     console.error("❌ Ошибка заявки в поддержку:", error);
@@ -208,6 +318,9 @@ export async function submitSupportAction(
   }
 }
 
+// ------------------------------------------------------------------
+// КОНСУЛЬТАЦИЯ
+// ------------------------------------------------------------------
 export async function submitConsultAction(
   prevState: ActionState,
   formData: FormData,
@@ -215,9 +328,7 @@ export async function submitConsultAction(
   const data = Object.fromEntries(formData.entries());
 
   if (typeof data.botCheck === "string" && data.botCheck.length > 0) {
-    console.warn(
-      `[SECURITY] Бот-спам заблокирован через honeypot (IP Hash: pending)`,
-    );
+    console.warn(`[SECURITY] Бот-спам заблокирован через honeypot`);
     return { success: true };
   }
 
@@ -235,7 +346,6 @@ export async function submitConsultAction(
 
     const { name, phone, email, message, consent, botCheck, ...payloadData } =
       parsed.data;
-    console.log(parsed.data);
 
     const rateLimit = await checkRateLimit("consultation", 3, 60000);
     if (!rateLimit.success) {
@@ -246,8 +356,10 @@ export async function submitConsultAction(
       };
     }
 
+    const ticketNumber = generateTicketNumber();
+
     await db.insert(feedbackRequests).values({
-      ticketNumber: generateTicketNumber(),
+      ticketNumber,
       type: "consultation",
       name,
       phone,
@@ -256,6 +368,31 @@ export async function submitConsultAction(
       payload: payloadData,
       ipHash: rateLimit.ipHash,
       consentAt: new Date(),
+    });
+
+    after(async () => {
+      try {
+        await sendFeedbackClientEmail(
+          email,
+          name,
+          ticketNumber,
+          "Консультация",
+        );
+
+        await sendAdminNotificationEmail(
+          "support",
+          `Новый вопрос (Консультация) #${ticketNumber}`,
+          {
+            Имя: name,
+            Телефон: phone,
+            Email: email,
+            "Вопрос / Комментарий": message || "—",
+            "Страница отправки": String(payloadData.sourcePage || "—"),
+          },
+        );
+      } catch (err) {
+        console.error("❌ Фоновая отправка писем (Consult) не удалась:", err);
+      }
     });
 
     return { success: true };

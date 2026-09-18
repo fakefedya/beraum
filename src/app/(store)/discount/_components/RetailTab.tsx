@@ -7,13 +7,14 @@ import {
   AccordionContent,
 } from "@/src/components/ui/accordion";
 import { Button } from "@/src/components/ui/button";
-import { ExternalLink, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { RETAIL_INFO, RETAIL_FAQ } from "./data";
 import { cn } from "@/src/lib/utils";
 import {
   MARKETPLACE_LINKS,
   MarketplaceProps,
 } from "@/src/lib/constants/marketplaces";
+import Link from "next/link";
 
 export const RetailTab = () => {
   const discountLink: MarketplaceProps | undefined =
@@ -40,14 +41,7 @@ export const RetailTab = () => {
                   "shadow-button transition-all duration-300",
                 )}
               >
-                <a
-                  href={discountLink && discountLink.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Перейти в каталог Ozon
-                  <ExternalLink className="ml-2 size-4" strokeWidth={2.5} />
-                </a>
+                <Link href="/discount/catalog/">Перейти в каталог</Link>
               </Button>
             </div>
 

@@ -34,7 +34,13 @@ export default async function DiscountItemsPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   try {
-    await requireAuthRole(["superadmin", "admin", "manager"]);
+    await requireAuthRole([
+      "superadmin",
+      "admin",
+      "manager",
+      "support",
+      "warehouse",
+    ]);
   } catch {
     redirect("/dashboard");
   }
