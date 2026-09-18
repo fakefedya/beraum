@@ -30,7 +30,13 @@ export default async function DashboardPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   try {
-    await requireAuthRole(["superadmin", "admin", "manager", "support"]);
+    await requireAuthRole([
+      "superadmin",
+      "admin",
+      "manager",
+      "support",
+      "warehouse",
+    ]);
   } catch {
     redirect("/auth/login");
   }

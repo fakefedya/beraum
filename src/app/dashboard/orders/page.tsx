@@ -31,7 +31,7 @@ export default async function OrdersPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   try {
-    await requireAuthRole(["superadmin", "admin", "manager"]);
+    await requireAuthRole(["superadmin", "admin", "support"]);
   } catch {
     redirect("/dashboard");
   }
