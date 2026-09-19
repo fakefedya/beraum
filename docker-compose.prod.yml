@@ -24,7 +24,7 @@ services:
       - tools
 
   proxy:
-    image: caddy:2-alpine
+    image: ch:2-alpine
     container_name: beraum-proxy
     restart: unless-stopped
     ports:

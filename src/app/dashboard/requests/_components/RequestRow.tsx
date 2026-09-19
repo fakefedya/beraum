@@ -156,12 +156,17 @@ export const RequestRow = ({
               {String(payload.modelArticle)}
             </p>
           )}
-          <p className="text-muted-foreground line-clamp-1 text-xs">
-            {req.message}
-          </p>
-          {hasMedia && (
-            <Paperclip className="text-brand-secondary-muted mt-1 h-4 w-4 shrink-0" />
-          )}
+          <div className="flex items-center gap-1">
+            {hasMedia && (
+              <Paperclip
+                size={14}
+                className="text-brand-secondary-muted mt-1 shrink-0"
+              />
+            )}
+            <p className="text-muted-foreground line-clamp-1 text-xs">
+              {req.message}
+            </p>
+          </div>
         </div>
       </td>
       <td className="px-6 py-4 text-right">
