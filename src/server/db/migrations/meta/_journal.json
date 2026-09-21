@@ -169,6 +169,13 @@
       "when": 1789712223710,
       "tag": "0023_great_susan_delgado",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1789976331905,
+      "tag": "0024_fantastic_colonel_america",
+      "breakpoints": true
     }
   ]
 }

@@ -42,6 +42,10 @@ interface DiscountItemFormProps {
   isPending: boolean;
 }
 
+const MOST_COMMON_PRODUCT_STATE =
+  "Техника новая, не использовалась. Полная, стандартная комплектация.";
+const MOST_COMMON_PRODUCT_DESCRIPTION = "Незаметные потёртости на корпусе.";
+
 export const DiscountItemForm = ({
   mode,
   initialData,
@@ -267,6 +271,40 @@ export const DiscountItemForm = ({
             disabled={isPending}
             defaultValue={initialData?.defectDescription}
             placeholder="Царапина на стекле 2см, отсутствует коробка, а в Beraum присутствует кризис..."
+            className="bg-background border-input focus-visible:ring-ring min-h-24 resize-none rounded-md border p-3 text-sm focus-visible:ring-1 focus-visible:outline-none"
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-foreground text-sm font-medium">
+            Состояние товара
+          </label>
+          <textarea
+            name="productState"
+            disabled={isPending}
+            defaultValue={
+              mode === "create"
+                ? MOST_COMMON_PRODUCT_STATE
+                : (initialData?.productState ?? "")
+            }
+            placeholder="Новый, не использовался, полный комплект."
+            className="bg-background border-input focus-visible:ring-ring min-h-24 resize-none rounded-md border p-3 text-sm focus-visible:ring-1 focus-visible:outline-none"
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-foreground text-sm font-medium">
+            Описание товара
+          </label>
+          <textarea
+            name="productDescription"
+            disabled={isPending}
+            defaultValue={
+              mode === "create"
+                ? MOST_COMMON_PRODUCT_DESCRIPTION
+                : (initialData?.productDescription ?? "")
+            }
+            placeholder="Незаметные потёртости на корпусе."
             className="bg-background border-input focus-visible:ring-ring min-h-24 resize-none rounded-md border p-3 text-sm focus-visible:ring-1 focus-visible:outline-none"
           />
         </div>

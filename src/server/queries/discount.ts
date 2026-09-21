@@ -126,6 +126,8 @@ export const getDiscountItemBySku = cache(async (uniqueSku: string) => {
         id: discountItems.id,
         uniqueSku: discountItems.uniqueSku,
         defectDescription: discountItems.defectDescription,
+        productState: discountItems.productState,
+        productDescription: discountItems.productDescription,
         discountPrice: discountItems.discountPrice,
         mediaKeys: discountItems.mediaKeys,
         status: discountItems.status,

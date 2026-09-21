@@ -7,6 +7,8 @@ export type DiscountItemDTO = {
   id: string;
   uniqueSku: string;
   defectDescription: string;
+  productState: string | null;
+  productDescription: string | null;
   discountPrice: number;
   status: "available" | "reserved" | "sold";
   reservedAt: Date | null;

@@ -119,6 +119,16 @@ const createDiscountItemSchema = z.object({
     .string()
     .min(10, "Опишите дефект подробнее (минимум 10 символов)")
     .max(1000, "Описание слишком длинное"),
+  productState: z
+    .string()
+    .max(1000, "Описание слишком длинное")
+    .optional()
+    .transform((v) => (v?.trim() === "" ? null : v)),
+  productDescription: z
+    .string()
+    .max(1000, "Описание слишком длинное")
+    .optional()
+    .transform((v) => (v?.trim() === "" ? null : v)),
   discountPrice: z.coerce
     .number()
     .int("Цена должна быть целым числом")
@@ -134,6 +144,8 @@ export async function createDiscountItemAction(formData: FormData) {
       productId: formData.get("productId"),
       uniqueSku: formData.get("uniqueSku"),
       defectDescription: formData.get("defectDescription"),
+      productState: formData.get("productState"),
+      productDescription: formData.get("productDescription"),
       discountPrice: formData.get("discountPrice"),
       mediaPayload: formData.get("mediaPayload") || "[]",
     };
@@ -175,6 +187,8 @@ export async function createDiscountItemAction(formData: FormData) {
       productId: parsed.data.productId,
       uniqueSku: parsed.data.uniqueSku,
       defectDescription: parsed.data.defectDescription,
+      productState: parsed.data.productState,
+      productDescription: parsed.data.productDescription,
       discountPrice: parsed.data.discountPrice,
       mediaKeys: permanentMedia,
       status: "available",
@@ -207,6 +221,16 @@ const updateDiscountItemSchema = z.object({
     .string()
     .min(10, "Опишите дефект (мин. 10 символов)")
     .max(1000),
+  productState: z
+    .string()
+    .max(1000, "Описание слишком длинное")
+    .optional()
+    .transform((v) => (v?.trim() === "" ? null : v)),
+  productDescription: z
+    .string()
+    .max(1000, "Описание слишком длинное")
+    .optional()
+    .transform((v) => (v?.trim() === "" ? null : v)),
   discountPrice: z.coerce
     .number()
     .int()
@@ -222,6 +246,8 @@ export async function updateDiscountItemAction(formData: FormData) {
     const rawData = {
       id: formData.get("id"),
       defectDescription: formData.get("defectDescription"),
+      productState: formData.get("productState"),
+      productDescription: formData.get("productDescription"),
       discountPrice: formData.get("discountPrice"),
       status: formData.get("status"),
       mediaPayload: formData.get("mediaPayload") || "[]",
@@ -282,6 +308,8 @@ export async function updateDiscountItemAction(formData: FormData) {
       .update(discountItems)
       .set({
         defectDescription: parsed.data.defectDescription,
+        productState: parsed.data.productState,
+        productDescription: parsed.data.productDescription,
         discountPrice: parsed.data.discountPrice,
         status: parsed.data.status,
         mediaKeys: permanentMedia,

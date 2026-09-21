@@ -27,6 +27,8 @@ export const discountItems = pgTable(
 
     uniqueSku: text("unique_sku").notNull().unique(),
     defectDescription: text("defect_description").notNull(),
+    productState: text("product_state"),
+    productDescription: text("product_description"),
     discountPrice: integer("discount_price").notNull(),
 
     mediaKeys: jsonb("media_keys")

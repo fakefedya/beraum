@@ -39,6 +39,8 @@ export async function getAdminDiscountItems(
         id: discountItems.id,
         uniqueSku: discountItems.uniqueSku,
         defectDescription: discountItems.defectDescription,
+        productState: discountItems.productState,
+        productDescription: discountItems.productDescription,
         discountPrice: discountItems.discountPrice,
         status: discountItems.status,
         reservedAt: discountItems.reservedAt,

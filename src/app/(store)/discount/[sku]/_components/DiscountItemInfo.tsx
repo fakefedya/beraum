@@ -93,6 +93,7 @@ export const DiscountItemInfo = ({ item }: DiscountItemInfoProps) => {
               </div>
             )}
           </div>
+
           <div className="flex flex-col gap-3 rounded-2xl border border-orange-200 bg-orange-50 p-4 text-orange-900">
             <div className="flex items-center gap-2 font-medium">
               <AlertTriangle className="size-5 shrink-0" />
@@ -138,6 +139,29 @@ export const DiscountItemInfo = ({ item }: DiscountItemInfoProps) => {
           </div>
         )}
       </div>
+
+      {/* 2. Блок состояния и описания*/}
+
+      {item.productState && (
+        <div className="flex flex-col gap-6">
+          <h2 className="text-xl font-medium text-balance">
+            <span className="text-foreground">Состояние. </span>
+            <span className="text-muted-foreground/60">Подробно.</span>
+          </h2>
+          {item.productState}
+        </div>
+      )}
+      {item.productDescription && (
+        <div className="flex flex-col gap-6">
+          <h2 className="text-xl font-medium text-balance">
+            <span className="text-foreground">Описание. </span>
+            <span className="text-muted-foreground/60">
+              Изучите перед покупкой.
+            </span>
+          </h2>
+          {item.productDescription}
+        </div>
+      )}
 
       {/* 3. Характеристики */}
       {validSpecs.length > 0 && (
