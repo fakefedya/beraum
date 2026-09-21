@@ -270,7 +270,7 @@ export const DiscountItemForm = ({
             required
             disabled={isPending}
             defaultValue={initialData?.defectDescription}
-            placeholder="Царапина на стекле 2см, отсутствует коробка, а в Beraum присутствует кризис..."
+            placeholder="Царапина на стекле 2см, отсутствует коробка..."
             className="bg-background border-input focus-visible:ring-ring min-h-24 resize-none rounded-md border p-3 text-sm focus-visible:ring-1 focus-visible:outline-none"
           />
         </div>
@@ -287,7 +287,7 @@ export const DiscountItemForm = ({
                 ? MOST_COMMON_PRODUCT_STATE
                 : (initialData?.productState ?? "")
             }
-            placeholder="Новый, не использовался, полный комплект."
+            placeholder={MOST_COMMON_PRODUCT_STATE}
             className="bg-background border-input focus-visible:ring-ring min-h-24 resize-none rounded-md border p-3 text-sm focus-visible:ring-1 focus-visible:outline-none"
           />
         </div>
@@ -304,7 +304,7 @@ export const DiscountItemForm = ({
                 ? MOST_COMMON_PRODUCT_DESCRIPTION
                 : (initialData?.productDescription ?? "")
             }
-            placeholder="Незаметные потёртости на корпусе."
+            placeholder={MOST_COMMON_PRODUCT_DESCRIPTION}
             className="bg-background border-input focus-visible:ring-ring min-h-24 resize-none rounded-md border p-3 text-sm focus-visible:ring-1 focus-visible:outline-none"
           />
         </div>
