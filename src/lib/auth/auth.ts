@@ -32,8 +32,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!user || !user.passwordHash) return null;
         if (user.isLocked) throw new Error("Аккаунт заблокирован");
 
-        const passwordsMatch = await compare(password, user.passwordHash);
-        if (!passwordsMatch) return null;
+        if (!code) {
+          if (!password) return null;
+          const passwordsMatch = await compare(password, user.passwordHash);
+          if (!passwordsMatch) return null;
+        }
 
         if (user.isTwoFactorEnabled) {
           if (!code) throw new Error("2FA_REQUIRED");

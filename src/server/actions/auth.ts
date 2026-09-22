@@ -29,6 +29,7 @@ export async function loginAction(
   formData: FormData,
 ): Promise<LoginActionState> {
   const data = Object.fromEntries(formData.entries()) as Record<string, string>;
+  const rawEmail = data.email || "";
 
   try {
     const parsed = LoginSchema.safeParse(data);
@@ -36,12 +37,14 @@ export async function loginAction(
       return {
         success: false,
         error: "Некорректно заполнены поля",
-        payload: data,
+        payload: { email: rawEmail },
         isTwoFactor: prevState.isTwoFactor,
       };
     }
 
     const { email, password, code } = parsed.data;
+
+    // Валидация Rate Limit
     const ipLimit = await checkRateLimit("login_ip", 15, 60000);
     const emailLimit = await checkRateLimit(
       "login_email",
@@ -55,7 +58,7 @@ export async function loginAction(
       return {
         success: false,
         error: "Обнаружена подозрительная активность. Попробуйте позже.",
-        payload: data,
+        payload: { email },
         isTwoFactor: prevState.isTwoFactor,
       };
     }
@@ -65,28 +68,28 @@ export async function loginAction(
       .from(users)
       .where(eq(users.email, email));
 
-    // Защита от Time-based
-    const hashToCompare = existingUser?.passwordHash || DUMMY_HASH;
-    const passwordsMatch = await compare(password, hashToCompare);
-
-    if (!existingUser || !passwordsMatch) {
-      return {
-        success: false,
-        error: "Неверный Email или пароль",
-        payload: data,
-      };
-    }
-
-    if (existingUser.isLocked) {
+    if (existingUser?.isLocked) {
       return {
         success: false,
         error: "Аккаунт заблокирован. Обратитесь к администратору.",
-        payload: data,
+        payload: { email },
       };
     }
 
-    if (existingUser.isTwoFactorEnabled) {
-      if (!code) {
+    // ШАГ 1: Валидация пароля (OTP-кода еще нет)
+    if (!code) {
+      const hashToCompare = existingUser?.passwordHash || DUMMY_HASH;
+      const passwordsMatch = await compare(password || "", hashToCompare);
+
+      if (!existingUser || !passwordsMatch) {
+        return {
+          success: false,
+          error: "Неверный Email или пароль",
+          payload: { email },
+        };
+      }
+
+      if (existingUser.isTwoFactorEnabled) {
         const [existingToken] = await db
           .select()
           .from(twoFactorTokens)
@@ -96,7 +99,7 @@ export async function loginAction(
           return {
             success: false,
             isTwoFactor: true,
-            payload: data,
+            payload: { email },
           };
         }
 
@@ -113,66 +116,77 @@ export async function loginAction(
           }
         });
 
-        return { success: false, isTwoFactor: true, payload: data };
+        return { success: false, isTwoFactor: true, payload: { email } };
       }
-
-      const [twoFactorToken] = await db
-        .select()
-        .from(twoFactorTokens)
-        .where(eq(twoFactorTokens.email, existingUser.email));
-
-      if (!twoFactorToken) {
+    } else {
+      // ШАГ 2: Валидация OTP-кода (пароль больше не проверяется здесь)
+      if (!existingUser) {
         return {
           success: false,
-          error: "Код не запрошен или аннулирован",
-          isTwoFactor: true,
-          payload: data,
+          error: "Пользователь не найден",
+          payload: { email },
         };
       }
 
-      if (new Date() > twoFactorToken.expires) {
-        await db
-          .delete(twoFactorTokens)
-          .where(eq(twoFactorTokens.id, twoFactorToken.id));
-        return {
-          success: false,
-          error: "Срок действия кода истек",
-          isTwoFactor: true,
-          payload: data,
-        };
-      }
+      if (existingUser.isTwoFactorEnabled) {
+        const [twoFactorToken] = await db
+          .select()
+          .from(twoFactorTokens)
+          .where(eq(twoFactorTokens.email, existingUser.email));
 
-      if (twoFactorToken.token !== code) {
-        const newAttempts = twoFactorToken.attempts + 1;
+        if (!twoFactorToken) {
+          return {
+            success: false,
+            error: "Код не запрошен или аннулирован",
+            isTwoFactor: true,
+            payload: { email },
+          };
+        }
 
-        if (newAttempts >= 3) {
+        if (new Date() > twoFactorToken.expires) {
           await db
             .delete(twoFactorTokens)
             .where(eq(twoFactorTokens.id, twoFactorToken.id));
           return {
             success: false,
-            error: "Превышен лимит попыток. Запросите код заново.",
-            isTwoFactor: false,
-            payload: { email, password },
-          };
-        } else {
-          await db
-            .update(twoFactorTokens)
-            .set({ attempts: newAttempts })
-            .where(eq(twoFactorTokens.id, twoFactorToken.id));
-
-          return {
-            success: false,
-            error: "Неверный код",
+            error: "Срок действия кода истек",
             isTwoFactor: true,
-            payload: data,
+            payload: { email },
           };
+        }
+
+        if (twoFactorToken.token !== code) {
+          const newAttempts = twoFactorToken.attempts + 1;
+
+          if (newAttempts >= 3) {
+            await db
+              .delete(twoFactorTokens)
+              .where(eq(twoFactorTokens.id, twoFactorToken.id));
+            return {
+              success: false,
+              error: "Превышен лимит попыток. Запросите код заново.",
+              isTwoFactor: false, // Сбрасываем процесс, заставляем ввести пароль
+              payload: { email },
+            };
+          } else {
+            await db
+              .update(twoFactorTokens)
+              .set({ attempts: newAttempts })
+              .where(eq(twoFactorTokens.id, twoFactorToken.id));
+
+            return {
+              success: false,
+              error: "Неверный код",
+              isTwoFactor: true,
+              payload: { email },
+            };
+          }
         }
       }
     }
 
+    // Аутентификация успешна, обновляем данные в БД
     const ip = await getClientIp();
-
     await db
       .update(users)
       .set({
@@ -181,15 +195,13 @@ export async function loginAction(
       })
       .where(eq(users.id, existingUser.id));
 
+    // Инициируем сессию Auth.js
     const authPayload: Record<string, string> = {
       email,
-      password,
       redirectTo: "/dashboard",
     };
-
-    if (code) {
-      authPayload.code = code;
-    }
+    if (password) authPayload.password = password;
+    if (code) authPayload.code = code;
 
     await signIn("credentials", authPayload);
 
@@ -199,7 +211,7 @@ export async function loginAction(
       return {
         success: false,
         error: "Неверные данные для входа",
-        payload: data,
+        payload: { email: rawEmail },
         isTwoFactor: prevState.isTwoFactor,
       };
     }
@@ -210,7 +222,7 @@ export async function loginAction(
       return {
         success: false,
         error: error.message,
-        payload: data,
+        payload: { email: rawEmail },
         isTwoFactor: prevState.isTwoFactor,
       };
     }

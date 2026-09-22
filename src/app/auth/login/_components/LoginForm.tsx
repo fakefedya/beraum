@@ -70,11 +70,6 @@ export const LoginForm = () => {
               name="email"
               value={state.payload?.email || ""}
             />
-            <input
-              type="hidden"
-              name="password"
-              value={state.payload?.password || ""}
-            />
 
             <div className="bg-brand/10 border-brand/20 flex flex-col gap-1 rounded-xl border p-4">
               <span className="text-foreground text-lg font-semibold">

@@ -2,18 +2,23 @@ import type { NextAuthConfig } from "next-auth";
 import { z } from "zod";
 import type { Role } from "@/src/lib/constants/roles";
 
-export const LoginSchema = z.object({
-  email: z.string().email().trim().toLowerCase(),
-  password: z.string().min(8),
-  code: z.preprocess(
-    (val) =>
-      val === "" || val === "undefined" || val === null ? undefined : val,
-    z
-      .string()
-      .regex(/^\d{6}$/)
-      .optional(),
-  ),
-});
+export const LoginSchema = z
+  .object({
+    email: z.string().email().trim().toLowerCase(),
+    password: z.string().min(8).optional(),
+    code: z.preprocess(
+      (val) =>
+        val === "" || val === "undefined" || val === null ? undefined : val,
+      z
+        .string()
+        .regex(/^\d{6}$/)
+        .optional(),
+    ),
+  })
+  .refine((data) => data.password || data.code, {
+    message: "Требуется пароль или код",
+    path: ["password"],
+  });
 
 export const authConfig = {
   pages: {
