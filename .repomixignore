@@ -1,11 +1,3 @@
-# Add patterns to ignore here, one per line
-
-# Example:
-
-# *.log
-
-# tmp/
-
 package-lock.json
 src/server/db/migrations/
 backup/
@@ -13,13 +5,13 @@ backup/
 .vscode/
 node_modules/
 
-src/components/ui
+src/components/
 
 <!-- МАГАЗИН -->
 
-<!-- src/app/(store)/ -->
+src/app/(store)/
 
-src/app/(store)/_components/
+<!-- src/app/(store)/_components/
 src/app/(store)/about/
 src/app/(store)/catalog/
 src/app/(store)/faq/
@@ -27,7 +19,7 @@ src/app/(store)/partnership/
 src/app/(store)/policies/
 src/app/(store)/product/
 src/app/(store)/service/
-src/app/(store)/support/
+src/app/(store)/support/ -->
 
 <!-- Дисконт -->
 
@@ -35,8 +27,8 @@ src/app/(store)/support/
 
 <!-- ДАШБОРД -->
 
-<!-- src/app/dashboard/ -->
+src/app/dashboard/
 
-src/app/dashboard/banners/
+<!-- src/app/dashboard/banners/
 src/app/dashboard/settings/
-src/app/dashboard/products/
+src/app/dashboard/products/ -->
