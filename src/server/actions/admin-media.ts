@@ -14,7 +14,7 @@ import { requireAuthRole } from "../utils/auth-check";
 
 const BUCKET = "products";
 const FILE_KEY_REGEX =
-  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\.[a-z0-9]+$/;
+  /^([a-zA-Z0-9\-_\u0400-\u04FF\s]+\/)+[a-zA-Z0-9\-_\u0400-\u04FF\s()]+\.[a-z0-9]+$/i;
 
 export async function getProductAssetsAction(productId: string) {
   await requireAuthRole(["admin", "superadmin", "manager"]);
@@ -208,7 +208,7 @@ export async function deleteProductAssetAction(
 
 export async function toggleProductImageFitAction(imageId: string) {
   try {
-    await requireAuthRole(["admin", "manager"]);
+    await requireAuthRole(["superadmin", "admin", "manager"]);
 
     if (!z.string().uuid().safeParse(imageId).success) {
       return { success: false, error: "INVALID_ID" };
