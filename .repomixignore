@@ -7,19 +7,19 @@ node_modules/
 src/components/
 
 # МАГАЗИН
-src/app/(store)/
+# src/app/(store)/
 src/app/api/
 src/app/auth/
 
 # Раскомментируй нужное, если потребуется исключить отдельные директории вместо всего (store)
-# src/app/(store)/_components/
-# src/app/(store)/about/
-# src/app/(store)/catalog/
-# src/app/(store)/faq/
-# src/app/(store)/partnership/
-# src/app/(store)/policies/
-# src/app/(store)/product/
-# src/app/(store)/service/
+src/app/(store)/_components/
+src/app/(store)/about/
+src/app/(store)/catalog/
+src/app/(store)/faq/
+src/app/(store)/partnership/
+src/app/(store)/policies/
+src/app/(store)/product/
+src/app/(store)/service/
 # src/app/(store)/support/
 
 # Дисконт
@@ -30,8 +30,8 @@ src/app/auth/
 
 src/app/dashboard/banners/
 src/app/dashboard/settings/
-src/app/dashboard/orders/
-# src/app/dashboard/discount-products/
-src/app/dashboard/requests/
+# src/app/dashboard/orders/
+src/app/dashboard/discount-products/
+# src/app/dashboard/requests/
 
 # src/app/dashboard/products/

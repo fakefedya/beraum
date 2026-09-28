@@ -132,8 +132,16 @@ export async function checkoutDiscountCartAction(
       return { success: false, error: "Слишком много запросов. Подождите." };
     }
 
-    const { name, phone, email, message, skus, deliveryMethod, paymentMethod } =
-      parsed.data;
+    const {
+      name,
+      phone,
+      email,
+      message,
+      skus,
+      deliveryMethod,
+      paymentMethod,
+      preferredChannel,
+    } = parsed.data;
 
     let totalAmount = 0;
 
@@ -193,6 +201,7 @@ export async function checkoutDiscountCartAction(
           message,
           deliveryMethod,
           paymentMethod,
+          preferredChannel,
           deliveryDetails:
             parsed.data.deliveryMethod === "delivery"
               ? {

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { VALID_MARKETPLACES } from "@/src/lib/constants/marketplaces";
 import { PAYMENT_METHODS } from "@/src/lib/constants/orders";
+import { FEEDBACK_CHANNELS } from "../constants";
 
 const VALID_CONDITIONS = ["new", "discount"] as const;
 
@@ -96,6 +97,11 @@ export const supportSchema = baseFeedbackSchema.extend({
     .max(new Date(), "Дата покупки не может быть в будущем")
     .min(new Date("2015-01-01"), "Проверьте дату покупки"),
 
+  preferredChannel: z.enum(
+    FEEDBACK_CHANNELS,
+    "Выберите предпочитаемый способ связи",
+  ),
+
   mediaKeys: z.array(z.string()).optional(),
 });
 
@@ -120,6 +126,11 @@ const cartBaseSchema = baseFeedbackSchema.extend({
   paymentMethod: z.enum(["card", "cash"], {
     message: "Выберите способ оплаты",
   }),
+
+  preferredChannel: z.enum(
+    FEEDBACK_CHANNELS,
+    "Выберите предпочитаемый способ связи",
+  ),
 });
 
 export const discountCartSchema = z.discriminatedUnion("deliveryMethod", [

@@ -69,6 +69,14 @@ export const WholesaleForm = () => {
         </div>
       )}
 
+      <input
+        type="text"
+        name="botCheck"
+        className="absolute -z-10 opacity-0"
+        tabIndex={-1}
+        autoComplete="off"
+      />
+
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <FloatingField
           name="name"
@@ -176,7 +184,7 @@ export const WholesaleForm = () => {
               className="shrink-0"
             />
             <label
-              htmlFor="consent"
+              htmlFor="wholesale-consent"
               className="text-foreground/80 cursor-pointer text-sm"
             >
               Я даю согласие на{" "}

@@ -28,7 +28,11 @@ import {
 } from "@/src/components/ui/command";
 import { MediaUploader } from "./MediaUploader";
 import { toast } from "sonner";
-import { MARKETPLACE_LINKS } from "@/src/lib/constants";
+import {
+  FEEDBACK_CHANNEL_LABELS,
+  FEEDBACK_CHANNELS,
+  MARKETPLACE_LINKS,
+} from "@/src/lib/constants";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import {
   Select,
@@ -48,7 +52,7 @@ const fetchModels = async (categoryId: string) => {
     if (!res.ok) return { success: false, data: [] };
     return await res.json();
   } catch (error) {
-    console.error("Ошибка загрузки моделей:", error);
+    console.error(error);
     return { success: false, data: [] };
   }
 };
@@ -77,6 +81,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
 
   const latestCategoryReq = useRef<string | null>(initialCategoryId);
 
+  // Подгрузка моделей при смене категории (здесь useEffect оправдан)
   useEffect(() => {
     let isCancelled = false;
     const payloadCatId = state.payload?.categoryId as string | undefined;
@@ -97,10 +102,9 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
     };
   }, [state.payload?.categoryId]);
 
-  // Обработчик интерактивного выбора категории пользователем
   const handleCategorySelect = async (categoryId: string) => {
     setSelectedCategoryId(categoryId);
-    setSelectedModel(""); // Сброс выбранной модели при смене категории
+    setSelectedModel("");
     setModels([]);
     setIsLoadingModels(true);
     latestCategoryReq.current = categoryId;
@@ -150,7 +154,6 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
       action={formAction}
       className="mx-auto flex w-full max-w-3xl flex-col gap-16 text-left"
       noValidate
-
       onSubmit={(e) => {
         const uploader = e.currentTarget.querySelector(
           '[data-uploading="true"]',
@@ -176,13 +179,23 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
         </div>
       )}
 
-      {/* С чем вам требуется помощь? */}
+      {/* 🛡️ SECURITY: Honeypot */}
+      <input
+        type="text"
+        name="botCheck"
+        className="absolute -z-10 opacity-0"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+      />
+
       <div className="relative flex w-full flex-col gap-4">
         <h3 className="text-center text-2xl font-medium">
           С чем вам требуется помощь?
           <span className="ml-1 text-red-600/60">*</span>
         </h3>
         <div className="relative w-full">
+          {/* Удалили controlled state, используем defaultValue */}
           <Select
             name="deviceCondition"
             defaultValue={(state.payload?.deviceCondition as string) || "new"}
@@ -211,14 +224,12 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
             </SelectContent>
           </Select>
 
-          {/* Статичный Floating Label (эмитируем активное состояние) */}
           <label className="text-muted-foreground pointer-events-none absolute top-4 left-4 z-10 flex origin-left -translate-y-2.5 scale-[0.8] gap-0.5 transition-all duration-200">
             Состояние техники при покупке{" "}
             <span className="text-red-600/60">*</span>
           </label>
         </div>
 
-        {/* Вывод ошибки */}
         <div
           className={cn(
             "flex items-start gap-1.5 px-1 text-xs font-medium text-red-500 opacity-0 transition-opacity duration-300",
@@ -233,7 +244,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           )}
         </div>
       </div>
-      {/* Выберите категорию устройства */}
+
       <div className="flex flex-col gap-4">
         <h3 className="text-center text-2xl font-medium">
           Выберите категорию устройства
@@ -279,7 +290,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           </div>
         )}
       </div>
-      {/* Какая модель устройства? */}
+
       <div className="flex flex-col gap-4">
         <h3 className="text-center text-2xl font-medium">
           Какая модель устройства?
@@ -372,7 +383,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           </div>
         </div>
       </div>
-      {/* Где вы приобрели устройство? */}
+
       <div className="flex flex-col gap-4">
         <h3 className="text-center text-2xl font-medium">
           Где вы приобрели устройство?
@@ -425,7 +436,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           </div>
         )}
       </div>
-      {/* Когда вы приобрели устройство? */}
+
       <div className="flex flex-col gap-4">
         <h3 className="text-center text-2xl font-medium">
           Когда вы приобрели устройство?
@@ -441,7 +452,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           />
         </div>
       </div>
-      {/* Краткое описание неисправности */}
+
       <div className="flex flex-col gap-4">
         <h3 className="text-center text-2xl font-medium">
           Краткое описание неисправности
@@ -457,7 +468,66 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
 
         <MediaUploader />
       </div>
-      {/* Персональная информация */}
+
+      <div className="flex flex-col gap-4">
+        <h3 className="text-center text-2xl font-medium">
+          Как с вами связаться?
+        </h3>
+        <div className="flex flex-col gap-4">
+          <div className="relative w-full">
+            {/* Удалили controlled state, используем defaultValue */}
+            <Select
+              name="preferredChannel"
+              defaultValue={
+                (state.payload?.preferredChannel as string) || undefined
+              }
+              required
+              disabled={isPending}
+            >
+              <SelectTrigger
+                className={cn(
+                  "text-foreground h-14 w-full rounded-xl border bg-transparent px-4 pt-6 pb-2 text-base shadow-none transition-all duration-200 outline-none",
+                  "border-ring/30 focus:border-brand-secondary focus:ring-brand-secondary focus:ring-1",
+                  state.fieldErrors?.preferredChannel &&
+                    "border-red-500 bg-[#fff2f4] focus:border-red-500 focus:ring-red-500",
+                )}
+              >
+                <SelectValue placeholder="Выберите способ связи" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl">
+                {FEEDBACK_CHANNELS.map((ch) => (
+                  <SelectItem
+                    key={ch}
+                    value={ch}
+                    className="cursor-pointer rounded-lg"
+                  >
+                    {FEEDBACK_CHANNEL_LABELS[ch]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <label className="text-muted-foreground pointer-events-none absolute top-4 left-4 z-10 flex origin-left -translate-y-2.5 scale-[0.8] gap-0.5 transition-all duration-200">
+              Способ связи <span className="text-red-600/60">*</span>
+            </label>
+          </div>
+        </div>
+
+        <div
+          className={cn(
+            "flex items-start gap-1.5 px-1 text-xs font-medium text-red-500 opacity-0 transition-opacity duration-300",
+            state.fieldErrors?.preferredChannel && "opacity-100",
+          )}
+        >
+          {state.fieldErrors?.preferredChannel && (
+            <>
+              <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              <span>{state.fieldErrors.preferredChannel}</span>
+            </>
+          )}
+        </div>
+      </div>
+
       <div className="flex flex-col gap-4">
         <h3 className="text-center text-2xl font-medium">
           Персональная информация

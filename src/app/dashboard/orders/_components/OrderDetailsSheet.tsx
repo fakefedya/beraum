@@ -15,6 +15,7 @@ import { updateOrderStatusAction } from "@/src/server/actions/admin-orders";
 import { cn } from "@/src/lib/utils";
 import type { OrderItem } from "./OrdersTable";
 import { ORDER_STATUS_MAP } from "./OrderRow";
+import { FEEDBACK_CHANNEL_LABELS, FeedbackChannel } from "@/src/lib/constants";
 
 export const OrderDetailsSheet = ({
   order,
@@ -132,6 +133,17 @@ export const OrderDetailsSheet = ({
                   >
                     {order.email}
                   </a>
+                </div>
+
+                <div>
+                  <span className="text-muted-foreground mr-2">
+                    Способ связи:
+                  </span>
+                  <span className="text-brand-secondary-muted dark:text-brand-secondary font-medium">
+                    {FEEDBACK_CHANNEL_LABELS[
+                      order.preferredChannel as FeedbackChannel
+                    ] || order.preferredChannel}
+                  </span>
                 </div>
               </div>
             </section>

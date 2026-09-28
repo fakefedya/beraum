@@ -12,6 +12,7 @@ import { Loader2, ExternalLink, FileIcon } from "lucide-react";
 import { SafeImage } from "@/src/components/shared/SafeImage";
 import type { RequestItem, FeedbackPayload } from "./RequestsTable";
 import { cn } from "@/src/lib/utils";
+import { FEEDBACK_CHANNEL_LABELS, FeedbackChannel } from "@/src/lib/constants";
 
 interface RequestDetailsProps {
   request: RequestItem | null;
@@ -35,6 +36,7 @@ const PAYLOAD_LABELS: Record<string, string> = {
   volume: "Ожидаемый объем",
   source: "Источник перехода",
   techType: "Категория",
+  preferredChannel: "Способ связи",
 };
 
 export const RequestDetailsSheet = ({
@@ -85,6 +87,10 @@ export const RequestDetailsSheet = ({
 
   const renderPayloadValue = (key: string, value: unknown) => {
     if (!value) return "—";
+
+    if (key === "preferredChannel") {
+      return FEEDBACK_CHANNEL_LABELS[value as FeedbackChannel] || String(value);
+    }
 
     if (key === "categoryId") {
       const cat = categories.find((c) => c.id === value);
