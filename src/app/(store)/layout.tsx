@@ -4,6 +4,7 @@ import { Header } from "@/src/components/shared/header/Header";
 import { Main } from "@/src/components/shared/Main";
 import { CookieBanner } from "@/src/components/shared/CookieBanner";
 import { ConsultWidget } from "@/src/components/shared/ConsultWidget";
+import { YandexMetrika } from "@/src/lib/analytics/YandexMetrika";
 
 export default async function StoreLayout({
   children,
@@ -19,6 +20,7 @@ export default async function StoreLayout({
 
       {!hasConsent && <CookieBanner />}
       <ConsultWidget />
+      <YandexMetrika />
     </div>
   );
 }

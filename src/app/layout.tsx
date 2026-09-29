@@ -5,7 +5,6 @@ import { Toaster } from "@/src/components/ui/sonner";
 import { clientEnv } from "@/src/lib/env/client";
 import { Metadata } from "next";
 import { ThemeProvider } from "@/src/components/providers/theme-provider";
-import { YandexMetrika } from "../lib/analytics/YandexMetrika";
 
 const golosText = Golos_Text({
   subsets: ["latin", "cyrillic"],
@@ -52,7 +51,6 @@ export default function RootLayout({
           {children}
           <Toaster position="bottom-right" />
         </ThemeProvider>
-        <YandexMetrika />
       </body>
     </html>
   );
