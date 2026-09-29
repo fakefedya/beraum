@@ -1,4 +1,4 @@
-import { clientEnv } from "@/src/lib/env/client";
+const COUNTER_ID = process.env.NODE_ENV === "production" ? 113156251 : null;
 
 export type YmGoal = {
   name: "view_item";
@@ -19,10 +19,6 @@ declare global {
     ) => void;
   }
 }
-
-const COUNTER_ID = clientEnv.NEXT_PUBLIC_YM_COUNTER_ID
-  ? Number(clientEnv.NEXT_PUBLIC_YM_COUNTER_ID)
-  : null;
 
 export function reachYmGoal<T extends YmGoal>(
   name: T["name"],
