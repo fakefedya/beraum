@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useState, useActionState } from "react";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { submitPartnershipAction } from "@/src/server/actions/feedback";
@@ -8,7 +8,7 @@ import { FloatingField } from "@/src/components/shared/FloatingField";
 import { cn } from "@/src/lib/utils";
 import { Checkbox } from "@/src/components/ui/checkbox";
 
-export const PartnershipForm = () => {
+const PartnershipFormContent = ({ onReset }: { onReset: () => void }) => {
   const [state, formAction, isPending] = useActionState(
     submitPartnershipAction,
     {
@@ -31,7 +31,7 @@ export const PartnershipForm = () => {
             "bg-foreground text-background mt-8 h-12 w-fit rounded-xl px-8",
             "hover:bg-foreground/80 transition-colors duration-300",
           )}
-          onClick={() => window.location.reload()}
+          onClick={onReset}
         >
           Отправить еще
         </Button>
@@ -52,6 +52,16 @@ export const PartnershipForm = () => {
           <p className="text-sm font-medium">{state.error}</p>
         </div>
       )}
+
+      {/* 🛡️ SECURITY: Honeypot */}
+      <input
+        type="text"
+        name="botCheck"
+        className="absolute -z-10 opacity-0"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+      />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <FloatingField
@@ -154,5 +164,16 @@ export const PartnershipForm = () => {
         </Button>
       </div>
     </form>
+  );
+};
+
+export const PartnershipForm = () => {
+  const [formKey, setFormKey] = useState(0);
+
+  return (
+    <PartnershipFormContent
+      key={formKey}
+      onReset={() => setFormKey((prev) => prev + 1)}
+    />
   );
 };

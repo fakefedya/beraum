@@ -1,22 +1,15 @@
 "use client";
 
-import { useActionState } from "react";
+import { useState, useActionState } from "react";
 import { submitWholesaleAction } from "@/src/server/actions/discount";
 import { FloatingField } from "@/src/components/shared/FloatingField";
 import { Button } from "@/src/components/ui/button";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import { cn } from "@/src/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/src/components/ui/select";
 import { FormSelect } from "@/src/components/shared/FormSelect";
 
-export const WholesaleForm = () => {
+const WholesaleFormContent = ({ onReset }: { onReset: () => void }) => {
   const [state, formAction, isPending] = useActionState(submitWholesaleAction, {
     success: false,
   });
@@ -39,7 +32,7 @@ export const WholesaleForm = () => {
             "bg-foreground text-background mt-8 h-12 w-fit rounded-xl px-8",
             "hover:bg-foreground/80 transition-colors duration-300",
           )}
-          onClick={() => window.location.reload()}
+          onClick={onReset}
         >
           Отправить еще
         </Button>
@@ -70,12 +63,14 @@ export const WholesaleForm = () => {
         </div>
       )}
 
+      {/* 🛡️ SECURITY: Honeypot скрыт от скринридеров */}
       <input
         type="text"
         name="botCheck"
         className="absolute -z-10 opacity-0"
         tabIndex={-1}
         autoComplete="off"
+        aria-hidden="true"
       />
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -185,5 +180,16 @@ export const WholesaleForm = () => {
         </Button>
       </div>
     </form>
+  );
+};
+
+export const WholesaleForm = () => {
+  const [formKey, setFormKey] = useState(0);
+
+  return (
+    <WholesaleFormContent
+      key={formKey}
+      onReset={() => setFormKey((prev) => prev + 1)}
+    />
   );
 };

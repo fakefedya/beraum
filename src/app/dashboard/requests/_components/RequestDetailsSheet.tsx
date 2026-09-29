@@ -111,6 +111,7 @@ export const RequestDetailsSheet = ({
         discount: "Дисконт",
         working: "Исправная уценка (Спб)",
         broken: "Неисправная техника (Мск/Спб)",
+        both: "Обе категории",
       };
       return conditionMap[String(value)] || String(value);
     }

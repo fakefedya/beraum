@@ -34,13 +34,6 @@ import {
   MARKETPLACE_LINKS,
 } from "@/src/lib/constants";
 import { Checkbox } from "@/src/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/src/components/ui/select";
 import { FormSelect } from "@/src/components/shared/FormSelect";
 
 interface SupportFormProps {
@@ -58,7 +51,10 @@ const fetchModels = async (categoryId: string) => {
   }
 };
 
-export const SupportForm = ({ categories }: SupportFormProps) => {
+const SupportFormContent = ({
+  categories,
+  onReset,
+}: SupportFormProps & { onReset: () => void }) => {
   const [state, formAction, isPending] = useActionState(submitSupportAction, {
     success: false,
   });
@@ -82,7 +78,6 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
 
   const latestCategoryReq = useRef<string | null>(initialCategoryId);
 
-  // Подгрузка моделей при смене категории (здесь useEffect оправдан)
   useEffect(() => {
     let isCancelled = false;
     const payloadCatId = state.payload?.categoryId as string | undefined;
@@ -142,7 +137,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
             "bg-foreground text-background mt-8 h-12 w-fit rounded-xl px-8",
             "hover:bg-foreground/80 transition-colors duration-300",
           )}
-          onClick={() => window.location.reload()}
+          onClick={onReset}
         >
           Создать новое обращение
         </Button>
@@ -206,20 +201,6 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           error={state.fieldErrors?.deviceCondition}
           disabled={isPending}
         />
-
-        <div
-          className={cn(
-            "flex items-start gap-1.5 px-1 text-xs font-medium text-red-500 opacity-0 transition-opacity duration-300",
-            state.fieldErrors?.deviceCondition && "opacity-100",
-          )}
-        >
-          {state.fieldErrors?.deviceCondition && (
-            <>
-              <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              <span>{state.fieldErrors.deviceCondition}</span>
-            </>
-          )}
-        </div>
       </div>
 
       <div className="flex flex-col gap-4">
@@ -441,6 +422,7 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           disabled={isPending}
           defaultValue={state.payload?.message as string}
           error={state.fieldErrors?.message}
+          isRequired={true}
         />
 
         <MediaUploader />
@@ -564,5 +546,17 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
         </Button>
       </div>
     </form>
+  );
+};
+
+export const SupportForm = ({ categories }: SupportFormProps) => {
+  const [formKey, setFormKey] = useState(0);
+
+  return (
+    <SupportFormContent
+      key={formKey}
+      categories={categories}
+      onReset={() => setFormKey((prev) => prev + 1)}
+    />
   );
 };

@@ -67,6 +67,12 @@ export const partnershipSchema = baseFeedbackSchema.extend({
     .string()
     .regex(/^\d{10,12}$/, "ИНН должен содержать 10 или 12 цифр")
     .optional(),
+
+  message: z
+    .string()
+    .min(10, "Описание должно содержать минимум 10 символов")
+    .max(2000, "Описание слишком длинное")
+    .refine(hasNoLongWords, "Описание содержит неестественно длинные слова"),
 });
 
 export const supportSchema = baseFeedbackSchema.extend({
