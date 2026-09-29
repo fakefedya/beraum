@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { VALID_MARKETPLACES } from "@/src/lib/constants/marketplaces";
-import { PAYMENT_METHODS } from "@/src/lib/constants/orders";
 import { FEEDBACK_CHANNELS } from "../constants";
 
 const VALID_CONDITIONS = ["new", "discount"] as const;
@@ -76,6 +75,12 @@ export const supportSchema = baseFeedbackSchema.extend({
     VALID_CONDITIONS,
     "Укажите тип приобретенной техники",
   ),
+
+  message: z
+    .string()
+    .min(10, "Описание неисправности должно содержать минимум 10 символов")
+    .max(2000, "Сообщение слишком длинное")
+    .refine(hasNoLongWords, "Сообщение содержит неестественно длинные слова"),
 
   address: z
     .string()

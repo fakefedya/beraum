@@ -12,6 +12,7 @@ src/app/api/
 src/app/auth/
 
 # Раскомментируй нужное, если потребуется исключить отдельные директории вместо всего (store)
+
 src/app/(store)/_components/
 src/app/(store)/about/
 src/app/(store)/catalog/
@@ -30,8 +31,8 @@ src/app/(store)/service/
 
 src/app/dashboard/banners/
 src/app/dashboard/settings/
-# src/app/dashboard/orders/
 src/app/dashboard/discount-products/
-# src/app/dashboard/requests/
+src/app/dashboard/products/
 
-# src/app/dashboard/products/
+# src/app/dashboard/orders/
+# src/app/dashboard/requests/

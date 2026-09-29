@@ -41,6 +41,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
+import { FormSelect } from "@/src/components/shared/FormSelect";
 
 interface SupportFormProps {
   categories: { id: string; name: string }[];
@@ -194,41 +195,17 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
           С чем вам требуется помощь?
           <span className="ml-1 text-red-600/60">*</span>
         </h3>
-        <div className="relative w-full">
-          {/* Удалили controlled state, используем defaultValue */}
-          <Select
-            name="deviceCondition"
-            defaultValue={(state.payload?.deviceCondition as string) || "new"}
-            disabled={isPending}
-          >
-            <SelectTrigger
-              className={cn(
-                "text-foreground h-14 w-full rounded-xl border bg-transparent px-4 pt-6 pb-2 text-base shadow-none transition-all duration-200 outline-none",
-                "border-ring/30 focus:border-brand-secondary focus:ring-brand-secondary focus:ring-1",
-                state.fieldErrors?.deviceCondition &&
-                  "border-red-500 bg-[#fff2f4] focus:border-red-500 focus:ring-red-500",
-              )}
-            >
-              <SelectValue placeholder="Выберите состояние" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl">
-              <SelectItem value="new" className="cursor-pointer rounded-lg">
-                Новая техника
-              </SelectItem>
-              <SelectItem
-                value="discount"
-                className="cursor-pointer rounded-lg"
-              >
-                Дисконт техника
-              </SelectItem>
-            </SelectContent>
-          </Select>
-
-          <label className="text-muted-foreground pointer-events-none absolute top-4 left-4 z-10 flex origin-left -translate-y-2.5 scale-[0.8] gap-0.5 transition-all duration-200">
-            Состояние техники при покупке{" "}
-            <span className="text-red-600/60">*</span>
-          </label>
-        </div>
+        <FormSelect
+          name="deviceCondition"
+          label="Состояние техники при покупке"
+          options={[
+            { value: "new", label: "Новая техника" },
+            { value: "discount", label: "Дисконт техника" },
+          ]}
+          defaultValue={(state.payload?.deviceCondition as string) || "new"}
+          error={state.fieldErrors?.deviceCondition}
+          disabled={isPending}
+        />
 
         <div
           className={cn(
@@ -473,59 +450,19 @@ export const SupportForm = ({ categories }: SupportFormProps) => {
         <h3 className="text-center text-2xl font-medium">
           Как с вами связаться?
         </h3>
-        <div className="flex flex-col gap-4">
-          <div className="relative w-full">
-            {/* Удалили controlled state, используем defaultValue */}
-            <Select
-              name="preferredChannel"
-              defaultValue={
-                (state.payload?.preferredChannel as string) || undefined
-              }
-              required
-              disabled={isPending}
-            >
-              <SelectTrigger
-                className={cn(
-                  "text-foreground h-14 w-full rounded-xl border bg-transparent px-4 pt-6 pb-2 text-base shadow-none transition-all duration-200 outline-none",
-                  "border-ring/30 focus:border-brand-secondary focus:ring-brand-secondary focus:ring-1",
-                  state.fieldErrors?.preferredChannel &&
-                    "border-red-500 bg-[#fff2f4] focus:border-red-500 focus:ring-red-500",
-                )}
-              >
-                <SelectValue placeholder="Выберите способ связи" />
-              </SelectTrigger>
-              <SelectContent className="rounded-xl">
-                {FEEDBACK_CHANNELS.map((ch) => (
-                  <SelectItem
-                    key={ch}
-                    value={ch}
-                    className="cursor-pointer rounded-lg"
-                  >
-                    {FEEDBACK_CHANNEL_LABELS[ch]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <label className="text-muted-foreground pointer-events-none absolute top-4 left-4 z-10 flex origin-left -translate-y-2.5 scale-[0.8] gap-0.5 transition-all duration-200">
-              Способ связи <span className="text-red-600/60">*</span>
-            </label>
-          </div>
-        </div>
-
-        <div
-          className={cn(
-            "flex items-start gap-1.5 px-1 text-xs font-medium text-red-500 opacity-0 transition-opacity duration-300",
-            state.fieldErrors?.preferredChannel && "opacity-100",
-          )}
-        >
-          {state.fieldErrors?.preferredChannel && (
-            <>
-              <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              <span>{state.fieldErrors.preferredChannel}</span>
-            </>
-          )}
-        </div>
+        <FormSelect
+          name="preferredChannel"
+          label="Способ связи"
+          options={FEEDBACK_CHANNELS.map((ch) => ({
+            value: ch,
+            label: FEEDBACK_CHANNEL_LABELS[ch],
+          }))}
+          defaultValue={
+            (state.payload?.preferredChannel as string) || undefined
+          }
+          error={state.fieldErrors?.preferredChannel}
+          disabled={isPending}
+        />
       </div>
 
       <div className="flex flex-col gap-4">
