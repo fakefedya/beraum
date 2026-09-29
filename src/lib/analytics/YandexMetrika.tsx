@@ -3,10 +3,7 @@
 import { useEffect, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Script from "next/script";
-import { clientEnv } from "@/src/lib/env/client";
-import { hitYm } from "@/src/lib/analytics/ym";
-
-const COUNTER_ID = clientEnv.NEXT_PUBLIC_YM_COUNTER_ID;
+import { COUNTER_ID, hitYm } from "@/src/lib/analytics/ym";
 
 function RouteChangeTracker() {
   const pathname = usePathname();

@@ -1,4 +1,5 @@
-const COUNTER_ID = process.env.NODE_ENV === "production" ? 113156251 : null;
+export const COUNTER_ID =
+  process.env.NODE_ENV === "production" ? 113156251 : null;
 
 export type YmGoal = {
   name: "view_item";
