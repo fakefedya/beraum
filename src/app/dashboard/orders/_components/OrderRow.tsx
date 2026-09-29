@@ -15,6 +15,7 @@ import { Barcode, PanelRightOpen } from "lucide-react";
 import { CopyButton } from "@/src/components/shared/CopyButton";
 import { cn } from "@/src/lib/utils";
 import type { OrderItem } from "./OrdersTable";
+import { FEEDBACK_CHANNEL_LABELS, FeedbackChannel } from "@/src/lib/constants";
 
 export const ORDER_STATUS_MAP: Record<
   OrderItem["status"],
@@ -116,7 +117,22 @@ export const OrderRow = ({
       <td className="px-6 py-4">
         <div className="flex flex-col gap-1">
           <span className="text-foreground font-medium">{order.name}</span>
-          <span className="text-muted-foreground text-xs">{order.phone}</span>
+          <div className="text-muted-foreground flex flex-col gap-1 text-xs">
+            {/* Выводим бейдж/текст предпочитаемого способа связи */}
+            <span className="text-brand-secondary-muted dark:text-brand-secondary font-semibold">
+              {FEEDBACK_CHANNEL_LABELS[
+                order.preferredChannel as FeedbackChannel
+              ] || order.preferredChannel}
+            </span>
+            <span
+              className="max-w-37.5 truncate"
+              title={
+                order.preferredChannel === "email" ? order.email : order.phone
+              }
+            >
+              {order.preferredChannel === "email" ? order.email : order.phone}
+            </span>
+          </div>
         </div>
       </td>
       <td className="px-6 py-4">

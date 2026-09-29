@@ -117,15 +117,15 @@ export const OrderDetailsSheet = ({
             <section className="flex flex-col gap-3">
               <h4 className="text-foreground font-medium">Покупатель</h4>
               <div className="bg-muted flex flex-col gap-3 rounded-xl p-4 text-sm">
-                <div className="border-border/50 border-b pb-2">
+                <div className="border-border/50 flex justify-between border-b pb-2">
                   <span className="text-muted-foreground mr-2">Имя:</span>
                   <span className="font-medium">{order.name}</span>
                 </div>
-                <div className="border-border/50 border-b pb-2">
+                <div className="border-border/50 flex justify-between border-b pb-2">
                   <span className="text-muted-foreground mr-2">Телефон:</span>
                   <span className="font-medium">{order.phone}</span>
                 </div>
-                <div>
+                <div className="border-border/50 flex justify-between border-b pb-2">
                   <span className="text-muted-foreground mr-2">Email:</span>
                   <a
                     href={`mailto:${order.email}`}
@@ -135,7 +135,7 @@ export const OrderDetailsSheet = ({
                   </a>
                 </div>
 
-                <div>
+                <div className="flex justify-between">
                   <span className="text-muted-foreground mr-2">
                     Способ связи:
                   </span>
@@ -154,7 +154,7 @@ export const OrderDetailsSheet = ({
                 Получение и оплата
               </h4>
               <div className="bg-muted flex flex-col gap-3 rounded-xl p-4 text-sm">
-                <div className="border-border/50 border-b pb-2">
+                <div className="border-border/50 flex justify-between border-b pb-2">
                   <span className="text-muted-foreground mr-2">
                     Тип получения:
                   </span>
@@ -166,7 +166,7 @@ export const OrderDetailsSheet = ({
                 </div>
                 <div
                   className={cn(
-                    "border-border/50",
+                    "border-border/50 flex justify-between",
                     order.deliveryMethod === "delivery" && "border-b pb-2",
                   )}
                 >
@@ -180,13 +180,13 @@ export const OrderDetailsSheet = ({
 
                 {order.deliveryMethod === "delivery" && (
                   <>
-                    <div className="border-border/50 border-b pb-2">
+                    <div className="border-border/50 flex justify-between border-b pb-2">
                       <span className="text-muted-foreground mr-2">Адрес:</span>
                       <span className="font-medium">{d.address}</span>
                     </div>
                     <div
                       className={cn(
-                        "border-border/50 flex gap-4",
+                        "border-border/50 flex justify-between gap-4",
                         d.courierComment && "border-b pb-2",
                       )}
                     >

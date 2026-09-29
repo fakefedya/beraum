@@ -4,7 +4,9 @@ backup/
 .next/
 .vscode/
 node_modules/
-src/components/
+
+src/components/ui
+src/components/providers
 
 # МАГАЗИН
 # src/app/(store)/

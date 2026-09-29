@@ -19,6 +19,7 @@ import {
   sendAdminNotificationEmail,
   sendFeedbackClientEmail,
 } from "../services/mail/client";
+import { FEEDBACK_CHANNEL_LABELS, FeedbackChannel } from "@/src/lib/constants";
 
 export async function submitWholesaleAction(
   prevState: ActionState,
@@ -256,6 +257,9 @@ export async function checkoutDiscountCartAction(
             Имя: name,
             Телефон: phone,
             Email: email,
+            "Способ связи":
+              FEEDBACK_CHANNEL_LABELS[preferredChannel as FeedbackChannel] ||
+              preferredChannel,
             Сумма: `${totalAmount.toLocaleString("ru-RU")} ₽`,
             "Способ оплаты":
               paymentMethod === "card" ? "Карта (при получении)" : "Наличные",

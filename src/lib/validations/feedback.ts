@@ -53,6 +53,12 @@ export const consultSchema = baseFeedbackSchema.extend({
       "Protocol-relative ссылки запрещены",
     )
     .default("/"), // Fallback, если поля вдруг нет
+
+  message: z
+    .string()
+    .min(10, "Вопрос должен содержать минимум 10 символов")
+    .max(2000, "Вопрос слишком длинный")
+    .refine(hasNoLongWords, "Вопрос содержит неестественно длинные слова"),
 });
 
 export const partnershipSchema = baseFeedbackSchema.extend({
