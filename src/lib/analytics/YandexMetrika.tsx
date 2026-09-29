@@ -1,4 +1,3 @@
-// src/components/shared/analytics/YandexMetrika.tsx
 "use client";
 
 import { useEffect, Suspense } from "react";

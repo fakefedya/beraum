@@ -1,6 +1,9 @@
 services:
   web:
-    build: .
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_YM_COUNTER_ID: ${NEXT_PUBLIC_YM_COUNTER_ID}
     container_name: beraum-web
     restart: unless-stopped
     env_file: .env.production
@@ -14,6 +17,8 @@ services:
     build:
       context: .
       target: builder
+      args:
+        NEXT_PUBLIC_YM_COUNTER_ID: ${NEXT_PUBLIC_YM_COUNTER_ID}
     container_name: beraum-migrator
     env_file: .env.production
     command: npm run db:migrate
