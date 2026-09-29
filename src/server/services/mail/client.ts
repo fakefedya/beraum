@@ -91,7 +91,7 @@ export async function sendTwoFactorTokenEmail(email: string, token: string) {
   }
 }
 
-// 2. УВЕДОМЛЕНИЕ КЛИЕНТУ О ЗАКАЗЕ (ДОБАВЛЕНЫ ТОВАРЫ)
+// 2. УВЕДОМЛЕНИЕ КЛИЕНТУ О ЗАКАЗЕ
 export async function sendOrderClientEmail(
   email: string,
   name: string,
@@ -163,7 +163,7 @@ export async function sendAdminNotificationEmail(
       ([key, value]) => `
       <tr>
         <td style="padding: 12px 8px; border-bottom: 1px solid #eee; color: #666; vertical-align: top; width: 35%;">
-          ${escapeHtml(key)}
+          ${escapeHtml(key)}:
         </td>
         <td style="padding: 12px 8px; border-bottom: 1px solid #eee; vertical-align: top;">
           <div style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: #f4f4f5; padding: 6px 10px; border-radius: 6px; display: inline-block; color: #111; white-space: pre-wrap; word-break: break-word;">${escapeHtml(String(value))}</div>

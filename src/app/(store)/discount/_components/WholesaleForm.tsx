@@ -1,21 +1,15 @@
 "use client";
 
-import { useActionState } from "react";
+import { useState, useActionState } from "react";
 import { submitWholesaleAction } from "@/src/server/actions/discount";
 import { FloatingField } from "@/src/components/shared/FloatingField";
 import { Button } from "@/src/components/ui/button";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import { cn } from "@/src/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/src/components/ui/select";
+import { FormSelect } from "@/src/components/shared/FormSelect";
 
-export const WholesaleForm = () => {
+const WholesaleFormContent = ({ onReset }: { onReset: () => void }) => {
   const [state, formAction, isPending] = useActionState(submitWholesaleAction, {
     success: false,
   });
@@ -38,7 +32,7 @@ export const WholesaleForm = () => {
             "bg-foreground text-background mt-8 h-12 w-fit rounded-xl px-8",
             "hover:bg-foreground/80 transition-colors duration-300",
           )}
-          onClick={() => window.location.reload()}
+          onClick={onReset}
         >
           Отправить еще
         </Button>
@@ -68,6 +62,16 @@ export const WholesaleForm = () => {
           <p className="text-sm font-medium">{state.error}</p>
         </div>
       )}
+
+      {/* 🛡️ SECURITY: Honeypot скрыт от скринридеров */}
+      <input
+        type="text"
+        name="botCheck"
+        className="absolute -z-10 opacity-0"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+      />
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <FloatingField
@@ -102,57 +106,18 @@ export const WholesaleForm = () => {
         />
       </div>
 
-      <div className="relative flex w-full flex-col gap-1.5">
-        <div className="relative w-full">
-          <Select
-            name="techType"
-            defaultValue={(state.payload?.techType as string) || "both"}
-            disabled={isPending}
-          >
-            <SelectTrigger
-              className={cn(
-                "text-foreground h-14 w-full rounded-xl border bg-transparent px-4 pt-6 pb-2 text-base transition-all duration-200 outline-none",
-                "border-ring/30 focus:border-brand-secondary focus:ring-brand-secondary focus:ring-1",
-                state.fieldErrors?.techType &&
-                  "border-red-500 bg-[#fff2f4] focus:border-red-500 focus:ring-red-500",
-              )}
-            >
-              <SelectValue placeholder="Выберите категорию" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl">
-              <SelectItem value="both" className="cursor-pointer rounded-lg">
-                Обе категории
-              </SelectItem>
-              <SelectItem value="working" className="cursor-pointer rounded-lg">
-                Исправный дисконт (Спб)
-              </SelectItem>
-              <SelectItem value="broken" className="cursor-pointer rounded-lg">
-                Неисправный дисконт (Мск / Спб)
-              </SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Статичный Floating Label (эмитируем активное состояние) */}
-          <label className="text-muted-foreground pointer-events-none absolute top-4 left-4 z-10 flex origin-left -translate-y-2.5 scale-[0.8] gap-0.5 transition-all duration-200">
-            Интересующая категория <span className="text-red-600/60">*</span>
-          </label>
-        </div>
-
-        {/* Вывод ошибки в едином стиле */}
-        <div
-          className={cn(
-            "flex items-start gap-1.5 px-1 text-xs font-medium text-red-500 opacity-0 transition-opacity duration-300",
-            state.fieldErrors?.techType && "opacity-100",
-          )}
-        >
-          {state.fieldErrors?.techType && (
-            <>
-              <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              <span>{state.fieldErrors.techType}</span>
-            </>
-          )}
-        </div>
-      </div>
+      <FormSelect
+        name="techType"
+        label="Интересующая категория"
+        options={[
+          { value: "both", label: "Обе категории" },
+          { value: "working", label: "Исправный дисконт (СПб)" },
+          { value: "broken", label: "Неисправный дисконт (МСК / СПб)" },
+        ]}
+        defaultValue={(state.payload?.techType as string) || "both"}
+        error={state.fieldErrors?.techType}
+        disabled={isPending}
+      />
 
       <FloatingField
         name="message"
@@ -176,7 +141,7 @@ export const WholesaleForm = () => {
               className="shrink-0"
             />
             <label
-              htmlFor="consent"
+              htmlFor="wholesale-consent"
               className="text-foreground/80 cursor-pointer text-sm"
             >
               Я даю согласие на{" "}
@@ -215,5 +180,16 @@ export const WholesaleForm = () => {
         </Button>
       </div>
     </form>
+  );
+};
+
+export const WholesaleForm = () => {
+  const [formKey, setFormKey] = useState(0);
+
+  return (
+    <WholesaleFormContent
+      key={formKey}
+      onReset={() => setFormKey((prev) => prev + 1)}
+    />
   );
 };

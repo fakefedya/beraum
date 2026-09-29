@@ -9,6 +9,7 @@ import {
   index,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
+import { FEEDBACK_CHANNELS } from "@/src/lib/constants";
 
 export const orderStatusEnum = pgEnum("order_status", [
   "new",
@@ -54,6 +55,9 @@ export const orders = pgTable(
       enum: ["pickup", "delivery"],
     }).notNull(),
     paymentMethod: text("payment_method", { enum: ["card", "cash"] }).notNull(),
+    preferredChannel: text("preferred_channel", { enum: FEEDBACK_CHANNELS })
+      .default("email")
+      .notNull(),
     deliveryDetails: jsonb("delivery_details")
       .$type<OrderDeliveryDetails>()
       .default({})

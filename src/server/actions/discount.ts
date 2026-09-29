@@ -19,6 +19,7 @@ import {
   sendAdminNotificationEmail,
   sendFeedbackClientEmail,
 } from "../services/mail/client";
+import { FEEDBACK_CHANNEL_LABELS, FeedbackChannel } from "@/src/lib/constants";
 
 export async function submitWholesaleAction(
   prevState: ActionState,
@@ -132,8 +133,16 @@ export async function checkoutDiscountCartAction(
       return { success: false, error: "Слишком много запросов. Подождите." };
     }
 
-    const { name, phone, email, message, skus, deliveryMethod, paymentMethod } =
-      parsed.data;
+    const {
+      name,
+      phone,
+      email,
+      message,
+      skus,
+      deliveryMethod,
+      paymentMethod,
+      preferredChannel,
+    } = parsed.data;
 
     let totalAmount = 0;
 
@@ -193,6 +202,7 @@ export async function checkoutDiscountCartAction(
           message,
           deliveryMethod,
           paymentMethod,
+          preferredChannel,
           deliveryDetails:
             parsed.data.deliveryMethod === "delivery"
               ? {
@@ -247,6 +257,9 @@ export async function checkoutDiscountCartAction(
             Имя: name,
             Телефон: phone,
             Email: email,
+            "Способ связи":
+              FEEDBACK_CHANNEL_LABELS[preferredChannel as FeedbackChannel] ||
+              preferredChannel,
             Сумма: `${totalAmount.toLocaleString("ru-RU")} ₽`,
             "Способ оплаты":
               paymentMethod === "card" ? "Карта (при получении)" : "Наличные",

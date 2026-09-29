@@ -3,6 +3,10 @@ import { z } from "zod";
 const clientSchema = z.object({
   NEXT_PUBLIC_APP_URL: z.string().url(),
   NEXT_PUBLIC_STORAGE_URL: z.string().url(),
+  NEXT_PUBLIC_YM_COUNTER_ID: z
+    .string()
+    .regex(/^\d{7,10}$/, "Некорректный ID счетчика Яндекс Метрики")
+    .optional(), // Опционально для dev/ci, обязательно для prod
 });
 
 const parsed = clientSchema.safeParse({

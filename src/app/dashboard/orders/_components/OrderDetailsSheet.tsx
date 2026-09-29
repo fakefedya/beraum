@@ -15,6 +15,7 @@ import { updateOrderStatusAction } from "@/src/server/actions/admin-orders";
 import { cn } from "@/src/lib/utils";
 import type { OrderItem } from "./OrdersTable";
 import { ORDER_STATUS_MAP } from "./OrderRow";
+import { FEEDBACK_CHANNEL_LABELS, FeedbackChannel } from "@/src/lib/constants";
 
 export const OrderDetailsSheet = ({
   order,
@@ -116,15 +117,15 @@ export const OrderDetailsSheet = ({
             <section className="flex flex-col gap-3">
               <h4 className="text-foreground font-medium">Покупатель</h4>
               <div className="bg-muted flex flex-col gap-3 rounded-xl p-4 text-sm">
-                <div className="border-border/50 border-b pb-2">
+                <div className="border-border/50 flex justify-between border-b pb-2">
                   <span className="text-muted-foreground mr-2">Имя:</span>
                   <span className="font-medium">{order.name}</span>
                 </div>
-                <div className="border-border/50 border-b pb-2">
+                <div className="border-border/50 flex justify-between border-b pb-2">
                   <span className="text-muted-foreground mr-2">Телефон:</span>
                   <span className="font-medium">{order.phone}</span>
                 </div>
-                <div>
+                <div className="border-border/50 flex justify-between border-b pb-2">
                   <span className="text-muted-foreground mr-2">Email:</span>
                   <a
                     href={`mailto:${order.email}`}
@@ -132,6 +133,17 @@ export const OrderDetailsSheet = ({
                   >
                     {order.email}
                   </a>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground mr-2">
+                    Способ связи:
+                  </span>
+                  <span className="text-brand-secondary-muted dark:text-brand-secondary font-medium">
+                    {FEEDBACK_CHANNEL_LABELS[
+                      order.preferredChannel as FeedbackChannel
+                    ] || order.preferredChannel}
+                  </span>
                 </div>
               </div>
             </section>
@@ -142,7 +154,7 @@ export const OrderDetailsSheet = ({
                 Получение и оплата
               </h4>
               <div className="bg-muted flex flex-col gap-3 rounded-xl p-4 text-sm">
-                <div className="border-border/50 border-b pb-2">
+                <div className="border-border/50 flex justify-between border-b pb-2">
                   <span className="text-muted-foreground mr-2">
                     Тип получения:
                   </span>
@@ -154,7 +166,7 @@ export const OrderDetailsSheet = ({
                 </div>
                 <div
                   className={cn(
-                    "border-border/50",
+                    "border-border/50 flex justify-between",
                     order.deliveryMethod === "delivery" && "border-b pb-2",
                   )}
                 >
@@ -168,13 +180,13 @@ export const OrderDetailsSheet = ({
 
                 {order.deliveryMethod === "delivery" && (
                   <>
-                    <div className="border-border/50 border-b pb-2">
+                    <div className="border-border/50 flex justify-between border-b pb-2">
                       <span className="text-muted-foreground mr-2">Адрес:</span>
                       <span className="font-medium">{d.address}</span>
                     </div>
                     <div
                       className={cn(
-                        "border-border/50 flex gap-4",
+                        "border-border/50 flex justify-between gap-4",
                         d.courierComment && "border-b pb-2",
                       )}
                     >

@@ -24,6 +24,11 @@ import { FloatingField } from "../../FloatingField";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import { checkoutDiscountCartAction } from "@/src/server/actions/discount";
 import { DELIVERY_LABELS, PAYMENT_LABELS } from "@/src/lib/constants";
+import { FormSelect } from "@/src/components/shared/FormSelect";
+import {
+  FEEDBACK_CHANNELS,
+  FEEDBACK_CHANNEL_LABELS,
+} from "@/src/lib/constants";
 
 function useIsClient() {
   return useSyncExternalStore(
@@ -308,6 +313,25 @@ const CartFormContent = ({
                 <span>{state.fieldErrors.paymentMethod}</span>
               </div>
             )}
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <h3 className="text-foreground text-lg font-medium">
+              Как с вами связаться?
+            </h3>
+            <FormSelect
+              name="preferredChannel"
+              label="Способ связи"
+              options={FEEDBACK_CHANNELS.map((ch) => ({
+                value: ch,
+                label: FEEDBACK_CHANNEL_LABELS[ch],
+              }))}
+              defaultValue={
+                (state.payload?.preferredChannel as string) || undefined
+              }
+              error={state.fieldErrors?.preferredChannel}
+              disabled={isPending}
+            />
           </div>
 
           {/* 3. ДАННЫЕ ПОКУПАТЕЛЯ */}

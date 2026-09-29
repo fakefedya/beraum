@@ -16,6 +16,7 @@ import { PanelRightOpen, Paperclip } from "lucide-react";
 import type { RequestItem, FeedbackPayload } from "./RequestsTable";
 import { CopyButton } from "@/src/components/shared/CopyButton";
 import { cn } from "@/src/lib/utils";
+import { FEEDBACK_CHANNEL_LABELS, FeedbackChannel } from "@/src/lib/constants";
 
 const STATUS_MAP: Record<
   RequestItem["status"],
@@ -89,6 +90,14 @@ export const RequestRow = ({
     });
   };
 
+  const preferredChannel = payload?.preferredChannel as
+    FeedbackChannel | undefined;
+
+  const contactValue = preferredChannel === "email" ? req.email : req.phone;
+  const channelLabel = preferredChannel
+    ? FEEDBACK_CHANNEL_LABELS[preferredChannel] || preferredChannel
+    : null;
+
   return (
     <tr className="hover:bg-muted/30 transition-colors">
       <td className="px-6 py-4 whitespace-nowrap">
@@ -146,7 +155,27 @@ export const RequestRow = ({
       <td className="px-6 py-4">
         <div className="flex flex-col gap-1">
           <span className="text-foreground font-medium">{req.name}</span>
-          <span className="text-muted-foreground text-xs">{req.phone}</span>
+          <div className="text-muted-foreground flex flex-col gap-1 text-xs">
+            {preferredChannel ? (
+              <>
+                <span className="text-brand-secondary-muted dark:text-brand-secondary font-semibold">
+                  {channelLabel}
+                </span>
+                <span className="max-w-37.5 truncate" title={contactValue}>
+                  {contactValue}
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="max-w-37.5 truncate" title={req.email}>
+                  {req.email}
+                </span>
+                <span className="max-w-37.5 truncate" title={req.phone}>
+                  {req.phone}
+                </span>
+              </>
+            )}
+          </div>
         </div>
       </td>
       <td className="max-w-xs px-6 py-4">

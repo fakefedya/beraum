@@ -1,0 +1,1 @@
+ALTER TABLE "orders" ADD COLUMN "preferred_channel" text DEFAULT 'email' NOT NULL;

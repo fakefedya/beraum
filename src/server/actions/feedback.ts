@@ -19,6 +19,7 @@ import {
   sendAdminNotificationEmail,
   sendFeedbackClientEmail,
 } from "../services/mail/client";
+import { FEEDBACK_CHANNEL_LABELS } from "@/src/lib/constants";
 
 export type ActionState = {
   success: boolean;
@@ -285,6 +286,8 @@ export async function submitSupportAction(
             Имя: name,
             Телефон: phone,
             Email: email,
+            "Способ связи":
+              FEEDBACK_CHANNEL_LABELS[restPayload.preferredChannel],
             "Категория техники": categoryRecord.titleRu,
             "Артикул / Модель": String(restPayload.modelArticle || "—"),
             "Место покупки":

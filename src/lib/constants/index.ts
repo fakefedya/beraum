@@ -6,3 +6,4 @@ export * from "./assets";
 export * from "./uploads";
 export * from "./roles";
 export * from "./orders";
+export * from "./feedback-channels";
