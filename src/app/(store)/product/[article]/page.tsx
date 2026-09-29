@@ -18,6 +18,7 @@ import {
   SimilarProducts,
   SimilarProductsSkeleton,
 } from "./_components/SimilarProducts";
+import { ProductTracker } from "./_components/ProductTracker";
 
 const DOC_META: Record<string, { label: string }> = {
   user_instruction: { label: "Руководство пользователя" },
@@ -119,6 +120,12 @@ export default async function ProductPage({ params }: PageProps) {
 
   return (
     <>
+      <ProductTracker
+        article={product.itemArticle}
+        categorySlug={product.categorySlug ?? undefined}
+        categoryName={product.categoryTitle ?? undefined}
+      />
+
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd }}

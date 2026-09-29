@@ -5,13 +5,12 @@ backup/
 .vscode/
 node_modules/
 
-src/components/ui
-src/components/providers
+src/components/
 
 # МАГАЗИН
-src/app/(store)/
-# src/app/api/
-# src/app/auth/
+# src/app/(store)/
+src/app/api/
+src/app/auth/
 
 # Раскомментируй нужное, если потребуется исключить отдельные директории вместо всего (store)
 
@@ -26,15 +25,15 @@ src/app/(store)/
 # src/app/(store)/support/
 
 # Дисконт
-# src/app/(store)/discount
+src/app/(store)/discount
 
 # ДАШБОРД
-# src/app/dashboard/
+src/app/dashboard/
 
-src/app/dashboard/banners/
+# src/app/dashboard/banners/
 # src/app/dashboard/settings/
-src/app/dashboard/discount-products/
-src/app/dashboard/products/
+# src/app/dashboard/discount-products/
+# src/app/dashboard/products/
 
 # src/app/dashboard/orders/
 # src/app/dashboard/requests/
