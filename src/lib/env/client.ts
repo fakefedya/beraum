@@ -12,6 +12,7 @@ const clientSchema = z.object({
 const parsed = clientSchema.safeParse({
   NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   NEXT_PUBLIC_STORAGE_URL: process.env.NEXT_PUBLIC_STORAGE_URL,
+  NEXT_PUBLIC_YM_COUNTER_ID: process.env.NEXT_PUBLIC_YM_COUNTER_ID,
 });
 
 if (!parsed.success) {
