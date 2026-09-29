@@ -326,6 +326,7 @@ const CartFormContent = ({
                 value: ch,
                 label: FEEDBACK_CHANNEL_LABELS[ch],
               }))}
+
               defaultValue={
                 (state.payload?.preferredChannel as string) || undefined
               }
@@ -439,7 +440,7 @@ export const DiscountCartButton = () => {
     return (
       <Button
         disabled
-        className="bg-brand text-foreground relative h-12 w-12 rounded-[16px] opacity-50"
+        className="bg-brand text-foreground relative h-12 w-12 rounded-[10px] opacity-50 md:rounded-[16px]"
       >
         <ShoppingBag className="size-5" />
       </Button>
@@ -451,9 +452,10 @@ export const DiscountCartButton = () => {
       <SheetTrigger asChild>
         <Button
           className={cn(
-            "bg-brand text-foreground relative h-11 w-11 rounded-[16px] transition-all duration-300 md:h-12 md:w-12",
+            "bg-brand text-foreground relative h-11 w-11 rounded-[10px] transition-all duration-300 md:h-12 md:w-12",
             "hover:bg-brand-hover active:scale-[0.96]",
             "outline-none focus-visible:ring-2 focus-visible:ring-black",
+            "md:rounded-[16px]",
           )}
           aria-label={`Корзина, товаров: ${cartItems.length}`}
         >
