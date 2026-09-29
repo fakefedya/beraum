@@ -26,7 +26,6 @@ import {
 import { SafeImage } from "@/src/components/shared/SafeImage";
 import { buildImageUrl, cn } from "@/src/lib/utils";
 import type { slides } from "@/src/server/db/schema";
-import type { SlidePayload } from "@/src/server/db/schema/marketing.schema";
 
 type SlideItem = typeof slides.$inferSelect;
 
