@@ -2,7 +2,7 @@ import "server-only";
 import { z } from "zod";
 import { db } from "@/src/server/db/client";
 import { products } from "@/src/server/db/schema";
-import { isNotNull, eq } from "drizzle-orm";
+import { isNotNull, eq, sql } from "drizzle-orm";
 import { serverEnv } from "@/src/lib/env/server";
 import { wbPricesResponseSchema, wbStocksResponseSchema } from "./schemas";
 import { updateStocksInDb, type NormalizedStock } from "../sync/stocks";
@@ -253,15 +253,22 @@ export async function syncWbPrices(
       return { success: true, synced: allPrices.length, data: allPrices };
     }
 
-    const chunks = chunkArray(allPrices, 100);
+    const chunks = chunkArray(allPrices, 2000);
+
     await db.transaction(async (tx) => {
       for (const chunk of chunks) {
-        for (const item of chunk) {
-          await tx
-            .update(products)
-            .set({ wbDiscountedPrice: item.price })
-            .where(eq(products.itemArticle, item.article));
-        }
+        // Сериализуем данные чанка
+        const payload = JSON.stringify(
+          chunk.map((item) => ({ article: item.article, price: item.price })),
+        );
+
+        // Исполняем один сырой SQL-запрос на весь чанк
+        await tx.execute(sql`
+          UPDATE products AS p
+          SET wb_discounted_price = u.price
+          FROM jsonb_to_recordset(${payload}::jsonb) AS u(article text, price int)
+          WHERE p.item_article = u.article
+        `);
       }
     });
 

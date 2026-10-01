@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { revalidateTag } from "next/cache";
 import { eq, lt, and, inArray } from "drizzle-orm";
 import { db } from "@/src/server/db/client";
@@ -7,14 +7,32 @@ import { orders } from "@/src/server/db/schema/orders.schema";
 import { discountItems } from "@/src/server/db/schema/discount.schema";
 import { syncOzonStocks } from "@/src/server/services/ozon/client";
 import { syncWbStocks, syncWbPrices } from "@/src/server/services/wb/client";
+import { syncWbSkusAutoMapper } from "@/src/server/services/wb/init-skus";
 import { serverEnv } from "@/src/lib/env/server";
 import crypto from "crypto";
 
-export async function GET(request: Request) {
-  // 1. Авторизация Cron-запроса
+export async function GET(request: NextRequest) {
+  if (!serverEnv.CRON_SECRET) {
+    console.error(
+      "❌ CRON_SECRET не задан. Эндпоинт отключен для защиты от DoS.",
+    );
+    return new Response("Internal Server Error", { status: 500 });
+  }
+
   const authHeader = request.headers.get("authorization") || "";
   const expectedHeader = `Bearer ${serverEnv.CRON_SECRET}`;
 
+  const debug = request.nextUrl.searchParams.get("debug") === "true";
+  const dryRun = request.nextUrl.searchParams.get("dryRun") === "true";
+  const syncOptions = { debug, dryRun };
+
+  if (debug) {
+    console.log(`\n=========================================`);
+    console.log(`🤖 СТАРТ ОРКЕСТРАТОРА (DryRun: ${dryRun})`);
+    console.log(`=========================================\n`);
+  }
+
+  // 2. Безопасное сравнение строк
   if (authHeader.length !== expectedHeader.length) {
     return new Response("Unauthorized", { status: 401 });
   }
@@ -29,7 +47,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    // 2. Очистка старых заявок (старше 1 года)
+    // Очистка старых заявок (старше 1 года)
     const oneYearAgo = new Date();
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
@@ -43,14 +61,13 @@ export async function GET(request: Request) {
       );
 
     // ==========================================
-    // 3. АВТО-ОТМЕНА ЗАКАЗОВ ДИСКОНТА (72 ЧАСА)
+    // АВТО-ОТМЕНА ЗАКАЗОВ ДИСКОНТА (72 ЧАСА)
     // ==========================================
     const threeDaysAgo = new Date();
     threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
     let releasedItemsCount = 0;
 
-    // 3.1. Находим и отменяем зависшие заказы
     const expiredOrders = await db
       .update(orders)
       .set({ status: "cancelled", updatedAt: new Date() })
@@ -63,18 +80,16 @@ export async function GET(request: Request) {
       .returning({ items: orders.items });
 
     if (expiredOrders.length > 0) {
-      // Собираем все уникальные SKU из отмененных заказов
       const skusToRelease = expiredOrders.flatMap((order) =>
         order.items.map((item) => item.uniqueSku),
       );
 
-      // Снимаем бронь с физических товаров
       if (skusToRelease.length > 0) {
         const released = await db
           .update(discountItems)
           .set({
             status: "available",
-            reservedAt: null, // Сбрасываем время резерва
+            reservedAt: null,
             updatedAt: new Date(),
           })
           .where(
@@ -89,31 +104,32 @@ export async function GET(request: Request) {
       }
     }
 
-    // 3.2. Подчистка "сиротских" резервов (на случай сбоев транзакций)
     const orphanedItems = await db
       .update(discountItems)
       .set({ status: "available", reservedAt: null, updatedAt: new Date() })
       .where(
         and(
           eq(discountItems.status, "reserved"),
-          lt(discountItems.reservedAt, threeDaysAgo), // Резерв старше 3 суток
+          lt(discountItems.reservedAt, threeDaysAgo),
         ),
       )
       .returning({ id: discountItems.id });
 
     releasedItemsCount += orphanedItems.length;
 
-    // Сбрасываем кэш витрины, если появились новые товары
     if (releasedItemsCount > 0) {
       revalidateTag("discount_items", { expire: 0 });
     }
 
     // ==========================================
-    // 4. Синхронизация маркетплейсов
+    // СИНХРОНИЗАЦИЯ МАРКЕТПЛЕЙСОВ
     // ==========================================
-    const ozonStocks = await syncOzonStocks();
-    const wbStocks = await syncWbStocks();
-    const wbPrices = await syncWbPrices();
+
+    await syncWbSkusAutoMapper(debug);
+
+    const ozonStocks = await syncOzonStocks(syncOptions);
+    const wbStocks = await syncWbStocks(syncOptions);
+    const wbPrices = await syncWbPrices(syncOptions);
 
     const changed =
       (ozonStocks.synced ?? 0) +

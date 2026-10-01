@@ -37,3 +37,5 @@ src/app/dashboard/
 
 # src/app/dashboard/orders/
 # src/app/dashboard/requests/
+
+src/app/(store)/

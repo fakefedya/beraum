@@ -11,6 +11,7 @@ import {
 import { sql } from "drizzle-orm";
 import { productStatusEnum } from "./enums.schema";
 import { categories } from "./categories.schema";
+import { bigint } from "drizzle-orm/pg-core";
 
 export type ProductFilters = Record<
   string,
@@ -42,7 +43,7 @@ export const products = pgTable(
 
     wbLink: text("wb_link"),
     fbsStock: integer("fbs_stock"),
-    wbChrtId: integer("wb_chrt_id"),
+    wbChrtId: bigint("wb_chrt_id", { mode: "number" }),
 
     wbDiscountedPrice: integer("wb_discounted_price"),
     ymarketLink: text("ymarket_link"),

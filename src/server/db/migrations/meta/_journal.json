@@ -183,6 +183,13 @@
       "when": 1790618024510,
       "tag": "0025_closed_catseye",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1790839223868,
+      "tag": "0026_dark_wilson_fisk",
+      "breakpoints": true
     }
   ]
 }

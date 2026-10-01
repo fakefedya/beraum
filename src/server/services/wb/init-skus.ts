@@ -4,6 +4,7 @@ import { products } from "@/src/server/db/schema";
 import { eq } from "drizzle-orm";
 import { serverEnv } from "@/src/lib/env/server";
 import { chunkArray, delay } from "@/src/server/utils/sync-helpers";
+import { sql } from "drizzle-orm";
 
 const WB_API_URL = "https://content-api.wildberries.ru";
 
@@ -60,7 +61,7 @@ export async function syncWbSkusAutoMapper(debug = true) {
       const res = await fetch(`${WB_API_URL}/content/v2/get/cards/list`, {
         method: "POST",
         headers: {
-          Authorization: apiKey, // 🛡️ Заменили serverEnv.WB_API_KEY на локальную переменную
+          Authorization: apiKey,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -135,16 +136,18 @@ export async function syncWbSkusAutoMapper(debug = true) {
     }
 
     if (matchedUpdates.length > 0) {
-      const chunks = chunkArray(matchedUpdates, 100);
+      const chunks = chunkArray(matchedUpdates, 2000);
 
       await db.transaction(async (tx) => {
         for (const chunk of chunks) {
-          for (const item of chunk) {
-            await tx
-              .update(products)
-              .set({ wbChrtId: item.wbChrtId })
-              .where(eq(products.id, item.id));
-          }
+          const payload = JSON.stringify(chunk);
+
+          await tx.execute(sql`
+            UPDATE products AS p
+            SET wb_chrt_id = u."wbChrtId"
+            FROM jsonb_to_recordset(${payload}::jsonb) AS u(id uuid, "wbChrtId" bigint)
+            WHERE p.id = u.id
+          `);
         }
       });
     }
