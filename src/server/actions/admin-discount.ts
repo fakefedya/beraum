@@ -363,7 +363,7 @@ export async function deleteDiscountItemAction(id: string) {
 
 export async function getModelsByCategoryAction(categoryId: string) {
   try {
-    await requireAuthRole(["superadmin", "admin", "manager"]);
+    await requireAuthRole(["superadmin", "admin", "manager", "warehouse"]);
     const result = await getSupportModelsByCategory(categoryId);
     return { success: true, data: result.data };
   } catch {
