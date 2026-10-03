@@ -138,7 +138,7 @@ const createDiscountItemSchema = z.object({
 
 export async function createDiscountItemAction(formData: FormData) {
   try {
-    await requireAuthRole(["superadmin", "admin", "manager"]);
+    await requireAuthRole(["superadmin", "admin", "manager", "warehouse"]);
 
     const rawData = {
       productId: formData.get("productId"),
@@ -241,7 +241,7 @@ const updateDiscountItemSchema = z.object({
 
 export async function updateDiscountItemAction(formData: FormData) {
   try {
-    await requireAuthRole(["superadmin", "admin", "manager"]);
+    await requireAuthRole(["superadmin", "admin", "manager", "warehouse"]);
 
     const rawData = {
       id: formData.get("id"),
@@ -329,7 +329,7 @@ export async function updateDiscountItemAction(formData: FormData) {
 
 export async function deleteDiscountItemAction(id: string) {
   try {
-    await requireAuthRole(["superadmin", "admin", "manager"]);
+    await requireAuthRole(["superadmin", "admin", "manager", "warehouse"]);
 
     const [item] = await db
       .select({ mediaKeys: discountItems.mediaKeys })
