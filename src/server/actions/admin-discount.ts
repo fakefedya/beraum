@@ -53,7 +53,7 @@ export async function getDiscountPresignedUploadUrl(
   rawData: unknown,
 ): Promise<PresignedUrlResult> {
   try {
-    await requireAuthRole(["superadmin", "admin", "manager"]);
+    await requireAuthRole(["superadmin", "admin", "manager", "warehouse"]);
     const parsed = discountMediaSchema.safeParse(rawData);
     if (!parsed.success) {
       return { success: false, error: parsed.error.issues[0].message };
