@@ -62,8 +62,7 @@ const computedPriceSql = sql<number>`
 
 const computedStockSql = sql<number>`(
   COALESCE(${products.ozonStockFbo}, 0) + 
-  COALESCE(${products.fbsStock}, 0) +
-  COALESCE(${products.manualStock}, 0)
+  COALESCE(${products.fbsStock}, 0)
 )`;
 
 const productTypeScalarSql = sql<string>`
