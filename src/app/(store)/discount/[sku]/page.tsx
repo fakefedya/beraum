@@ -67,6 +67,19 @@ export default async function DiscountProductPage({ params }: PageProps) {
       fit: media.fit,
     }));
 
+  if (item.baseProductImage) {
+    galleryImages.unshift({
+      url: buildImageUrl(
+        {
+          bucketName: item.baseProductImage.bucketName,
+          fileKey: item.baseProductImage.fileKey,
+        },
+        "products",
+      ),
+      fit: item.baseProductImage.fit,
+    });
+  }
+
   return (
     <div className={cn("flex flex-col gap-20", "md:gap-30")}>
       <Section className={cn("pt-24", "md:pt-32")}>
