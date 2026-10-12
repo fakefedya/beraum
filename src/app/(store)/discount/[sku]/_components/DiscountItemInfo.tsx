@@ -130,7 +130,7 @@ export const DiscountItemInfo = ({ item }: DiscountItemInfoProps) => {
           <>
             <div
               className={cn(
-                "bg-background/90 fixed bottom-0 left-0 z-10 w-full border-t border-black/5 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-xl",
+                "bg-background/90 fixed bottom-0 left-0 z-10 w-full border-t border-black/5 p-4 pr-22 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-xl",
                 "md:static md:w-auto md:border-none md:bg-transparent md:p-0 md:backdrop-blur-none",
               )}
             >
