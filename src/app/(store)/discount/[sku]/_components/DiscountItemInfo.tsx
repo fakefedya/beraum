@@ -32,10 +32,30 @@ export const DiscountItemInfo = ({ item }: DiscountItemInfoProps) => {
     ([_, val]) => val !== null && val !== "",
   );
 
-  const coverImageKey = item.mediaKeys?.[0]?.key;
-  const imageUrl = coverImageKey
-    ? buildImageUrl({ bucketName: "discount-products", fileKey: coverImageKey })
-    : "";
+  const baseImage = item.baseProductImage;
+  const discountCoverMedia =
+    item.mediaKeys?.find((m) => m.isCover) || item.mediaKeys?.[0];
+
+  const imagePayload = baseImage
+    ? {
+        bucketName: baseImage.bucketName,
+        fileKey: baseImage.fileKey,
+        defaultBucket: "products" as const,
+      }
+    : discountCoverMedia
+      ? {
+          bucketName: "discount-products",
+          fileKey: discountCoverMedia.key,
+          defaultBucket: "discount-products" as const,
+        }
+      : null;
+
+  const imageUrl = buildImageUrl(
+    imagePayload
+      ? { bucketName: imagePayload.bucketName, fileKey: imagePayload.fileKey }
+      : null,
+    imagePayload?.defaultBucket || "system-assets",
+  );
 
   return (
     <div className={cn("flex flex-col gap-10", "md:gap-16")}>

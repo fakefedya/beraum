@@ -3,8 +3,23 @@ import "server-only";
 import { cache } from "react";
 import { db } from "@/src/server/db/client";
 import { discountItems } from "@/src/server/db/schema/discount.schema";
-import { products, categories, productDocuments } from "@/src/server/db/schema";
-import { eq, and, desc, count, asc, or, ilike, type SQL } from "drizzle-orm";
+import {
+  sql,
+  eq,
+  and,
+  desc,
+  count,
+  asc,
+  or,
+  ilike,
+  type SQL,
+} from "drizzle-orm"; // Добавлен sql
+import {
+  products,
+  categories,
+  productDocuments,
+  productImages,
+} from "@/src/server/db/schema";
 import { buildImageUrl } from "@/src/lib/utils";
 import { unstable_cache } from "next/cache";
 
@@ -65,6 +80,21 @@ export async function getPublicDiscountItems(
           categoryId: categories.id,
           colorName: products.colorName,
           basePrice: products.manualPrice,
+          baseProductImage: sql<{
+            fileKey: string;
+            bucketName: string;
+            fit: "contain" | "cover";
+          } | null>`(
+            SELECT jsonb_build_object(
+              'fileKey', pi.file_key,
+              'bucketName', pi.bucket_name,
+              'fit', pi.image_fit
+            )
+            FROM ${productImages} pi
+            WHERE pi.product_id = ${products.id}
+            ORDER BY pi.is_cover DESC, pi.sort_order ASC
+            LIMIT 1
+          )`.as("baseProductImage"),
         })
         .from(discountItems)
         .innerJoin(products, eq(discountItems.productId, products.id))
@@ -139,6 +169,21 @@ export const getDiscountItemBySku = cache(async (uniqueSku: string) => {
         categoryId: products.categoryId,
         categorySlug: categories.slug,
         categoryName: categories.titleRu,
+        baseProductImage: sql<{
+          fileKey: string;
+          bucketName: string;
+          fit: "contain" | "cover";
+        } | null>`(
+          SELECT jsonb_build_object(
+            'fileKey', pi.file_key,
+            'bucketName', pi.bucket_name,
+            'fit', pi.image_fit
+          )
+          FROM ${productImages} pi
+          WHERE pi.product_id = ${products.id}
+          ORDER BY pi.is_cover DESC, pi.sort_order ASC
+          LIMIT 1
+        )`.as("baseProductImage"),
       })
       .from(discountItems)
       .innerJoin(products, eq(discountItems.productId, products.id))

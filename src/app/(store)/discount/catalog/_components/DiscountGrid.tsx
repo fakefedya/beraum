@@ -14,6 +14,11 @@ export type PublicDiscountItemDTO = {
   categoryName: string;
   colorName: string | null;
   basePrice: number | null;
+  baseProductImage: {
+    fileKey: string;
+    bucketName: string;
+    fit: "contain" | "cover";
+  } | null;
 };
 
 interface DiscountGridProps {

@@ -19,15 +19,35 @@ interface DiscountCardProps {
 }
 
 export const DiscountCard = ({ product }: DiscountCardProps) => {
-  const coverMedia =
+  const baseImage = product.baseProductImage;
+  const discountCoverMedia =
     product.mediaKeys?.find((m) => m.isCover) || product.mediaKeys?.[0];
 
+  const imagePayload = baseImage
+    ? {
+        bucketName: baseImage.bucketName,
+        fileKey: baseImage.fileKey,
+        fit: baseImage.fit,
+        defaultBucket: "products" as const,
+      }
+    : discountCoverMedia
+      ? {
+          bucketName: "discount-products",
+          fileKey: discountCoverMedia.key,
+          fit: discountCoverMedia.fit,
+          defaultBucket: "discount-products" as const,
+        }
+      : null;
+
   const imageUrl = buildImageUrl(
-    coverMedia
-      ? { bucketName: "discount-products", fileKey: coverMedia.key }
+    imagePayload
+      ? { bucketName: imagePayload.bucketName, fileKey: imagePayload.fileKey }
       : null,
-    "discount-products",
+    imagePayload?.defaultBucket || "system-assets",
   );
+
+  const imageFit =
+    imagePayload?.fit === "cover" ? "object-cover" : "object-contain";
 
   const hasBasePrice = product.basePrice && product.basePrice > 0;
   const savings = hasBasePrice
@@ -53,7 +73,7 @@ export const DiscountCard = ({ product }: DiscountCardProps) => {
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className={cn(
               "transition-transform duration-500 group-hover:scale-102",
-              coverMedia?.fit === "cover" ? "object-cover" : "object-contain",
+              imageFit,
             )}
           />
 
